@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Defining Quality | Andy Sansness</title>
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'></head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+    <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href="collections">Collections</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+      <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>Defining Quality</h1>
+  <!-- March 2024 -->
+  <hr>
+  <br>
+  <br>
+  <p><i>This entry is Part 1 out of a 4 part series on quality. Here is <a href='quality2' class='link'>Part 2</a>, <a href='quality3' class='link'>Part 3</a> and <a class='link' href='quality4'>Part 4</a>.</i></p>
+  <br>
+  <p>
+  Quality is inherent in almost everything around us; however, before you can begin to measure or create quality, you first have to understand it.
+  </p>
+  <p>
+  On its most fundamental level, quality is determined by the extent to which something <i>fulfills its intended purpose</i>.
+  </p>
+  <p>
+  Say you eat out at a restaurant.
+  The quality of the food at that restauraunt is dependent on fulfilling its purpose of tasting good.
+  The quality of the music playing at that restaurant is dependent on fulfilling its purpose of engaging its audience.
+  And finally, the quality of the restaurant in its entirely is dependent on fulfilling its purpose of providing an excellent dining experience.
+  </p>
+  <p>
+  Purpose is intrinsic to anything man-made, and when something is produced, its intended purpose is determined by whoever produced it.
+  Sure, you can use a drill to mix a cake batter, but the quality of that drill is not dependent on how well it mixes a cake batter, but how well it <i>drills</i>.
+  </p>
+  <br>
+  <p>
+  With this rule in mind, the one exception is that there is no such thing as the quality of an idea.
+  Consider: what is the purpose of Nature?
+  This is a ridiculous question; Nature doesn't have a purpose, it just <i>is</i>.
+  The same is true for ideas as significant as Truth and Freedom, to ideas as modest as startup and story ideas.
+  The nature of ideas is purely potential, and as such, they cannot have a purpose.
+  Quality is only introduced once an idea is given substance, by which point, it is no longer just an idea. 
+  </p>
+  <p>
+  Admittedly, although ideas can't have quality, they can have <i>potential</i> quality. 
+  The trouble with this is that individuals are pretty pathetic at predictions, even predictions as simple as whether an idea will produce a quality product.
+  </p>
+  <br>
+  
+  <p>
+  Coming back to purpose for a moment, if everything <i>man-made</i> has a purpose and a subsequent quality, where does that leave things which are not man-made?
+  It's already been established that Nature as an idea cannot have quality.
+  However, the substance of Nature, by which I mean animals, plants and minerals, certainly can.
+  In these cases, intended quality is not determined by the producer; instead, humans must <i>attribute</i> a purpose to them.
+  </p>
+  <p>
+  Let me explain what I mean here. 
+  When an individual looks at a tree, what do they see?
+  Some may see the tree as art, others may see the tree as timber, others again may see the tree as part of an ecosystem.
+  All these viewpoints are equally valid 'purposes' of that exact same tree; therefore they can also be equally valid determinations of quality.
+  </p>
+  <p>
+  With this in mind, let me add an addendum to my original definition of quality.
+  Quality is determined by the extent to which something achieves its intended purpose, <i>as defined by the <a class='link' href='lenses'>lens<sup><img class='self_link' src='thumbs_up_.png'></sup></a> through which you view it.</i>
+  </p>
+  
+  <br><br>
+  <img class='break' src='thumbs_up_break.png'>
+  <br><br>
+  
+  <p>
+  For something to fulfill its intended purpose, two requirements must be met: first, it must <i>have</i> a purpose in the first place, and second, that purpose must somehow be <i>fulfilled</i>.
+  </p>
+  <p>
+  Moving forward, I'm going to refer to these two requirements as frontend quality and backend quality.
+  </p>
+  <p>
+  These terms &#8212; frontend and backend &#8212; are both technical terms used in software development; frontend development is focused on generating a graphical interface, while backend development is focused on generating the underlying functionality.
+  </p>
+  <p>
+  This distinction can very aptly be translated to virtually anything of quality. 
+  Frontend quality is all about how something is presented, its surface level... in a word, <i>style</i>. 
+  Backend quality is all about something's purpose, function and performance... in a word, <i>substance</i>.
+  </p>
+  <p>
+  It's important to realise the equal importance of both of frontend and backend quality. Without frontend quality, the underlying message or functionality of the backend quality won't be able to be communicated; this is because it lacks style. Likewise, without backend quality, the frontend quality will seem superficial and empty; this because it lacks substance. 
+  </p>
+  <p>
+  While the backend concerns itself with the underlying <i>purpose</i>, the frontend concerns itself with <i>how</i> this purpose is achieved.
+  </p>
+  <p>
+  Consider story writing. The frontend of a story is the writing, which encapsulates everything from prose and coherence to grammer and spelling. 
+  Conversely, the backend of a story is captured by the story itself, including its plot, characters and setting.
+  </p>
+  <p>
+  Both of these features are necessary to ensure the quality of a story. A story well told but without much substance will be called shallow. A story poorly told but with an interesting plot will be called boring.
+  </p>
+  <p>
+  Film takes the same backend of a story, but instead presents it with very different frontend. The frontend of film is called production, and includes cinematography, acting and the soundtrack.
+  </p>
+  <p>
+  Informative writing takes the same frontend as story writing, but instead presents a very different backend; namely, the information and insights which you're wishing to convey.
+  </p>
+  <p>
+  In all of these examples, overall quality is equally determined by the quality of both the frontend and backend.
+  </p>
+  <br>
+  <br>
+  <p>
+  On top of these two distinct types of quality, it's also helpful to consider two broad catagories to which these types of quality can be applied: that of <i>production</i> and that of <i>consumption</i>.
+  </p>
+  <p>
+  While the quality of productive tools is dependent on performance, the quality of consumptive experiences is dependent on engagement.
+  </p>
+  <p>
+  The purpose of productive tools is to perform work, which is the means by which a task is completed. Accordingly, the quality of a tool relies on its performance, that is, how well that given tool is able to perform its intended work. Inherent within the idea of performance are facets such as longevity, consistency and workmanship. Tools can include utensils, stationary, software, hardware, hand tools, power tools, machines and vehicles.
+  </p>
+  <p>
+  The purpose of consumptive experiences is to engage its audience, whether visually, auditorily, gustatorily, cognitively or otherwise. Accordingly, the quality of an experience is determined by how well it's audience is engaged. The experiences I'm referring to are more or less summed up by the phrase 'the arts'. This includes (but is not limited to) music, film, poetry, literature, sculpture, painting, cartoon, theatre, architecture, fashion and photography.
+  </p>
+  <p>
+  As neat as this split seemingly is, there are also groups which lies at the intersection between tools and experiences. Clothes can fit anywhere along the spectrum, and can equally be considered in terms of engagement or performance, with fashion leaning toward engagement, and activewear leaning toward performance.
+  Cars, furniture and food<span class="popup" onclick="footnote1()"><sup class='note'>1</sup><span class="popuptext" id="foot1">On one hand, when you eat a delicious meal, masterfully prepared and lovingly consumed, is food not art for the tongue? On the other hand, when you're eating a snack on the go, doesn't food become purely a tool whose only purpose is to escape the clutches of hunger?</span></span> can also be considered in a similar way.
+  In all these cases, their frontend quality is consumptive in nature, while their backend quality is productive in nature.
+  </p>
+  <br>
+  <p>
+  In the case of tools, quality is not a static state. 
+  The quality of a top-of-the-line refrigerator made in 1920 compared to one made in 2020 is vastly different, and yet both would have been regarded as highest quality for it's era. 
+  <i>As technology progresses, so too does quality.</i>
+  </p>
+  <p>
+  A perfect example of this is Moore's law, which states that the speed of microchips will double approximately every two years.
+  This <a class='link' href='https://sarahconstantin.substack.com/p/the-enchippening'>enchippening</a> explains much of the exponential improvement in technology, in large parts because so much of technology relies on microchips.
+  </p>
+  <p>
+  Interestingly, while tools may improve over time, society doesn't expect art to improve the same way they expect a microchip to. 
+  However, though the average quality of art may not change over time, instead, art changes in its very nature. 
+  </p>
+  <p>
+  Impressionism is completely different from surrealism, and yet each can equally be of high calibre quality. 
+  Think of the difference between classical music and rap, Shakespearean plays and Broadway musicals, greek epics and modern literature as we know it. 
+  None of these are any better than another &#8212; they are simply <i>different</i>.
+  </p>
+  <p>
+  In the cases of both tools and experiences, innovation is inevitable.
+  Notably, the reason this innovation has divergent outcomes is due to the fact that while technology may change, humans fundamentally do not.
+  </p>
+  <br>
+  <br>
+  <br>
+  <p style='color: #004d99;'><i>
+  Thanks to Rhys Goosen for reading drafts and providing critisism and feedback
+  </i></p>
+  <br><br>
+  <p>
+  <hr>
+  <a class='footer_link' href='nobel'> &#8592; <span class='hide'>Nobel by Numbers</span></a>
+  <a class='footer_link' style='float: right;' href='quality2'> <span class='hide'>Measuring Quality</span> &#8594;</a>
+  <hr>
+  </p>
+  <br><br><br><br><br>
+  <a href='index.html'><img src="thumbs_up_.png" class='footer'></a>
+  <br><br> 
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

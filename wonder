@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Wonder and Awe | Andy Sansness</title>
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'>
+</head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+    <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href="collections">Collections</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+      <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>Wonder and Awe</h1>
+  <!-- December 2023 -->
+  <hr>
+  <br>
+  <img src='sublime.jpeg' style='width: 100%;'>
+  <span style='color: #666666;'><i>Mirror Lake, Yosemite Valley, 1864</i> by Albert Bierstadt</span>
+  <br>
+  <br>
+  <h2>Wonder</h2>
+  <p>
+  Though it defies true definition, we all recognise wonder.
+  Wonder is when we admire something new or unfamiliar and are astonished by it.
+  Typically, wonder as a human emotion is rare; this is because the primary ingredient of wonder is <i>novelty</i>.
+  </p>
+  <p>
+  Novelty is anything new and therefore unfamiliar to your human experience.
+  Think of experiences in your life which have precipitated wonder; maybe it was seeing snow for the first time or snorkelling in a coral reef. 
+  In each possible instance, these experiences of wonder are inevitably driven by novelty.
+  </p>
+  <p>
+  Because the novel is unfamiliar, this usually means that you initially don't understand it. 
+  It's for this reason that wonder tends to be accompanied by an underlying curiosity<span class="popup" onclick="footnote1()"><sup class='note'>1</sup><span class="popuptext" id="foot1">Ironically, the mental mechanism behind wonder is intrinsic within the word itself, that is, whenever you say something along the lines of: "I wonder what that is?"</span></span>.
+  The height of novelty and therefore wonder will be when you experience something for the very first time.
+  As you begin to experience it further, it's novelty will fade, progressively replacing wonder with apathy. 
+  This explains why children live their lives in an almost constant state of wonder, while adults, having experienced almost all there is to experience, very rarely encounter it at all.
+  </p>
+  <p>
+  When we find wonder in the mundane &#8212; an ant crawling across a leaf, a raindrop sliding down a windowsill &#8212; this is recapturing, just for a fleeting moment, the feeling we felt when we experienced it's novelty for the very first time. 
+  This process is the essence of what it means to 'cultivate wonder'.
+  </p>
+  <p>
+  Let me note for the record that not all novelty produces wonder. 
+  If you eat an exotic looking boiled substance and find it utterly disgusting, then you most certainly aren't going to experience wonder &#8212; you are going to experience disgust.
+  While there isn't a direct causation between all novelty and wonder, wonder does undeniably <i>rely on</i> novelty as the primary ingredient.
+  The thing is, it's quite difficult to pre-empt whether something novel will yield wonder. 
+  So, in order to find those experiences, inevitably you're going to have to <i>try new things</i>.
+  </p>
+  <p>
+  The flipside to trying new things is that we usually have to endure a small measure of discomfort.
+  All of us as humans find comfort in the familiar, the things which stay the same in our lives &#8212; our house, our job, our family, our friends, our routine. 
+  Discomfort is inherent within novelty because by definition, that which is novel is unfamiliar to our human experience.
+  By extending our horizons beyond what is familiar and therefore comfortable, we risk awkwardness, disgust, disappointment... in a work, <i>discomfort</i>. 
+  </p>
+  <p>
+  And yet, if discomfort is inherent within novelty<span class="popup" onclick="footnote2()"><sup class='note'>2</sup><span class="popuptext" id="foot2">Again, not a causation, merely a correlation</span></span>, then discomfort is imperitive to experiencing wonder.
+  However, all things considered, discomfort is a relatively small price to pay in order to find wonder.
+  And, when you do end up finding and experiencing it, in the midst of wonder there exists no room for discomfort.
+  In fact, in the moment itself, wonder trumps all other emotions, thoughts and feelings.
+  Wonder truly is a wonder.
+  </p>
+  
+  <!-- <p>
+  Novelty then link to surprise and thus entertainment.
+  The point is, humans seek novelty yet are pattern-recognition machines
+  By recognising the pattern.
+  </p> -->
+  <br>
+  
+  <h2>Awe</h2>
+  <p>
+  Similar, but very different to wonder is the feeling of awe. 
+  Awe is when we are met by some breathtaking experience which commands a mixture of fear, reverence and amazement.
+  </p>
+  <p>
+  In the same way that wonder relies on novelty, awe relies on <i>grandeur</i>. 
+  Grandeur is the quality of greatness, whether in size, in scope, in detail... anything which captures something greater than your mind has yet imagined.
+  Again, think of experiences in your life which have precipitated awe; maybe it was meeting a powerful figure whom you revere or appreciating a mind-bendingly epic cloud formation. 
+  In each possible instance, these experiences of awe are inevitably driven by grandeur.
+  </p>
+  <p>
+  Physiologically, the best way to identify awe is to determine whether the experience is accompanied by goosebumps. 
+  Goosebumps are a sure sign that whatever you are perceiving, you perceive to be as beyond the ordinary.
+  Another more psychological sign of awe is that while wonder may cause us to ask questions, awe tends to strike us dumb. 
+  That's because we are dumbfounded... but only for a moment. 
+  </p>
+  
+  
+  <p>
+  This capturing of emotion and feeling in a single moment is true for wonder also. 
+  In this way, wonder and awe are less feelings than they are experiences, experiences which occur powerfully and unpredictably.
+  </p>
+  <br>
+  
+  <h2>When Wonder Meets Awe</h2>
+  <p>
+  Now while some experiences of awe can contain elements of wonder (and vis versa), a true melding of wonder and awe creates something far greater than the sum of its parts, something which surpasses understanding. 
+  For a second your mind opens, your breath catches, your thoughts transcend... 
+  A moment builds and cascades into something truly beyond description. 
+  The English language doesn't quite have a word which encapsulates that tentative place made up of equal parts awe and wonder (wond-awe?).
+  </p>
+  <p>
+  The best way to describe this phenomenon is as an experience which so complex and multifaceted that you don't exactly know what you're feeling, <i>you just feel</i>.
+  More specifically, it takes the physiological and psychological effects of awe and combines them with the novelty and astonishing nature of wonder, both dialed up to a level which is nigh on overwelming.
+  </p>
+  <p>
+  While awe strikes us dumb for the primary reason that we are awe-struck, wond-awe strikes us down due to the <i>inexpressibility</i> of both the stimulus and our subsequent state.
+  Because this inexpressibly unique experience is greater than the sum of its parts, for this reason it doesn't merely come from something which merely contains both grandeur and novelty... 
+  Instead it relies on the <i>sublime</i>.
+  </p>
+  <p>
+  The sublime is a kind of grandeur, but a grandeur which is beyond any form of human understanding, thus linking it to the novel.
+  Through this definition, there emerges a few contexts which the sublime can arise in.
+  </p>
+  <p>
+  Firstly, the infinite. 
+  Now the infinite is all around us &#8212; infinite smallness, infinite largeness and an infinity in between. 
+  The trick to experiencing this combination of awe and wonder is to somehow catch a glimpse of it. 
+  This can occur when we mistake the quantity of greatness for the quantity of infinite greatness &#8212; for example, seeing a boundless landscape as truly boundless.  
+  </p>
+  <p>
+  Another context which is able to produce the sublime is the indefinite.
+  Just as what is definite is linked to reality, by the same logic, what is indefinite is linked to that which is beyond reality.
+  Specifically what I'm referring to here is an abstracted, aesthetic experience... in other words, art.
+  For example, words as art are able to capture a quality which only exists in the human mind; something which truly does transcend reality.
+  <!--
+  Another kind of this phenomenon of the inexpressible is in music, and in listening to something which touches something within you.  
+  Interestingly, this only usually happens the first time I listen to a song. 
+  Again, whenever I listen to it again, the feeling is only really an echo of the original moment of ecstasy. 
+  Link to novel.
+  -->
+  </p>
+  
+  
+  <!-- <p>
+  C.S. Lewis described something similar in his autobiography   
+  </p>
+  -->
+  <br>
+  <h2>In Pursuit of Wonder and Awe</h2>
+  <p>
+  Slowly but surely I've attempted to describe wonder, awe and a unique but recognisable combination of the two.
+  Though each of these are positive experiences which we could all do with more of, the inevitable question remains:
+  <i>How can you go about experiencing them?</i>
+  </p>
+  <p>
+  The thing is, I could list off a handful of circumstances which produced these emotions for me, but by no means would they do the same for you. 
+  What is novel or grand to one person may be boring and mundane to another. 
+  To find these experiences, you're going to have to actually look for them yourself, based off your own personal experiences. 
+  This being said, there is one technique which is undoubtably able to produce wonder and awe in everyone: 
+  </p>
+  <p>
+  <i>Travel.</i>
+  </p>
+  <p>
+  By travelling overseas and encountering a completely unfamiliar culture and environment, it is basically inevitable that you will experience both awe and wonder in gloriously gluttonous abundance.  
+  To hear a different language, eat a different cuisine, see sights which you could never other wise see &#8212; all of these are able to produce a novelty and grandeur which is simply inaccessible in your home country.
+  That's because, by living somewhere, we naturally exhaust the natural wonder and awe which we find there.
+  So, by travelling outside of what we know &#8212; to <a href='japan' class='link'>Japan<sup><img class='self_link' src='thumbs_up_.png'></sup></a>, to Italy, to Brazil, where-ever it may be &#8212; we are able to find new sources of wonder and awe.
+  </p>
+  <br>
+  <p>
+  Now I fully realise that this reflection will be inconsequential to most.
+  Although we can all appreciate wonder and awe, most people probably don't care enough about them to actively seek them out.
+  With this in mind, I at least hope that this article will be able to cultivate a greater self awareness regarding these experiences.
+  And, if you truly can't remember the last time you felt unrestrained wonder or breathtaking awe, the least you can do is wonder...
+  </p>
+  
+  <blockquote>
+  <p>
+  He who wonders discovers that this in itself is a wonder
+  <span>— M.C. Escher</span></p>
+  </blockquote>
+  <br>
+  <br>
+  <p>
+  <hr>
+  <a class='footer_link' href='generalisation'> &#8592; <span class='hide'>Specialisation in Generalisation</span></a>
+  <a class='footer_link' style='float: right;' href='japan'><span class='hide'>Travelling Japan</span> &#8594;</a>
+  <hr>
+  </p>
+  <br><br><br><br><br>
+  <a href='index.html'><img src="thumbs_up_.png" class='footer'></a>
+  <br><br>
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

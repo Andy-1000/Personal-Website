@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Phraseology | Andy Sansness</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<link href='https://fonts.googleapis.com/css?family=Roboto Slab' rel='stylesheet'>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'>
+</head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+  <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href="collections">Collections</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+      <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>Phraseology</h1>
+  <hr>
+  <br>
+  <p>Relaxatives</p>
+  <p>Diplomatic Impunity</p>
+  <p>Bread loser</p>
+  <p>Urn Burial</p>
+  <p>A reputation to keep down</p>
+  <p>It takes a child to raise a village</p>
+  <p>The pot thickens</p>
+  <p>Global climax change</p>
+  <p>Enemies in high places</p>
+  <p>Moral Hygiene</p>
+  <p>Last but least</p>
+  <p>How the turns have tabled</p>
+  <p>Shirtless sleeves</p>
+  <p>A word of opportunity</p>
+  <p>Solitaire confinement</p>
+  <p>Sleep for joy</p>
+  <p>Third hand book store</p>
+  <p>CAPITALism</p>
+  <p>Petal to the metal</p>
+  <p>In-convinience store</p>
+  <p>Mis-fortune teller</p>
+  <p>Foul pay</p>
+  <p>Unappreciation of beauty</p>
+  <p>What goes up must calm down</p>
+  <p>Alterior motif</p>
+  <p>Abra-Cadaver-a</p>
+  <p>Alive and kicking and screaming</p>
+  <p>The chill of the moment</p>
+
+<br><br><br><br><br><br><br><br><br><br>
+
+
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Through the Lens of Physics | Andy Sansness</title>
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'>
+</head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+    <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href="collections">Collections</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+      <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>Through the Lens of Physics</h1>
+  <!-- September 2023 -->
+  <hr>
+  <br>
+  <br>
+  <p>
+  Physics is the study of forces.
+  Such forces include phenomena such as gravity, magnetism, electricity, motion and heat.
+  Over the centuries countless theories, theorems and formulae have been employed by physicists to understand and explain why these fundamental forces do what they do.
+  Now while these principles are typically applied to their specific niche within physics, who's to say they couldn't be applied elsewhere, that physics itself could be used as a <a href='lenses'   class='link'>lens<sup><img class='self_link' src='thumbs_up_.png'></sup></a> through which to view... <i>everything</i>?  
+  </p>
+  <p>
+  Nobody.
+  Not me at least.
+  </p>
+    
+  <br>
+  <h2>Friction and Inertia</h2>
+  <p> 
+  Friction is the force which resists motion along surfaces.
+  Analogously, the motion of ideas also experiences friction; in this context, friction refers to <i>resistance to change</i>.
+  As new ideas, innovations or technology are introduced, there is typically resistance to them, aka. <i>societal friction</i> in adopting these ideas into practice.
+  This resistance may look like bureaucracy, internal politics or simple human discomfort in new things.
+  Much like in physics, whenever there are ideas in motion, friction will always be experienced.
+  </p>
+  <p>
+  Inertia refers to the phenomena of objects staying in the state of motion they are in.
+  If an object is moving, it will continue moving; if an object is stationary, it will stay stationary - this will continue to be so until the object is acted upon by an external force.
+  More broadly, any system, whether it be an economy (ceretis parabis), an ecosystem, an organism, a climate or a human mind, will all stay <i>as they are</i> unless they are changed by something external to that given system.
+  </p>
+  <p>
+  This brings us to social inertia.
+  Each individual's behaviours, lifestyles and beliefs are based on those around them; once these are engrained they typically stay that way.
+  This explains how economic, cultural and religious heritage is carried from generation to generation.
+  As humans, we are wired to resist imposed changes in previously entrenched beliefs, routines or processes.
+  This is inertia; once entrenched, individuals stay in the state of motion which they are already in.
+  </p>
+  <p>
+  Both friction and inertia describe <i>resistance</i> to change.
+  While friction is a force directly opposing the change, inertia is the initial inability to change in the first place.
+  </p>
+  
+  <br>
+  
+  <h2>Laws of Conservation (The First Law of Thermodynamics)</h2>
+  <p>
+  There are many conservation laws within the different subcategories of physics, but all of them tend to sound a bit like this: <i>matter/energy/momentum/electric charge/whatever can neither be created or destroyed, only transformed from one form into another.</i>
+  Burning a match doesn't actually destroy it.
+  Instead, it's atoms are transformed into a different form (namely that of smoke, which subsequently dissipates).
+  This process of conservation can be found in virtually every physics scenario you can imagine. 
+  </p>
+  <p>
+  Outside of physics, this idea of conservation is fundamentally innate in all that we do.
+  Everyone knows you can't make something out of nothing.
+  To construct any creative work requires time, effort and materials.
+  Thus, in the same way that <i>physical</i> matter can never truly be created or destroyed, neither can <i>metaphysical</i> matter.
+  Ideas do not simply pop into our brains, much like bubbles do not simply pop into existence.<span class="popup" onclick="footnote1()"><sup class='note'>1</sup><span class="popuptext" id="foot1">Though addmittedly they do pop <i>out</i> of existence.</span></span>
+  Every interaction, information dump and observation we make all contribute to the creation of our own individual thoughts and ideas.
+  </p>
+  <p>
+  So, along with the more classical laws of conservation, I would humbly suggest another: the law of conservation of metaphysical matter.
+  <i>Metaphysical matter can neither be created or destroyed, only transformed from one form to another.</i>
+  </p>
+  
+  
+  <br>
+  <h2>Entropy (The Second Law of Thermodynamics)</h2>
+  <p>
+  Entropy is the measure of the amount of disorder within a system.
+  Relatedly, the Second Law of Thermodynamics states that the total entropy within a system will never decrease - in other words, without human intervention <i>a system will always defer to degradation. </i>
+  Typically within physics the 'system' in question is that of a thermodynamic system, with entropy describing the amount of energy not available to do mechanical work.
+  </p>
+  <p>
+  Entropy can also be employed in information theory and telecommunications with regards to the 'amount of information' in a variable.
+  More generally, this idea of a system deferring to degradation is clear within many other systems outside of thermodynamics - for example, the economy will eventually defer to market failure if the government fails to provide intervention.
+  </p>
+  <p>
+  Similarly, entropy can also be used to describe biological entropy.
+  Take muscular atrophy, in which muscles become wasted away when they are not being used - like entropy, without intervention these muscles will automatically degrade.
+  </p>
+  <p>
+  Another example of entropy used in this way is concerning memory - without consciously attempting to remember something, your brain will automatically defer to forgetting it.
+  The same here could also apply to skill - if you don't practice a skill which you have, then it will automatically degrade.
+  </p>
+  <p>
+  On a slightly more macro scale, every organism will eventually die.
+  Just as every day is a step closer to death, every day your cells degrade.
+  Why?
+  Entropy.
+  </p> 
+  
+  <br>
+  <h2>Efficiency (The Third Law of Thermodynamics)</h2>
+  <p>
+  Here is a brief synopsis of the Third law of Thermodynamics: 
+  Energy is able to overcome entropy; absolute zero is reached when there is no entropy left in a system; but, the amount of energy required to cool an object to temperatures approaching absolute zero become exponentially greater; because of this, absolute zero requires an infinite amount of energy to be achieved.
+  This idea of natural limits is prominent across many fields - for example, The Law of Diminishing Demands, which I delved into <a href='economics'   class='link'>here<sup><img class='self_link' src='thumbs_up_.png'></sup></a>.
+  </p>
+  <p>
+  One important implication of the second and third law is that it is impossible to reach 100% efficiency within a system, or within any exchange between systems.
+  Outside of heat engines and by extension pretty much all machinery, isn't this true everywhere you look?
+  No economy, no human mind, no organism, no social network, no business can ever be 100% efficiency.
+  Likewise, no trading, no interaction, no symbiosis, no virtual connection, no business deal can be 100% efficient either.
+  The reason this is true is due to either a natural limit in place within the system, or the inhibition due to forces of resistance like friction or inertia.
+  </p>
+  
+  <br>
+  
+  <h2>The Theory of Special Relativity</h2>
+  <p>
+  The Theory of Special Relativity states that the traditional Galilean laws of physics break down when approaching the speed of light.
+  What this means is that when travelling near the speed of light, time, length and momentum will differ according to your frame of reference, resulting in such phenomena as time dilation and length contraction.
+  </p>
+  <p>
+  This idea can also be translated in terms of the human mind.
+  As your mind travels at a great pace - when you are occupied and engrossed in interesting work or an absorbing project - doesn't time fly?
+  Or, in other words, your individual perception of time is dilated.
+  Likewise, as your mind travels slowly - when you are bored or have nothing to do - doesn't time move sluggishly?
+  Admittedly, this idea is much more applicable in terms of the concept itself than the mathematical innerworkings (it's difficult to quantify perception of time or the 'speed' of one's mind).
+  Time flies when you're having fun; or rather, as your mind approaches relativistic speed, the timing of your frame of reference dilates.
+  </p>
+  <br>
+  <br>
+  <img class='break' src='thumbs_up_break.png'>
+  <br>
+  <br>
+  <p>
+  In summary:
+  </p>
+  <p>
+  <ul>
+  <li>there will always be resistance to change</li>
+  <li>matter (metaphysical or otherwise) can neither be created or destroyed</li>
+  <li>all systems defer towards degradation</li>
+  <li>there can never be perfect efficiency</li>
+  <li>time flies when you're having fun</li>
+  </ul>
+  </p>
+  <p>
+  Again, there are plenty more application which could be drawn from many other laws and principles within physics.
+  Equally the ideas already considered could be delved into much more detail.
+  Consider this more of a starting point, an inspiration, a lens to apply elsewhere.
+  To apply... Everywhere.
+  </p>
+   <br><br>
+  <p>
+  <hr>
+  <a class='footer_link' href='economics'> &#8592; <span class='hide'>Through the Lens of Economics</span></a>
+  <a class='footer_link' style='float: right;' href='mcguffin'><span class='hide'>The McGuffin</span> &#8594;</a>
+  <hr>
+  </p>
+  <br><br><br><br><br>
+  <a href='index.html'><img src="thumbs_up_.png" class='footer'></a>
+  <br><br>
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

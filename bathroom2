@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Bathroom Ramblings 2 | Andy Sansness</title>
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'>
+</head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+    <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href="collections">Collections</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+      <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>Late Night Bathroom Ramblings 2</h1>
+  <hr style='float: right; width:81%;'><p class='date'>24th February 2023</p>
+  <br>
+  <p>
+  Last night, approximately 24 hours ago, something utterly unexpected happened.
+  Words like 'surprise' and 'shock' don't fully express or give justice to it; the idea that such a thing could occur had not even entered my mind previous to the incident.
+  Even now I remain sceptical; however, the evidence of my memory attests, and not just my recollections, but also their companioning feelings and thoughts at the time.
+  Therefore, it is for this reason that will attempt to relay what happened in my own words (though since I was alone there couldn't be any words anyway).
+  Anyway, it all began in the bathroom...
+  </p>
+  <br>
+  <p>
+  We had eaten dinner as a family and had individually retired (ugh, that sounds like such an elderly word) to our rooms.
+  In my case, I had gone into my bathroom to have a shower.
+  Like the water flowing from the shower, all had been running smoothly until that fateful moment.
+  I reached out to pump the shampoo, just like I had done hundreds of times before, when, utterly unexpectedly, the entire globulous chunk of soap flung into my wide open eyeball.
+  I know.
+  </p>
+  <p>
+  'How could this happen?' you ask.
+  Well, the shampoo bottle is located on a ledge at approximately head height, but usually I am distanced away from it at about an arm's length.
+  In this case though, it just to happened that my pump force, my distance to the bottle and my head angle all just happened to result in this unfortunate happenstance.
+  Of course, my first reaction - involuntarily - was a combination of pain and shock which resulted in a...
+  Actually no, now that I come to think of it, as soon as it happened my mind momuntarily shut down.
+  By the time I had gotten over that moment, the pain receptors in my eye had signalled to my brain an overloa of stimulus, aka. sheer agony.
+  </p>
+  <p>
+  Keep in mind here, this was no mere scattering of suds.
+  This was a gelatinous flying squirt of liquidated shampoo.
+  My eye burned like the fiery smolderings of a newborn star.
+  It was the kind of pain which, aided also by the shock, cause me to utter involuntary gasps and groans and spasmically move my arms and the rest of my body to the tune of each new twitch of pain.
+  Because that's all it took.
+  </p>
+  <p>
+  My eyes, squeezed tight as a sleeping bag stuffed inside its case, sent spasms of inexpressible agony at the barest flicker of eyelid.
+  Now it is worth noting two thing at this point: 1. is that the shower is still straying relentlessly, adding yet another facet to the sensory overload. And 2. is that I am now at this point laughing at the hilarity and ridiculousness of the situation I am in.
+  I have long since found that this is my primary defence/coping mechanism in life generally, but still.
+  You had to be there.
+  </p>
+  <p>
+  As the minutes ticked by in this, shall we say unique, position, I now began to wonder what I should do.
+  I had managed to force open my right eyelid for a few feeble seconds to try and rinse out the soup, but it seemed like the damage had already been done.
+  Now I kept my eyes firmly clamped shut. 
+  In fact not just firmly but forcibly.
+  </p>
+  <p>
+  I stood in the shower for a while longer, more because I didn't know what else to do.
+  Mum, the person I would usually turn to for sympathy, was out for dinner that night.
+  So, I would tell Dad.
+  I told Dad.
+  He acknowledged my state and suggested, as I had already surmised, that I would have to wait it out.
+  For me to actually have moved from the shower to telling my father took a decent amount of time because I was essentially blind.
+  And blindness slows everything down.
+  I had to grope for my towel, my clothes and the door handle.
+  I had to feel the furniture with my hands so that I didn't feel it with my shins.
+  It was tough going.
+  </p>
+  <p>
+  Going outside after talked to my father, I cautiously experimented with trying to open my eyelid.
+  Either of them.
+  But no.
+  Brutal pain was all I received for my troubles.
+  It was interesting to find that our eyes are design to work in unison; attempting to isolate one's eyes movement was very difficult.
+  The mechanical (with my fingers that is) opening of my left (supposedly now 'good') eye proved to tense the muscles around my other ('bad') eye.
+  Miasmic spasms of pain followed.
+  Say la vie.
+  </p>
+  <br>
+  <p>
+  What remained of this experience - the effects of this unprecedented event which had taken place - was essentially blindness for the next 12 hours of my life.
+  Granted, 10 of those were spent asleep, but still...
+  The two hours directly following it involved me slowly (I don't know why) realising that no, I couldn't read, no, I couldn't write, no, I couldn't do vitually anything.
+  So I thought.
+  I listened.
+  It hurt, but by then not that much.
+  Interestingly, my eyes also cried a fair amount of the time, though to let a tear loose I had to open my eyes just the most infitisimal fraction until it would slip out of my eye with a small stab of pain and stream down my face.
+  </p>
+  <p>
+  I don't know if, or how many blind people can cry, but when I was blind for a while I cried a lot.
+  Maybe that means something.
+  Maybe it doesn't.
+  Maybe I'm blind to it.
+  But it isn't worth crying about.
+  </p>
+  <br>
+  <br>
+  <br>
+  <br>
+  <p>Read my original bathroom ramble <a class='link' href='bathroom' target="_blank">here</a></p>
+  
+  <p style='text-align: center;'>
+  <a onclick="topFunction()" id="top" class='link'>Go to top</a>
+  <br>
+  </p>
+  
+  
+<br><br><br><br>  
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

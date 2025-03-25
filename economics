@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Through the Lens of Economics | Andy Sansness</title>
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'></head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+    <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href="collections">Collections</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+      <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>Through the Lens of Economics</h1>
+  <!-- August 2023 -->
+  <hr>
+  <br>
+  <br>
+  <p>
+  Economics is much more than the study of economies or even money.
+  At its core, economics is the study of scarcity and value. 
+  But, the thing is, scarcity and value can be found just about everywhere, in just about everything.
+  So, couldn't economics, with all its theories and frameworks, be used as a <a href='lenses'   class='link'>lens<sup><img class='self_link' src='thumbs_up_.png'></sup></a> through which to view... <i>everything</i>?
+  </p>
+  <p>
+  No harm in trying.
+  </p>
+  
+  <br>
+  
+  <h2>The Laws of Supply and Demand</h2>
+  <p>
+  The Laws of Supply and Demand describes a relationship between value, supply and demand.
+  Basically, scarcity (low supply, high demand) creates value, while abundance (high supply, low demand) diminishes value.
+  This explains why a one-of-a-kind stamp with the king’s rear end is much more valuable than your run-of-the-mill stamp with just the king’s head. 
+  Generally in economics the term 'value' refers only to monetary value.
+  But what if it didn't?
+  </p>
+  <p>
+  For a basic example, consider compliments.
+  If someone deals out compliments left, right and center, the value of each compliment is going to be fairly meaningless – abundance reduces value. 
+  Meanwhile, if someone who has never said a good word about you in their life goes and compliments you, its value is going to be far greater – scarcity creates value.
+  The same goes for insults. 
+  And swearing. 
+  And etiquette. 
+  Any words which carry weight or 'value' to them, the laws of supply and demand are in play, whether you like it or not.<span class="popup" onclick="footnote1()"><sup class='note'>1</sup><span class="popuptext" id="foot1">One slight caveat is that the idea of value here is in reality only <i>perceived value</i>, a currency only used only within a small, select group of people.</span></span>
+  </p>
+  <p>
+  Okay, what else has value then?
+  Try human experience. 
+  Food is most enjoyed not when you are full, but when you are starving. 
+  Water is most enjoyed not when you are hydrated, but when you are thirsty. 
+  Sleep is most enjoyed not when you are wide awake, but when you are exhausted. 
+  In every instance it is the scarcity of the experience which makes it so valuable. 
+  </p>
+  <p>
+  To consider this point further, say you are served your favourite meal once a month - this meal has value to you. 
+  But what happens when you are served this meal every night? 
+  Too much supply reduces value... 
+  Suddenly your favourite meal doesn’t seem so valuable anymore.
+  </p>
+  <p>
+  In every instance, relative scarcity is the thing which creates value. 
+  So there.
+  </p>
+  
+  <br>
+  
+  <h2>Factor Endowment</h2>
+  <p>
+  Factor endowment refers to the types and quantities of resources a country is endowed with.
+  These include land (natural resources like minerals, forests and fields), labour (a skilled and educated workforce) and capital (useful stuff like factories, buildings and equipment).
+  </p>
+  <p>
+  Incidentally, if you replace 'country' with 'human being', the concept still stands.
+  Much like a country, an individual can be endowed with genetics (like land endowed with resources), training (like educating a labour force), or an inheritance (like capital goods).
+  </p>
+  <p>
+  Also, in the same way that countries specialise in and trade using the factors they are endowed with, so too do human specialise in a particular niche and trade their services with the rest of the world.
+  </p>
+    
+  <br>
+  
+  <h2>Asymmetric Information</h2>
+  <p>
+  Asymmetric information is the idea that sellers have more information than buyers.
+  This explains why we go to the doctor, or hire an architect, or consult any trained specialist.
+  </p>
+  <p>
+  The downside of this is when sellers abuse their informational advantage to unfairly charge the buyer.
+  For example, consider a house seller who doesn't tell a potential buyer that their house is riddled with termites.
+  </p>
+  <p>
+  To take this idea further it has to be applied not only economic transactions but other types of transactions.
+  </p>
+  <p>
+  Take social transactions.
+  If you know something about someone (whether their name or their secrets), you hold value over them.<span class="popup" onclick="footnote2()"><sup class='note'>1</sup><span class="popuptext" id="foot2">Everyone values the person that knows their name more than the person that doesn't</span></span>
+  The trick is knowing things which everybody else doesn't.
+  </p>
+  <p>
+  Here's another example: regifting.
+  If the birthday boy or girl knew that their gift had been regifted, they wouldn't value it as much.
+  </p>
+  <p>
+  Basically, asymmetric information just means ignorance is bliss.
+  </p>
+  
+  <br>
+  
+  <h2>Law of Diminishing Returns</h2>
+  <p>
+  The Law of Diminishing Returns describes how as resources are invested to increase yield, exponentially more resources are required as the process progresses.
+  For example, one unit of fertiliser may increase yield by 10%. 
+  But to increase yield by another 10%, two units are required. 
+  Then, to increase yield by a further 10%, four units are required.
+  And on and on it goes.
+  </p>
+  <p>
+  This idea is similar to the Third Law of Thermodynamics - as energy is required to cool substances, exponentially more energy is required to reach temperatures close to absolute zero.
+  This in turn is incidentally similar to achieving speeds near the speed of light - as energy is required to create velocity, exponentially more energy is required to reach the speed of light.
+  For all three of these principles, an infinite amount of energy/resources is required to reach an 'optimum' value.
+  </p>
+  <p>
+  Interestingly, this idea is also true for the amount of effort we can apply to something.
+  One day of work may make a project 10% better.
+  But to make it better by another 10%, two more days of work are required. 
+  Then, to make it better by a further 10%, another four more days of work are required.
+  And on and on it goes.
+  </p>
+  <p>
+  In this case, the unattainable value is <i>perfection</i>.
+  </p>
+  
+  <br>
+  
+  <h2>Tragedy of the Commons</h2>
+  <p>
+  The Tragedy of the Commons describes how common resources available to everyone can be overused and destroyed - basically, when everyone spoils it for everyone.
+  Overfishing, pollution and traffic are all prime examples.
+  </p>
+  <p>
+  But while economics only considers the tragedy of the commons in terms of economic resources, there are evidently many other applications.
+  As a resource available to virtually everybody, the internet in its entirety undoubtably experiences the tragedy of the commons - think clickbait, trolls, scams, information pollution, ads, etc.
+  The same occurs even to a service like Wikipedia; however, much like park maintenance workers keeping parks clean, those who maintain Wikipedia are able to reduce the effect of this principle.
+  </p>
+  <p>
+  Basically, unless it is maintained, anything freely available for everyone to use will inevitably be spoilt.
+  </p>
+  <br>
+  <br>
+  <img class='break' src='thumbs_up_break.png'>
+  <br>
+  <br>
+  <p>
+  In summary:
+  </p>
+  <p>
+  <ul>
+  <li>relative scarcity creates relative value</li>
+  <li>factor endowment dictates specialisation</li>
+  <li>ignorance is bliss</li>
+  <li>perfection is unattainable</li>
+  <li>anything available to all will inevitably be spoilt</li>
+  </ul>
+  </p>
+  <p>
+  By no means is this an exhaustive list; in reality there are plenty more economic principles and plenty more contexts to which they can all be applied.
+  Principles like the ones I have considered here are tools.
+  Though these tools may be particularly suited to one particular job, that doesn't mean you can't use them in other ways.
+  Ways that they've never been used for before.  
+  Ways that do the things no-one's ever <i>seen</i> before.
+  </p>
+  <p>
+  For tools to be useful, first you have to use them.
+  So... use them.
+  </p>
+   <br><br>
+  <p>
+  <hr>
+  <a class='footer_link' href='paradox'> &#8592; <span class='hide'>The Paradox of Contradiction</span></a>
+  <a class='footer_link' style='float: right;' href='physics'><span class='hide'>Through the Lens of Physics</span> &#8594;</a>
+  <hr>
+  </p>
+  <br><br><br><br><br>
+  <a href='index.html'><img src="thumbs_up_.png" class='footer'></a>
+  <br><br> 
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

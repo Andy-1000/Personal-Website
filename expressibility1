@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Inexpressibility | Andy Sansness</title>
+
+
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'>
+</head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+    <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href="collections">Collections</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+      <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>Inexpressibility</h1>
+  <!-- November 2024 -->
+  <hr>
+  <br>
+  <br>
+  <p>
+  Words are the purest form an idea can be expressed <span class="popup" onclick="footnote1()"><sup class='note'>1</sup><span class="popuptext" id="foot1">While symbols in circumstances such as math and science can encompass express an idea far better, they still require words to attach meaning to these symbols in the first place</span></span>.
+  </p>
+  <p>
+  Therefore, language is the antithesis of inexpressibility. 
+  </p>
+  <p>
+  This means that language and expression are one and the same; to express thoughts and feelings and observations to others requires some form of communication, and language is the universal standard.
+  </p>
+  <br><br>
+  <p>
+  And yet, sometimes language fails.
+  </p>
+  <p>
+  Think of those uncommon but wretched circumstances in which every word that comes to mind is flimsy, not nearly enough to convey the depth of meaning you're trying to express. 
+  </p>
+  <p>
+  Where, in despair, you are fully aware that what you're trying to refer is universally recognisable, if only you could mentally and linguistically pin it down. 
+  </p>
+  <p>
+  Where, in desperation, you are forced to pour every word you can think of around it, but in no way do these words capture its true essence. Like a silhouette, you can make out its shape from what you can see surrounding it, but it lacks colour, detail, fidelity, depth.
+  </p>
+  <p>
+  It is in these instances that language as we know it is excruciatingly, woefully inadequate.
+  </p>
+  <br><br>
+  <p>
+This semantic hole between an idea and the words to capture that idea can occur for a few reasons. 
+  </p>
+  <p>
+The most likely reason is that the circumstance too obscure to be within the tenable vocabulary spectrum. That is, the word is there, it's just out of reach.
+  </p>
+  <p>
+Alternatively, a word may not yet exist for the circumstance you're trying to capture. This may be due to innovation, whether in technology, culture, knowledge or even society as a whole. As insight leads to new ideas, new words are inevitably required to express them.
+  </p>
+  <br><br>
+  <p>
+
+Based off this, there are three key ways that this linguistic hole can be filled.
+  </p>
+  <p>
+The first classification is based off a word you're looking for already existing, but on the very edges of the common man's venacular. Though a simple web search may find it, there is something quaint and curious and satisfying in finding the perfect word for the perfect circumstance.
+  </p>
+  <p>
+If the word doesn't come to mind, then the circumstance must be rare, and to express a circumstance of rarity will require a word of rarity.
+  </p>
+  <p>
+This is language as niche.
+  </p>
+  <br>
+  <p>
+
+The second classification is when a word is naturally formed by society. The inevitable output of communities, both on the micro and macro, is cultural expression, otherwise known as lore. Alongside the lore of every community is a language native only to them.   
+  </p>
+  <p>
+Whether media-based, web-based or lifestyle-based, this language is formed through a combination of virality and cultural alignment, imbuning words with far more than a simple definition.
+  </p>
+  <p>
+This is language as lore.
+  </p>
+  <br>
+  <p>
+
+The third classification is when a word must be purposefully coined by an individual. If a word truly doesn't exist, then sometimes it becomes necessary to create one. Neogolisms of this type exist to fill the semantic gap by documenting as many words as possible to align with the circumstance, and assigning a single word or phrase to represent it. 
+  </p>
+  <p>
+Beyond identifying a silhouette of what you're trying to convey, this method provides enough evidence and description to force the audience to recognise it, and in recognising, then aligning it with a word so as to summon this recognition on command.
+  </p>
+  <p>
+This is language as insight.
+  </p>
+  <br>
+  <p>
+Each of these in some way are able to resolve the inexpressible. And yet no matter how extensively language is extended or explored, there will always be some level of inexpressibility. 
+  </p>
+  <p>
+This is because language is perpetually catching up to societal innovations, always some level of desparity between that which is and how that which is, is expressed. This is also in accordance with Godel's incompleteness theorum (as applied to language), which states that in any system, a finite list of axioms can never be created.
+  </p>
+  <p>
+All this means is that no dictionary will ever be complete. Words will come and go, morph and change, extend and diminish, a reflection of society as a whole. The best we can do is embrace the resolution of inexpressibility everywhere we encounter it.
+  </p>
+  <p>
+In the end, it's better to be spoiled for choice than to be at a complete loss for words.
+  </p>
+  
+  <br>
+  <br>
+  <p>
+  <hr>
+  <a class='footer_link' href='tension'> &#8592; <span class='hide'>Narrative Tension and Meta-tension</span></a>
+  <a class='footer_link' style='float: right;' href='expressibility2'> <span class='hide'>Language as Niche</span> &#8594;</a>
+  <hr>
+  </p>
+  <br><br><br><br><br>
+  <a href='index.html'><img src="thumbs_up_.png" class='footer'></a>
+  <br><br>
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

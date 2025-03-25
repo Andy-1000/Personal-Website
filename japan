@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Travelling Japan | Andy Sansness</title>
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'>
+</head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+    <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href="collections">Collections</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+      <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>Travelling Japan</h1>
+  <!-- January 2024 -->
+  <hr>
+  <br>
+  <br>
+  <h2>Unmissable Experiences</h2>
+  <p>
+  <b><a href='https://www.teamlab.art/' class='link' target='_blank'>teamLab</a></b>
+  </p>
+  <p>
+  teamLab is an immersive experience art gallery, and was one of the most breath-taking experiences I have ever come across.
+  Each room's exhibit showcases a mind bending displays of mirrors, light shows, projectors, water and much more.
+  Tickets cost 3800 yen for adults, which to me is a relatively small price to pay for an experience of pure, unadulterated <a href='wonder' class='link' target='_blank'>wonder and awe<sup><img class='self_link' src='thumbs_up_.png'></sup></a>.
+  </p>
+  <br>
+  
+  <p>
+  <b><a href='https://www.google.com/maps/place/Arashiyama+Monkey+Park+Iwatayama/@35.011395,135.6740496,17z/data=!3m1!4b1!4m6!3m5!1s0x600100ab6efb49bd:0x1b3493b0430734b2!8m2!3d35.011395!4d135.6766245!16zL20vMDlyMTBq?entry=ttu' class='link' target='_blank'>Arishiyama Monkey Park</a></b>
+  </p>
+  <p>
+  Nestled in the city of Kyoto is the Arishiyama region, which is home to traditional houses, a bamboo forest, and yes, a monkey park.
+  A short hike to the top of Mt Arishiyama brings you to both a breathtaking view of Kyoto and the home of over 100 wild macaque monkeys.
+  These guys are nothing short of fascinating and hilarious; this is the kind of experience you could enjoy all day long.
+  </p>
+  <br>
+  <p>
+  <b><a href='https://www.google.com/maps/place/Shibuya+Scramble+Crossing/@35.6594863,139.6979847,17z/data=!3m2!4b1!5s0x60188b57f546295f:0x486cece41a7b21b0!4m6!3m5!1s0x60188bcaeb0cd12b:0x20e563a2e0aec969!8m2!3d35.659482!4d139.7005596!16s%2Fg%2F11shy4scrj?entry=ttu' class='link' target='_blank'>Shibuya Crossing</a></b>
+  </p>
+  <p>
+  Shibuya crossing is the largest street crossing in the entire world.
+  
+  Imagine hundreds upon hundreds of people as far as the eye can see, all walking in variously distinct paces and directions, framed by dozens of skyscrapers will equally sized electronic billboards.
+  If there was ever a location which encapsulated the phrase 'the sea of humanity', Shibuya crossing is the place.
+  </p>
+  <br>
+  <br>
+  
+  <h2>Must-Visit Stores</h2>
+  <p>
+  <b><a class='link' href='https://www.abc-mart.net/shop/'  >ABC mart</a></b>
+  </p>
+  <p>
+  If you're looking for cheap and affordable shoes, look no further than ABC mart.
+  ABC mart has a wide selection of brands &#8212; Converse, Vans, Nike, Adidas, Puma &#8212; as well as a lineup of shoe designs exclusive only to Japan.
+  Prices range from as little as 4000 yen to around 10000 yen for some of the more high-end pairs.
+  </p>
+  <br>
+  <p>
+  <b><a class='link' href='https://official.goslowcaravan.com/'  >Go Slow Caravan</a></b>
+  </p>
+  <p>
+  Go Slow Caravan sells a unique selection of colourful and awesome-looking apparel.
+  Although prices are a bit steep, the designs are undeniably cool and surprisingly different from any other clothing brand you'll ever come across.
+  </p>
+  <br>
+  <p>
+  <b><a class='link' href='https://bside-label.com/en'  >B-side Label</a></b>
+  </p>
+  <p>
+  This is the place to find the stickers you never knew you needed. 
+  B-side label was created by a bunch of Japanese artists and cartoonists who decided to put their unique, obscure and rad designs on stickers (among other things).
+  The thing is, what makes these stickers worth buying is that they are genuinely waterproof, and never peel or fade.
+  </p>
+  <br>
+  <br>
+  
+  <h2>Extraordinary Meals</h2>
+  <p>
+  <b>Okonomiyaki</b>
+  </p>
+  <p>
+  Okonomiyaki is a type of savory pancake, with a variety of curiously delectable toppings including (but not limited to) fried egg, noodles, bacon, octopus and chicken.
+  The word okonomiyaki is derived from the two words 'okonomi', which literally translates to 'whatever you want', and 'yaki', which means 'grilled'.
+  </p>
+  <br>
+  <p>
+  <b>Ramen</b>
+  </p>
+  <p>
+  I know it's fairly obvious, but if you decide to travel to Japan, I would suggest that you consume as much ramen as possible.
+  Most restaurants are pretty small and many don't even take reservations, so you may have to be prepared to either shop around or wait in line.
+  </p>
+  <br>
+  <p>
+  <b>Takoyaki</b>
+  </p>
+  <p>
+  Takoyaki, which translates to octopus balls, are a delicious street food which is found in most Japanese cities.
+  Usually bought in packs of six to ten at a time, takoyaki are creamy, steaming-hot, potato balls with a chunk of fried octopus in the middle.
+  </p>
+  <br>
+  <br>
+  
+  <h2>Interesting Observations</h2>
+  <p>
+  <b>Vending machines are located everywhere</b>
+  </p>
+  <p>
+  I'm talking in the middle of parks, outside people's houses, not to mention on the side of every single street you walk down.
+  A typical vending machines contains both heated and chilled drinks, and are priced pretty affordably at 200-300 yen. 
+  Public drink fountains seem few and far between, so it seems like vending machines are the capitalistic Japanese alternative.
+  </p>
+  <br>
+  <p>
+  <b>All meals are put on display</b>
+  </p>
+  <p>
+  Instead of simply providing photos, outside of every Japanese restaurant is a synthetic but realistic looking display of every meal.
+  When observing this phenomenon, I couldn't help but think that the meal on display was just taxidermied food.
+  </p>
+  <br>
+  <p>
+  <b>Every dog in sight were tiny toy poodles</b>
+  </p>
+  <p>
+   From what I observed, dogs larger than approximately a kettle or of a breed other than a poodle-cross seem to have been unofficially banned.
+   This is in part due to the Japanese 'kawaii' (lit. cute) culture, which manifests itself in brand mascots, maid cafes and anime.
+  </p>
+  <br>
+  <p>
+  <b>No one wears sunglasses</b>
+  </p>
+  <p>
+  Sunglasses are virtually non-existent; they are not sold anywhere, and they are not worn anywhere.
+  Because most travel is done via underground subway, my guess would be that the Japanese simply don't have much of a need for them.
+  </p>
+  <br>
+  <br>
+  
+  <h2>Customs Worth Knowing</h2>
+  <p>
+  <b>Don't wear shoes inside someone's home</b>
+  </p>
+  <p>
+  Cleanliness and hygiene seem to be a significant element within Japanese culture, and because of this, shoes are meant to be taken off before entering someone's home or accomadation, and are to be exchanged for lightweight padded slippers when inside.
+  </p>
+  <br>
+  <p>
+  <b>Only eat food once you are seated</b>
+  </p>
+  <p>
+  That's right: food of any sort is not meant to be eaten while walking or on the move.
+  Relatedly, whether directly because of this or otherwise, nobody seems to chew gum in Japan either. 
+  </p>
+  <br>
+  <p>
+  <b>Keep quiet on public transport</b>
+  </p>
+  <p>
+  Whether on a bus, train or subway, the polite thing to do is to keep absolutely quiet and not make any noise at all, let alone conversation.
+  As with most of these customs, there is no real enforcement of them; instead it is simply a matter of politeness and respect, two ideals which seem highly engrained within Japanese culture.
+  </p>
+  <br>
+  <br>
+  
+  <h2>General Advice</h2>
+  <p>
+  <b>Learn some Japanese</b>
+  </p>
+  <p>
+  An easy and effective way of picking up some basic Japanese is to jump on <a href='https://www.duolingo.com/course/ja/en/Learn-Japanese'   class='link'>Duolingo</a>.
+  If you're not interesting in learning Japanese at all, from my experience even learning a few basic words goes a long way. 
+  The vocabulary I used the most: konichiwa (hello), sumimasen (excuse me), arigato (thank you), kudasai (please) and sayonara (good bye)
+  </p>
+  <br>
+  <p>
+  <b>Talk to people</b>
+  </p>
+  <p>
+  Many people in Japan speak English, and are happy and willing to take up conversation.
+  This is in part due to an almost in-built politeness as a society, which also explains why Japanese people bow and just generally display an overt level of manners.
+  In terms of conversation, I would recommend asking whatever it is you want to know about Japanese society and culture.
+  </p>
+  <br>
+  <p>
+  <b>Try stuff</b>
+  </p>
+  <p>
+  In order to get the most out of your travel, I would suggest aggressively trying everything that comes across your path, whether it be experiences culinary, cultural or otherwise.
+  Eat an unidentifiable food.
+  Watch a bit of Japanese TV.
+  Attend a Japanese sporting event.
+  Travel offers a rare opportunity to explore and experience things you will never be able to experience again, to extend and even transcend your comfort zones.
+  With this in mind, I would argue that making the most out of your time overseas will inevitably involve trying virtually everything.
+  </p>
+  <br>
+  <br>
+  <p><i>For more on Japan, check out a day-by-day play-by-play of my <a href='japan-log' class='link'>entire Japanese trip</a></i></p>
+  <br><br>
+  <p>
+  <hr>
+  <a class='footer_link' href='wonder'> &#8592; <span class='hide'>Wonder and Awe</span></a>
+  <a class='footer_link' style='float: right;' href='notes'><span class='hide'>Notes</span>&#8594;</a>
+  <hr>
+  </p>
+  <br><br><br><br><br>
+  <a href='index.html'><img src="thumbs_up_.png" class='footer'></a>
+  <br><br>
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>The Spice of Life | Andy Sansness</title>
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'>
+</head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+    <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href="collections">Collections</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+      <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>The Spice of Life</h1>
+  <!-- June 2023 -->
+  <hr>
+  <br>
+  <img src='battlefield.jpg' style='width: 100%;'>
+  <span style='color: #666666;'><i>Joshua at the Battle of Ai - Attended by Death</i> by John Trumbull</span>
+  <br>
+  <br>
+  <blockquote>
+  <p>
+  The spice of life is battle
+  <span>— Robert Louis Stevenson, Talk and Talkers</span></p>
+  </blockquote>
+  
+  <p>
+  This quote was originally used in the context of conversation, and yet it is my solemn belief that it can applied much more broadly.
+  Before I dig any deeper, let me break my initial overarching thoughts into something like a hypothesis, thesis and antithesis: 
+  </p>
+  <p>
+  <ul>
+  <li>The spice of life is battle</li>
+  <li>As such, life would be flavourless without conflict</li>
+  <li>However, if the spice of life is battle, then the <i>substance</i> of life is mundanity.</li>
+  </ul>
+  Therefore, it is both the spice of conflict and the substance of mundanity together which create that enigmatic experience we call life.
+  </p>
+  <br>
+  <p>
+  Firstly, in terms of conversation, Stevenson makes an eloquently compelling case in the essay from which this quote was extracted from.
+  Briefly I will add my own thoughts here.
+  </p>
+  <p>
+  Everyone has experienced the satisfaction of verbally sparring, whether by means of intellectual debate, casual banter or just plain argument.
+  A fight to the death, using words as weapons.
+  Being wrong is an intellectual indignity, and though we may think we are defending some noble cause or view, in the end we are really just fighting for ourselves.
+  As such, our pride gives no opportunity for surrender; to concede any argument requires either an admirably humble loser or a detestable (but sometimes necessary) conversational pacifist.
+  </p>
+  <p>
+  However, battle is not just the spice of <i>conversation</i>, but also of life in general.
+  In centuries past we would have to fight for our own physical survival, but in a world where survival is taken for granted, what then?
+  </p>
+  <p>
+  Instead, these days we are fighting for our social survival, our economic survival and our psychological survival.
+  If life is just a game, then it's worth noting that there are a fair few competitors.
+  Of course, this underlying sense of competition can undeniably be taken too far.
+  </p>
+  <p>
+  In one direction, too much focus on this competition can obviously become toxic, destroying not only yourself, but also your relationships with everyone around you.
+  In the other direction, is a life without any conflict even worth living?
+  No problems, no difficulties, no obstacles...
+  Conflict adds flavour to what would otherwise be an entirely boring life, and in this way, battle encapsulate the <i>spice</i> of life, not its entire mode.
+  
+  <blockquote>
+  <p>
+  My world's on fire... how 'bout yours?<br>
+  That's the way I like it and I'll never get bored
+  <span>— Smash Mouth, <i>All Star</i></span></p>
+  </blockquote>
+  <br>
+  <p>
+  Historically, humanity has always enjoyed a good fight.
+  From the macro perspective, war has ultimately been an effective means of settling a dispute, whether political, ideological, economic or otherwise.<span class="popup" onclick="footnote1()"><sup class='note'>1</sup><span class="popuptext" id="foot1">Unfortunatly, sometimes a dispute is simply invented to justify conquest, genocide or other horrific acts that would otherwise be inexcusable</span></span>
+  However, while the historical precedence, social influence and scientific innovations born of war cannot be denied, most people these days have come to detest war in all forms.  
+  </p>
+  <p>
+  Interestingly, the other primary macro perspective in this context is in terms of business: I'm thinking of corporate rivalries, price competition, advertising battles...
+  Even the word 'campaign' I have only ever seen in three contexts: a marketing campaign, a political campaign or a war campaign.<span class="popup" onclick="footnote2()"><sup class='note'>2</sup><span class="popuptext" id="foot">Politics and the competition associated it works in much the same way as business; there's a reason the two major political parties are consider 'the hidden duopoly'</span></span>
+  It seems the spice of business is also battle; a true monopoly would make marketing, sales and the entire mechanics of business itself virtually redundant.
+  </p>
+  <p>
+  Likewise, from the micro perspective, battle between individuals has also been used to settle disputes.
+  Throughout history, these battles came in many forms, including single combat, duels and gun fights.
+  Of course these days, such acts would be labelled assault, grievous bodily harm and murder, respectively.
+  The reason individuals felt, and still feel the need to settle their disputes in such ways was because of their pride, or, in more righteous terms, their honour.
+  </p>
+  <p> 
+  Although violence can seem fairly implicit within the idea of battle, resorting to it as a means by which to settle any dispute, whether on the national or individual level, is now condemned to the extreme.
+  For some, violence seems to be an unfortunate symptom of a desire for conflict. 
+  For others, violence is simply a tool by which to settle disputes and restore pride.
+  Both of these reasons are indefensible.
+  </p>
+  <br>
+  <p>
+  While historically there have always been fights for honour, there have also always been fights for entertainment.
+  Interestingly, this is one facet of life where violence has actually been condoned and even encouraged.
+  Gladiators have given way to boxers, wrestlers and a staggering variety of martials artists.
+  Swords have given way to fists, knees and bodies.
+  The Colosseum has given way to The Octagon.
+  And on and on it goes.
+  </p>
+  <p>
+  In fact, sport in its entirety and variety is essentially just fighting for entertainment.
+  One individual or team versus another.<span class="popup" onclick="footnote3()"><sup class='note'>3</sup><span class="popuptext" id="foot3">This is reminiscent of games in general, including board games, card games and even video games. In all these cases, conflict is the mode of entertainment; the spice of life</span></span>
+  Taking part is an obvious way in which we participate in this battle, but for most sports at the highest level, the spectators far outnumber the actual participants.
+  It raises the obvious question: 
+  Why do we enjoy watching sport in the first place? 
+  </p>
+  <p> 
+  On one level, spectators are <a class='link' href='entertainment'>entertained by the surprise<sup><img class='self_link' src='thumbs_up_.png'></sup></a> of not knowing what happens next.
+  On a much deeper level, <i>supporters</i> are less watching the fight than they are identifying with the fight - the greater the level of their support, the greater they identify with the battle.
+  Much of the time they are not supporting the team so much as what that team represents, whether their city, their state or even their country.
+  They see it as an extension of themselves, and justifiably so; for any geographical region is nothing but the sum of its individuals.
+  But more than this.
+  As spectators support their region and identify with the battle, it is almost as if they themselves are fighting it.
+  </p>
+  <br>
+  <p>
+  Inextricably connected to sport and even battle itself is the idea of winning and losing...
+  What of that, you may ask?
+  Well, in the grand scheme of things, I would argue it to be irrelevant: the spice of life is the battle itself, not the <i>outcome</i> of that battle (i.e. winning or losing).
+  Similarly, as we experience the conflict and struggle of life itself, our focus in not the outcome either (i.e. dying).<span class="popup" onclick="footnote4()"><sup class='note'>4</sup><span class="popuptext" id="foot4">Unless we are contemplating suicide. This is usually evidence of being unable to cope with the conflict of life, and that it is simply too much to handle</span></span></p>
+  </p>
+  <p>
+  Whether playing sport or living life, <i>we are all just playing the game for the game's sake.</i>
+  </p>
+  <p>
+  In the end it's not about the destination, it's about the journey.
+  And in that journey called life, it's spice... <i>is battle</i>.
+  </p>
+   <br><br>
+  <p>
+  <hr>
+  <a class='footer_link' href='simple'> &#8592; <span class='hide'>Simple = Accessible</span></a>
+  <a class='footer_link' style='float: right;' href='paradox'><span class='hide'>The Paradox of Contradiction</span> &#8594;</a>
+  <hr>
+  </p>
+  <br><br><br><br><br>
+  <a href='index.html'><img src="thumbs_up_.png" class='footer'></a>
+  <br><br> 
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

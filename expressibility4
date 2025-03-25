@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Language as Insight | Andy Sansness</title>
+
+
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'>
+</head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+    <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href="collections">Collections</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+      <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>Language as Insight</h1>
+  <!-- September 2024 -->
+  <hr>
+  <br>
+  <br>
+  <p>
+  Words are the purest form an idea can be expressed. While most words express just one idea, some words carry not just an idea, but an entire body of peripheral idea-centric baggage.
+  </p>
+  <p>
+  It's in this way that language is used not just to express insight, but embody it.
+  </p>
+  <br><br>
+  <p>
+  Let me explain where I'm coming from.
+  </p>
+  <p>
+	Language expresses ideas through words.
+	Language as insight<span class="popup" onclick="footnote1()"><sup class='note'>1</sup><span class="popuptext" id="foot1">This is not quite language as lore, though there can be overlap. This is because it's not not cultural baggage which is being associated with these words, but rather idea-centric baggage</span></span> expresses new ideas through new words.
+ </p>
+  <p>
+New ideas are generated through insight, and insight is generated through the linking or extension of existing ideas.
+ </p>
+  <p>
+Linking two or more previously unassociated ideas creates far more breadth than was originally present within each individual idea. As each idea is introduced to the distinct context of its new association, insight is the natural result. 
+ </p>
+  <p>
+In the context of language as lore, linkage of ideas is usually expressed by combining two seperate words. Though individually these words may carry meaning, together they create something greater than the sum of its parts.
+ </p>
+  <p>
+In contrast, extending an idea creates far more depth within that single idea. To expand, stretch and extend an idea into new territory outside its typical usage can be equally as insightful as combining multiple ideas.
+ </p>
+  <p>
+In the context of language as lore, extension of ideas is usually expressed in the additional layer of meaning being added to an existing word. So, instead of assigning a completely new and original combination of sounds for your mouth to make, take words you already know and are familiar with, but imbune them with a completely new depth of meaning.
+ </p>
+  <p>
+Both methods of generating insight rely on <a href='lenses' class='link'>lenses<sup><img class='self_link' src='thumbs_up_.png'></sup></a>, whether by using one lens through which to view a breadth of ideas, or by using a range of different lenses through which to view the depth of one single idea.
+ </p>
+ <br><br>
+  <p>
+This process of linking or extending ideas to generate insight doesn't just spring from thin air. It has to be documented - not only to explain this process to others, but to clarify itself in the first place. Although insight may initially exist in someone's mind, to write it down is to prove its own viability.
+ </p>
+  <p>
+Language as insight comes into play when the exploration of these ideas are truly novel. At some point or another we all recognise those reoccuring, recognisable circumstances which resist the definition of any exisitng word or phrase. To capture this, to pin down it down in its entirety provides the perfect opportunity to leverage language as insight. 
+ </p>
+  <p>
+Importantly, it's this documentation of 'filling the gap' which makes language as insight a particularly unique expression of neogolism. The more words used in documentation, the more usefulness will be associated with the newly formed word or phrase you've attatched to it. This documentation may take the form of an essay, a blog post, a whitepaper, sometimes even an entire book.
+ </p>
+ <br><br>
+  <p>
+Now that I've attempted to define language as insight (which if you haven't noticed is an example of language as insight itself), the question remains of why it need exist in the first place. The answer lies in referencability.
+ </p>
+  <p>
+To document insight is a noble endeavour in the first place. But to then associate a word or phrase to this insight provides it with far more functionality. By condensing an entire body of thinking into one single phrase, this allows you to build upon ideas without having to re-explain them in their entirety. To create language as insight is to create the groundwork for additional ideas to be built upon it.
+ </p>
+ <br><br>
+  <p>
+Let me walk through an example. The book <a href='https://www.amazon.com.au/Nudge-Improving-Decisions-Health-Happiness/dp/014311526X' class='link'>Nudge</a>, by Richard Thaler and Cass Sunstein poses multiple examples of language as insight, not only to express their ideas, but from which to develop the technical nature of their theory as a whole. 
+Firstly they introduce the idea of <a href='https://en.wikipedia.org/wiki/Choice_architecture#:~:text=Choice%20architecture%20is%20the%20design,the%20presence%20of%20a%20%22default%22' class='link'>choice architecture</a> and <a href='https://en.wikipedia.org/wiki/Libertarian_paternalism#:~:text=Libertarian%20paternalism%20is%20the%20idea,the%20implementation%20of%20that%20idea.' class='link'>libertarian paternalism</a>, both of which involve the linkage of ideas. Then, over the course of the book, they build out an extension of the word <i>nudge</i> to encompass the specific context of choice and behaviour theory.
+ </p>
+  <p>
+  To further reinforce these ideas, here I've collated a small sample of language as insight examples<span class="popup" onclick="footnote2()"><sup class='note'>2</sup><span class="popuptext" id="foot2">Many of these are taken from <a href='https://lessfoolish.substack.com/p/the-metalanguage-of-the-internet' class='link'>here</a>, <a href='https://maggieappleton.com/neologisms' class='link'>here</a> and <a href='https://www.ribbonfarm.com/' class='link'>here</a></span></span>:
+ </p>
+ <ul>
+ <li><a href='https://www.ribbonfarm.com/2017/08/17/the-premium-mediocre-life-of-maya-millennial/' class='link'>Premium Mediocre</a></li>
+ <li><a href='https://thenetworkstate.com/' class='link'>Network State</a></li>
+ <li><a href='https://studio.ribbonfarm.com/p/lands-of-lorecraft' class='link'>Lorecraft</a></li>
+ <li><a href='https://seths.blog/wp-content/uploads/2008/12/2000Ideavirus.pdf' class='link'>Idea virus</a></li>
+ <li><a href='https://www.paulgraham.com/heresy.html' class='link'>Heresy</a></li>
+ <li><a href='https://medium.com/solarpunks/solarpunk-a-reference-guide-8bcf18871965' class='link'>Solar punk</a></li>
+ <li><a href='https://en.wikipedia.org/wiki/Strange_loop' class='link'>Strange loop</a></li>
+ <li><a href='https://locusmag.com/2021/01/cory-doctorow-neofeudalism-and-the-digital-manor/' class='link'>Neofeudalism</a></li>
+ <li><a href='https://www.ribbonfarm.com/2009/03/26/the-tragedy-of-wiios-law/' class='link'>Game break</a></li>
+ <li><a href='https://sceneswithsimon.com/p/the-inevitable-narrative-oozification?hide_intro_popup=true' class='link'>Narrative Oozification</a></li>
+ <li><a href='https://studio.ribbonfarm.com/p/against-waldenponding' class='link'>Waldenponding</a></li>
+ <li><a href='https://medium.com/@allen_forstel/irony-poisoning-603b7e1c87a' class='link'>Irony Poisoning</a></li>
+ <li><a href='https://projects.csail.mit.edu/gsb/old-archive/gsb-archive/gsb2000-02-11' class='link'>Yak Shaving</a></li>
+ </ul>
+  <br>
+  <br>
+  <p>
+  <hr>
+  <a class='footer_link' href='expressibility3'> &#8592; <span class='hide'>Language as Lore</span></a>
+  <a class='footer_link' style='float: right;' href='culinarity'> <span class='hide'>Narrative as a Culinary Experience</span> &#8594;</a>
+  <hr>
+  </p>
+  <br><br><br><br><br>
+  <a href='index.html'><img src="thumbs_up_.png" class='footer'></a>
+  <br><br>
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

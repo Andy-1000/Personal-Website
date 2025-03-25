@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Japan Log | Andy Sansness</title>
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'></head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+    <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="now">Now</a>
+  <a href='puns'>Puns</a>
+  <a href="wordsmithery">Wordsmithery</a>
+  <a href='reviews'>Reviews</a>  
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+      <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>What I'm Doing Now</h1>
+  <hr style='float: right; width:88%;' class='hide'><p class='date'>December 2023</p>
+  <br>
+  <h2>I Went to Japan</h2>
+  <h3>Day 1</h3>
+  <p> 
+  After a relatively pleasant 9 hour flight, we arrived in Narita Airport, just outside of Tokyo. 
+  Passing through customs and navigating our way through the clean but kind of old looking airport, we first tracked down the food court to abate my ravenously unchecked appetite. 
+  Here we found a curiously delectable okonomiyaki: an egg on top of bacon, octopus, chicken noodles on top of a pancake. 
+  Exotic but filling. 
+  Eventually we left the safety and heating of the airport in search of better greater things, namely in the form of the hotel we were staying at that night, a mere 20 minute walk along a highway.
+  </p>
+  <br>
+  
+  <h3>Day 2</h3>
+  <p>
+  A manageable night sleep, a brief squirrel around the hotel's Lawson (grocery store) and a convenient free shuttle bus lead us back to the airport to find a train into Tokyo city. 
+  With time to spare, we spent the morning perusing the shops around the airport; not exactly the full Japanese experience, but still a fascinating start to it. 
+  After checking out most of the stores, we were intrigued to notice that a) all foodstuffs were put on intricate display, and b) virtually every item's packaging portraying the product in question with a face...
+  </p>
+  <p>
+  Lunch found us at Maccas, where we scored a teriyaki burger and a grape Fanta (and boy was it a score). 
+  Soon enough we were on a train to Shibuya, the location of our first real accommodation in Tokyo. 
+  It was interesting to watch the farmland build into an endless expanse of built-up suburb, and then eventually to the skyscraper filled denseness which is Tokyo city itself. 
+  After a short hour, we exited the train into the guts of Tokyo to walk to our apartment, encountering and having to wade through a staggeringly sheer volume of human beings.
+  </p>
+  <p>
+  The temperature was brisk but not uncomfortable. 
+  As we began to orient ourselves and walk, our eyes began to ravenously drink in the sights. 
+  Vending machines everywhere. 
+  Lopsided traffic lights. 
+  A Seven Eleven and a Starbucks every 50 meters. 
+  A multitude of unfamiliar shops and signs and brands. 
+  And every word spoken, every word written, in Japanese. Figures, I guess.
+  </p>
+  <p>
+  Eventually we found our way to our accommodation, a quaint two room apartment on the third and top story. 
+  After settling in, we then settled out to nab some dinner. 
+  The restaurant we were aiming for was a mere few streets away, and looked initially as if it were someone's residence. 
+  In actuality it was a fine dining restaurant in the layout of someone's home. 
+  What followed was an entertaining interaction with a non-English speaking waiter, a utterly smashing meal of miso and seafood on rice, and an illuminating and tasty serving of mochi, much larger and more gelatinous that our Westernised version.
+  </p>
+  <p>
+  Following dinner we then hiked via elevator to the top of a nearby viewing deck from which we could observe the entire city of Tokyo by night. 
+  The sight of so many skyscrapers and a landscape simply covered in an endless array of buildings was just staggering, and unlike anything I have ever seen.
+  </p>
+  <br>
+  
+  <h3>Day 3</h3>
+  <p> 
+  Today was our first real day of exploration, and man did we explore. First we took a train to Origami Kaikan, an insanely cool origami museum and home of a legitimate origami sensei. 
+  The sensei was 80 years old (apparently), and the origami and paper making company had been in his family for over 160 years. Impressive.
+  </p>
+  <p>
+  Walking a bit further down the street, we then checked out Kanda shrine, a collection of temples which looked like they was straight out of a karate movie. 
+  However, this was the real deal, and a marvel of intricate and ancient architecture at that. 
+  </p>
+  <p>
+  Next we visited Akihabara, otherwise known as Electric Town, a strange precinct of anime, gaming and Japanese pop culture. 
+  To be perfectly honest, we didn't last long there, and quickly moved on to explore a nearby street market, which included (but was not limited by) such stores as a knife store, a kimono store and a dog petting Cafe.
+  </p>
+  <p>
+  For lunch we feasted on the most insane ramen in a nifty alley located adjacent to the street market. 
+  Words don't serve enough justice to the glory which these simple noodles and broth provided to our taste buds. 
+  After lunch we found ourselves in another, but much larger shrine in the center of the markets. 
+  These were much busier that the previous one, and boasted an even more impressive collection of architecture and detail. 
+  </p>
+  <p>
+  On the move away from the shrine, we caught a glimpse of the golden poo, a shiny and golden sculpture (about the size of a double decker bus) in the shape of a poo on top of a building. 
+  Art, apparently. What can you say? 
+  </p>
+  <p>
+  Walking in the direction of the poo, we eventually reached the Asahi observation deck, which overlooked the entirety of the city. 
+  By day, the view was even more impressive, with an endless expanse of buildings in the foreground, and mountains in the far background where the city meets the sky.
+  </p>
+  <p>
+  The afternoon led us to the Sky Tree shopping mall, which contained gems such as Go Slow Caravan - a funky, camping based clothes store - and ABC mart - a cheap and varied shoe store. 
+  As we went, we grabbed some fried octopus for a snack, and found some sushi for dinner in the food court. 
+  Overall, a jam packed day, in total racking up 16km of walking.
+  </p>
+  <br>
+  
+  <h3>Day 4</h3>
+  <p> 
+  Day 4 found us in the Harajuku region. 
+  First we started in Takeshita Street, a strange laneway loaded with girly and skate clothes shops in equal proportion. 
+  Thankfully there was also a Daiso, in which every product was only 100 yen. 
+  Walking further, we then found a seemingly unending selection of shoe stores, of which a Jordan store, the Ascics Tiger store and The Shoe Lab were the most notable. 
+  Hungry, we purchased some woretako, which were delicious, creamy potato balls with octopus in the middle.
+  </p>
+  <p>
+  After finding a supposedly top tier sandwich store closed, we grabbed lunch at what was essentially an American diner. 
+  As we continued along the streets, second hand stores we exchanged for designer clothes stores. 
+  Overall, it was cool just wandering the streets and laneways, and just generally checking things out.
+  </p>
+  <br>
+  
+  <h3>Day 5</h3>
+  <p> 
+  Shibya crossing - the largest crosswalk in the world. 
+  Imagine hundreds upon hundreds of people all walking in variously distinct directions and variously distinct paces, framed by dozens of massive electronic billboards. 
+  Shibuya crossing is the best place to go if you ever wish to learn the truth behind the phrase 'the sea of humanity'.
+  </p>
+  <p>
+  After surviving Shibuya crossing, we then ventured to an experience much calmer and more peaceful: a Hedgehog Cafe. 
+  For small fee you can pet, cuddle and just generally enjoy a selection of hedgehogs. 
+  Animal cruelty, maybe. Adorably cute, most definitely.
+  </p>
+  <p>
+  By then we were too hungry to decisively select lunch, so we deferred to Maccas. 
+  Little did we know that we were entering what I judged to be the largest Maccas I've ever seen by a country mile, easily being larger that the square footage of our entire house.
+  </p>
+  <p>
+  We then wandered through Miyashita Park Center, a lush green zone which provided nice relief from the surrounding skyscrapers, before taking a quick train to Shimo-kitazawa. 
+  Our hopes weren't that high of Shimo-kitazama, but yikes were we wrong; Shimo-kitazama ending up being one of our favourite precincts so far. 
+  Everywhere, down every street, were an infinite array of retro second hand stores. 
+  Prices were relatively cheap, though a bit erratic at times. 
+  Anyhow, for the next three hours we had an absolute ball checking out as many stores as we could; even so, we barely scratched the surface. 
+  Eventually we had to stop for dinner, which we conveniently found at a nearby night market. 
+  Tired, but satisfied, we headed home after another full day.
+  </p>
+  <br>
+  
+  <h3>Day 6</h3>
+  <p>
+  Day 6 was involved a fair amount of travel. 
+  Before hopping on the train to Hakone, first I checked out Don Quijote, a curious and very Japanese store which seemingly sold everything you could imagine, from pharmacutial drugs to Christmas costumes to cigars. 
+  Eventually, a long trip by train led us from inner city Tokyo to remote rural Hakone.  
+  </p>
+  <p>
+  The best way to describe Hakone is that it is essentially a very small town/village which is surrounded on every side by towering and utterly beautiful mountains. 
+  One of these mountains is volcanic, and because of this heats all the natural water to create hot springs, which the people of Hakone the use for what are known as onsens. Onsens are basically just steaming mineral infused baths, but boy are they an utterly relaxing and satisfying experience. 
+  For dinner we brought back to our AirBnB some gyoza - scrumptious fried dumplings - for dinner.
+  </p>
+  <br>
+  
+  <h3>Day 7</h3>
+  <p>
+  Today we ventured up Mt Hakone - you know, the volcanic one. When I say volcanic, what this looks like is intense billowing steam from random vents in the ground, bright yellow sections of sulfer and the lovely smell of rotten eggs. 
+  To get there we took cable carts up to the top, where there lies a small tourist center from which we obtained black eggs and a black soft serve.   
+  </p>
+  <p>
+  For lunch we dined at a restaurant at the top of the mountain which contained the most spectacular views of the surrounding mountains and the sulfur vents below. 
+  There we ate the most delicious udon noodle soup. A highlight.
+  </p>
+  <p>
+  As we went down the other side of the mountain via cable car, tentative views of Mt Fuji in the background became clear as the clouds began to shift. 
+  On the opposite side on the mountain lay Lake Ashi, which we naturally crossed in a pirate ship. No seriously.
+  </p>
+  <p>
+  Across the lake delivered further views of the mountains and a short walk to a shrine. 
+  Soon we took bus back to Hakone, where there was one last location to explore for the day. 
+  The Hakone open air museum. 
+  This museum, with an extensive sculpture collection, was made truly epic by the backdrop of the mountains behind each piece. 
+  And even apart from the art, it was also just generally a leisurely and serene walk.
+  </p>
+  <br>
+  
+  <h3>Day 8</h3>
+  <p> 
+  Today was a day of travel. 
+  First a tram ride from Hakone to Miyanoshita station, then a train to Hakone-Yumoto station, then from there a bullet train to Nagoya, and finally from there yet another train ride to our final destination for the day, Takayama.
+  </p>
+  <p>
+  Although a mostly uneventful day itinerary-wise, much of the route yielded views which were nothing short of stellar. 
+  One stretch along the route of the bullet train gave us our best view of Mt Fuji yet, while the final train to Takayama gave us the most picturesque views yet - of snow capped mountains, of rushing blue rivers and of small isolated villages.
+  </p>
+  <p>
+  After checking into Wat Hotel, for dinner we found a local top-tier sushi restaurant, the type which requires you to sit cross legged under a low wooden table. 
+  Let's just say that the food was great, but the seating requirements after about an hour, most definitely were not.
+  </p>
+  <br>
+  
+  <h3>Day 9</h3>
+  <p> 
+  Day 9 was spent exploring the isolated township of Takayama. 
+  What made Takayama different from previous locations was that the climate was much, much colder, requiring us to rug up in beanies, gloves and a fair few layers.
+  </p>
+  <p>
+  Most of the day we spent wandering around, checking out the local markets, shrines, shops, and on one obscure detour, graveyards. 
+  Many of the shops were full of intricately carved wooden objects, which the region is supposedly famous for. 
+  </p>
+  <p>
+  For lunch, we found a neat little hidden café from whence we obtained coffee and an intriguingly assembled parfait. 
+  It had green tea ice-cream, a sesame seed brittle, some beans, and a broad selection of completely unknown but completely tasty components.
+  </p>
+  <br>
+  
+  <h3>Day 10</h3>
+  <p> 
+  Before traveling to Kyoto, we first visited the Hida folk village, which was a old preserved village set out as it would have been hundreds of years ago. 
+  That meant thatch roofs, dirt/wood floors and paper walls - overall quite fascinating and extremely picturesque.
+  </p>
+  <p>
+  Following our morning escapade, we then took a train back to Nagoya, and then a bullet train on to Kyoto. 
+  Again, the scenery along the way was nothing short of breathtaking.
+  </p>
+  <br>
+  
+  <h3>Day 11</h3>
+  <p> 
+  Kyoto was nowhere near as built as Tokyo - there is barely a skyscraper in sight - but instead was densely and extremely spread out. Our first morning in Kyoto found us exploring Yasaka shrine and the adjacent Maruyama park, which contained pleasant gardens and a leisurely walk. 
+  Both of these were framed by pretty autumn leaved trees, which were a highlight in and of themselves.
+  </p>
+  <p>
+  Interestingly, for some reason this particular region contained the most kimonos so far as well, which women of all ages dressing up and taking photos everywhere.
+  </p>
+  <p>
+  We then walked back across the river to the Nishiki markets, an impressively expansive arrays of shops along two seemingly neverending laneways. 
+  The shops it contained were varied and sundry, including second-hand clothes stores, army supply shops, a doughnut store and many others not worth my time describing.
+  </p>
+  <p>
+  There was also one more laneway which ran perpendicular and contained an eclectic array of fresh, fried and grilled seafood of every kind imaginable (and then a few more which escape imagination). 
+  At the end of that laneway we grabbed a greasy burger for lunch at Shake Shack, and then basically spent the rest of the day checking out the rest of the laneway markets.
+  </p>
+  <br>
+  
+  <h3>Day 12</h3>
+  <p> 
+  Today we hit the region of Arishiyama, with primarily one aim in mind: to go see some monkeys. 
+  And monkeys we saw. All morning we were able to enjoy the antics of the monkeys atop Iwatayama peak. 
+  This was undoubtably a massive highlight of the entire trip - it was the kind of thing where you just had to be there.
+  </p>
+  <p>
+  Eventually moving on, we headed towards Arishiyama Park, which contained a nifty bamboo forest. 
+  Along the way we grabbed some green tea ice-cream, which was surprisingly tasty. 
+  Unfortunately the bamboo forest was a bit of a miss, being both extremely busy and not particularly impressive; what was impressive however was a nearby walk with striking autumn coloured trees and a nice view of the river and the mountains.
+  </p>
+  <br>
+  
+  <h3>Day 13</h3>
+  <p> 
+  Today we ventured to Osaka, Kyoto's neighbouring and much larger city. 
+  There we spent most of our time travesing through the largest and busiest set of open shopping centers yet. The bustling, crowded open shopping center was set out in market style laneways, interposed with giant figurines of shops' logos or products.
+  </p>
+  <p> 
+  It's busyness and large scale advertising and billboards was remniscient of Times Square in New York, but instead everything was in Japanese. Along the way we found and ate some more woretako, which seemed to be served at every second store. 
+  Other than that the day was mostly uneventful - it took a fair amount of time anyway getting too and from Osaka in the first place.
+  </p>
+  <br>
+  
+  <h3>Day 14</h3>
+  <p> 
+  Today I walked. 
+  A lot. 
+  First I stopped by Nijo Castle, where we would return later that day for a full tour. 
+  Then I charged further on to Kyoto imperial palace within which I wandered for a fair while, checking out the garden scenery and autumn trees, a relief from the bustling nearby city streets.
+  </p>
+  <p>
+  Back to Nijo Castle, we ventured through the 600 year old home of a former shogun (warlord), whose floors squeaked belligerently, supposedly so ninjas didn't sneak up on the shogun and his men. Kind of sick. We then continued through the grounds and gardens.
+  </p>
+  <p>
+  That afternoon we made our way by bus to one last tourist attraction in Kyoto before we left the next day: Sannenzaka, a collection of preserved houses and pretty laneways, dispersed with shops and food vendors. In Sannenzaka I ate both the best apple pie I have ever eaten, as well as the worst salted cucumber on a stick as well. Here we also saw a great many kimonos on display, conplete with wooden shoes and all. 
+  Further on was also Kiyomizu-Dera temple, which contained decent views of the city below.
+  </p>
+  <p>
+  For dinner, sick of Japanese cuisine, we tracked down a nearby Nepalese restaurant, where we ate a top tier delicious butter chicken and a generously head-sized hunk of naan bread.
+  </p>
+  <br>
+  
+  <h3>Day 15</h3>
+  <p> 
+  Today we travelled by bullet train one last time to our final accommodation in Tokyo, this time in the Ginza region. 
+  Getting there took us most of the day; however, we still had time to check out the bustling ginza crossing, as well as the stunning(ly expensive looking) designer brand shop's architecture.
+  </p>
+  <br>
+  
+  <h3>Day 16</h3>
+  <p> 
+  Day 16 saw us at TeamLabs, an immersive experience art gallery. 
+  There we first enjoyed some stellar ramen in a dark mirror room, which gave us a small fore-taste of the experiences to come. And man oh man were they experiences.
+  </p>
+  <p>
+  Turns out you can buy pure unadulterated Wonder... and it only costs 4500 Yen. A small price, all things considered. 
+  For almost two hours we enjoyed mind bending rooms and displays of mirrors, lights-shows, projectors, water and more.
+  </p>
+  <br>
+  
+  <h3>Day 17</h3>
+  <p> 
+  Before heading home that night, we first had one last sight to see: the Tsukimi fish markets, a maze of fresh seafood sold in every form imaginable. We only tasted a small selection, which included grilled octopus (tasty but chewy), what I can best describe as shrimp bashed into a rice cracker, and three types of tuna sushi.
+  </p>
+  <p>
+  Then that was it. We grudgingly gathered together our stuff, took a long train to the airport, went through the frivolities of the airport and... left. Goodbye Japan! It was nice while it lasted.
+  </p>
+  <br>
+  
+  
+<br><br><br><br>  
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

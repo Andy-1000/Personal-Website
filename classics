@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>The Classics | Andy Sansness</title>
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'>
+</head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+    <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href='puns'>Cartoons</a>
+  <a href="wordsmithery">Wordsmithery</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+      <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>The Classics</h1>
+  <p class='date'>June 2023 <span style='font-size: 0.7vw'>&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210; </span><span style='position: absolute;'>  9 minute read</span></p>
+  <br>
+  <div class='quote_box'>
+  <p class='initial_quote'>A classic is any book which stays in print<div class='initial_quote_source'>&#8212; Mark Van Doren</div></p>
+  </div>
+  <div class='quote_box'>
+  <p class='initial_quote'>A classic... something that everybody wants to have read and nobody wants to read<div class='initial_quote_source'>&#8212; Mark Twain </div></p> 
+  </div>
+  <p>
+  I think these two definitions sum up pretty well what a classic novel is (I've never bought into any of that highbrow 'literary significance' baloney). 
+  But admittedly, they are also contradictory... if nobody wants to read The Classics, then why do they stay in print?</p>
+  <p>Of course some people read and enjoy them. 
+  But for the layman The Classics can seem like a daunting literary challenge; most people would regard them as thick, old, boring books. 
+  And yet regardless of this, these same people who have even a passing interesting in reading and literature feel a kind of duty to read the novels that supposedly everyone should read. 
+  The Classics.</p>
+  <p>It's a conundrum to be sure. 
+  But if someone were to read a classic novel, where should they start? 
+  Luckily, I've read a few. And not only read, but reviewed them as well. 
+  In these reviews I have simply written a few short, unfiltered thoughts and a subsequent rating. 
+  If you are looking for a recommendation, take heed of this Score: any score above seven suggests a book worth reading (in my books, a book 'worth reading' is any book which, once started, I enjoy and want to continue reading). 
+  Subsequently, it is my advice to you that you should not waste your life reading any books below a seven score.</p>
+<br><br>
+
+<h2 class='title'><a class='link'   href='https://www.amazon.com/Fahrenheit-451-Ray-Bradbury/dp/1451673310/ref=sr_1_1?crid=33EGG8EUGGLNF&amp;keywords=fahrenheit+451+book&amp;qid=1687151882&amp;sprefix=fahrenhei%252Caps%252C319&amp;sr=8-1&_encoding=UTF8&tag=andysansness-20&linkCode=ur2&linkId=3099c0ee04aa3d60dcb64c0b6309507b&camp=1789&creative=9325'>
+Fahrenheit 451</a> </h2>
+<p class='author'>by Ray Bradbury (1953)</p>
+<p>'If you drown, at least die knowing you were heading for shore...'</p>
+<p>This book is just stupidly well written. 
+Wit and imagination sparkle on every page, and its prose is nothing short of beautiful. 
+Fahrenheit 451 is first and foremost a dystopia novel; think book burning, blind conformity and enslavement to media. 
+However, in many ways Fahrenheit 451 is the opposite of <a href='#1984' class='footnote'>1984</a>, ultimately being a story of hope. 
+Character are developed well enough, while the overall plot flows seamlessly. 
+At just 192 pages, this book is very short - too short I would argue. 
+Overall, a magnificent novel which I would recommend, and even commend to everybody.</p>
+<p>Score: <b>8.5/10</b></p>
+
+<br><br>
+
+<h2 class='title'><a class='link'   href='https://www.amazon.com/Oliver-Penguin-Classics-Charles-Dickens/dp/0141439742/ref=sr_1_1?crid=3H4L221PD8NLC&amp;keywords=oliver+twist+book&amp;qid=1687152144&amp;sprefix=oliver+twist%252Caps%252C377&amp;sr=8-1&_encoding=UTF8&tag=andysansness-20&linkCode=ur2&linkId=198e22913bf1a1dae0df3593c6d18c8c&camp=1789&creative=9325'>Oliver Twist</a> </h2>
+<p class='author'>by Charles Dickens (1838)</p>
+<p>'Please sir, can I have some more please?'</p>
+<p>Absolute cracka of a book, and to be perfectly honest, surprisingly readable. 
+Though initially it all seems a bit slow, the plot definitely picks up a few chapters in. Action, suspense and mystery all move the story along, 
+but what really stands out are the characters - an array of gentlemen, burglars and children all so thoroughly human that you could 
+have sworn they existed. Both sides of humanity are on display in a battle to determine the fate of a one Oliver Twist. 
+Though the portrayal of the historical period it is somewhat of a caricature, Oliver Twist still makes for an absorbing and interesting read.</p>
+<p>Score: <b>8/10</b></p>
+
+<br><br>
+
+<h2 class='title'><a class='link'   href='https://www.amazon.com/One-Flew-Over-Cuckoos-Nest/dp/0451163966/ref=sr_1_1?crid=3JOJDXDR75BUQ&amp;keywords=one+flew+over+the+coo+coo+nest+book&amp;qid=1687152408&amp;sprefix=one+flew+o%252Caps%252C393&amp;sr=8-1&_encoding=UTF8&tag=andysansness-20&linkCode=ur2&linkId=f82da6e520ea4ba664ebda9431122997&camp=1789&creative=9325'>One Flew Over the Cuckoo's Nest</a> </h2>
+<p class='author'>by Ken Kesey (1962)</p>
+<p>'Because he knows you have to laugh at the things that hurt you... just to keep the world from running you plumb crazy.'</p>
+<p>Superbly well written; it really doesn't miss a beat. 
+This novel about the nature of sanity and insanity, but is handled in such a way that is highly accessible.
+Set against the backdrop of a mental asylum in the 1950s, the story is equally that of man vs man, and man vs society.
+The representative of both man and society is antagonist whom you begin to loathe more perhaps than any other villain (and she just happens to be a psychiatric nurse).
+Though a distinctly American novel, One Flew Over the Cuckoo's Nest is somehow a more human story than anything else.</p>
+<p>Score: <b>7.5/10</b></p>
+
+
+<br><br>
+
+<h2 class='title'><a class='link'   href='https://www.amazon.com/Pride-Prejudice-Jane-Austen/dp/0141439513/ref=sr_1_1?crid=7R8KHUKPS7F4&amp;keywords=pride+and+prejudice+jane+austen+book&amp;qid=1687152575&amp;sprefix=pride+and+prejudice+jane+austen+boo%252Caps%252C319&amp;sr=8-1&_encoding=UTF8&tag=andysansness-20&linkCode=ur2&linkId=86b48f4c89cb68d74e77f4dfdf85be77&camp=1789&creative=9325'>
+Pride and Prejudice</a> </h2>
+<p class='author'>by Jane Austen (1813)</p>
+<p>'It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife.'</p>
+<p>Even though it is my solemn opinion that Pride and Prejudice is just a wee bit overrated, it is undeniably well written. 
+So well written in fact, that it even rises above my general disgust at finding romance in any novel (much like the disgust of a vegetarian finding a caterpillar in his salad).
+Honestly, its difficult to put my finger on what makes it so well written; its flow is flawless, its plot commendable, its writing articulate with an occasional glitter of wit. 
+Overall, in spite of its length and theme, an undoubtable joy to read. </p>
+<p>Score: <b>7.5/10</b></p>
+
+<br><br>
+
+<h2 class='title'><a class='link'   href='https://www.amazon.com/Great-Gatsby-Original-Fitzgerald-Classic/dp/B093MYWTT5/ref=sr_1_1?crid=2C3BM7ZC24LVD&amp;keywords=the+great+gatsby+book&amp;qid=1687152663&amp;sprefix=the+great+gatsby+book%252Caps%252C325&amp;sr=8-1&_encoding=UTF8&tag=andysansness-20&linkCode=ur2&linkId=10b36ebcba151480f240a19b88d9c10f&camp=1789&creative=9325'>The Great Gatsby</a> </h2>
+<p class='author'>by F. Scott Fitzgerald (1925)</p>
+<p>'Reserving judgement is a matter of infinite hope.'</p>
+<p>The Great Gatsby is a picture of New York in the 1920s, the Jazz Age, a raging and roaring romp of parties and drinking and music. 
+It's romance, of sorts, but from the perspective from outside the romance itself. 
+Well written to be sure, but just lacks a little omph in plot; people did things, people said things, but I was only really drawn along in a passive kind of way.
+This in itself does not make it a bad, just... different.
+Vaguely interesting if I were being perfectly honest; subtly nuanced if I were feeling generous.
+I will give it this, its resolution was totally unexpected, a very different flavour from any other romance or even period novels.</p>
+<p>Score: <b>7/10</b></p>
+
+<br><br>
+
+<h2 class='title'><a class='link'   href='https://www.amazon.com/Treasure-Island-Signet-Classics-Stevenson/dp/1101990325/ref=sr_1_1?crid=2VKHOJYU2TL5F&amp;keywords=treasure+island+book&amp;qid=1687152877&amp;sprefix=treasure+island+book%252Caps%252C320&amp;sr=8-1&_encoding=UTF8&tag=andysansness-20&linkCode=ur2&linkId=a87c3cbaf9b05f0c11dbd2809d08ff12&camp=1789&creative=9325'>Treasure Island</a> </h2>
+<p class='author'>by Robert Louis Stevenson (1883)</p>
+<p>'Fifteen men on a dead mans chest. Yo ho ho and a bottle of rum!'</p>
+<p>The original pirate adventure story, a high tale of the high seas. 
+Buccaneers and buried gold, mutiny and treasure maps, wooden legs and eye patches, parley and, of course, pirates. Treasure Island moves with surprising pace, though it can drag just a little at times. 
+The atmosphere which Stevenson manages to create is exceptional, and is what he refers to as Romance: not that of love, but of imagination. The idea that a dark and stormy night could somehow be more than it seems...</p>
+<p>Score: <b>7/10</b></p>
+
+<br><br>
+
+<h2 class='title' id='1984'><a class='link'   href='https://www.amazon.com/1984-Signet-Classics-George-Orwell/dp/0451524934/ref=sr_1_1?crid=BL7AA0CYQSR8&amp;keywords=1984+book&amp;qid=1687152999&amp;sprefix=198+book%252Caps%252C339&amp;sr=8-1&_encoding=UTF8&tag=andysansness-20&linkCode=ur2&linkId=ffc07eefa6b333973411b15ff1972057&camp=1789&creative=9325'>
+1984</a> </h2>
+<p class='author'>by George Orwell (1949)</p>
+<p>'Who controls the past controls the future. Who controls the present controls the past.'</p>
+<p>1984 is the original dystopian novel. 
+It gives a cynical and haunting glimpse at what society could become, while also subtly undermining the present state of the world as we know it. 
+Reading this book gives a much deeper and darker context into words like 'totalitarian' and 'Orwellian'; a regime that is not only omniscient, but also omnipotent.
+However, if I had to prescribe a cure for happiness, this would be the treatment; never have I read so bleak and depressing a novel; 
+if you are going to read it, please know that by the time you are through, your soul will have been crushed just a little bit. Enjoy!</p>
+<p>Score: <b>6.5/10</b></p>
+
+<br><br>
+
+<h2 class='title'><a class='link'   href='https://www.amazon.com/Kill-Mockingbird-Harper-Lee/dp/0060935464/ref=sr_1_1?crid=3ECALBRY9S39D&amp;keywords=to+kill+a+mockingbird+book&amp;qid=1687153175&amp;sprefix=to+kill+a+mockingbrd+book%252Caps%252C302&amp;sr=8-1&_encoding=UTF8&tag=andysansness-20&linkCode=ur2&linkId=ecde94f9888ee0e39e0cfed94a51b49e&camp=1789&creative=9325'>To Kill a Mockingbird
+</a></h2>
+<p class='author'>by Harper Lee (1960)</p>
+<p>'Shoot all the bluejays you want, if you can hit 'em, but remember it's a sin to kill a mockingbird.'</p>
+<p>I remember having to read To Kill a Mockingbird for Year 9 English, and something about being forced to read and analyse a novel definitely impedes its enjoyability. 
+From what I can remember it was written well enough; again, being in Year 9 I found it to be a bit slow and difficult to read. 
+It is ultimately a coming of age novel, and though it deals with difficult themes such as racism, rape and murder, its child-like and innocent perspective mellow what could have been a truly dark novel. 
+Sometime I will read it again and will probably update this review.
+</p>
+<p>Score: <b>6.5/10</b></p>
+
+<br><br>
+
+<h2 class='title'><a class='link'   href='https://www.amazon.com/Picture-Dorian-Gray-Oscar-Wilde/dp/B098CR95HV/ref=tmm_pap_swatch_0?_encoding=UTF8&amp;qid=1687153245&amp;sr=8-1&_encoding=UTF8&tag=andysansness-20&linkCode=ur2&linkId=c7e6851e0270327605de59ec74edfd5f&camp=1789&creative=9325'>The Picture of Dorian Gray</h2></a>
+<p class='author'>by Oscar Wilde (1891)</p>
+<p>'He was prisoned in thought. Memory, like a horrible malady, was eating his soul away.'</p>
+<p>The Picture of Dorian Gray is story of corruption, immorality and ultimately, self destruction. 
+Again, this is another one of those books which I was forced to read in school.
+Its writing is excessively and decadently verbose, characterised by vivid, vibrant descriptions and sparkling, even blinding wit. 
+In some ways it is almost too much (aka. descriptions of jewels taking up entire pages) but in others it is simply admirable (aka. brilliant, pithy, razor sharp dialogue). 
+It's a fine line between brilliance and excessiveness, and somewhat appropriately, this is also the underlying theme of the book.
+</p>
+<p>Score: <b>6/10</b></p>
+
+<br><br>
+
+<h2 class='title'><a class='link'   href='https://www.amazon.com/Kidnapped-Illustrated-Classic-Anniversary-Collection/dp/1949460622/ref=sr_1_1?crid=NOWJ7DC7B0WE&amp;keywords=kidnapped+book+robert+louis+stevenson&amp;qid=1687154052&amp;sprefix=kidnapped+%252Caps%252C401&amp;sr=8-1&_encoding=UTF8&tag=andysansness-20&linkCode=ur2&linkId=178a37e143fdeffe339fc32b26fde382&camp=1789&creative=9325'>Kidnapped
+</a> </h2>
+<p class='author'>by Robert Louis Stevenson (1886)</p>
+<p>'His eyes playing hide and seek with mine'</p>
+<p>Kidnapped is basically just a worse version Treasure Island, primarily set on land instead of the sea (bar a few chapters).
+Although Stevenson's adventure, atmosphere and romance is all there, it becomes difficult to follow without any knowledge of Scottish culture, folklore and geography, not to mention the aged writing itself.
+These Scottish cultural undercurrents throughout the novel are made all the more annoying because of how integral it is to the plot and even the antagonists of the story. 
+It is fine when a historical period or place is the backdrop, but it fails when it is instead made the forefront.
+For an education it was certainly interesting, but for a read... not so much.
+
+</p>
+
+<p>Score: <b>5/10</b></p>
+
+<br><br>
+
+<h2 class='title'><a class='link'   href='https://www.amazon.com/Slaughterhouse-Five-Anniversary-Modern-Library-Novels/dp/0385312083/ref=tmm_hrd_swatch_0?_encoding=UTF8&amp;qid=1687155080&amp;sr=8-1&_encoding=UTF8&tag=andysansness-20&linkCode=ur2&linkId=2a0cedb8cc2dfefa37c236990d06a880&camp=1789&creative=9325'>Slaughterhouse-5
+</a> </h2>
+<p class='author'>by Kurt Vonegan (1969)</p>
+<p>'So it goes.'</p>
+<p>I have mixed feelings about Slaughterhouse-5.
+Bounding from reality to unreality, seriousness to humour, absurdity to sobriety... It's almost too much to handle. 
+In Slaughterhouse-5, Kurt Vonegan has managed to create a new archetype within literature: the stupid American.
+I get it; the world (and war especially) is irrational and crazy, but capturing this idea in a novel, even if it is cleverly done, banks no guarantee that it makes the book any good.
+Is stupidity entertaining? In this case, I'm inclined to say no.</p>
+<p>Score: <b>4/10</b></p>
+
+<br><br>
+
+<h2 class='title'><a class='link'   href='https://www.amazon.com/Punishment-Penguin-Classics-Fyodor-Dostoyevsky/dp/0140449132/ref=tmm_pap_swatch_0?_encoding=UTF8&amp;qid=1687155980&amp;sr=8-1&_encoding=UTF8&tag=andysansness-20&linkCode=ur2&linkId=aa96424ea6f308ea83c49648c2235825&camp=1789&creative=9325'>Crime and Punishment
+</a> </h2>
+<p class='author'>by Fyodor Dostoevsky (1866)</p>
+<p>'When reason fails, the devil helps!'</p>
+<p>
+
+Some instinct inside my being, whether of cultural self-improvement or naive personal accreditation, caused me to borrow Crime and Punishment online.
+Tentatively I opened the digital cover and cautiously began to read... Oh, what horrors! 
+The sheer grotesqueness of the boredom which gripped me is beyond words... beyond comprehension.
+But still, even knowing that all I would encounter would be more of the same, still I pressed on.
+Eventually, but a few chapters in, I mentally collapsed with boredom.
+Sure, those chapters were well written and did carry some level of intrigue, but certainly not enough to continue reading.
+</p>
+<p>Score: <b>3/10</b></p>
+
+<br><br>
+
+
+<h2 class='title'><a class='link'   href='https://www.amazon.com/Adventures-Huckleberry-SeaWolf-Illustrated-Classic/dp/1953649807/ref=sr_1_3?crid=1KO3W1UNQBT6J&amp;keywords=huckleberry+finn+book&amp;qid=1687157361&amp;sprefix=huckleberry+finn%252Caps%252C425&amp;sr=8-3&_encoding=UTF8&tag=andysansness-20&linkCode=ur2&linkId=7ed9637eca9f4ae811d1c9b3b8dd47e9&camp=1789&creative=9325'>Huckleberry Finn
+</a> </h2>
+<p class='author'>by Mark Twain (1884)</p>
+<p>'Persons attempting to find a moral in this narrative will be prosecuted; persons attempting to find a moral in it will be banished; persons attempting to find a plot in it will be shot'</p>
+<p>Other than these witty and admirable lines in the author's notice to reader, there is nothing much more of value to be found in Huckleberry Finn. 
+If a parent is looking for a harsh discipline for his child, they should look no further than forcing said child into reading Huckleberry Finn. 
+I thank Mark Twain for creating his definition of a classic - the only trouble is that in writing Huckleberry Finn, Twain has himself fulfilled his definition!</p>
+<p>Score: <b>2.5/10</b></p>
+
+<br><br>
+
+<h2 class='title'><a class='link'   href='https://www.amazon.com/Expectations-Signature-Classics-Charles-Dickens/dp/1435171640/ref=sr_1_2?crid=20U0V6F15414A&amp;keywords=great+expectations+charles+dickens+book&amp;qid=1687158103&amp;sprefix=great+expe%252Caps%252C590&amp;sr=8-2&_encoding=UTF8&tag=andysansness-20&linkCode=ur2&linkId=bb59a60d6fa474034d9338395a2832c1&camp=1789&creative=9325'>
+Great Expectations</a> </h2>
+<p class='author'>by Charles Dickens (1861)</p>
+<p>Look. I read probably about the first 50 pages of this book before I gave up out of sheer boredom. There was absolutely nothing in those 50 pages which made any part of me wish to continue reading. To say I was bored may actually be too kind; mentally tortured may be a more accurate description. Yet some part of me protested: 'This is supposed to be Dickens at his finest' it said. Well whoever said that deserved to be hung, drawn and thirded. Stay away from this book I say. STAY AWAY!!</p>
+<p>Score: <b>2/10</b></p>
+ <br><br>
+ <p>
+ <hr>
+  <a class='footer_link' href='simple'> &#8592; <span class='hide'>Simple = Accessible</span></a>
+  <a class='footer_link' style='float: right;' href='battle'><span class='hide'>The Spice of Life</span> &#8594;</a>
+  <hr>
+  </p>
+  <br><br><br><br><br>
+  <a href='index.html'><img src="thumbs_up_.png" class='footer'></a>
+  <br><br>  
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

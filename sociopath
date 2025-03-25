@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>In Praise of the Cinematic Sociopath | Andy Sansness</title>
+
+
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'>
+</head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+    <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href='puns'>Cartoons</a>
+  <a href="wordsmithery">Wordsmithery</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+      <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>In Praise of the Cinematic Sociopath</h1>
+  <p class='date'>July 2024 <span style='font-size: 0.7vw'>&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210;&#8210; </span><span style='position: absolute;'>  9 minute read</span></p>
+  <br>
+  <br>
+  <p>
+  The true definition of a sociopath remains dubious at best, but the type of sociopath I'm referring to here is fundamentally a manipulator. Someone who influences the thoughts and behaviours of the people around them for their own personal gain. Someone who knows the exact buttons to press in an individual so as to cause them to do exactly what they want. Highly intelligent, morally questionable, subtly duplicitous and downright Machiavellian. These are the hallmarks of a cinematic sociopath<span class="popup" onclick="footnote1()"><sup class='note'>1</sup><span class="popuptext" id="foot1">In no way at all does this definition reflect any reliable medical definition or diagnosis. This is simply the label I am giving to my interpretation of a cinematic archetype. Realistically, outside of the silver screen, this kind of sociopath is not a nice person. Nobody in their right mind actually likes being manipulated, and its for this reason most cinematic sociopaths are villains</span></span>.
+  </p>
+  <p>
+  Before I go any further, let me differentiate between a cinematic psychopath and sociopath. While there is definitely overlap between these two archetypes, the difference between lies primarily in their morality. The way I interpret it, cinematic sociopaths may understand morality (universal right and wrong), but can chose to ignore it in favour for their conscience (personal right and wrong). Psychopaths have no understanding of morality, and thus have no conscience at all - this means they are far more likely to perform acts of violence. In cases like these, the violence is bourne not out of carefully calculated purpose, but out of enjoyment or sadistic pleasure.
+  </p>
+  <p>
+  Cinematic sociopaths include the likes of protagonists such as Sherlock Holmes, Patrick James and Dr Gregory House, as well as antagonists such as Emperor Palpatine, Jim Moriarty and Tom Ripley.
+  </p>
+  <p>
+Each of these characters are richly compelling, even more so in their cinematic portrayal than their original, written representation. While written descriptions do their best to present a sociopath's cunning through their actions, behaviours or thoughts, by presenting these same elements in the medium of cinema, something much deeper is captured. 
+  </p>
+  <p>
+Sociopathy is shown by manipulation, which itself is best portrayed through encounters between characters. Such written encounters are typically contrained to dialogue only, maybe indispersed with occasional description. As a visual encounter however, such a meeting is far richer, far subtler and far deeper.
+  </p>
+  <p>
+Facial cues, body language, eye movement, tone of voice, even setting and atmosphere - all these contribute to characterisation, but with a sociopath there's more to it than this. In scenes like this there is a neat trick at play. As a character is being manipulated, while they themselves don't know it, the audience does.
+  </p>
+  <p>
+Sometimes it may not be immediately clear, but as more and more clues confirm the audience's suspicions, upon reflection it will have seemed obvious. In other cases the manipulation will be blantantly obvious from the very beginning, forcing the audience to have to watch on in distressed frustration. 
+  </p>
+  <br>
+  <br>
+  <p>
+To create a sociopath as a protagonist poses no easy feat. Although sociopaths do make for inherently compelling characters, they are usually difficult to relate to. And the measure you relate to a story's characters is equally the measure you relate to the story itself. 
+  </p>
+  <p>
+The fundamental difference between a typical protagonist and antagonist is moral integrity. The good guys do things for the right reason, the bad guys do things for the wrong reason. So, in modern cinema, a good guy can kill a bad guy, but only if the bad guy deserves it.
+  </p>
+  <p>
+Sociopath protagonists tend to push the limit of doing bad things for the right reason. This is especially applicable if their true intentions remain unclear. Betraying their friends, blackmailing for leverage or seeking aid from criminals can all look like bad guy behaviour until the real outcome of their plans is revealed.
+  </p>
+  <p>
+And yet all protagonists need to be someone to root for. Though a sociopath protagonist may carry some of the hallmarks of a typical antagonist, by showing moments of weakness, or love, or humour, an audience can then relate to them.
+  </p>
+  <p>
+This value is especially highlighted as a sociopath protagonist is juxtalosed alongside supporting characters, who serve to highlight both the protagonist's cunning and dysfunction. Eventually, as supporting characters come to appreciate the humanity of a protagonist, so too can the audience.
+  </p>
+  <p>
+This is true for Sherlock Holmes' representation in both Sherlock and Elementary. Patrick Jane in The Mentalist. Dr Gregory House in House. Though each of these protagonists manipulate the people around them, they all ultimately do what they do for the right reasons.
+  </p>
+  <br>
+  <br>
+  <p>
+Of all the villains, murderers and bad guys onscreen, all the best of them have at least some element of the cunning, manipulative sociopath. Loki in the Marvel Cinematic Universe. Ernst Stavro Blofeld in the latest Bond franchise. Emporer Palpatine in Star Wars. Moriarty in BBC's Sherlock. The Joker in The Dark Knight. Dr. Smith in Lost in Space. Tom Ripley in Netflix's Ripley. And yes, the list goes on... but not as long as you might think.
+  </p>
+  <p>
+The type of antagonist I'm trying to capture here is a different class than your traditional crazed psychopath or revenge fueled obsessive. The methods which antagonists like these use to achieve their goals are just crude; either they send someone to threaten or enact violence, or they threaten or enact violence themselves. Consider any villain you care to think of and see if anything they do extends beyond primitive, uninspired violence. While every franchise has a veritable gluttony of villains, very few truly capture the compelling nuance of a sociopath.
+  </p>
+  <p>
+Consider Palpatine as a case study. In the first three Star Wars movies, Senator Palpatine is established as a sociopath of the highest order. The most obvious demonstration of this is as he slowly manipulates Anakin to joining the dark side. However, on top of this, Palpatine is also employing widespread manipulation to influence the Jedi council, Naboo royalty and even the Galactic Republic as a whole. 
+  </p>
+  <p>
+Though there may have been some help from Jedi mind tricks, there is also evidence of the most obvious and basic technique there is, the use of a carrot and a stick. In the case of Anakin, the stick is the threat of losing his loved ones, as he already had experienced. The carrot is the potential to save them, if only he will join Palpatine.
+  </p>
+  <p>
+Palpatine also provides an interesting progression in character. While episode I portrays a sociopathic politician, episode II portrays a more sinister sociopath, and Episode III and onwards portrays a far darker, borderline-psychopath characterisation.
+  </p>
+  <br>
+  <br>
+  <p>
+Sociopaths make for compelling protagonists and antagonists alike... But why is the sociopath so compelling? First off, what characterises a sociopath is not their motivation, but their method. Each of the antagonists I mentioned earlier had vastly different motives; Loki and Palpatine wanted power, Ripley and Dr. Smith wanted wealth, and Moriarty and The Joker just wanted to play the game. But the underlying method which each of these characters employed was virtually identical. Yes, each of them employed a scheme in some form or another, but to achieve that scheme they had to understand and manipulate those standing in the way of their goals.
+  </p>
+  <p>
+This is one of the main sources of a cinematic sociopath's entertainment value. Every character in a story has motivations and goals, and every character has other characters stopping them from achieving these goals. Where the typical cinematic portrayal defers to violence to remove these roadblocks, the cinematic sociopath defers to manipulation.
+  </p>
+  <p>
+However, because this is cinema, sociopaths are by no means reduced to mere social manipulation. Bribery, blackmail, coercion, extortion, even cafefully calculated violence are all fair game, especially when considering their dramatic value.
+  </p>
+  <br><br>
+  <p>
+And yet part of the question remains. Sure, sociopaths are compelling because they employ manipulation. But why is this manipulation so compelling?
+  </p>
+  <p>
+One reason is that manipulation removes the need for suspension bridges of disbelief.
+  </p>
+  <p>
+Although all fiction is by definition fictional, a suspension bridge of disbelief is sometimes required when an audiences needs to sumount a feature of a story which is idealogically implausible. Within all stories there are two levels through which an audience may need to suspend their disbelief.
+  </p>
+  <p>
+The first is primary disbelief, which considers how realistic the story is in relation to the real world. This can very easily be put aside to enjoy the story, but on some level subconsciously you are always aware that the story is fictional.
+  </p>
+  <p>
+Secondary disbelief focuses only within the world of the story. Ignoring primary disbelief, secondary disbelief consciously considers whether the story is internally consistent with its worldbuilding. This relates to the integrity of the plot, ensuring that no plot conviences are introduced or deus ex machina occurs.
+  </p>
+  <p>
+To force suspension of primary belief is understandable, but to force suspension of secondary belief is nigh on unforgivable.
+  </p>
+  <p>
+Overall, the more realistic a story, both within its world and ours, the more an audience can relate to it. So, stories where characters resort to excessive violence, or near-limitless wealth, or futuristic technology, or magic, or superpowers, or anything beyond the potential capabilities of an audience require some suspension of belief. The greater those capabilities, the greater the suspension of disbelief.
+  </p>
+  <p>
+In comparison, the method of a sociopath - social manipulation - seems far more feasible and even more logically understandable (Occassionally there are examples of pseudo-supernatural manipulation. Palpatine may use Jedi mind tricks. Patrick Jane from The Mentalist sometimes resorts to hypnosis. Loki uses mind control from the scepter. However, although these examples do challenge secondary disbelief, contextually they are all used in conjuction with basic social manipulation, making them all much more believable within their given story). Ergo, less suspension of disbelief and more investment into the story.
+  </p>
+  <br><br>
+  <p>
+Another case for the manipulation of a sociopath is in their ability to reveal depth of character, both in themselves and those they manipulate. In order to leverage character's motives, beliefs and values, these first must be defined and explored, as per Chekov's Gun.
+  </p>
+  <p>
+In its most basic form, Chekov's Gun states that if a gun is introduced in Act One, then it must used later in the story, either in Act Two or Three. To bring this in terms of characterisation, if a character is shown to have a temper, they are probably going to lose their temper. If a character is shown to dislike another character, this is probably going to end in a showdown. And so on.
+  </p>
+  <p>
+As soon as you add a sociopath into the mix, every element of characterisation introduced becomes not only important to the character, but also the plot. This then forces all characterisation to be used judiciously and effectively.
+  </p>
+  <p>
+For example, The Dark Knight characterises Batman in a way which establishes that he will never kill. Based off this, the Joker engineers himself into a situation where Batman could kill him; however, with his knowledge of Batman's character, The Joker knows he will be sent to prison instead.
+  </p>
+  <p>
+In this way, sometimes the influence of a cinematic sociopath can become much more cerebral. By getting into the head of the protagonist, they in doing so get in the head of the audience as well.
+  </p>
+  <p>
+And that's the kicker. Because on some meta-narrative level, a cinematic sociopath is not only manipulating people, or even the plot of the narrative... They're manipulating you. The audience. Every time you think you understand what's been going on, they're going to show you what really happened. Every time you think you know what's going to happen next, they know what you're thinking, so they're going to do something else. And every time you think you know how its going to end... You don't. 
+  </p>
+  <p>
+Not if a cinematic sociopath has anything to say about.
+  </p>
+  
+  <br>
+  <br>
+  <p>
+  <hr>
+  <a class='footer_link' href='tension'> &#8592; <span class='hide'>Narrative Tension and Meta-tension</span></a>
+  <a class='footer_link' style='float: right;' href='index.html'> <span class='hide'></span></a>
+  <hr>
+  </p>
+  <br><br><br><br><br>
+  <a href='index.html'><img src="thumbs_up_.png" class='footer'></a>
+  <br><br>
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Discovering Quality | Andy Sansness</title>
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'>
+</head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+    <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href="collections">Collections</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+      <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>Discovering Quality</h1>
+  <!-- May 2024 -->
+  <hr>
+  <br>
+  <br>
+  
+  <p><i>This entry is Part 3 out of a 4 part series on quality. Here is <a href='quality1' class='link'>Part 1</a>, <a href='quality2' class='link'>Part 2</a> and <a class='link' href='quality4'>Part 4</a>.</i></p>
+  <br>
+
+  <br>
+  <p>
+  Whether searching for quality tangible, digital or mental, the arrival of the internet unlocked an unprecedented mechanism for discovering quality.
+  What the internet allowed for was centralised places from which to compare everything, and yet was in and of itself entirely decentralised.
+  </p>
+  <p>
+  By storing such copious amounts of data publicly, the internet didn't just only allow for comparison, but also discussion, recommendation and most importantly, <i>discovery</i>.
+  In fact, I would argue that discovering quality is one of the primary purposes of the internet.
+  </p>
+  <p>
+  As far as I can see, there have arisen three primary means of discovering quality on the internet: aggregators, algorthims and serendipity. Interestingly, each of these yield progressively more personalised results.
+  </p>
+  <br>
+  <p>
+  Aggregators, including search engines like Google and online stores like Amazon, work by taking every piece of data on the internet and stacking them according to how popular those particular sites are.
+  In theory, quality content should be found at the top of every search.
+  </p>
+  <p>
+  Algorithms, including content recommendors like Netflix and social medias like Instagram, work by serving content according to your interests, preferences and overall taste.
+  In theory, quality content should be steered directly into your feed.
+  </p>
+  <p>
+  Compared to aggregators and algorithms, serendipity is far more simple and far more unpredictable.
+  And yet comparably, serendipity is somehow far more satisfying &#8210; maybe because the discovery becomes something personal.
+  Serendipity relies upon digital gardens, and involves exploring rabbit holes, aggressively sampling content and doubling down on existing sources of quality.
+  </p>
+  <p>
+  As a means of discovering quality, all three of these means are highly flawed.
+  </p>
+  <br>
+  <p>
+  While each of these means of discovering quality have their own advantages and disadvantages, the main issue we are currently facing lies not with them, but with the internet itself.
+  In essence, the issue comes down to this: quality has become increasingly more difficult to find.
+  </p>
+  <p>
+  Why is this?
+  Well for one, as the years have gone by, the internet has become a lot more... crowded.
+  More websites, more content creators, more copycats, more aggregators, more algorithms, more <i>everything</i>.
+  The internet has become a bustling, bursting place, and many have begun to see the impact of this.
+  </p>
+  <blockquote>
+  <p>
+  This is the original sin of modernity. We have cleared access, but at the cost of discovery.
+  <span>— Rohit Krishnan, <a class='link' href='https://www.strangeloopcanon.com/p/discovery-is-the-original-sin-of'><i>Discovery is the original sin of the modern age</i></a></span></p>
+  </blockquote>
+  <p>
+  </p>
+  <p>
+  In terms of aggregators, Google and other search engines have become exceedingly broken, partly due to results being marred by so-called sponsored recommendations, and partly due to the diminishing returns on more data over time.
+  For example, if you search 'blog' on google you will get more than 15 billion hits (in 0.39 seconds thank you very much).
+  To make matters worse, the first 17 of them are't even actual blogs.
+  How on earth are we supposed to find a needle amoungst such sheer volume of hay?
+  </p>
+  <img style='width: 100%;' src='google.png' alt='Google hits on search term blog'>
+  <p>
+  In terms of algorithms, the same problem of volume comes into play, with the additional and more underlying problem being that content is focused more on entertainment rather than utility.
+  For both cases, the problem is only going to get <a href='https://maggieappleton.com/ai-dark-forest' class='link'>worse</a> with the additional proliforation of AI generated content.
+  </p>
+  <br>
+  <p>
+  Whether due to, or even because of the proliforation of internet content, quality has seemingly retreated from our aggregators, our algorithms and even our serendipitous exploration.
+  Apart from sheer volume, this phemenon is best explained by the <a href='https://ystrickler.medium.com/the-dark-forest-theory-of-the-internet-7dc3e68a7cb1' class='link'>dark forest theory of the internet</a>, which compares the internet to a dark forest at night. 
+  Although it may seem lifeless, in actuality it is teeming with life; the reason it seems lifeless is because all life remains silent so as not to be detected by predators.
+  </p>
+  <blockquote>
+  <p>
+    In response to the ads, the tracking, the trolling, the hype, and other predatory behaviors, we’re retreating to our dark forests of the internet, and away from the mainstream.
+  <span>— Yancey Strickler, <a href='https://ystrickler.medium.com/the-dark-forest-theory-of-the-internet-7dc3e68a7cb1' class='link'><i>The Dark Forest Theory of the Internet</i></a></span></p>
+  </blockquote>
+  <p>
+  Notice that the retreat is away from the <i>mainstream</i>.
+  Although mainstream quality may exist (it remains to be seen), for any content to appeal to the mainstream in the first place, it's going to have to be fairly basic &#8210; this is because <a href='simple' class='link'>simple = accessible<sup><img class='self_link' src='thumbs_up_.png'></sup></a>.
+  </p>
+  <p>
+  To double down on this point, let me elaborate slightly by saying that the quality I've been referring to is in actuality <i>niche quality</i>.
+  On the most part, nicheness seems kind of inherent within quality.
+  This is because depth and complexity of ideas thrive in niches, not wide open spaces.
+  Specialisation, not generalisation.
+  </p>
+  <p>
+  So, if mainstream quality (lit. low quality) is found on the mainstream internet, then niche quality (lit. high quality) is going to be found on the <a href='https://kanfa.macbudkowski.com/niche-internet' class='link'>niche internet</a>.
+  While broad, mainstream content is generously exhibited by aggregators and algorithms alike, niche internet content remains far more difficult to find.
+  </p>
+  <br><br>
+  <img class='break' src='thumbs_up_break.png'>
+  <br><br>
+  <p>
+  While traditional methods are fairly ineffective at facilitating the discovery of quality, there are plenty of solutions both already existing and steadily emerging. Each of these combine elements of aggregators, algorithms and seredipitous exploration, to varying degrees of success.
+  </p>
+  <br>
+  <h3>Link Aggregators</h3>
+  <p>
+  In terms of presently-existing solutions, one possibility are link aggregators. 
+  By focusing on one particular niche, link aggregators take the benefits of both curation and vertical aggregation.
+  The most prominent example is <a class='link' href='https://news.ycombinator.com/'>HackerNews</a>, which focuses primarily on tech.
+  While undeniably useful, link aggregators do lack a certain element of personalisation, especially when the niche focus ends up being frustratingly broad.
+  </p>
+  <br>
+  <h3>Taste Makers</h3>
+  <p>
+  To counter the underpersonalisation of aggregators without becoming a slave to the algorithms, the most sensible approach seems to be relying on taste makers.
+  This involves determining your own taste, and then by trial and error (tasting content) finding individuals who share a similar taste.
+  By 'share a similar taste', I both mean that they share a similar taste to you <i>and</i> that they share the content which they find/produce.
+  </p>
+  <p>
+  This approach is very similar to relying serendipity; the difference is that you are not just randomly sampling content, but instead progressively collecting reliable sources of content.
+  As a complement to this approach, subscribing to <a href='https://craigmod.com/essays/newsletters/' class='link'>newsletters</a> is a tried and trued method of routing such content directly into your inbox (for example the likes of Tim Ferris's <a href='https://go.tim.blog/5-bullet-friday-1/' class='link'>5 bullet Friday</a>).  
+  </p>
+  <br>
+  <h3>Start a Blog</h3>
+  <p>
+  Finally, a more abstract solution is to start a blog, as considered by the highly self-explanatorily named piece  
+  <a href='https://www.henrikkarlsson.xyz/p/search-query?utm_source=substack&utm_campaign=post_embed&utm_medium=web' class='link'>a blog post is a very long and complex search query to find fascinating people and make them route interesting stuff to your inbox</a>.
+  Basically, by writing about some niche area which you are interested in, individuals who share a similar interest in taste will, to a greater or lesser degree, reciprocate.
+  Unfortunately not everyone has the inclination to write, and of those who do, not all enjoy the same amount of success as others.
+  </p>
+  <br>
+  <h3>Boutique Search Engines</h3>
+  <p>
+  In terms of forward-thinking solutions, one promising solution are <a href='https://sariazout.mirror.xyz/7gSSTJ96SEyvXeljymglO3zN4H6DCgVnrNZq8_2NX1A' class='link'>boutique search engines</a>.
+  Not quite aggregators and not quite algorithms, boutique search engines are curated, searchable interfaces.
+  Existing examples include Doordash, Airbnb and Behance.
+  </p>
+  <blockquote>
+  <p>
+  Unlike vertical search aggregators, boutique search engines feel less like yellow pages, and more like texting your friends to ask for a recommendation. They have constrained supply, which is the foundation for their biggest moat — trust. Importantly, boutique search engines introduce new business models that don’t rely on advertising.
+  <span>— Sari Azout, <a href='https://sariazout.mirror.xyz/7gSSTJ96SEyvXeljymglO3zN4H6DCgVnrNZq8_2NX1A' class='link'><i>Re-Organizing the World’s Information: Why we need more Boutique Search Engines</i></a></span></p>
+  </blockquote>
+  <p>
+  Although boutique engines make complete sense if you know what you're looking for, I'm unsure how effective they will be for open-ended and playful exploration.
+  </p>
+  <br>
+  <h3>Community Network Search Engines</h3>
+  The primary example of these is <a class='link' href='https://thegigabrain.com/'>The Giga Brain</a>, which works as a search engine for Reddit.
+  <blockquote>
+  <p>
+  The internet has been mainstream for over 30 years but most human knowledge is still offline. There are still questions that Google and ChatGPT can't answer well. In way too many cases, Google searches return an endless list of crappy content farm blogs that feel totally untrustworthy. And ChatGPT, although great for coding questions or wikipedia facts, isn't ready to answer questions that seek experience-based or subjective information.
+  <br><br>
+  For now, we turn to communities like reddit to find the people that are really into any given niche who can give us specific, opinionated, experience-based answers. That said, reddit's own search is really bad, and with over 300,000 communities, its hard to know where to start when seeking info from redditors.
+  </p>
+  </blockquote>
+  <p>
+  Though still in its early stages, software like The Giga Brain shows tremendous potential as a capturer of knowledge, not just information. It also does well to provide summarised in packages as oppose to inaccessible information dumps.
+  </p>
+  <br>
+  <h3>AI powered Search Engines</h3>
+  <p>
+  AI powered Search Engines work similar to traditional search engine aggregators, but are able to filter out much of the noise, focusing not on advertising, SEO or page position, but whether the content provided is the best possible fit.
+  Currently, the most powerful of these is <a class='link' href='https://exa.ai/'>Exa.ai</a>, and of all the current search alternatives on the market, Exa.ai is by far the best humanity has to offer in terms of usefulness and utility.
+  Filters enable some level of customisability and personalisation, while a link predictor transformer is used to predict match meaning within prompts.
+  </p>
+  <br>
+  <br>
+  <img class='break' src='thumbs_up_break.png'>
+  <br>
+  <br>
+  <p>
+  While each of these approaches are improvements on their predecessors and forebearers, they still remain a little ways off from the perfect tool for discovering quality.
+  It would have to be a curated, personalised, aggregated platform, with the potential for both playful exploration and effective utility.
+  It would have to have a sleek, intuitive interface, where noise and signal are minimised, if not eliminated entirely. 
+  It would have to deliver content without either the paradox of choice or content being shoved down your throat.
+  Impossible...
+  For now.
+  </p>
+  <br>
+  <br>
+  <p>
+  <hr>
+  <a class='footer_link' href='quality2'> &#8592; <span class='hide'>Measuring Quality</span></a>
+  <a class='footer_link' style='float: right;' href='quality4'> <span class='hide'>Creating Quality</span> &#8594;</a>
+  <hr>
+  </p>
+  <br><br><br><br><br>
+  <a href='index.html'><img src="thumbs_up_.png" class='footer'></a>
+  <br><br>  
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

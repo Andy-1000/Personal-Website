@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Articles | Andy Sansness</title>
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'>
+</head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+  <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href="collections">Collections</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+  <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>Articles</h1>
+  <hr>
+  <br>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="culinarity" class='biglink'>Narrative as a Culinary Experience</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>Is there a better way to judge stories beyond genre but as culinary experiences?<span class='length'>7 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="expressibility4" class='biglink'>Language as Insight</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>What is language as insight?<span class='length'>3 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="expressibility3" class='biglink'>Language as Lore</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>What is language as lore?<span class='length'>7 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="expressibility2" class='biglink'>Language as Lore</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>What is language as niche?<span class='length'>4 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="expressibility1" class='biglink'>Inexpressibility</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>How can inexpressibility be resolved?<span class='length'>3 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="sociopath" class='biglink'>In Praise of the Cinematic Sociopath</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>What makes sociopath characters interesting onscreen?<span class='length'>6 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="tension" class='biglink'>Narrative Tension and Meta-tension</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>What is the force which compels a reader to keep reading a story?<span class='length'>6 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="quality4" class='biglink'>Creating Quality</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>What are the ingredients, techniques and recipes used to create quality?<span class='length'>10 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="quality3" class='biglink'>Discovering Quality</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>Why has quality become difficult to find? How can you discover quality?<span class='length'>6 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="quality2" class='biglink'>Measuring Quality</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>How can quality be measured and can quality be measured objectively?<span class='length'>7 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="quality1" class='biglink'>Defining Quality</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>What is quality and how can quality as an idea be applied?<span class='length'>5 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="nobel" class='biglink'>Nobel by Numbers</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'> Infographic</i>
+  <p>What does it take to win a Nobel prize?<span class='length'>2 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="notes" class='biglink'>Notes &#8210; A Backup For Your Thoughts</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'> Advice</i>
+  <p>Why should you take notes? <span class='length'>5 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="japan" class='biglink'>Travelling Japan</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'>Travel Tips</i>
+  <p>A collection of recommendations and reflections on travelling Japan <span class='length'>5 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="wonder" class='biglink'>Wonder and Awe</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'>Essay</i>
+  <p>What is wonder and awe? And how can you experience them both? <span class='length'>6 minute read</span></p>
+  </div>
+  <br>  
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="generalisation" class='biglink'>Specialisation in Generalisation</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'>Contemplation</i>
+  <p>In a world of specialisation, what are the benefits of generalisation? <span class='length'>2 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="mcguffin" class='biglink'>The McGuffin</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'>Short Story</i>
+  <p>A variety of profiles are all after an enigmatic and anonymous object...<span class='length'>9 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="physics" class='biglink'>Through the Lens of Physics</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'>Proof of Concept</i>
+  <p>What are some insights in viewing life through the lens of physics? <span class='length'>6 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="economics" class='biglink'>Through the Lens of Economics</a></h2>
+  <i style='float: right;   display: inline; margin-top: 10px;' class='hide'>Proof of Concept</i>
+  <p>What are some insights in viewing life through the lens of economics? <span class='length'>5 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="battle" class='biglink'>The Spice of Life</a></h2>
+  <i style='float: right; display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>'The spice of life is battle...' To what extent is this true? <span class='length'>5 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="classics" class='biglink'>The Classics</a></h2>
+  <i style='float: right;   display: inline; margin-top: 10px;' class='hide'> Review</i>
+  <p>A review and rating of all of the classic novels which I have read. <span class='length'>9 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="simple" class='biglink'>Simple = Accessible</a></h2>
+  <i style='float: right;   display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>What is the impact of simplicity and complexity in how we view the world? <span class='length'>6 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="entertainment" class='biglink'>The Secret to Entertainment</a></h2>
+  <i style='float: right;   display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>'The secret to entertainment is surprise...'  To what extent is this true? <span class='length'>5 minute read</span></p>
+  </div>
+  <br>
+  <div class='block more'>
+  <h2 style='display: inline;'><a href="lenses" class='biglink'>Lenses</a></h2>
+  <i style='float: right;   display: inline; margin-top: 10px;' class='hide'> Essay</i>
+  <p>What is a lens? And how can we use our lenses to produce insights? <span class='length'>7 minute read</span></p>
+  </div>
+  <br>
+  <br>
+  <br>
+  <br>
+</div>  
+  <div class="column side">
+  </div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

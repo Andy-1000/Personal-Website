@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Blogroll | Andy Sansness</title>
+<link rel="icon" type="image/x-icon" href="thumbs_up_.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link href='style.css' rel='stylesheet'></head>
+<body>
+
+<div class="topnav" id='nav_bar'>
+  <div class ='rotate'>
+  <a href="index.html" class='split'>Andy Sansness</a>
+  </div>
+  <a href="reviewcommendations">Reviewcommendations</a>
+  <a href="collections">Collections</a>
+  <a href="articles">Articles</a>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a> 
+  <div class ='shape'></div>
+</div>
+
+<div class="cursor">
+  <div class="ball big">
+    <svg height="50" width="50">
+      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
+    </svg>
+  </div>
+  
+  <div class="ball small">
+    <svg height="10" width="10">
+      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
+    </svg>
+  </div>
+</div>
+
+<div class="row">
+  <div class="column side">
+  <p></p>
+  </div>
+  
+<div class="column middle">
+  <br><h1>Blogroll</h1>
+  <hr>
+  <br>
+  <br>
+  <div class='row_middle'>
+  <div class='column1'>
+  <p><a href='https://www.paulgraham.com/articles.html' class='link' target='_blank'>Paul Graham &#9733; <img src='favicon/paul_graham.png' class='favicon'></a></p>
+  <p>A collection of essays on ideas, startups, art and software, added to fairly sporatically. In terms of both coherence and insight density, Paul Graham is in a class all by himself.</p>
+  <br>
+  <p><a href='https://kk.org/thetechnium/' class='link' target='_blank'>Kevin Kelly &#9733; <img src='favicon/kevin_kelly.png' class='favicon'></a></p>
+  <p>Semi-weekly insights and explorations from the world of innovation and technology; articles alternate between interesting links and full in-depth examinations.</p>
+  <br><br><p><a href='https://seths.blog/' class='link' target='_blank'>Seth Godin <img src='favicon/seth_godin.png' class='favicon'></a></p>
+  <p>Daily reflections from a legendary and prolific writer and marketer; through the lens of marketing, content focuses how we view the world and what is happening in it.</p>
+  <br><p><a href='https://tim.blog/' class='link' target='_blank'>Tim Ferris &#9733; <img src='favicon/tim_ferris.png' class='favicon'></a></p>
+  <p>Practical philosphies, learning hacks, productivity habits, travel tips and everything in between. Casual, actionable writing from a bestselling author and veritable human guinea pig</p>
+  <br><p><a href='https://maggieappleton.com/garden' class='link' target='_blank'>Maggie Appleton <img src='favicon/maggie_appleton.png' class='favicon'></a></p>
+  <p>Nifty pieces ranging from programming to writing to the internet, catagorised into longform, opinionated essays and shortform, unopinionated notes.</p>
+  <br><p><a href='https://www.ystrickler.com/' class='link' target='_blank'>Yancy Strickler <img src='favicon/yancy_strickler.png' class='favicon'></a></p>
+  <p>Insight dense reflections on the goings-on of the internet and the world, as well as creativity, entrapeneurship and writing.</p>
+  </div>
+  
+  
+  <div class='column2'>
+  <p><a href='https://collabfund.com/blog/authors/morgan/' class='link' target='_blank'>Morgan Housel &#9733; <img src='favicon/collab_fund.jpeg' class='favicon'></a></p>
+  <p>Monthly pieces on investing, learning and living, all of which are both highly accessible and highly informative.</p>
+  <br>
+  <br><p><a href='https://www.ribbonfarm.com/' class='link' target='_blank'>Ribbonfarm &#9733; <img src='favicon/ribbonfarm.png' class='favicon'></a></p>
+  <p>A rich ecosystem of thoughtful content and novel ideas, added to frequently by the one and only Venkatesh Rao. Though wildly diverse, topics tend to relate primarily to culture, technology and mediocrity.</p>
+  <br><p><a href='https://ma.tt/' class='link' target='_blank'>Matt Mullenwig <img src='favicon/matt.png' class='favicon'></a></p>
+  <p>Regular bits and bobs, some of it linking to random cool content, other times relaying some thoughts and reflections</p>
+  <br><br><p><a href='https://marginalrevolution.com/' class='link' target='_blank'>Marginal Revolution <img src='favicon/marginal_revolution.png' class='favicon'></a></p>
+  <p>Assorted links, recommendations and economics driven insights. Highly assorted and frequently published content. Written by Tyler Cowen and Alex Tabarrok.</p>
+  <br><p><a href='https://interconnected.org/home/' class='link' target='_blank'>Interconnected <img src='favicon/interconnected.png' class='favicon hide'></a></p>
+  <p>Short, sharp, intermittent pieces which get your mind turning, touching on life, programming and the internet.</p>
+  <br>
+  <br><p><a href='https://www.thejaymo.net/blog/' class='link' target='_blank'>The Jaymo <img src='favicon/jaymo.jpeg' class='favicon'></a></p>
+  <p>Fairly random but always interesting stuff, with some reoccuring topics in the form of world running, solar punk and AI. Written by Jay Springett.</p>
+  </div>
+  </div>
+  
+  <div class='row_alt'>
+  <p><a href='https://www.paulgraham.com/articles.html' class='link' target='_blank' style=''>Paul Graham &#9733; <img src='favicon/paul_graham.png' class='favicon'></a></p>
+  <p>A collection of essays on ideas, startups, art and software, added to fairly sporatically. In terms of both coherence and insight density, Paul Graham is in a class all by himself.</p>
+  <br>
+  <p><a href='https://kk.org/thetechnium/' class='link' target='_blank'>Kevin Kelly &#9733; <img src='favicon/kevin_kelly.png' class='favicon'></a></p>
+  <p>Semi-weekly insights and explorations from the world of innovation and technology; articles alternate between interesting links and full in-depth examinations.</p>
+  <br><p><a href='https://seths.blog/' class='link' target='_blank'>Seth Godin<img src='favicon/seth_godin.png' class='favicon'></a></p>
+  <p>Daily reflections from a legendary and prolific writer and marketer; through the lens of marketing, content focuses how we view the world and what is happening in it.</p>
+  <br>
+  <p><a href='https://collabfund.com/blog/authors/morgan/' class='link' target='_blank'>Morgan Housel &#9733; <img src='favicon/collab_fund.jpeg' class='favicon'></a></p>
+  <p>Monthly pieces on investing, learning and living, all of which are both highly accessible and highly informative.</p>
+  <br><p><a href='https://www.ribbonfarm.com/' class='link' target='_blank'>Ribbonfarm &#9733; <img src='favicon/ribbonfarm.png' class='favicon'></a></p>
+  <p>A rich ecosystem of thoughtful content and novel ideas, added to frequently by the one and only Venkatesh Rao. Though wildly diverse, topics tend to relate primarily to culture, technology and mediocrity.</p>
+  <br><p><a href='https://ma.tt/' class='link' target='_blank'>Matt Mullenwig<img src='favicon/matt.png' class='favicon'></a></p>
+  <p>Regular bits and bobs, some of it linking to random cool content, other times relaying some thoughts and reflections</p>
+  
+  <br><p><a href='https://tim.blog/' class='link' target='_blank'>Tim Ferris &#9733; <img src='favicon/tim_ferris.png' class='favicon'></a></p>
+  <p>Practical philosphies, learning hacks, productivity habits, travel tips and everything in between. Casual, actionable writing from a bestselling author and veritable human guinea pig</p>
+  
+  <br><p><a href='https://marginalrevolution.com/' class='link' target='_blank'>Marginal Revolution <img src='favicon/marginal_revolution.png' class='favicon'></a></p>
+  <p>Assorted links, recommendations and economics driven insights. Highly assorted and frequently published content. Written by Tyler Cowen and Alex Tabarrok.</p>
+  
+  <br><p><a href='https://maggieappleton.com/garden' class='link' target='_blank'>Maggie Appleton <img src='favicon/maggie_appleton.png' class='favicon'></a></p>
+  <p>Nifty pieces ranging from programming to writing to the internet, catagorised into longform, opinionated essays and shortform, unopinionated notes.</p>
+  
+  <br><p><a href='https://www.ystrickler.com/' class='link' target='_blank'>Yancy Strickler<img src='favicon/yancy_strickler.png' class='favicon'></a></p>
+  <p>Insight dense reflections on the goings-on of the internet and the world, as well as creativity, entrapeneurship and writing.</p>
+  
+  <br><p><a href='https://interconnected.org/home/' class='link' target='_blank'>Interconnected <img src='favicon/interconnected.png' class='favicon hide'></a></p>
+  <p>Short, sharp, intermittent pieces which get your mind turning, touching on life, programming and the internet.</p>
+  
+  <br><p><a href='https://www.thejaymo.net/blog/' class='link' target='_blank'>The Jaymo <img src='favicon/jaymo.jpeg' class='favicon'></a></p>
+  <p>Fairly random but always interesting stuff, with some reoccuring topics in the form of world running, solar punk and AI. Written by Jay Springett.</p>
+  </div>
+  
+  <br><br>
+  <h2>Substacks</h2>
+  <div class='row_middle'>
+  <div class='column1'>
+  <p><a href='https://www.theintrinsicperspective.com/' class='link' target='_blank'>The Intrinsic Perspective <img src='favicon/perspective.png' class='favicon'></a></p>
+  <p>Highly interesting discourse on interdisciplinary ideas</p>
+  <br><p><a href='https://sceneswithsimon.com/' class='link' target='_blank'>Scenes with Simon <img src='favicon/simon.jpeg' class='favicon'></a></p>
+  <p>Really accessible format: short, light articles with a few bonus interesting links at the end</p>
+  </div>
+  <div class='column2'>
+  <p><a href='https://theeggandtherock.com/' class='link' target='_blank'>The Egg and the Rock <img src='favicon/egg_and_rock.jpeg' class='favicon'></a></p>
+  <p>Redefining our universe - an ambitious premise to be sure, but definitely interesting</p>
+  <br><p><a href='https://www.henrikkarlsson.xyz/' class='link' target='_blank'>Escaping Flatland <img src='favicon/henrik.jpeg' class='favicon'></a></p>
+  <p>Wide ranging essays and ideas, sourced from literature modern and historical</p>
+  </div>
+  </div>
+  
+  <div class='row_alt'>
+  <br><p><a href='https://www.theintrinsicperspective.com/' class='link' target='_blank'>The Intrinsic Perspective <img src='favicon/perspective.png' class='favicon'></a></p>
+  <p>Highly interesting discourse on interdisciplinary ideas</p>
+  <br><p><a href='https://sceneswithsimon.com/' class='link' target='_blank'>Scenes with Simon <img src='favicon/simon.jpeg' class='favicon'></a></p>
+  <p>Really accessible format: short, light articles with a few bonus interesting links at the end</p>
+  <br><p><a href='https://theeggandtherock.com/' class='link' target='_blank'>The Egg and the Rock <img src='favicon/egg_and_rock.jpeg' class='favicon'></a></p>
+  <p>Redefining our universe - an ambitious premise to be sure, but definitely interesting</p>
+  <br><p><a href='https://www.henrikkarlsson.xyz/' class='link' target='_blank'>Escaping Flatland <img src='favicon/henrik.jpeg' class='favicon'></a></p>
+  <p>Wide ranging essays and ideas, sourced from literature modern and historical</p>
+  </div>
+  
+  <br><br>
+  <h2>Linkstacks</h2>
+  <div class='row_middle'>
+  <div class='column1'>
+  <p><a href='https://kottke.org/' class='link' target='_blank'>Kottke <img src='favicon/kottke.png' class='favicon'></a></p>
+  <p>One of the web's oldest blogs, Kottke is a curated collection of key people, inventions, and ideas across art, science, technology, and culture, filtered through Jason Kottke's unique perspective</p>
+  <br><p><a href='https://www.recomendo.com/posts' class='link' target='_blank'>Recommendo <img src='favicon/recommendo.png' class='favicon'></a></p>
+  <p>Six weekly recommendations, curated and crafted by Kevin Kelly, Mark Fraeunfelder and Claudia Dawson</p>
+  </div>
+  <div class='column2'>
+  <p><a href='https://www.densediscovery.com/archive/' class='link' target='_blank'>Dense Discovery <img src='favicon/discovery.png' class='favicon'></a></p>
+  <p>What’s good on the internet, thoughtfully curated; including useful apps, tools & websites, interesting books & accessories and inspiring art & design projects</p>
+  <br><p><a href='https://www.swiss-miss.com/' class='link' target='_blank'>Swiss Miss <img src='favicon/swiss.png' class='favicon'></a></p>
+  <p>A nifty design journal curated and written by Tina Roth Eisenberg</p>
+  </div>
+  </div>
+  
+  <div class='row_alt'>
+  <p><a href='https://kottke.org/' class='link' target='_blank'>Kottke <img src='favicon/kottke.png' class='favicon'></a></p>
+  <p>One of the web's oldest blogs, Kottke is a curated collection of key people, inventions, and ideas across art, science, technology, and culture, filtered through Jason Kottke's unique perspective</p>
+  <br><p><a href='https://www.recomendo.com/posts' class='link' target='_blank'>Recommendo <img src='favicon/recommendo.png' class='favicon'></a></p>
+  <p>Six weekly recommendations, curated and crafted by Kevin Kelly, Mark Fraeunfelder and Claudia Dawson</p>
+  <br><p><a href='https://www.densediscovery.com/archive/' class='link' target='_blank'>Dense Discovery <img src='favicon/discovery.png' class='favicon'></a></p>
+  <p>What’s good on the internet, thoughtfully curated; including useful apps, tools & websites, interesting books & accessories and inspiring art & design projects</p>
+  <br><p><a href='https://www.swiss-miss.com/' class='link' target='_blank'>Swiss Miss <img src='favicon/swiss.png' class='favicon'></a></p>
+  <p>A nifty design journal curated and written by Tina Roth Eisenberg</p>
+  </div>
+  
+  <br><br>
+  <h2>Web Comics</h2>
+  <div class='row_middle'>
+  <div class='column1'>
+  <p><a href='https://www.thefarside.com/' class='link' target='_blank'>The Far Side <img src='favicon/farside.png' class='favicon'></a></p>
+  <p>Whatever your brand of humour &#8212; dark, overt, subtle, stupid, smart or otherwise &#8212; The Far Side always delivers</p>
+  <br><p><a href='https://theawkwardyeti.com/chapter/heart-and-brain/' class='link' target='_blank'>Heart and Brain <img src='favicon/heart.png' class='favicon'></a></p>
+  <p>The highly relatable and always entertaining exploits of our bodys organs</p>
+  </div>
+  <div class='column2'>
+  <p><a href='https://xkcd.com/' class='link' target='_blank'>xkcd <img src='favicon/xkcd.png' class='favicon'></a></p>
+  <p>In its own words: 'A webcomic of romance, sarcasm, math, and language'. Smart humour for smart people.</p>
+  </div>
+  </div>
+  
+  <div class='row_alt'>
+  <p><a href='https://www.thefarside.com/' class='link' target='_blank'>The Far Side <img src='favicon/farside.png' class='favicon'></a></p>
+  <p>Whatever your brand of humour &#8212; dark, overt, subtle, stupid, smart or otherwise &#8212; The Far Side always delivers</p>
+  <br><p><a href='https://theawkwardyeti.com/chapter/heart-and-brain/' class='link' target='_blank'>Heart and Brain <img src='favicon/heart.png' class='favicon'></a></p>
+  <p>The highly relatable and always entertaining exploits of our bodys organs</p>
+  <br><p><a href='https://xkcd.com/' class='link' target='_blank'>xkcd <img src='favicon/xkcd.png' class='favicon'></a></p>
+  <p>In its own words: 'A webcomic of romance, sarcasm, math, and language'. Smart humour for smart people.</p>
+  </div>
+  
+  <br><br>
+  <h2>Infographics</h2>
+  <div class='row_middle'>
+  <div class='column1'>
+  <p><a href='https://informationisbeautiful.net/' class='link' target='_blank'>Information is Beautiful <img src='favicon/information.png' class='favicon'></a></p>
+  <p>David McCandless is both the pioneer and master of all things data visualisation; here you will find not data and graphs, but stories and art.</p>
+  <br><p><a href='https://pudding.cool/' class='link' target='_blank'>The Pudding <img src='favicon/pudding.png' class='favicon'></a></p>
+  <p>The Pudding is visual storytelling at its finest; a combination of explanation written and visual, all presented in an engaging scrollytelling format</p>
+  </div>
+  <div class='column2'>
+  <p><a href='https://www.visualcapitalist.com/' class='link' target='_blank'>Visual Capitalist <img src='favicon/capitalist.png' class='favicon'></a></p>
+  <p>All things business, technology and otherwise, presented in visually striking infographics.</p>
+  <br><p><a href='https://flowingdata.com/category/visualization/statistical-visualization/' class='link' target='_blank'>Flowing Data <img src='favicon/flowing.png' class='favicon'></a></p>
+  <p>Statistical Visualization explorinh patterns, distributions, and anomalies.</p>
+  </div>
+  </div>
+  
+  <div class='row_alt'>
+  <p><a href='https://informationisbeautiful.net/' class='link' target='_blank'>Information is Beautiful <img src='favicon/information.png' class='favicon'></a></p>
+  <p>David McCandless is both the pioneer and master of all things data visualisation; here you will find not data and graphs, but stories and art.</p>
+  <br><p><a href='https://www.visualcapitalist.com/' class='link' target='_blank'>Visual Capitalist <img src='favicon/capitalist.png' class='favicon'></a></p>
+  <p>All things business, technology and otherwise, presented in visually striking infographics.</p>
+  <br>
+  <p><a href='https://pudding.cool/' class='link' target='_blank'>The Pudding <img src='favicon/pudding.png' class='favicon'></a></p>
+  <p>The Pudding is visual storytelling at its finest; a combination of explanation written and visual, all presented in an engaging scrollytelling format</p>
+  <br><p><a href='https://flowingdata.com/category/visualization/statistical-visualization/' class='link' target='_blank'>Flowing Data <img src='favicon/flowing.png' class='favicon'></a></p>
+  <p>Statistical Visualization explorinh patterns, distributions, and anomalies.</p>
+  </div>
+  
+  <br><br>
+  
+  
+  
+  <br>  <p><a href='' class='link' target='_blank'></a></p>
+  <p></p>
+  
+  <br>
+  <br>
+</div>  
+  <div class="column side">
+  </div>
+</div>
+<script src="script.js"></script>
+
+</body>
+</html>

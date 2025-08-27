@@ -217,14 +217,12 @@ a.footnote {
 .link {
   color: black;
   background-color: transparent;
-  text-decoration: underline;
-  text-decoration-color: #004d99;
+
 }
 
 .link:hover {
   color: #004d99;
   background-color: transparent;
-  text-decoration: underline;
 }
 
 .small_link_side {

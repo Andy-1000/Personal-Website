@@ -595,6 +595,81 @@
 
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+  /* ---- add to calendar ---- */
+  .cal-links {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.7rem;
+  }
+
+  .cal-btn {
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--blue);
+    background: transparent;
+    border: 2px solid rgba(0, 77, 153, 0.35);
+    border-radius: 999px;
+    padding: 0.5rem 0.9rem 0.45rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+  }
+
+  .cal-btn:hover { border-color: var(--blue); background: rgba(0, 77, 153, 0.07); transform: translateY(-1px); }
+
+  .finale .cal-btn { color: var(--sky); border-color: rgba(204, 230, 255, 0.4); }
+  .finale .cal-btn:hover { border-color: var(--sky); background: rgba(255, 255, 255, 0.1); }
+
+  /* ---- confetti layer (tilts with the device) ---- */
+  .confetti-layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+    transition: transform 0.25s ease-out;
+    will-change: transform;
+  }
+
+  /* ---- pinata ---- */
+  .hero-inner .hero-num, .finale-inner .hero-num {
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ---- viz view toggle ---- */
+  .view-toggle {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    margin: 0 0 0.45rem;
+    background: rgba(0, 51, 102, 0.08);
+    border-radius: 999px;
+  }
+
+  .vt-btn {
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--navy);
+    background: transparent;
+    border: none;
+    border-radius: 999px;
+    padding: 0.32rem 0.8rem 0.28rem;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+  }
+
+  .vt-btn.on { background: #fff; color: var(--blue); box-shadow: 0 1px 3px rgba(0, 35, 70, 0.18); }
+
   /* ================= CLICK CONFETTI ================= */
   .pop-layer {
     position: fixed;
@@ -724,13 +799,15 @@
   @media (max-height: 700px) {
     .hero { padding: 1.6rem 1.1rem 3.2rem; }
     .invite-lead { font-size: 1.02rem; }
-    .hero-inner .hero-num, .finale-inner .hero-num { font-size: clamp(4.2rem, 21vh, 6.4rem); margin: 0.05rem 0 0; }
+    .hero-inner .hero-num, .finale-inner .hero-num { font-size: clamp(3.8rem, 19vh, 5.7rem); margin: 0 0 0; }
     .countdown { margin: 0.6rem 0 0.7rem; }
     .cd-cell { padding: 0.32rem 0.18rem 0.3rem; }
     .cd-lab { font-size: 0.56rem; }
     .details { gap: 0.8rem; }
     .detail-value { font-size: 1rem; }
-    .rsvp-btn { margin-top: 1.05rem; padding: 0.72rem 1rem 0.65rem; padding-left: 1.22rem; }
+    .rsvp-btn { margin-top: 0.9rem; padding: 0.66rem 1rem 0.6rem; padding-left: 1.22rem; }
+    .cal-links { margin-top: 0.45rem; gap: 0.4rem; }
+    .cal-btn { font-size: 0.64rem; padding: 0.38rem 0.66rem 0.34rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -765,6 +842,11 @@
     </div>
 
     <a class="rsvp-btn" id="rsvpBtn1" href="#">RSVP</a>
+
+    <div class="cal-links">
+      <a class="cal-btn cal-ics" href="#" download="andys-21st.ics">Add to calendar</a>
+      <a class="cal-btn cal-gcal" href="#" target="_blank" rel="noopener">Google</a>
+    </div>
   </div>
 
   <div class="scroll-cue">
@@ -788,6 +870,10 @@
         <div class="viz-head">
           <h3><span class="count" id="vizCount">0</span> days &amp; counting</h3>
           <p class="viz-sub" id="vizSub">every dot is one day &mdash; keep scrolling</p>
+        </div>
+        <div class="view-toggle" role="group" aria-label="Chart view">
+          <button class="vt-btn on" type="button" data-view="buckets">Buckets</button>
+          <button class="vt-btn" type="button" data-view="calendar">Calendar</button>
         </div>
         <div class="legend" id="legend" role="group" aria-label="Day buckets"></div>
         <canvas id="dayCanvas" aria-label="Dot chart: one dot for every day Andy has lived, coloured by how the day was spent"></canvas>
@@ -967,6 +1053,11 @@
     </div>
 
     <a class="rsvp-btn" id="rsvpBtn2" href="#">RSVP</a>
+
+    <div class="cal-links">
+      <a class="cal-btn cal-ics" href="#" download="andys-21st.ics">Add to calendar</a>
+      <a class="cal-btn cal-gcal" href="#" target="_blank" rel="noopener">Google</a>
+    </div>
   </div>
 
 </section>
@@ -1066,6 +1157,25 @@
     }
   })();
 
+  // which year of life each day belongs to, and its offset inside that year
+  var dayYear = new Uint8Array(TOTAL_DAYS);
+  var dayYearIdx = new Uint16Array(TOTAL_DAYS);
+  var YEARS = 0;
+  (function indexYears() {
+    var d = new Date(BIRTH), y = 0, k = 0;
+    var next = new Date(BIRTH.getFullYear() + 1, BIRTH.getMonth(), BIRTH.getDate());
+    for (var i = 0; i < TOTAL_DAYS; i++) {
+      if (d >= next) {
+        y++; k = 0;
+        next = new Date(BIRTH.getFullYear() + y + 1, BIRTH.getMonth(), BIRTH.getDate());
+      }
+      dayYear[i] = y;
+      dayYearIdx[i] = k++;
+      d.setDate(d.getDate() + 1);
+    }
+    YEARS = y + 1;
+  })();
+
   function fmt(n) { return n.toLocaleString("en-AU"); }
 
   document.getElementById("daysLived").textContent = fmt(TOTAL_DAYS);
@@ -1113,6 +1223,47 @@
   renderCountdown();
   setInterval(renderCountdown, 1000);
 
+  /* ================= ADD TO CALENDAR ================= */
+
+  // Brisbane is UTC+10 all year (no daylight saving), so 4:30pm = 06:30Z
+  var CAL = {
+    title: "Andy's 21st",
+    location: "30 Essex Street, Mitchelton QLD",
+    details: "Andy's 21st birthday. 4:30pm, Sunday 11 October 2026.",
+    startZ: "20261011T063000Z",
+    endZ: "20261011T093000Z"
+  };
+
+  (function calendarLinks() {
+    var ics = [
+      "BEGIN:VCALENDAR",
+      "VERSION:2.0",
+      "PRODID:-//andysansness.com//21st//EN",
+      "CALSCALE:GREGORIAN",
+      "METHOD:PUBLISH",
+      "BEGIN:VEVENT",
+      "UID:andy-21st-20261011@andysansness.com",
+      "DTSTAMP:" + CAL.startZ,
+      "DTSTART:" + CAL.startZ,
+      "DTEND:" + CAL.endZ,
+      "SUMMARY:" + CAL.title,
+      "LOCATION:" + CAL.location,
+      "DESCRIPTION:" + CAL.details,
+      "END:VEVENT",
+      "END:VCALENDAR"
+    ].join("\r\n");
+
+    var icsHref = "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
+    var gcal = "https://calendar.google.com/calendar/render?action=TEMPLATE" +
+      "&text=" + encodeURIComponent(CAL.title) +
+      "&dates=" + CAL.startZ + "/" + CAL.endZ +
+      "&details=" + encodeURIComponent(CAL.details) +
+      "&location=" + encodeURIComponent(CAL.location);
+
+    document.querySelectorAll(".cal-ics").forEach(function (a) { a.href = icsHref; });
+    document.querySelectorAll(".cal-gcal").forEach(function (a) { a.href = gcal; });
+  })();
+
   /* ================= RSVP BUTTONS ================= */
 
   var toast = document.getElementById("toast");
@@ -1141,12 +1292,20 @@
   /* ================= CONFETTI ================= */
 
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var tiltX = 0;                 // -1 .. 1, from device orientation
+  var confettiLayers = [];
   if (!reduceMotion) {
     var colors = ["#004d99", "#e8a921", "#ff6f59", "#2a9d8f", "#cce6ff", "#7b5ea7"];
     [
       { host: document.querySelector(".hero"), n: 58, opacity: 1 },
       { host: document.querySelector(".finale"), n: 32, opacity: 0.5 }
     ].forEach(function (spec, hi) {
+      var layer = document.createElement("div");
+      layer.className = "confetti-layer";
+      layer.setAttribute("aria-hidden", "true");
+      spec.host.appendChild(layer);
+      confettiLayers.push(layer);
+      spec.host = layer;
       for (var c = 0; c < spec.n; c++) {
         var s = document.createElement("span");
         s.className = "confetti";
@@ -1163,6 +1322,51 @@
         spec.host.appendChild(s);
       }
     });
+  }
+
+  /* ---- tilt: confetti drifts with the device ---- */
+
+  if (!reduceMotion) {
+    var tiltPending = false;
+
+    function applyTilt() {
+      tiltPending = false;
+      var shift = tiltX * 22;             // px
+      var lean = tiltX * 4;               // deg
+      for (var i = 0; i < confettiLayers.length; i++) {
+        confettiLayers[i].style.transform =
+          "translateX(" + shift.toFixed(1) + "px) rotate(" + lean.toFixed(2) + "deg)";
+      }
+    }
+
+    function onTilt(e) {
+      if (e.gamma === null || e.gamma === undefined) return;
+      // gamma is left/right tilt in degrees; clamp to a gentle range
+      var g = Math.max(-45, Math.min(45, e.gamma));
+      tiltX = g / 45;
+      if (!tiltPending) {
+        tiltPending = true;
+        requestAnimationFrame(applyTilt);
+      }
+    }
+
+    if (window.DeviceOrientationEvent) {
+      if (typeof DeviceOrientationEvent.requestPermission === "function") {
+        // iOS 13+: needs a user gesture. Ask once, on the first tap, and
+        // never nag again whichever way they answer.
+        var askedTilt = false;
+        document.addEventListener("click", function askTilt() {
+          if (askedTilt) return;
+          askedTilt = true;
+          document.removeEventListener("click", askTilt);
+          DeviceOrientationEvent.requestPermission().then(function (state) {
+            if (state === "granted") window.addEventListener("deviceorientation", onTilt);
+          })["catch"](function () { /* declined - no tilt, no harm */ });
+        });
+      } else {
+        window.addEventListener("deviceorientation", onTilt);
+      }
+    }
   }
 
   /* ================= REVEAL ON SCROLL ================= */
@@ -1216,12 +1420,23 @@
     }
   }
 
-  var pos = null;
+  var posB = null;              // bucket arrangement
+  var posC = null;              // calendar arrangement
+  var view = "buckets";
+  var viewT = 0;                // 0 = buckets, 1 = calendar
+  var viewFrom = 0, viewStart = 0;
+  var VIEW_MS = 750;
   var pitch = 4;
   var headerH = 20;
   var layoutW = 0, layoutH = 0;
   var clusterTops = [];
+  var calTiles = [];            // {x, y, label} per year of life
+  var TCOLS = 19;               // dots across one year tile
+  var calLabelH = 13;
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  function curX(i) { return posB[i * 2] + (posC[i * 2] - posB[i * 2]) * viewT; }
+  function curY(i) { return posB[i * 2 + 1] + (posC[i * 2 + 1] - posB[i * 2 + 1]) * viewT; }
 
   function layout() {
     var stage = canvas.parentElement;
@@ -1230,18 +1445,27 @@
       - document.querySelector(".viz-head").offsetHeight
       - legend.offsetHeight - vizNote.offsetHeight - 46);
 
-    var p, cols, H;
-    for (p = 7; p >= 2.4; p -= 0.2) {
+    // find the largest dot pitch at which BOTH arrangements fit
+    var p, cols, H, tileW, tileH, gap, tcols, trows, calH, calW;
+    var tileRows = Math.ceil(367 / TCOLS);
+    for (p = 7; p >= 1.6; p -= 0.2) {
       cols = Math.floor(availW / p);
       H = 0;
       for (var i = 0; i < BUCKETS.length; i++) {
         H += headerH + Math.ceil(counts[i] / cols) * p + 6;
       }
-      if (H <= availH) break;
+      tileW = TCOLS * p;
+      tileH = tileRows * p;
+      gap = Math.max(6, p * 1.7);
+      tcols = Math.max(1, Math.floor((availW + gap) / (tileW + gap)));
+      trows = Math.ceil(YEARS / tcols);
+      calH = trows * (calLabelH + tileH + gap);
+      if (H <= availH && calH <= availH) break;
     }
     pitch = p;
-    layoutW = cols * p;
-    layoutH = H;
+    calW = tcols * (tileW + gap) - gap;
+    layoutW = Math.max(cols * p, calW);
+    layoutH = Math.max(H, calH);
 
     canvas.width = Math.round(layoutW * dpr);
     canvas.height = Math.round(layoutH * dpr);
@@ -1256,14 +1480,33 @@
       y += headerH + rows * p + 6;
     }
 
-    pos = new Float32Array(TOTAL_DAYS * 2);
+    posB = new Float32Array(TOTAL_DAYS * 2);
     var idxInBucket = [0, 0, 0, 0, 0, 0];
     for (var d = 0; d < TOTAL_DAYS; d++) {
       var b = dayBucket[d];
       var j = idxInBucket[b]++;
       var cl = clusterTops[b];
-      pos[d * 2] = (j % cl.cols) * p;
-      pos[d * 2 + 1] = cl.top + Math.floor(j / cl.cols) * p;
+      posB[d * 2] = (j % cl.cols) * p;
+      posB[d * 2 + 1] = cl.top + Math.floor(j / cl.cols) * p;
+    }
+
+    // calendar arrangement: one tile per year of life, centred
+    var originX = (layoutW - calW) / 2;
+    calTiles = [];
+    for (var yr = 0; yr < YEARS; yr++) {
+      calTiles.push({
+        x: originX + (yr % tcols) * (tileW + gap),
+        y: Math.floor(yr / tcols) * (calLabelH + tileH + gap),
+        label: String(yr)
+      });
+    }
+
+    posC = new Float32Array(TOTAL_DAYS * 2);
+    for (var d2 = 0; d2 < TOTAL_DAYS; d2++) {
+      var t = calTiles[dayYear[d2]];
+      var k = dayYearIdx[d2];
+      posC[d2 * 2] = t.x + (k % TCOLS) * p;
+      posC[d2 * 2 + 1] = t.y + calLabelH + Math.floor(k / TCOLS) * p;
     }
 
     needsDraw = true;
@@ -1295,17 +1538,26 @@
     ctx.font = '700 11px Montserrat, sans-serif';
     ctx.textBaseline = "alphabetic";
 
-    for (var b = 0; b < BUCKETS.length; b++) {
-      var dim = (selected >= 0 && selected !== b);
-      ctx.globalAlpha = dim ? 0.35 : 1;
+    if (viewT < 1) {
+      for (var b = 0; b < BUCKETS.length; b++) {
+        var dim = (selected >= 0 && selected !== b);
+        ctx.globalAlpha = (dim ? 0.35 : 1) * (1 - viewT);
+        ctx.fillStyle = "#003366";
+        ctx.fillText(BUCKETS[b].label.toUpperCase(), 0, clusterTops[b].top - 6);
+      }
+    }
+    if (viewT > 0) {
+      ctx.globalAlpha = viewT;
       ctx.fillStyle = "#003366";
-      ctx.fillText(BUCKETS[b].label.toUpperCase(), 0, clusterTops[b].top - 6);
+      for (var ti = 0; ti < calTiles.length; ti++) {
+        ctx.fillText("AGE " + calTiles[ti].label, calTiles[ti].x, calTiles[ti].y + calLabelH - 4);
+      }
     }
 
     for (var i = 0; i < N; i++) {
       var bk = dayBucket[i];
       liveCounts[bk]++;
-      var x = pos[i * 2], y = pos[i * 2 + 1];
+      var x = curX(i), y = curY(i);
       var alpha = (selected >= 0 && selected !== bk) ? 0.13 : 1;
 
       if (!reduceMotion && i > N - FLY && N < TOTAL_DAYS) {
@@ -1343,12 +1595,12 @@
   };
 
   canvas.addEventListener("click", function (e) {
-    if (!pos) return;
+    if (!posB) return;
     var r = canvas.getBoundingClientRect();
     var mx = e.clientX - r.left, my = e.clientY - r.top;
     var best = -1, bestD = 1e9;
     for (var i = 0; i < shown; i++) {
-      var dx = pos[i * 2] - mx, dy = pos[i * 2 + 1] - my;
+      var dx = curX(i) - mx, dy = curY(i) - my;
       var d2 = dx * dx + dy * dy;
       if (d2 < bestD) { bestD = d2; best = i; }
     }
@@ -1504,7 +1756,7 @@
       pops.push({
         el: el,
         x: x, y: y,
-        vx: Math.cos(angle) * speed,
+        vx: Math.cos(angle) * speed + tiltX * 2.2,
         vy: Math.sin(angle) * speed - 3.4,   // bias upward
         spin: Math.random() * 360,
         dSpin: (Math.random() - 0.5) * 26,
@@ -1524,6 +1776,62 @@
     if (!e.clientX && !e.clientY) return;
     burst(e.clientX, e.clientY);
   });
+
+  /* ================= PINATA: 21 taps on the 21st ================= */
+
+  (function pinata() {
+    var nums = document.querySelectorAll(".hero-inner .hero-num, .finale-inner .hero-num");
+    var hits = 0;
+    var GOAL = 21;
+
+    function swing(el, k) {
+      if (reduceMotion || !el.animate) return;
+      el.animate([
+        { transform: "scale(1) rotate(0deg) translateY(0)" },
+        { transform: "scale(" + (1 + 0.05 * k) + ") rotate(" + (-3.2 * k) + "deg) translateY(" + (-5 * k) + "px)" },
+        { transform: "scale(" + (1 - 0.035 * k) + ") rotate(" + (2.6 * k) + "deg) translateY(" + (3.4 * k) + "px)" },
+        { transform: "scale(" + (1 + 0.02 * k) + ") rotate(" + (-1.2 * k) + "deg) translateY(0)" },
+        { transform: "scale(1) rotate(0deg) translateY(0)" }
+      ], { duration: 380 + 90 * k, easing: "cubic-bezier(.28,.84,.42,1)" });
+    }
+
+    function splitOpen(el) {
+      var r = el.getBoundingClientRect();
+      // confetti cannon from right across the numeral
+      for (var i = 0; i < 7; i++) {
+        (function (n) {
+          setTimeout(function () {
+            burst(r.left + r.width * (0.15 + 0.12 * n), r.top + r.height * (0.35 + (n % 2) * 0.3));
+          }, n * 55);
+        })(i);
+      }
+      if (!reduceMotion && el.animate) {
+        el.animate([
+          { transform: "scale(1)" },
+          { transform: "scale(1.35) rotate(-6deg)", offset: 0.35 },
+          { transform: "scale(0.9) rotate(4deg)", offset: 0.6 },
+          { transform: "scale(1)" }
+        ], { duration: 900, easing: "cubic-bezier(.2,.9,.3,1)" });
+      }
+      showToast("You cracked it open. See you on the 11th!");
+    }
+
+    nums.forEach(function (el) {
+      el.setAttribute("role", "button");
+      el.setAttribute("tabindex", "0");
+      el.setAttribute("aria-label", "Andy's 21st");
+      el.addEventListener("click", function () {
+        hits++;
+        if (hits >= GOAL) {
+          hits = 0;
+          splitOpen(el);
+        } else {
+          // swings harder the closer it gets to bursting
+          swing(el, 0.35 + (hits / GOAL) * 1.75);
+        }
+      });
+    });
+  })();
 
   /* ================= TAP-TO-ZOOM LIGHTBOX ================= */
 
@@ -1616,6 +1924,14 @@
       layout();
     }
 
+    if (viewT !== viewTarget()) {
+      var el = (performance.now() - viewStart) / VIEW_MS;
+      var e2 = el >= 1 ? 1 : 1 - Math.pow(1 - el, 3);
+      viewT = viewFrom + (viewTarget() - viewFrom) * e2;
+      if (el >= 1) viewT = viewTarget();
+      needsDraw = true;
+    }
+
     var pr = pourProgress();
     if (pr !== lastProgress) {
       progress = pr;
@@ -1624,7 +1940,7 @@
     }
 
     var busy = needsDraw;
-    if (needsDraw && pos) {
+    if (needsDraw && posB) {
       needsDraw = false;
       draw();
     }
@@ -1653,6 +1969,31 @@
       requestAnimationFrame(frame);
     }
   }
+
+  function viewTarget() { return view === "calendar" ? 1 : 0; }
+
+  document.querySelectorAll(".vt-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var want = btn.getAttribute("data-view");
+      if (want === view) return;
+      view = want;
+      viewFrom = viewT;
+      viewStart = performance.now();
+      document.querySelectorAll(".vt-btn").forEach(function (b2) {
+        b2.classList.toggle("on", b2.getAttribute("data-view") === view);
+      });
+      vizNote.innerHTML = view === "calendar"
+        ? "each block is one year of life &mdash; 21 of them, day by day"
+        : "tap a bucket &mdash; or any dot &mdash; to inspect a day";
+      selected = -1;
+      updateSelection();
+      if (view === "calendar") {
+        vizNote.innerHTML = "each block is one year of life &mdash; 21 of them, day by day";
+      }
+      needsDraw = true;
+      wake();
+    });
+  });
 
   window.addEventListener("scroll", wake, { passive: true });
   legend.addEventListener("click", wake);

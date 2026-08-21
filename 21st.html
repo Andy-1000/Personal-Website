@@ -641,6 +641,14 @@
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
+    /* `scale` is its own property, so the swing animation (which drives
+       `transform`) composes on top instead of fighting it */
+    transition: scale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: 50% 55%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-inner .hero-num, .finale-inner .hero-num { transition: none; }
   }
 
   /* ---- viz view toggle ---- */
@@ -1704,6 +1712,7 @@
   document.body.appendChild(popLayer);
 
   var pops = [];
+  var popsLive = 0;
   var popRunning = false;
   var POP_COLOURS = ["#004d99", "#e8a921", "#ff6f59", "#2a9d8f", "#cce6ff", "#7b5ea7", "#f7d98b"];
 
@@ -1722,6 +1731,7 @@
       if (fade <= 0) {
         popLayer.removeChild(q.el);
         q.el = null;
+        popsLive--;
         continue;
       }
       q.el.style.opacity = fade;
@@ -1733,41 +1743,90 @@
       requestAnimationFrame(popFrame);
     } else {
       pops = [];
+      popsLive = 0;
       popRunning = false;
     }
   }
 
-  function burst(x, y) {
+  // o: { n, speed:[min,range], life:[min,range], size:[min,range],
+  //      bias (upward kick), arc:[startRad, sweepRad], cap }
+  function burst(x, y, o) {
     if (reduceMotion) return;
-    if (pops.length > 220) return;   // keep a lid on it
-    var n = 16 + Math.floor(Math.random() * 6);
+    o = o || {};
+    var cap = o.cap || 240;
+    if (popsLive > cap) return;                 // keep a lid on it
+    var n = o.n || (16 + Math.floor(Math.random() * 6));
+    var sp = o.speed || [3.2, 5.2];
+    var lf = o.life || [52, 26];
+    var sz = o.size || [5, 7];
+    var bias = o.bias === undefined ? -3.4 : o.bias;
     for (var i = 0; i < n; i++) {
       var el = document.createElement("span");
       el.className = "pop";
-      var size = 5 + Math.random() * 7;
+      var size = sz[0] + Math.random() * sz[1];
       el.style.width = size + "px";
       el.style.height = size * (0.45 + Math.random() * 0.75) + "px";
       el.style.background = POP_COLOURS[(Math.random() * POP_COLOURS.length) | 0];
       if (i % 3 === 0) el.style.borderRadius = "50%";
       popLayer.appendChild(el);
 
-      var angle = Math.PI * 2 * (i / n) + Math.random() * 0.5;
-      var speed = 3.2 + Math.random() * 5.2;
+      var angle = o.arc
+        ? o.arc[0] + o.arc[1] * (i / n) + Math.random() * 0.12
+        : Math.PI * 2 * (i / n) + Math.random() * 0.5;
+      var speed = sp[0] + Math.random() * sp[1];
       pops.push({
         el: el,
         x: x, y: y,
         vx: Math.cos(angle) * speed + tiltX * 2.2,
-        vy: Math.sin(angle) * speed - 3.4,   // bias upward
+        vy: Math.sin(angle) * speed + bias,
         spin: Math.random() * 360,
         dSpin: (Math.random() - 0.5) * 26,
         life: 0,
-        max: 52 + Math.random() * 26
+        max: lf[0] + Math.random() * lf[1]
       });
+      popsLive++;
     }
     if (!popRunning) {
       popRunning = true;
       requestAnimationFrame(popFrame);
     }
+  }
+
+  // the whole screen goes up
+  function megaBurst(cx, cy) {
+    if (reduceMotion) return;
+    var W = window.innerWidth, H = window.innerHeight;
+    var BIG = { cap: 900, size: [6, 9], life: [95, 65] };
+
+    function fire(x, y, extra) {
+      var o = { cap: BIG.cap, size: BIG.size, life: BIG.life };
+      for (var k in extra) o[k] = extra[k];
+      burst(x, y, o);
+    }
+
+    // 1. the numeral itself detonates, full circle and fast
+    fire(cx, cy, { n: 120, speed: [10, 21], bias: -5 });
+
+    // 2. two side cannons
+    setTimeout(function () {
+      fire(W * 0.14, H * 0.66, { n: 50, speed: [9, 17], bias: -7 });
+      fire(W * 0.86, H * 0.66, { n: 50, speed: [9, 17], bias: -7 });
+    }, 130);
+
+    // 3. a downpour right across the top
+    setTimeout(function () {
+      for (var i = 0; i < 9; i++) {
+        fire(W * (0.05 + i * 0.1125), -12, {
+          n: 10, speed: [2, 5], bias: 1.6, life: [115, 70], arc: [0, Math.PI]
+        });
+      }
+    }, 270);
+
+    // 4. bottom corners firing inward
+    setTimeout(function () {
+      fire(4, H - 4, { n: 45, speed: [12, 19], bias: -9, arc: [-1.75, 1.6] });
+      fire(W - 4, H - 4, { n: 45, speed: [12, 19], bias: -9, arc: [-3.05, 1.6] });
+    }, 420);
   }
 
   // fires wherever you click or tap, anywhere on the page
@@ -1795,23 +1854,22 @@
       ], { duration: 380 + 90 * k, easing: "cubic-bezier(.28,.84,.42,1)" });
     }
 
+    function setSwell(k) {
+      for (var i = 0; i < nums.length; i++) nums[i].style.scale = k;
+    }
+
     function splitOpen(el) {
       var r = el.getBoundingClientRect();
-      // confetti cannon from right across the numeral
-      for (var i = 0; i < 7; i++) {
-        (function (n) {
-          setTimeout(function () {
-            burst(r.left + r.width * (0.15 + 0.12 * n), r.top + r.height * (0.35 + (n % 2) * 0.3));
-          }, n * 55);
-        })(i);
-      }
+      megaBurst(r.left + r.width / 2, r.top + r.height / 2);
+      setSwell("1");                        // deflate back to normal
       if (!reduceMotion && el.animate) {
         el.animate([
           { transform: "scale(1)" },
-          { transform: "scale(1.35) rotate(-6deg)", offset: 0.35 },
-          { transform: "scale(0.9) rotate(4deg)", offset: 0.6 },
+          { transform: "scale(1.5) rotate(-7deg)", offset: 0.22 },
+          { transform: "scale(0.82) rotate(5deg)", offset: 0.48 },
+          { transform: "scale(1.12) rotate(-2deg)", offset: 0.72 },
           { transform: "scale(1)" }
-        ], { duration: 900, easing: "cubic-bezier(.2,.9,.3,1)" });
+        ], { duration: 1000, easing: "cubic-bezier(.2,.9,.3,1)" });
       }
       showToast("You cracked it open. See you on the 11th!");
     }
@@ -1826,8 +1884,9 @@
           hits = 0;
           splitOpen(el);
         } else {
-          // swings harder the closer it gets to bursting
+          // swings harder and swells a little more with every hit
           swing(el, 0.35 + (hits / GOAL) * 1.75);
+          setSwell((1 + hits * 0.023).toFixed(3));
         }
       });
     });

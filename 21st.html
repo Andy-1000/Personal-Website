@@ -4,13 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Andy's 21st</title>
-<meta name="description" content="You're invited to Andy's 21st — 4:30pm, 11 October 2026, Mitchelton.">
-<meta name="robots" content="noindex">
-<meta property="og:title" content="Andy's 21st — You're Invited">
-<meta property="og:description" content="4:30pm, Sunday 11 October 2026 · 30 Essex Street, Mitchelton. Scroll to find out who Andy is, anyway.">
-<meta property="og:image" content="https://andysansness.com/portraits/web/today-beach.jpg">
-<meta property="og:url" content="https://andysansness.com/21st">
-<meta property="og:type" content="website">
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex, notranslate, nocache">
+<meta name="googlebot" content="noindex, nofollow, noimageindex, nosnippet, noarchive">
+<meta name="googlebot-news" content="noindex">
+<meta name="bingbot" content="noindex, nofollow, noarchive, nocache">
+<meta name="slurp" content="noindex, nofollow">
+<meta name="duckduckbot" content="noindex, nofollow">
+<!-- AI / dataset opt-out signals -->
+<meta name="robots" content="noai, noimageai">
+<meta name="ai" content="noai, noimageai">
+<meta name="AIdataminer" content="noai, noimageai">
+<meta name="CCBot" content="nofollow">
+<meta name="GPTBot" content="noindex, nofollow">
+<meta name="ClaudeBot" content="noindex, nofollow">
+<meta name="Google-Extended" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<!-- no og:/twitter: tags on purpose: they would hand the details and a photo
+     to every link-preview crawler the URL is ever pasted in front of -->
 <link rel="icon" type="image/x-icon" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -583,6 +593,24 @@
   }
 
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  /* ================= CLICK CONFETTI ================= */
+  .pop-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .pop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 9px;
+    height: 9px;
+    will-change: transform, opacity;
+  }
 
   /* ================= TAP-TO-ZOOM LIGHTBOX ================= */
   .shot img { cursor: zoom-in; }
@@ -1401,6 +1429,87 @@
       dockSegs[s].style.width = (c[s] / tot * 100) + "%";
     }
   }
+
+  /* ================= CLICK CONFETTI ================= */
+
+  var popLayer = document.createElement("div");
+  popLayer.className = "pop-layer";
+  popLayer.setAttribute("aria-hidden", "true");
+  document.body.appendChild(popLayer);
+
+  var pops = [];
+  var popRunning = false;
+  var POP_COLOURS = ["#004d99", "#e8a921", "#ff6f59", "#2a9d8f", "#cce6ff", "#7b5ea7", "#f7d98b"];
+
+  function popFrame() {
+    var alive = 0;
+    for (var i = 0; i < pops.length; i++) {
+      var q = pops[i];
+      if (!q.el) continue;
+      q.life += 1;
+      q.vy += 0.42;          // gravity
+      q.vx *= 0.985;         // drag
+      q.x += q.vx;
+      q.y += q.vy;
+      q.spin += q.dSpin;
+      var fade = 1 - q.life / q.max;
+      if (fade <= 0) {
+        popLayer.removeChild(q.el);
+        q.el = null;
+        continue;
+      }
+      q.el.style.opacity = fade;
+      q.el.style.transform =
+        "translate(" + q.x.toFixed(1) + "px," + q.y.toFixed(1) + "px) rotate(" + q.spin.toFixed(0) + "deg)";
+      alive++;
+    }
+    if (alive) {
+      requestAnimationFrame(popFrame);
+    } else {
+      pops = [];
+      popRunning = false;
+    }
+  }
+
+  function burst(x, y) {
+    if (reduceMotion) return;
+    if (pops.length > 220) return;   // keep a lid on it
+    var n = 16 + Math.floor(Math.random() * 6);
+    for (var i = 0; i < n; i++) {
+      var el = document.createElement("span");
+      el.className = "pop";
+      var size = 5 + Math.random() * 7;
+      el.style.width = size + "px";
+      el.style.height = size * (0.45 + Math.random() * 0.75) + "px";
+      el.style.background = POP_COLOURS[(Math.random() * POP_COLOURS.length) | 0];
+      if (i % 3 === 0) el.style.borderRadius = "50%";
+      popLayer.appendChild(el);
+
+      var angle = Math.PI * 2 * (i / n) + Math.random() * 0.5;
+      var speed = 3.2 + Math.random() * 5.2;
+      pops.push({
+        el: el,
+        x: x, y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 3.4,   // bias upward
+        spin: Math.random() * 360,
+        dSpin: (Math.random() - 0.5) * 26,
+        life: 0,
+        max: 52 + Math.random() * 26
+      });
+    }
+    if (!popRunning) {
+      popRunning = true;
+      requestAnimationFrame(popFrame);
+    }
+  }
+
+  // fires wherever you click or tap, anywhere on the page
+  document.addEventListener("click", function (e) {
+    // synthetic clicks (keyboard activation) have no coordinates
+    if (!e.clientX && !e.clientY) return;
+    burst(e.clientX, e.clientY);
+  });
 
   /* ================= TAP-TO-ZOOM LIGHTBOX ================= */
 

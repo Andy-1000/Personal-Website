@@ -45,6 +45,7 @@
     --b-primary: #ff6f59;
     --b-high: #2a9d8f;
     --b-uni: #7b5ea7;
+    --b-work: #d63384;
     --b-life: #9ec8f2;
 
     /* Bokor sets the headings; Montserrat carries everything meant to be read */
@@ -989,11 +990,18 @@
   var HIGH_START = new Date(2018, 0, 22), HIGH_END = new Date(2023, 10, 17);       // Years 7 - 12
   var UNI_START = new Date(2024, 1, 26);                                            // uni onwards
 
+  // Work: one day a week (Saturdays) through Years 11-12, then three days a
+  // week from the end of Year 12 onwards. A day can only live in one bucket,
+  // so post-school the week splits Sun church / Mon-Wed uni / Thu-Sat work.
+  var WORK_SAT_START = new Date(2022, 0, 24);   // start of Year 11
+  var WORK_3DAY_START = new Date(2023, 10, 18); // day after Year 12 finished
+
   var BUCKETS = [
     { key: "church", label: "Church", color: "#e8a921" },
     { key: "primary", label: "Primary school", color: "#ff6f59" },
     { key: "high", label: "High school", color: "#2a9d8f" },
     { key: "uni", label: "Uni", color: "#7b5ea7" },
+    { key: "work", label: "Work", color: "#d63384" },
     { key: "life", label: "Everything else", color: "#9ec8f2" }
   ];
 
@@ -1001,7 +1009,8 @@
     church: "{n} Sundays &mdash; nearly three whole years of church, back to back.",
     primary: "{n} days of primary school &mdash; Qld runs about 195 school days a year, Prep to Year 6.",
     high: "{n} days at The Gap SHS &mdash; six years of Years 7 to 12.",
-    uni: "{n} days on campus &mdash; roughly four uni days a week, 26 teaching weeks a year.",
+    uni: "{n} days on campus &mdash; Mondays to Wednesdays, 26 teaching weeks a year.",
+    work: "{n} days on the clock &mdash; Saturdays right through Years 11 and 12, then three days a week ever since.",
     life: "{n} days of everything else &mdash; weekends, holidays, being a baby, and hitting drums with sticks."
   };
 
@@ -1033,18 +1042,22 @@
   var TOTAL_DAYS = dayCount(BIRTH, today);
 
   var dayBucket = new Uint8Array(TOTAL_DAYS);
-  var counts = [0, 0, 0, 0, 0];
+  var counts = [0, 0, 0, 0, 0, 0];
   (function classify() {
     var d = new Date(BIRTH);
     for (var i = 0; i < TOTAL_DAYS; i++) {
-      var dow = d.getDay(), b = 4;
+      var dow = d.getDay(), b = 5;
       if (dow === 0) {
         b = 0;
+      } else if (dow === 6 && d >= WORK_SAT_START && d <= HIGH_END) {
+        b = 4;                                   // Year 11-12 Saturday job
+      } else if (d >= WORK_3DAY_START && dow >= 4 && dow <= 6) {
+        b = 4;                                   // three days a week: Thu, Fri, Sat
       } else if (dow >= 1 && dow <= 5 && d >= PRIMARY_START && d <= PRIMARY_END && inSchoolTerm(isoWeek(d))) {
         b = 1;
       } else if (dow >= 1 && dow <= 5 && d >= HIGH_START && d <= HIGH_END && inSchoolTerm(isoWeek(d))) {
         b = 2;
-      } else if (dow >= 1 && dow <= 4 && d >= UNI_START && inUniTerm(isoWeek(d))) {
+      } else if (dow >= 1 && dow <= 3 && d >= UNI_START && inUniTerm(isoWeek(d))) {
         b = 3;
       }
       dayBucket[i] = b;
@@ -1244,7 +1257,7 @@
     }
 
     pos = new Float32Array(TOTAL_DAYS * 2);
-    var idxInBucket = [0, 0, 0, 0, 0];
+    var idxInBucket = [0, 0, 0, 0, 0, 0];
     for (var d = 0; d < TOTAL_DAYS; d++) {
       var b = dayBucket[d];
       var j = idxInBucket[b]++;
@@ -1277,7 +1290,7 @@
     ctx.clearRect(0, 0, layoutW, layoutH);
 
     var dotSize = Math.max(1.4, pitch * 0.72);
-    var liveCounts = [0, 0, 0, 0, 0];
+    var liveCounts = [0, 0, 0, 0, 0, 0];
 
     ctx.font = '700 11px Montserrat, sans-serif';
     ctx.textBaseline = "alphabetic";
@@ -1325,6 +1338,7 @@
     primary: "at primary school",
     high: "at The Gap SHS",
     uni: "at uni",
+    work: "at work",
     life: "doing everything else"
   };
 
@@ -1365,7 +1379,7 @@
 
   var cum = [];
   (function buildCum() {
-    var running = [0, 0, 0, 0, 0];
+    var running = [0, 0, 0, 0, 0, 0];
     for (var i = 0; i < TOTAL_DAYS; i++) {
       running[dayBucket[i]]++;
       if (i % 64 === 0 || i === TOTAL_DAYS - 1) cum.push({ i: i, c: running.slice() });

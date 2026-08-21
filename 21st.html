@@ -678,6 +678,20 @@
 
   .vt-btn.on { background: #fff; color: var(--blue); box-shadow: 0 1px 3px rgba(0, 35, 70, 0.18); }
 
+  /* the big one renders on canvas - tens of thousands of pieces */
+  .mega-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 301;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .mega-canvas.on { opacity: 1; }
+
   /* ================= CLICK CONFETTI ================= */
   .pop-layer {
     position: fixed;
@@ -1792,41 +1806,170 @@
     }
   }
 
-  // the whole screen goes up
-  function megaBurst(cx, cy) {
-    if (reduceMotion) return;
-    var W = window.innerWidth, H = window.innerHeight;
-    var BIG = { cap: 900, size: [6, 9], life: [95, 65] };
+  /* ---- the big one: canvas, tens of thousands of pieces ---- */
 
-    function fire(x, y, extra) {
-      var o = { cap: BIG.cap, size: BIG.size, life: BIG.life };
-      for (var k in extra) o[k] = extra[k];
-      burst(x, y, o);
+  // DOM nodes top out in the hundreds; canvas fillRect scales to tens of
+  // thousands. Everything below lives in flat typed arrays so a frame is a
+  // single tight loop with no allocation and almost no state changes.
+  var MEGA_TARGET = (function () {
+    var n = window.innerWidth >= 700 ? 40000 : 20000;
+    var cores = navigator.hardwareConcurrency || 4;
+    if (cores <= 4) n = Math.round(n * 0.6);
+    return n;
+  })();
+
+  var MCAP = MEGA_TARGET + 2000;
+  var megaCv = null, mctx = null, mn = 0, megaRunning = false;
+  var mx, my, mvx, mvy, mw, mh, mph, mdph, mlife, mmax, mgv, mcol;
+  var MDRAG = 0.997;
+  var megaSlow = 0, megaCulls = 0;
+
+  function megaInit() {
+    if (megaCv) return;
+    megaCv = document.createElement("canvas");
+    megaCv.className = "mega-canvas";
+    megaCv.setAttribute("aria-hidden", "true");
+    document.body.appendChild(megaCv);
+    // deliberately 1x, not devicePixelRatio: fill cost scales with pixels and
+    // fast-moving confetti hides the softness
+    mctx = megaCv.getContext("2d");
+    mx = new Float32Array(MCAP); my = new Float32Array(MCAP);
+    mvx = new Float32Array(MCAP); mvy = new Float32Array(MCAP);
+    mw = new Float32Array(MCAP); mh = new Float32Array(MCAP);
+    mph = new Float32Array(MCAP); mdph = new Float32Array(MCAP);
+    mlife = new Float32Array(MCAP); mmax = new Float32Array(MCAP);
+    mgv = new Float32Array(MCAP); mcol = new Uint8Array(MCAP);
+    window.addEventListener("resize", function () {
+      if (megaCv && megaRunning) megaSize();
+    });
+  }
+
+  function megaSize() {
+    megaCv.width = window.innerWidth;
+    megaCv.height = window.innerHeight;
+  }
+
+  function megaSpawn(cx, cy, count, o) {
+    var C = POP_COLOURS.length;
+    for (var i = 0; i < count && mn < MCAP; i++) {
+      var k = mn++;
+      var ang = o.arc ? o.arc[0] + o.arc[1] * Math.random() : Math.random() * Math.PI * 2;
+      var sp = o.speed[0] + Math.random() * o.speed[1];
+      mx[k] = cx + (o.spreadX ? (Math.random() - 0.5) * o.spreadX : 0);
+      my[k] = cy + (o.spreadY ? (Math.random() - 0.5) * o.spreadY : 0);
+      mvx[k] = Math.cos(ang) * sp + tiltX * 1.5;
+      mvy[k] = Math.sin(ang) * sp + (o.bias || 0);
+      var sz = o.size[0] + Math.random() * o.size[1];
+      mw[k] = sz;
+      mh[k] = sz * (0.4 + Math.random() * 0.9);
+      mph[k] = Math.random() * 6.283;
+      mdph[k] = (Math.random() - 0.5) * 0.5;
+      mlife[k] = 0;
+      mmax[k] = o.life[0] + Math.random() * o.life[1];
+      mgv[k] = o.grav[0] + Math.random() * o.grav[1];
+      // contiguous colour blocks keep fillStyle changes down to one per block
+      var ci = (i * C / count) | 0;
+      mcol[k] = ci >= C ? C - 1 : ci;
+    }
+    if (!megaRunning) {
+      megaRunning = true;
+      requestAnimationFrame(megaFrame);
+    }
+  }
+
+  function megaFrame() {
+    var t0 = performance.now();
+    var W = megaCv.width, H = megaCv.height;
+    var C = POP_COLOURS.length;
+    mctx.clearRect(0, 0, W, H);
+
+    // One Path2D per colour, filled once at the end: benchmarked about twice
+    // as fast as forty thousand individual fillRect calls.
+    var paths = new Array(C);
+    for (var c0 = 0; c0 < C; c0++) paths[c0] = new Path2D();
+
+    var alive = 0;
+    for (var i = 0; i < mn; i++) {
+      if (mlife[i] >= mmax[i]) continue;
+      mlife[i]++;
+      mvy[i] = mvy[i] * MDRAG + mgv[i];
+      mvx[i] = mvx[i] * MDRAG + tiltX * 0.05;
+      mx[i] += mvx[i];
+      my[i] += mvy[i];
+      if (my[i] > H + 30) { mlife[i] = mmax[i]; continue; }   // fallen away
+      alive++;
+      if (my[i] < -30 || mx[i] < -30 || mx[i] > W + 30) continue;  // alive, off-screen
+      mph[i] += mdph[i];
+      var fw = mw[i] * Math.abs(Math.cos(mph[i]));   // cheap fake spin
+      paths[mcol[i]].rect(mx[i], my[i], fw < 1 ? 1 : fw, mh[i]);
     }
 
-    // 1. the numeral itself detonates, full circle and fast
-    fire(cx, cy, { n: 120, speed: [10, 21], bias: -5 });
+    for (var c1 = 0; c1 < C; c1++) {
+      mctx.fillStyle = POP_COLOURS[c1];
+      mctx.fill(paths[c1]);
+    }
 
-    // 2. two side cannons
-    setTimeout(function () {
-      fire(W * 0.14, H * 0.66, { n: 50, speed: [9, 17], bias: -7 });
-      fire(W * 0.86, H * 0.66, { n: 50, speed: [9, 17], bias: -7 });
-    }, 130);
-
-    // 3. a downpour right across the top
-    setTimeout(function () {
-      for (var i = 0; i < 9; i++) {
-        fire(W * (0.05 + i * 0.1125), -12, {
-          n: 10, speed: [2, 5], bias: 1.6, life: [115, 70], arc: [0, Math.PI]
-        });
+    if (alive) {
+      // if the device is struggling, thin the crowd rather than stutter
+      megaSlow = (performance.now() - t0 > 30) ? megaSlow + 1 : 0;
+      if (megaSlow >= 3 && megaCulls < 3 && alive > 6000) {
+        megaSlow = 0;
+        megaCulls++;
+        for (var j = 0; j < mn; j += 3) mlife[j] = mmax[j];
       }
-    }, 270);
+      requestAnimationFrame(megaFrame);
+    } else {
+      megaRunning = false;
+      mn = 0;
+      megaSlow = 0;
+      megaCulls = 0;
+      mctx.clearRect(0, 0, W, H);
+      megaCv.classList.remove("on");
+    }
+  }
 
-    // 4. bottom corners firing inward
+  // the whole screen goes up, and keeps going
+  function megaBurst(cx, cy) {
+    if (reduceMotion) return;
+    megaInit();
+    megaSize();
+    megaCv.classList.add("on");
+
+    var W = window.innerWidth, H = window.innerHeight;
+    var N = MEGA_TARGET;
+    var HEAVY = [0.05, 0.06], HLIFE = [220, 200];     // falls at a decent clip
+    var FLOAT = [0.006, 0.012], FLIFE = [420, 280];   // hangs in the air
+
+    // 1 - the numeral detonates
+    megaSpawn(cx, cy, Math.round(N * 0.22), { speed: [6, 34], size: [4, 7], bias: -6, grav: HEAVY, life: HLIFE });
+    megaSpawn(cx, cy, Math.round(N * 0.08), { speed: [3, 16], size: [5, 9], bias: -4, grav: FLOAT, life: FLIFE });
+
+    // 2 - side cannons
     setTimeout(function () {
-      fire(4, H - 4, { n: 45, speed: [12, 19], bias: -9, arc: [-1.75, 1.6] });
-      fire(W - 4, H - 4, { n: 45, speed: [12, 19], bias: -9, arc: [-3.05, 1.6] });
-    }, 420);
+      megaSpawn(2, H * 0.72, Math.round(N * 0.08), { speed: [10, 26], size: [4, 7], bias: -8, arc: [-1.5, 1.2], grav: HEAVY, life: HLIFE });
+      megaSpawn(W - 2, H * 0.72, Math.round(N * 0.08), { speed: [10, 26], size: [4, 7], bias: -8, arc: [-3.1, 1.2], grav: HEAVY, life: HLIFE });
+    }, 160);
+
+    // 3 - the sky opens
+    setTimeout(function () {
+      megaSpawn(W / 2, -30, Math.round(N * 0.16), { speed: [0.5, 3], size: [4, 8], bias: 0.6, spreadX: W * 1.1, spreadY: 120, grav: FLOAT, life: FLIFE });
+    }, 380);
+
+    // 4 - bottom corners
+    setTimeout(function () {
+      megaSpawn(2, H - 2, Math.round(N * 0.09), { speed: [12, 30], size: [4, 7], bias: -10, arc: [-1.75, 1.5], grav: HEAVY, life: HLIFE });
+      megaSpawn(W - 2, H - 2, Math.round(N * 0.09), { speed: [12, 30], size: [4, 7], bias: -10, arc: [-3.0, 1.5], grav: HEAVY, life: HLIFE });
+    }, 700);
+
+    // 5 - second detonation
+    setTimeout(function () {
+      megaSpawn(cx, cy, Math.round(N * 0.10), { speed: [5, 30], size: [4, 8], bias: -7, grav: HEAVY, life: HLIFE });
+    }, 1150);
+
+    // 6 - long slow snowfall to finish
+    setTimeout(function () {
+      megaSpawn(W / 2, -40, Math.round(N * 0.10), { speed: [0.3, 2], size: [4, 9], bias: 0.4, spreadX: W * 1.1, spreadY: 200, grav: [0.004, 0.008], life: [520, 320] });
+    }, 1900);
   }
 
   // fires wherever you click or tap, anywhere on the page
@@ -1886,7 +2029,7 @@
         } else {
           // swings harder and swells a little more with every hit
           swing(el, 0.35 + (hits / GOAL) * 1.75);
-          setSwell((1 + hits * 0.023).toFixed(3));
+          setSwell((1 + hits * 0.055).toFixed(3));
         }
       });
     });

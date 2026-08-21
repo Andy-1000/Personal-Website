@@ -316,32 +316,35 @@
   .reveal.in { opacity: 1; transform: translateY(0); }
 
   /* ================= PHOTOS ================= */
+  /* columns pack the photos vertically, so no ragged gaps between rows */
   .snaps {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 1.2rem 0.8rem;
+    column-count: 2;
+    column-gap: 0.85rem;
     margin: 0 auto;
-    padding: 0.6rem 0.75rem 3.4rem;
+    padding: 0.6rem 0.9rem 3.4rem;
     max-width: 660px;
   }
 
+  /* a lone photo shouldn't hug one column */
+  .snaps.single { column-count: 1; max-width: 340px; }
+
   .shot {
     --rot: 0deg;
-    margin: 0;
+    display: inline-block;
+    width: 100%;
+    margin: 0 0 0.85rem;
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
     background: #fff;
     padding: 7px 7px 0;
     border-radius: 3px;
     box-shadow: 0 14px 28px -12px rgba(0, 35, 70, 0.42);
-    width: min(46.5%, 245px);
     transform: rotate(var(--rot)) translateY(32px);
     opacity: 0;
     transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.7, 0.3, 1);
   }
 
   .shot.in { opacity: 1; transform: rotate(var(--rot)) translateY(0); }
-  .shot.wide { width: min(74%, 330px); }
 
   .shot img {
     width: 100%;
@@ -558,19 +561,6 @@
     padding: 1.1rem 1rem 1.3rem;
   }
 
-  footer a {
-    font-family: var(--body);
-    font-weight: 700;
-    color: var(--sky);
-    font-size: 0.72rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding-left: 0.2em;
-  }
-
-  footer a:hover { color: #fff; }
-
   .toast {
     position: fixed;
     left: 50%;
@@ -691,14 +681,14 @@
     .cd-cell { max-width: 90px; padding: 0.55rem 0.25rem 0.5rem; }
     .rsvp-btn { width: auto; display: inline-block; padding-inline: 3.2rem; padding-left: 3.42rem; }
     .chapter { padding: 6rem 2rem 2.8rem; }
-    .snaps { max-width: 760px; gap: 1.5rem 1.1rem; padding-bottom: 4.4rem; }
-    .shot { width: min(31%, 235px); }
-    .shot.wide { width: min(44%, 320px); }
+    .snaps { max-width: 780px; column-count: 3; column-gap: 1.1rem; padding-bottom: 4.4rem; }
+    .shot { margin-bottom: 1.1rem; }
   }
 
   @media (min-width: 1100px) {
     .chapter { max-width: 720px; }
     .snaps { max-width: 900px; }
+    .snaps.single { max-width: 380px; }
   }
 
   /* short viewports: keep the whole invite above the scroll cue */
@@ -787,31 +777,31 @@
   <div class="snaps">
     <figure class="shot" style="--rot:-2.5deg; --ar:4/5; --pos:50% 15%;">
       <img src="portraits/web/baby-2.jpg" alt="Toddler Andy standing in the garden" loading="lazy">
-      <figcaption>Dirt: an early food group.</figcaption>
+      <figcaption>Dirt: an early food group</figcaption>
     </figure>
     <figure class="shot" style="--rot:2.2deg; --ar:4/5; --pos:50% 12%;">
       <img src="portraits/web/tot-sibling.jpg" alt="Andy holding his newborn sibling" loading="lazy">
-      <figcaption>Big brother duties begin.</figcaption>
+      <figcaption>Big brother duties begin</figcaption>
     </figure>
     <figure class="shot" style="--rot:2deg; --ar:3/2; --pos:50% 34%;">
       <img src="portraits/web/tot-garden.jpg" alt="Young Andy grinning in the garden" loading="lazy">
-      <figcaption>Professional smiler, est. 2005.</figcaption>
+      <figcaption>Professional smiler, est. 2005</figcaption>
     </figure>
     <figure class="shot" style="--rot:-2.2deg; --ar:3/2; --pos:50% 28%;">
       <img src="portraits/web/tot-tramp.jpg" alt="Andy laughing in front of the trampoline" loading="lazy">
-      <figcaption>Trampoline hair, don't care.</figcaption>
+      <figcaption>Trampoline hair, don't care</figcaption>
     </figure>
     <figure class="shot" style="--rot:-1.8deg; --ar:3/2; --pos:50% 32%;">
       <img src="portraits/web/tot-grass.jpg" alt="Andy smiling in the backyard" loading="lazy">
-      <figcaption>Backyard press conference.</figcaption>
+      <figcaption>Backyard press conference</figcaption>
     </figure>
     <figure class="shot" style="--rot:2.6deg; --ar:3/2; --pos:50% 42%;">
       <img src="portraits/web/tot-choc.jpg" alt="Andy at the table with chocolate evidence" loading="lazy">
-      <figcaption>Crime scene: chocolate.</figcaption>
+      <figcaption>Crime scene: chocolate</figcaption>
     </figure>
     <figure class="shot wide" style="--rot:-2deg; --ar:3/2; --pos:55% 40%;">
       <img src="portraits/web/tot-hat.jpg" alt="Andy wearing an oversized hat" loading="lazy">
-      <figcaption>Grow into it, they said.</figcaption>
+      <figcaption>Grow into it, they said</figcaption>
     </figure>
   </div>
 
@@ -825,19 +815,19 @@
   <div class="snaps">
     <figure class="shot" style="--rot:2.4deg; --ar:4/5; --pos:50% 12%;">
       <img src="portraits/web/kid-bike.jpg" alt="Andy riding a bike down a path" loading="lazy">
-      <figcaption>Two wheels, zero fear.</figcaption>
+      <figcaption>Two wheels, zero fear</figcaption>
     </figure>
     <figure class="shot" style="--rot:-2.6deg; --ar:1/1; --pos:50% 6%;">
       <img src="portraits/web/kid-scientist.jpg" alt="Andy in a lab coat and safety goggles" loading="lazy">
-      <figcaption>Trust me, I'm a scientist.</figcaption>
+      <figcaption>Trust me, I'm a scientist</figcaption>
     </figure>
     <figure class="shot" style="--rot:-1.9deg; --ar:4/5; --pos:50% 30%;">
       <img src="portraits/web/kid-gabba.jpg" alt="Andy celebrating on the field at the Gabba" loading="lazy">
-      <figcaption>Living the dream at the Gabba.</figcaption>
+      <figcaption>Living the dream at the Gabba</figcaption>
     </figure>
     <figure class="shot" style="--rot:2.1deg; --ar:4/5; --pos:50% 28%;">
       <img src="portraits/web/kid-costume.jpg" alt="Andy in costume on the footpath" loading="lazy">
-      <figcaption>Book Week? Or just a Tuesday.</figcaption>
+      <figcaption>Book Week? Or just a Tuesday</figcaption>
     </figure>
   </div>
 
@@ -851,27 +841,27 @@
   <div class="snaps">
     <figure class="shot" style="--rot:-2.4deg; --ar:1/1; --pos:50% 8%;">
       <img src="portraits/web/teen-starwars.jpg" alt="Andy with a fresh buzzcut in a Star Wars shirt" loading="lazy">
-      <figcaption>The buzzcut era.</figcaption>
+      <figcaption>The buzzcut era</figcaption>
     </figure>
     <figure class="shot" style="--rot:2.2deg; --ar:1/1; --pos:50% 10%;">
       <img src="portraits/web/teen-sling.jpg" alt="Andy with his arm in a sling" loading="lazy">
-      <figcaption>The arm survived. Mostly.</figcaption>
+      <figcaption>The arm survived. Mostly</figcaption>
     </figure>
     <figure class="shot" style="--rot:-2deg; --ar:4/5; --pos:50% 30%;">
       <img src="portraits/web/teen-officeworks.jpg" alt="Andy smiling in his Officeworks uniform" loading="lazy">
-      <figcaption>Officeworks' happiest employee.</figcaption>
+      <figcaption>Officeworks' happiest employee</figcaption>
     </figure>
     <figure class="shot" style="--rot:2.6deg; --ar:1/1; --pos:50% 8%;">
       <img src="portraits/web/teen-dog.jpg" alt="Andy sitting by the pool holding a dog" loading="lazy">
-      <figcaption>Poolside with a mate.</figcaption>
+      <figcaption>Poolside with a mate</figcaption>
     </figure>
     <figure class="shot" style="--rot:-1.8deg; --ar:3/2; --pos:45% 26%;">
       <img src="portraits/web/teen-bike.jpg" alt="Andy with an upturned mountain bike in the backyard" loading="lazy">
-      <figcaption>Bike maintenance 101.</figcaption>
+      <figcaption>Bike maintenance 101</figcaption>
     </figure>
     <figure class="shot wide" style="--rot:1.9deg; --ar:3/2; --pos:50% 40%;">
       <img src="portraits/web/hs-scenic.jpg" alt="Andy in front of a mountain view" loading="lazy">
-      <figcaption>Year 12, contemplating the view.</figcaption>
+      <figcaption>Year 12, contemplating the view</figcaption>
     </figure>
   </div>
 
@@ -885,27 +875,27 @@
   <div class="snaps">
     <figure class="shot" style="--rot:-2.3deg; --ar:4/5; --pos:50% 10%;">
       <img src="portraits/web/grad-suit.jpg" alt="Andy in a suit" loading="lazy">
-      <figcaption>Quite thoroughly done with school.</figcaption>
+      <figcaption>Quite thoroughly done with school</figcaption>
     </figure>
     <figure class="shot" style="--rot:2.5deg; --ar:4/5; --pos:50% 16%;">
       <img src="portraits/web/uni-snow.jpg" alt="Andy holding a snowboard on the slopes" loading="lazy">
-      <figcaption>Study break (extended).</figcaption>
+      <figcaption>Study break (extended)</figcaption>
     </figure>
     <figure class="shot" style="--rot:2deg; --ar:3/2; --pos:50% 38%;">
       <img src="portraits/web/uni-mtb.jpg" alt="Andy mountain biking above a lake" loading="lazy">
-      <figcaption>Field research.</figcaption>
+      <figcaption>Field research</figcaption>
     </figure>
     <figure class="shot" style="--rot:-2.2deg; --ar:3/2; --pos:50% 34%;">
       <img src="portraits/web/uni-friends.jpg" alt="Andy and friends in a grinning selfie" loading="lazy">
-      <figcaption>Quality companions.</figcaption>
+      <figcaption>Quality companions</figcaption>
     </figure>
     <figure class="shot" style="--rot:-1.9deg; --ar:3/2; --pos:50% 40%;">
       <img src="portraits/web/uni-deer.jpg" alt="Andy crouched beside a deer in a field" loading="lazy">
-      <figcaption>Dinner, sourced ethically.</figcaption>
+      <figcaption>Dinner, sourced ethically</figcaption>
     </figure>
     <figure class="shot" style="--rot:2.3deg; --ar:3/2; --pos:50% 38%;">
       <img src="portraits/web/uni-creatures.jpg" alt="Andy standing between two large white creature mascots" loading="lazy">
-      <figcaption>Made some new friends.</figcaption>
+      <figcaption>Made some new friends</figcaption>
     </figure>
   </div>
 
@@ -916,10 +906,10 @@
     <p class="lead reveal">As of today, Andy is completing his last semester of uni, and completely in faith towards what the Lord has in store for the season ahead. And, there's no better way to mark it than by being surrounded by the people who've been part of his journey. Andy would love for you to join him as he celebrates his 21st!</p>
   </section>
 
-  <div class="snaps">
+  <div class="snaps single">
     <figure class="shot wide" style="--rot:1.8deg; --ar:3/2; --pos:50% 45%;">
       <img src="portraits/web/today-beach.jpg" alt="Andy in a bucket hat and sunglasses at the beach" loading="lazy">
-      <figcaption>Ready for whatever's next.</figcaption>
+      <figcaption>Ready for whatever's next</figcaption>
     </figure>
   </div>
 
@@ -952,9 +942,7 @@
 
 </section>
 
-<footer>
-  <a href="index.html">andysansness.com</a>
-</footer>
+<footer></footer>
 
 <div class="toast" id="toast"></div>
 
@@ -1484,10 +1472,8 @@
 
   /* ================= PARALLAX DRIFT ================= */
 
+  // photos sit in packed columns now, so no per-photo vertical drift
   var parallaxEls = [];
-  document.querySelectorAll(".shot").forEach(function (el, i) {
-    parallaxEls.push({ el: el, speed: (i % 3 - 1) * 0.045 + (i % 2 ? 0.035 : -0.028) });
-  });
 
   /* ================= MAIN LOOP (idles when nothing changes) ================= */
 

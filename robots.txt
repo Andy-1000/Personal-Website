@@ -1,10 +1,14 @@
 # ---------------------------------------------------------------
-# Private pages: keep the 21st invite and all photos out of search
+# Private pages: keep the 21st invite, the puns page and all images
+# out of search entirely
 # ---------------------------------------------------------------
 User-agent: *
 Disallow: /21st.html
 Disallow: /21st
 Disallow: /portraits/
+Disallow: /puns.html
+Disallow: /puns
+Disallow: /cartoon/
 
 # ---------------------------------------------------------------
 # AI crawlers / dataset collectors: not welcome anywhere on the site

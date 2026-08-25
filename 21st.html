@@ -223,27 +223,66 @@
 
   .scroll-cue {
     position: absolute;
-    bottom: 1.2rem;
+    bottom: 1.1rem;
     left: 0;
     right: 0;
-    text-align: center;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.45rem;
+    transition: opacity 0.4s ease;
+  }
+
+  .scroll-cue .cue-label {
     font-family: var(--body);
     font-weight: 600;
     font-size: 0.92rem;
     color: var(--blue);
+    white-space: nowrap;
   }
 
   .scroll-cue .arrow {
-    display: block;
-    font-size: 1.25rem;
-    margin-top: 0.1rem;
-    animation: bob 2.2s ease-in-out infinite;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+    font-size: 1.15rem;
+    line-height: 1;
+    animation: bob 1.6s ease-in-out infinite;
   }
+
+  /* a soft ring that keeps pinging outwards, so the cue reads as "go on" */
+  .scroll-cue .arrow::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 2px solid var(--blue);
+    animation: cuePing 1.6s ease-out infinite;
+  }
+
+  /* nobody has scrolled yet - lean on it harder */
+  .scroll-cue.nudge .arrow { animation: bobHard 0.9s ease-in-out infinite; }
 
   @keyframes bob {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(8px); }
+  }
+
+  @keyframes bobHard {
+    0%, 100% { transform: translateY(0); }
+    45% { transform: translateY(12px) scale(1.06); }
+  }
+
+  @keyframes cuePing {
+    0% { transform: scale(1); opacity: 0.55; }
+    80%, 100% { transform: scale(1.75); opacity: 0; }
   }
 
   .confetti {
@@ -381,48 +420,64 @@
     background: linear-gradient(var(--paper), var(--sky-soft) 10%, var(--sky-soft) 90%, var(--paper));
   }
 
-  .viz-pin { height: 380vh; position: relative; }
+  .viz-pin { height: 620vh; position: relative; }
 
   .viz-stage {
     position: sticky;
     top: 0;
+    height: 100vh;
     height: 100svh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    padding: 0.8rem 0.9rem;
+    justify-content: flex-start;
+    padding: calc(0.7rem + env(safe-area-inset-top)) 0.9rem calc(0.7rem + env(safe-area-inset-bottom));
     overflow: hidden;
   }
 
-  .viz-head { text-align: center; margin-bottom: 0.45rem; }
+  /* Every child below is fixed-height, so the canvas wrapper is the only
+     thing that flexes - which makes the space available to the dots exact. */
+  .viz-head { text-align: center; flex: none; width: 100%; max-width: 560px; }
 
   .viz-head h3 {
     font-family: var(--display);
     font-weight: 400;
-    line-height: 1.3;
-    font-size: clamp(1.35rem, 5.6vw, 1.95rem);
+    line-height: 1.25;
+    font-size: clamp(1.1rem, 5.2vw, 1.9rem);
     color: var(--navy);
     margin: 0;
+    height: 2.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 
   .viz-head h3 .count { font-family: var(--body); font-weight: 800; font-size: 0.92em; color: var(--blue); }
+  .viz-head h3 > span[hidden] { display: none; }
 
   .viz-sub {
     font-family: var(--body);
     font-weight: 600;
-    font-size: 0.78rem;
+    font-size: clamp(0.66rem, 3.1vw, 0.8rem);
     color: var(--blue);
-    margin: 0.2rem 0 0;
+    margin: 0.1rem 0 0;
+    height: 1.5em;
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 
   .legend {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 0.35rem;
-    margin: 0.6rem 0 0.5rem;
+    gap: 0.3rem;
+    margin: 0.5rem 0 0.4rem;
     max-width: 560px;
+    flex: none;
   }
 
   .chip {
@@ -444,25 +499,117 @@
 
   .chip:hover { transform: translateY(-2px); }
   .chip .swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
-  .chip .n { font-variant-numeric: tabular-nums; color: var(--blue); font-weight: 700; }
+  /* the counts tick from 0 up to 3,308 - reserve the widest they will ever be
+     so the legend never rewraps and resizes the chart underneath it */
+  .chip .n {
+    font-variant-numeric: tabular-nums;
+    color: var(--blue);
+    font-weight: 700;
+    display: inline-block;
+    min-width: 3.2em;
+    text-align: right;
+  }
   .chip.sel { border-color: var(--navy); box-shadow: 0 0 0 2px var(--sky); }
   .legend.has-sel .chip:not(.sel) { opacity: 0.42; }
 
-  #dayCanvas { display: block; touch-action: pan-y; }
+  /* the only flexible row: whatever height is left over is the dot area */
+  .viz-canvas-wrap {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* rides along the bottom of the chart for the whole intro, so it is never
+     unclear that the story is driven by scrolling */
+  .viz-cue {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--blue);
+    background: rgba(255, 255, 255, 0.88);
+    border: 1.5px solid rgba(0, 77, 153, 0.28);
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem 0.26rem;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .viz-cue .vc-arrow {
+    font-size: 0.9rem;
+    line-height: 1;
+    animation: bob 1.4s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-cue .arrow, .scroll-cue .arrow::after, .viz-cue .vc-arrow { animation: none; }
+  }
+
+  #dayCanvas { display: block; touch-action: pan-y; max-width: 100%; }
 
   .viz-note {
-    min-height: 3em;
+    flex: none;
+    height: 4.6em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: var(--body);
     font-weight: 600;
-    font-size: 0.88rem;
+    font-size: clamp(0.76rem, 3.4vw, 0.88rem);
     color: var(--navy);
     text-align: center;
-    margin: 0.5rem 0 0;
+    margin: 0.45rem 0 0;
     max-width: 470px;
-    line-height: 1.55;
+    line-height: 1.45;
+    overflow: hidden;
   }
 
   .viz-note b { font-family: var(--body); font-weight: 800; color: var(--blue); }
+
+
+  /* Narrow phones: tighten the legend so it costs fewer rows and the dots
+     keep more of the screen. */
+  @media (max-width: 390px) {
+    .legend { gap: 0.22rem; }
+    .chip { font-size: 0.66rem; padding: 0.16rem 0.46rem; gap: 0.26rem; }
+    .chip .swatch { width: 8px; height: 8px; }
+  }
+
+  /* Landscape phones: the chart has almost no height to work with, so give
+     the chrome a haircut instead of squashing the dots into a strip. */
+  @media (max-height: 620px) and (orientation: landscape) {
+    .viz-stage {
+      padding: calc(0.35rem + env(safe-area-inset-top)) 0.7rem calc(0.35rem + env(safe-area-inset-bottom));
+    }
+    .viz-head h3 { font-size: clamp(0.95rem, 4.4vw, 1.3rem); height: 1.4em; }
+    .viz-sub { font-size: clamp(0.6rem, 2.8vw, 0.72rem); height: 1.35em; }
+    .view-toggle { margin-bottom: 0.28rem; }
+    .vt-btn { font-size: 0.6rem; padding: 0.22rem 0.62rem; }
+    .legend { margin: 0.28rem 0 0.24rem; gap: 0.25rem; }
+    .chip { font-size: 0.64rem; padding: 0.16rem 0.5rem; gap: 0.28rem; }
+    .chip .swatch { width: 8px; height: 8px; }
+    .viz-note {
+      height: 3em;
+      font-size: clamp(0.68rem, 2.9vw, 0.78rem);
+      line-height: 1.4;
+      margin-top: 0.26rem;
+      max-width: 620px;
+    }
+  }
 
   /* ================= DOCK ================= */
   .dock {
@@ -599,8 +746,8 @@
   .cal-links {
     display: flex;
     justify-content: center;
-    gap: 0.5rem;
-    margin-top: 0.7rem;
+    gap: 0.6rem;
+    margin-top: 1.15rem;
   }
 
   .cal-btn {
@@ -613,7 +760,7 @@
     background: transparent;
     border: 2px solid rgba(0, 77, 153, 0.35);
     border-radius: 999px;
-    padding: 0.5rem 0.9rem 0.45rem;
+    padding: 0.62rem 1.5rem 0.56rem;
     text-decoration: none;
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s, transform 0.15s;
@@ -653,6 +800,7 @@
 
   /* ---- viz view toggle ---- */
   .view-toggle {
+    flex: none;
     display: inline-flex;
     gap: 2px;
     padding: 2px;
@@ -711,8 +859,24 @@
   }
 
   /* ================= TAP-TO-ZOOM LIGHTBOX ================= */
-  .shot img { cursor: zoom-in; }
+  .shot { cursor: zoom-in; }
   .shot:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
+
+  /* ---- photos are look-only: no drag, no long-press sheet, no save menu ----
+     A determined visitor can still pull the file out of the network tab; this
+     stops every casual route to it. */
+  img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    user-drag: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .shot, .lb-figure { -webkit-touch-callout: none; }
 
   .lightbox {
     position: fixed;
@@ -785,6 +949,70 @@
 
   .lb-close:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.06); }
 
+  /* ---- browse without leaving the overlay ---- */
+  .lb-figure img {
+    transition: opacity 0.16s ease, transform 0.16s ease;
+  }
+
+  .lb-figure.swapping img { opacity: 0; }
+  .lb-figure.swapping.to-next img { transform: translateX(-16px); }
+  .lb-figure.swapping.to-prev img { transform: translateX(16px); }
+
+  .lb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    background: rgba(0, 51, 102, 0.45);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: background 0.15s ease, transform 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .lb-nav.prev { left: 0.5rem; }
+  .lb-nav.next { right: 0.5rem; }
+  .lb-nav:hover { background: rgba(0, 51, 102, 0.8); transform: translateY(-50%) scale(1.07); }
+  .lb-nav:active { transform: translateY(-50%) scale(0.95); }
+
+  .lb-count {
+    position: absolute;
+    top: 1.15rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: 0.76rem;
+    letter-spacing: 0.14em;
+    color: rgba(204, 230, 255, 0.9);
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+  }
+
+  @media (max-width: 520px) {
+    .lb-nav { width: 40px; height: 40px; font-size: 1.1rem; }
+    .lb-nav.prev { left: 0.25rem; }
+    .lb-nav.next { right: 0.25rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lb-figure img { transition: none; }
+  }
+
   .lb-hint {
     position: absolute;
     bottom: 1rem;
@@ -828,8 +1056,14 @@
     .details { gap: 0.8rem; }
     .detail-value { font-size: 1rem; }
     .rsvp-btn { margin-top: 0.9rem; padding: 0.66rem 1rem 0.6rem; padding-left: 1.22rem; }
-    .cal-links { margin-top: 0.45rem; gap: 0.4rem; }
-    .cal-btn { font-size: 0.64rem; padding: 0.38rem 0.66rem 0.34rem; }
+    .cal-links { margin-top: 0.8rem; }
+    .cal-btn { font-size: 0.66rem; padding: 0.48rem 1.25rem 0.42rem; }
+
+    /* not enough height to stack the cue - lay it out on one line instead */
+    .hero { padding-bottom: 3.7rem; }
+    .scroll-cue { flex-direction: row; align-items: center; gap: 0.45rem; bottom: 0.75rem; }
+    .scroll-cue .cue-label { font-size: 0.8rem; }
+    .scroll-cue .arrow { width: 30px; height: 30px; font-size: 0.95rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -867,13 +1101,12 @@
 
     <div class="cal-links">
       <a class="cal-btn cal-ics" href="#" download="andys-21st.ics">Add to calendar</a>
-      <a class="cal-btn cal-gcal" href="#" target="_blank" rel="noopener">Google</a>
     </div>
   </div>
 
-  <div class="scroll-cue">
-    Who is Andy anyway?
-    <span class="arrow">&darr;</span>
+  <div class="scroll-cue" id="scrollCue">
+    <span class="cue-label">Who is Andy anyway? Scroll down</span>
+    <span class="arrow" aria-hidden="true">&darr;</span>
   </div>
 </header>
 
@@ -890,15 +1123,18 @@
     <div class="viz-pin" id="vizPin">
       <div class="viz-stage">
         <div class="viz-head">
-          <h3><span class="count" id="vizCount">0</span> days &amp; counting</h3>
-          <p class="viz-sub" id="vizSub">every dot is one day &mdash; keep scrolling</p>
+          <h3><span id="vizHeadTally"><span class="count" id="vizCount">0</span> days &amp; counting</span><span id="vizHeadIntro" hidden></span></h3>
+          <p class="viz-sub" id="vizSub">every dot is one day</p>
         </div>
-        <div class="view-toggle" role="group" aria-label="Chart view">
+        <div class="view-toggle" id="viewToggle" role="group" aria-label="Chart view">
           <button class="vt-btn on" type="button" data-view="buckets">Buckets</button>
           <button class="vt-btn" type="button" data-view="calendar">Calendar</button>
         </div>
         <div class="legend" id="legend" role="group" aria-label="Day buckets"></div>
-        <canvas id="dayCanvas" aria-label="Dot chart: one dot for every day Andy has lived, coloured by how the day was spent"></canvas>
+        <div class="viz-canvas-wrap" id="vizCanvasWrap">
+          <canvas id="dayCanvas" aria-label="Dot chart: one dot for every day Andy has lived, coloured by how the day was spent"></canvas>
+          <p class="viz-cue" id="vizCue" aria-hidden="true">keep scrolling <span class="vc-arrow">&darr;</span></p>
+        </div>
         <p class="viz-note" id="vizNote">tap a bucket &mdash; or any dot &mdash; to inspect a day</p>
       </div>
     </div>
@@ -1078,7 +1314,6 @@
 
     <div class="cal-links">
       <a class="cal-btn cal-ics" href="#" download="andys-21st.ics">Add to calendar</a>
-      <a class="cal-btn cal-gcal" href="#" target="_blank" rel="noopener">Google</a>
     </div>
   </div>
 
@@ -1276,14 +1511,7 @@
     ].join("\r\n");
 
     var icsHref = "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
-    var gcal = "https://calendar.google.com/calendar/render?action=TEMPLATE" +
-      "&text=" + encodeURIComponent(CAL.title) +
-      "&dates=" + CAL.startZ + "/" + CAL.endZ +
-      "&details=" + encodeURIComponent(CAL.details) +
-      "&location=" + encodeURIComponent(CAL.location);
-
     document.querySelectorAll(".cal-ics").forEach(function (a) { a.href = icsHref; });
-    document.querySelectorAll(".cal-gcal").forEach(function (a) { a.href = gcal; });
   })();
 
   /* ================= RSVP BUTTONS ================= */
@@ -1408,13 +1636,19 @@
 
   var canvas = document.getElementById("dayCanvas");
   var ctx = canvas.getContext("2d");
+  var canvasWrap = document.getElementById("vizCanvasWrap");
   var vizPin = document.getElementById("vizPin");
   var vizCount = document.getElementById("vizCount");
+  var vizHeadTally = document.getElementById("vizHeadTally");
+  var vizHeadIntro = document.getElementById("vizHeadIntro");
   var vizSub = document.getElementById("vizSub");
   var vizNote = document.getElementById("vizNote");
+  var viewToggle = document.getElementById("viewToggle");
+  var vizCue = document.getElementById("vizCue");
   var legend = document.getElementById("legend");
   var chips = [];
   var selected = -1;
+  var NOTE_DEFAULT = "tap a bucket &mdash; or any dot &mdash; to inspect a day";
 
   BUCKETS.forEach(function (b, i) {
     var chip = document.createElement("button");
@@ -1438,12 +1672,13 @@
       var b = BUCKETS[selected];
       vizNote.innerHTML = BUCKET_BLURB[b.key].replace("{n}", "<b>" + fmt(counts[selected]) + "</b>");
     } else {
-      vizNote.innerHTML = "tap a bucket &mdash; or any dot &mdash; to inspect a day";
+      vizNote.innerHTML = NOTE_DEFAULT;
     }
   }
 
   var posB = null;              // bucket arrangement
   var posC = null;              // calendar arrangement
+  var posI = null;              // intro arrangement (the first year, one block)
   var view = "buckets";
   var viewT = 0;                // 0 = buckets, 1 = calendar
   var viewFrom = 0, viewStart = 0;
@@ -1457,49 +1692,85 @@
   var calLabelH = 13;
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
 
+  // ---- the scrolly intro: one day, one week, one year, then the colours ----
+  var INTRO_N = 365;            // dots on screen through the intro
+  var INTRO_COLS = 19;
+  var INTRO_ROWS = Math.ceil(INTRO_N / INTRO_COLS);
+  var INTRO_GREY = "#b7c7d8";   // a day that has not been sorted yet
+  var introPitch = 8, rowPitch = 30;
+
+  // Day one gets a face rather than a plain square. The photo is not from the
+  // day itself - the caption under it says so - it is just the youngest Andy
+  // there is, so the first dot means something before it turns into a chart.
+  var dayOnePic = new Image();
+  var dayOneReady = false;
+  dayOnePic.onload = function () { dayOneReady = true; needsDraw = true; wake(); };
+  dayOnePic.src = "portraits/web/baby-1.jpg";
+  // square crop around his head, as fractions of the natural size
+  var PIC_CROP = { x: 0.16, y: 0.02, side: 0.47 };
+
+  // scroll milestones, as a fraction of the pinned section
+  var S_WEEK = 0.075;           // one dot        -> one week
+  var S_YEAR = 0.155;           // one week       -> one year
+  var S_SORT = 0.255;           // one year       -> coloured in
+  var S_MORPH = 0.335;          // coloured year  -> the six buckets
+  var S_POUR = 0.400;           // buckets        -> every remaining day
+
+  function seg(v, a, b) { return Math.min(1, Math.max(0, (v - a) / (b - a))); }
+  function eout(t) { return 1 - Math.pow(1 - t, 3); }
+  function hold(t, at) { return Math.min(1, t / at); }  // finish early, then sit still
+
   function curX(i) { return posB[i * 2] + (posC[i * 2] - posB[i * 2]) * viewT; }
   function curY(i) { return posB[i * 2 + 1] + (posC[i * 2 + 1] - posB[i * 2 + 1]) * viewT; }
 
   function layout() {
-    var stage = canvas.parentElement;
-    var availW = Math.min(stage.clientWidth - 8, 720);
-    var availH = Math.max(240, stage.clientHeight
-      - document.querySelector(".viz-head").offsetHeight
-      - legend.offsetHeight - vizNote.offsetHeight - 46);
+    // Every other row in the sticky stage is a fixed height, so whatever the
+    // wrapper has left over is exactly - not approximately - the dot area.
+    var availW = Math.min(canvasWrap.clientWidth - 6, 720);
+    var availH = canvasWrap.clientHeight - 2;
+    if (availW < 60 || availH < 60) return;
 
-    // find the largest dot pitch at which BOTH arrangements fit
-    var p, cols, H, tileW, tileH, gap, tcols, trows, calH, calW;
+    // largest dot pitch at which BOTH arrangements fit inside that box
     var tileRows = Math.ceil(367 / TCOLS);
-    for (p = 7; p >= 1.6; p -= 0.2) {
-      cols = Math.floor(availW / p);
-      H = 0;
+    var fit = null;
+    for (var p = 7; p >= 1.2; p -= 0.2) {
+      var cols = Math.floor(availW / p);
+      if (cols < 1) continue;
+      var H = 0;
       for (var i = 0; i < BUCKETS.length; i++) {
         H += headerH + Math.ceil(counts[i] / cols) * p + 6;
       }
-      tileW = TCOLS * p;
-      tileH = tileRows * p;
-      gap = Math.max(6, p * 1.7);
-      tcols = Math.max(1, Math.floor((availW + gap) / (tileW + gap)));
-      trows = Math.ceil(YEARS / tcols);
-      calH = trows * (calLabelH + tileH + gap);
+      var tileW = TCOLS * p;
+      var tileH = tileRows * p;
+      var gap = Math.max(6, p * 1.7);
+      var tcols = Math.max(1, Math.floor((availW + gap) / (tileW + gap)));
+      var trows = Math.ceil(YEARS / tcols);
+      var calH = trows * (calLabelH + tileH + gap);
+      fit = { p: p, cols: cols, H: H, tileW: tileW, tileH: tileH,
+              gap: gap, tcols: tcols, calH: calH };
       if (H <= availH && calH <= availH) break;
     }
-    pitch = p;
-    calW = tcols * (tileW + gap) - gap;
-    layoutW = Math.max(cols * p, calW);
-    layoutH = Math.max(H, calH);
+
+    pitch = fit.p;
+    var calW = fit.tcols * (fit.tileW + fit.gap) - fit.gap;
+    layoutW = Math.min(availW, Math.max(fit.cols * fit.p, calW));
+    layoutH = Math.min(availH, Math.max(fit.H, fit.calH));
 
     canvas.width = Math.round(layoutW * dpr);
     canvas.height = Math.round(layoutH * dpr);
     canvas.style.width = layoutW + "px";
     canvas.style.height = layoutH + "px";
 
+    // centre each arrangement vertically inside the canvas box
+    var bucketOY = Math.max(0, (layoutH - fit.H) / 2);
+    var calOY = Math.max(0, (layoutH - fit.calH) / 2);
+
     clusterTops = [];
-    var y = 0;
+    var y = bucketOY;
     for (var i2 = 0; i2 < BUCKETS.length; i2++) {
-      var rows = Math.ceil(counts[i2] / cols);
-      clusterTops.push({ top: y + headerH, cols: cols, rows: rows });
-      y += headerH + rows * p + 6;
+      var rows = Math.ceil(counts[i2] / fit.cols);
+      clusterTops.push({ top: y + headerH, cols: fit.cols, rows: rows });
+      y += headerH + rows * fit.p + 6;
     }
 
     posB = new Float32Array(TOTAL_DAYS * 2);
@@ -1508,8 +1779,8 @@
       var b = dayBucket[d];
       var j = idxInBucket[b]++;
       var cl = clusterTops[b];
-      posB[d * 2] = (j % cl.cols) * p;
-      posB[d * 2 + 1] = cl.top + Math.floor(j / cl.cols) * p;
+      posB[d * 2] = (j % cl.cols) * fit.p;
+      posB[d * 2 + 1] = cl.top + Math.floor(j / cl.cols) * fit.p;
     }
 
     // calendar arrangement: one tile per year of life, centred
@@ -1517,8 +1788,8 @@
     calTiles = [];
     for (var yr = 0; yr < YEARS; yr++) {
       calTiles.push({
-        x: originX + (yr % tcols) * (tileW + gap),
-        y: Math.floor(yr / tcols) * (calLabelH + tileH + gap),
+        x: originX + (yr % fit.tcols) * (fit.tileW + fit.gap),
+        y: calOY + Math.floor(yr / fit.tcols) * (calLabelH + fit.tileH + fit.gap),
         label: String(yr)
       });
     }
@@ -1527,14 +1798,25 @@
     for (var d2 = 0; d2 < TOTAL_DAYS; d2++) {
       var t = calTiles[dayYear[d2]];
       var k = dayYearIdx[d2];
-      posC[d2 * 2] = t.x + (k % TCOLS) * p;
-      posC[d2 * 2 + 1] = t.y + calLabelH + Math.floor(k / TCOLS) * p;
+      posC[d2 * 2] = t.x + (k % TCOLS) * fit.p;
+      posC[d2 * 2 + 1] = t.y + calLabelH + Math.floor(k / TCOLS) * fit.p;
+    }
+
+    // intro arrangement: the first year as one big centred block
+    introPitch = Math.min(availW * 0.9 / INTRO_COLS, layoutH * 0.8 / INTRO_ROWS, 24);
+    rowPitch = Math.min(introPitch * 3.2, layoutW * 0.94 / 7);
+    var iox = (layoutW - INTRO_COLS * introPitch) / 2;
+    var ioy = (layoutH - INTRO_ROWS * introPitch) / 2;
+    posI = new Float32Array(INTRO_N * 2);
+    for (var k2 = 0; k2 < INTRO_N; k2++) {
+      posI[k2 * 2] = iox + (k2 % INTRO_COLS) * introPitch;
+      posI[k2 * 2 + 1] = ioy + Math.floor(k2 / INTRO_COLS) * introPitch;
     }
 
     needsDraw = true;
   }
 
-  var progress = 0;
+  var sRaw = 0;                 // 0 -> 1 across the whole pinned section
 
   function pourProgress() {
     var rect = vizPin.getBoundingClientRect();
@@ -1548,13 +1830,226 @@
   var FLY = 220;
   var shown = 0;
 
-  function draw() {
-    var N = Math.round(progress * TOTAL_DAYS);
-    shown = N;
+  /* ---- the words that go with each beat of the intro ---- */
+  var INTRO_COPY = [
+    { h: "This is one day",
+      s: "Wednesday, 7 September 2005",
+      n: "The day Andy turned up. One dot &mdash; one day. That is the whole chart." },
+    { h: "Seven dots, one week",
+      s: "Andy&rsquo;s first week",
+      n: "They line up in the order they happened, oldest first." },
+    { h: "365 dots, one year",
+      s: "Andy&rsquo;s first year",
+      n: "Nineteen dots to a row. This whole block is one year of being alive." },
+    { h: "Every day gets a colour",
+      s: "sorted by what Andy was doing",
+      n: "Sundays are church. Weekdays become school, uni or work once each of those starts. Everything left over is just life." }
+  ];
+
+  var lastCopy = -2;            // -1 = the running tally, 0..3 = an intro beat
+  var lastSub = "";
+  var lastLegendA = -1, lastToggleA = -1;
+
+  function applyCopy(idx) {
+    if (idx === lastCopy) return;
+    lastCopy = idx;
+    if (idx < 0) {
+      vizHeadIntro.hidden = true;
+      vizHeadTally.hidden = false;
+      lastSub = "";
+      if (selected < 0) {
+        vizNote.innerHTML = view === "calendar"
+          ? "each block is one year of life &mdash; 21 of them, day by day"
+          : NOTE_DEFAULT;
+      }
+    } else {
+      vizHeadTally.hidden = true;
+      vizHeadIntro.hidden = false;
+      vizHeadIntro.innerHTML = INTRO_COPY[idx].h;
+      vizSub.innerHTML = INTRO_COPY[idx].s;
+      vizNote.innerHTML = INTRO_COPY[idx].n;
+      lastSub = "";
+    }
+  }
+
+  function setSub(html) {
+    if (html === lastSub) return;
+    lastSub = html;
+    vizSub.innerHTML = html;
+  }
+
+  var lastCueA = -1;
+  function setCue(a) {
+    if (Math.abs(a - lastCueA) < 0.02) return;
+    lastCueA = a;
+    vizCue.style.opacity = a;
+  }
+
+  function setChrome(legendA, toggleA) {
+    if (Math.abs(legendA - lastLegendA) > 0.02) {
+      lastLegendA = legendA;
+      legend.style.opacity = legendA;
+      legend.style.pointerEvents = legendA > 0.95 ? "auto" : "none";
+    }
+    if (Math.abs(toggleA - lastToggleA) > 0.02) {
+      lastToggleA = toggleA;
+      viewToggle.style.opacity = toggleA;
+      viewToggle.style.pointerEvents = toggleA > 0.95 ? "auto" : "none";
+    }
+  }
+
+  function setChipCounts(c) {
+    for (var i = 0; i < chips.length; i++) {
+      chips[i].querySelector(".n").textContent = fmt(c[i]);
+    }
+  }
+
+  // day one, as a plain square of photo - same shape as every other dot
+  function drawDayOne(cx, cy, size) {
+    var x = cx - size / 2, y = cy - size / 2;
+    if (!dayOneReady) {
+      ctx.fillStyle = INTRO_GREY;
+      ctx.fillRect(x, y, size, size);
+      return;
+    }
+    var w = dayOnePic.naturalWidth, h = dayOnePic.naturalHeight;
+    var side = w * PIC_CROP.side;
+    ctx.drawImage(dayOnePic, w * PIC_CROP.x, h * PIC_CROP.y, side, side, x, y, size, size);
+  }
+
+  /* ---- beats 1-4: one day, one week, one year, then the sorting ---- */
+  function drawIntro(sv) {
+    var cx = layoutW / 2, cy = layoutH / 2;
+    var n, mRow = 0, mGrid = 0, colourT = 0, beat = 0;
+
+    if (sv < S_WEEK) {
+      n = 1; beat = 0;
+    } else if (sv < S_YEAR) {
+      var tb = hold(seg(sv, S_WEEK, S_YEAR), 0.66);
+      n = 1 + Math.round(6 * tb);
+      mRow = eout(tb);
+      beat = 1;
+    } else if (sv < S_SORT) {
+      var tc = hold(seg(sv, S_YEAR, S_SORT), 0.82);
+      n = 7 + Math.round((INTRO_N - 7) * tc);
+      mRow = 1;
+      mGrid = eout(Math.min(1, tc * 1.3));
+      beat = 2;
+    } else {
+      n = INTRO_N; mRow = 1; mGrid = 1; beat = 3;
+      colourT = hold(seg(sv, S_SORT, S_MORPH), 0.72);
+    }
+
+    applyCopy(beat);
+    setChrome(beat === 3 ? colourT : 0, 0);
+    // strongest at the very start, easing off as the chart takes over
+    setCue(beat === 3 ? Math.max(0, 1 - colourT) : 1);
+
+    var szSingle = Math.min(rowPitch * 0.8, 56);
+    var szRow = rowPitch * 0.6;
+    var szGrid = introPitch * 0.74;
+    var sz = szSingle + (szRow - szSingle) * mRow;
+    sz = sz + (szGrid - sz) * mGrid;
+
+    // Day one is the photo, full stop - it never turns back into a plain
+    // square. It just shrinks to dot size once the rest of the week arrives.
+    var picMax = Math.min(layoutW * 0.62, layoutH * 0.62, 200);
+    var bigT = Math.max(0, 1 - mRow * 1.6);              // dot-sized by mid-week
+    var breathe = (beat === 0 && !reduceMotion) ? 1 + Math.sin(performance.now() / 900) * 0.018 : 1;
+    var picSz = (sz + (picMax - sz) * bigT) * breathe;
+
+    // while it is alone on stage, pull it toward the middle of the viewport
+    // rather than the middle of the chart box - clamped so it cannot clip
+    var yShift = 0;
+    if (bigT > 0) {
+      var rct = canvas.getBoundingClientRect();
+      var want = window.innerHeight / 2 - (rct.top + rct.height / 2);
+      var room = Math.max(0, layoutH / 2 - picSz / 2 - 3);
+      yShift = Math.max(-room, Math.min(room, want)) * bigT;
+    }
+
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, layoutW, layoutH);
 
-    var dotSize = Math.max(1.4, pitch * 0.72);
+    var liveCounts = [0, 0, 0, 0, 0, 0];
+    var revealed = Math.round(colourT * INTRO_N);
+
+    for (var k = 0; k < n; k++) {
+      // where this dot sits in the row of seven, and in the year block
+      var rx = cx + (k - 3) * rowPitch - sz / 2, ry = cy - sz / 2;
+      var gx = posI[k * 2], gy = posI[k * 2 + 1];
+      var x, y, a = 1;
+
+      if (k === 0) {
+        // day one starts dead centre, then walks out to its place in the row
+        var ax = cx - sz / 2 + (rx - (cx - sz / 2)) * mRow;
+        x = ax + (gx - ax) * mGrid;
+        y = ry + (gy - ry) * mGrid;
+      } else if (k < 7) {
+        x = rx + (gx - rx) * mGrid;
+        y = ry + (gy - ry) * mGrid;
+        if (mRow < 1) a = Math.min(1, mRow * 3.5);
+      } else {
+        x = gx; y = gy;
+        a = Math.min(1, (n - k) / 24);        // the newest dots fade in
+      }
+
+      var bk = dayBucket[k];
+      if (k < revealed) {
+        liveCounts[bk]++;
+        ctx.fillStyle = BUCKETS[bk].color;
+      } else {
+        ctx.fillStyle = INTRO_GREY;
+      }
+
+      // a small pop as the colour lands on each day
+      var ds = (k < revealed && k > revealed - 10) ? sz * 1.4 : sz;
+      ctx.globalAlpha = a;
+
+      if (k === 0) {
+        // day one stays a photo for the whole intro, at whatever size the
+        // dots currently are
+        drawDayOne(x + sz / 2, y + sz / 2 + yShift, picSz);
+        ctx.globalAlpha = 1;
+        continue;
+      }
+
+      ctx.fillRect(x - (ds - sz) / 2, y - (ds - sz) / 2, ds, ds);
+    }
+    ctx.globalAlpha = 1;
+
+    setChipCounts(liveCounts);
+    shown = 0;
+    // keep day one breathing - but only while the chart is actually on screen,
+    // otherwise the loop would never idle for the whole rest of the page
+    if (beat === 0 && !reduceMotion) {
+      var vr = canvas.getBoundingClientRect();
+      if (vr.bottom > 0 && vr.top < window.innerHeight) needsDraw = true;
+    }
+  }
+
+  /* ---- beat 5 onwards: the year folds into the buckets, then it pours ---- */
+  function draw() {
+    if (!posB || !posI) return;
+    if (sRaw < S_MORPH) { drawIntro(sRaw); return; }
+
+    var mt = eout(seg(sRaw, S_MORPH, S_POUR));
+    // the pour finishes a little before the pin ends, so the finished chart
+    // gets a beat of its own instead of only existing at the last pixel
+    var N = mt < 1 ? INTRO_N
+      : Math.round(INTRO_N + (TOTAL_DAYS - INTRO_N) * seg(sRaw, S_POUR, 0.96));
+    shown = mt >= 1 ? N : 0;
+
+    applyCopy(-1);
+    setChrome(1, mt);
+    setCue(0);
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, layoutW, layoutH);
+
+    var szGrid = introPitch * 0.74;
+    var szBucket = Math.max(1.4, pitch * 0.72);
+    var dotSize = szGrid + (szBucket - szGrid) * mt;
     var liveCounts = [0, 0, 0, 0, 0, 0];
 
     ctx.font = '700 11px Montserrat, sans-serif';
@@ -1563,13 +2058,13 @@
     if (viewT < 1) {
       for (var b = 0; b < BUCKETS.length; b++) {
         var dim = (selected >= 0 && selected !== b);
-        ctx.globalAlpha = (dim ? 0.35 : 1) * (1 - viewT);
+        ctx.globalAlpha = (dim ? 0.35 : 1) * (1 - viewT) * mt;
         ctx.fillStyle = "#003366";
         ctx.fillText(BUCKETS[b].label.toUpperCase(), 0, clusterTops[b].top - 6);
       }
     }
     if (viewT > 0) {
-      ctx.globalAlpha = viewT;
+      ctx.globalAlpha = viewT * mt;
       ctx.fillStyle = "#003366";
       for (var ti = 0; ti < calTiles.length; ti++) {
         ctx.fillText("AGE " + calTiles[ti].label, calTiles[ti].x, calTiles[ti].y + calLabelH - 4);
@@ -1582,7 +2077,12 @@
       var x = curX(i), y = curY(i);
       var alpha = (selected >= 0 && selected !== bk) ? 0.13 : 1;
 
-      if (!reduceMotion && i > N - FLY && N < TOTAL_DAYS) {
+      if (mt < 1 && i < INTRO_N) {
+        // still unfolding out of the first-year block
+        var gx = posI[i * 2], gy = posI[i * 2 + 1];
+        x = gx + (x - gx) * mt;
+        y = gy + (y - gy) * mt;
+      } else if (!reduceMotion && i > N - FLY && N < TOTAL_DAYS) {
         var t = (N - i) / FLY;
         var e = 1 - Math.pow(1 - t, 3);
         x = layoutW * 0.5 + (x - layoutW * 0.5) * e;
@@ -1593,16 +2093,21 @@
       ctx.globalAlpha = alpha;
       ctx.fillStyle = BUCKETS[bk].color;
       ctx.fillRect(x, y, dotSize, dotSize);
+
+      if (i === 0 && mt < 1) {
+        // day one gives up the photo on its way into a bucket
+        ctx.globalAlpha = alpha * (1 - mt);
+        drawDayOne(x + dotSize / 2, y + dotSize / 2, dotSize);
+        ctx.globalAlpha = alpha;
+      }
     }
     ctx.globalAlpha = 1;
 
     vizCount.textContent = fmt(N);
-    for (var c2 = 0; c2 < chips.length; c2++) {
-      chips[c2].querySelector(".n").textContent = fmt(liveCounts[c2]);
-    }
-    vizSub.innerHTML = N >= TOTAL_DAYS
+    setChipCounts(liveCounts);
+    setSub(N >= TOTAL_DAYS
       ? "every dot is one day &mdash; all of them, so far"
-      : "every dot is one day &mdash; keep scrolling";
+      : "every dot is one day &mdash; keep scrolling");
   }
 
   var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -2044,26 +2549,70 @@
   lb.setAttribute("aria-hidden", "true");
   lb.innerHTML =
     '<button class="lb-close" type="button" aria-label="Close photo">&times;</button>' +
+    '<p class="lb-count" id="lbCount"></p>' +
+    '<button class="lb-nav prev" type="button" aria-label="Previous photo">&#10094;</button>' +
     '<figure class="lb-figure"><img alt=""><figcaption></figcaption></figure>' +
-    '<p class="lb-hint">tap anywhere to close</p>';
+    '<button class="lb-nav next" type="button" aria-label="Next photo">&#10095;</button>' +
+    '<p class="lb-hint">swipe or tap the arrows &middot; tap the photo to close</p>';
   document.body.appendChild(lb);
 
-  var lbImg = lb.querySelector("img");
+  var lbFig = lb.querySelector(".lb-figure");
+  var lbImg = lb.querySelector(".lb-figure img");
   var lbCap = lb.querySelector("figcaption");
   var lbClose = lb.querySelector(".lb-close");
+  var lbCount = lb.querySelector("#lbCount");
   var lbOpener = null;
 
-  function openZoom(fig) {
+  var shots = [].slice.call(document.querySelectorAll(".shot"));
+  var lbIndex = 0;
+
+  function shotSrc(fig) {
+    var img = fig.querySelector("img");
+    return img ? (img.currentSrc || img.src) : "";
+  }
+
+  function paint(i) {
+    var fig = shots[i];
     var img = fig.querySelector("img");
     var cap = fig.querySelector("figcaption");
-    if (!img) return;
-    lbImg.src = img.currentSrc || img.src;
-    lbImg.alt = img.alt || "";
+    lbImg.src = shotSrc(fig);
+    lbImg.alt = img ? (img.alt || "") : "";
     lbCap.textContent = cap ? cap.textContent : "";
     lbCap.style.display = cap ? "" : "none";
+    lbCount.textContent = (i + 1) + " / " + shots.length;
+    lbOpener = fig;
+
+    // so the next tap either way feels instant
+    [i + 1, i - 1].forEach(function (j) {
+      var f = shots[(j % shots.length + shots.length) % shots.length];
+      var pre = new Image();
+      pre.src = shotSrc(f);
+    });
+  }
+
+  function showAt(i, dir) {
+    i = (i % shots.length + shots.length) % shots.length;
+    if (i === lbIndex && dir) return;
+    var change = dir && lb.classList.contains("open");
+    lbIndex = i;
+
+    if (!change || reduceMotion) { paint(i); return; }
+
+    lbFig.classList.add("swapping", dir > 0 ? "to-next" : "to-prev");
+    setTimeout(function () {
+      paint(i);
+      lbFig.classList.remove("swapping", "to-next", "to-prev");
+    }, 150);
+  }
+
+  function step(d) { showAt(lbIndex + d, d); }
+
+  function openZoom(fig) {
+    var i = shots.indexOf(fig);
+    if (i < 0) return;
+    showAt(i, 0);
     lb.classList.add("open");
     lb.setAttribute("aria-hidden", "false");
-    lbOpener = fig;
     // freeze the page behind the overlay without losing scroll position
     document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
@@ -2074,6 +2623,7 @@
     if (!lb.classList.contains("open")) return;
     lb.classList.remove("open");
     lb.setAttribute("aria-hidden", "true");
+    lbFig.classList.remove("swapping", "to-next", "to-prev");
     document.documentElement.style.overflow = "";
     document.body.style.overflow = "";
     if (lbOpener) {
@@ -2083,13 +2633,53 @@
     wake();
   }
 
-  lb.addEventListener("click", closeZoom);
+  lb.querySelector(".lb-nav.prev").addEventListener("click", function (e) {
+    e.stopPropagation(); step(-1);
+  });
+  lb.querySelector(".lb-nav.next").addEventListener("click", function (e) {
+    e.stopPropagation(); step(1);
+  });
+  lbClose.addEventListener("click", function (e) { e.stopPropagation(); closeZoom(); });
 
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") closeZoom();
+  // A swipe leaves a stray click behind on some browsers. Ignore that one -
+  // but only for a moment, or the next genuine tap-to-close gets eaten too.
+  var swipeAt = 0;
+  lb.addEventListener("click", function () {
+    if (Date.now() - swipeAt < 450) return;
+    closeZoom();
   });
 
-  document.querySelectorAll(".shot").forEach(function (fig) {
+  /* ---- swipe left / right to move between photos ---- */
+  var lbX = 0, lbY = 0, lbTracking = false;
+
+  lb.addEventListener("touchstart", function (e) {
+    if (e.touches.length !== 1) { lbTracking = false; return; }
+    lbX = e.touches[0].clientX;
+    lbY = e.touches[0].clientY;
+    lbTracking = true;
+  }, { passive: true });
+
+  lb.addEventListener("touchend", function (e) {
+    if (!lbTracking) return;
+    lbTracking = false;
+    var t = e.changedTouches[0];
+    var dx = t.clientX - lbX;
+    var dy = t.clientY - lbY;
+    // horizontal, decisive, and clearly not a vertical flick
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+      swipeAt = Date.now();                // a swipe must not also close
+      step(dx < 0 ? 1 : -1);
+    }
+  }, { passive: true });
+
+  document.addEventListener("keydown", function (e) {
+    if (!lb.classList.contains("open")) return;
+    if (e.key === "Escape") { closeZoom(); }
+    else if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+  });
+
+  shots.forEach(function (fig) {
     var cap = fig.querySelector("figcaption");
     fig.setAttribute("tabindex", "0");
     fig.setAttribute("role", "button");
@@ -2102,6 +2692,43 @@
       }
     });
   });
+
+  /* ================= PHOTOS ARE LOOK-ONLY ================= */
+
+  function guarded(el) {
+    return el && el.closest && el.closest(".shot, .lb-figure, .lightbox, .snaps");
+  }
+
+  document.addEventListener("contextmenu", function (e) {
+    if (e.target.tagName === "IMG" || guarded(e.target)) e.preventDefault();
+  });
+
+  document.addEventListener("dragstart", function (e) {
+    if (e.target.tagName === "IMG" || guarded(e.target)) e.preventDefault();
+  });
+
+  document.querySelectorAll("img").forEach(function (im) { im.draggable = false; });
+
+  /* ================= "GO ON, SCROLL" ================= */
+
+  (function scrollNudge() {
+    var cue = document.getElementById("scrollCue");
+    if (!cue) return;
+    var moved = false;
+
+    function seen() {
+      if (moved) return;
+      moved = true;
+      cue.classList.remove("nudge");
+      window.removeEventListener("scroll", seen);
+    }
+
+    window.addEventListener("scroll", seen, { passive: true });
+    // still parked at the top after a few seconds? make the point louder
+    setTimeout(function () {
+      if (!moved && window.scrollY < 24) cue.classList.add("nudge");
+    }, 3800);
+  })();
 
   /* ================= PARALLAX DRIFT ================= */
 
@@ -2136,7 +2763,7 @@
 
     var pr = pourProgress();
     if (pr !== lastProgress) {
-      progress = pr;
+      sRaw = pr;
       lastProgress = pr;
       needsDraw = true;
     }

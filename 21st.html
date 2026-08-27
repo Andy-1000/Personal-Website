@@ -228,36 +228,39 @@
     left: 0;
     right: 0;
     z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.3rem;
+    padding: 0 1rem;
+    text-align: center;
     transition: opacity 0.4s ease;
   }
 
   .scroll-cue .cue-label {
+    display: block;
     font-family: var(--body);
     font-weight: 600;
     font-size: clamp(0.82rem, 3.6vw, 0.95rem);
     line-height: 1.3;
     color: var(--blue);
-    white-space: nowrap;
   }
 
   .scroll-cue .cue-go {
+    display: block;
+    margin-top: 0.28rem;
     font-family: var(--body);
     font-weight: 700;
     font-size: clamp(0.62rem, 2.7vw, 0.7rem);
     letter-spacing: 0.16em;
+    /* letter-spacing also trails the last glyph, which drags a centred line
+       half a space to the left; the indent puts it back */
+    text-indent: 0.08em;
     text-transform: uppercase;
     line-height: 1;
     color: var(--blue);
     opacity: 0.72;
-    white-space: nowrap;
   }
 
   .scroll-cue .arrow {
     display: block;
+    margin-top: 0.26rem;
     font-size: 1.3rem;
     line-height: 1;
     color: var(--blue);
@@ -563,6 +566,8 @@
   }
 
   #dayCanvas { display: block; touch-action: pan-y; max-width: 100%; }
+
+  .viz-note > span { display: block; }
 
   .viz-note {
     flex: none;
@@ -1068,9 +1073,10 @@
 
     /* not enough height for three lines - put the words on one */
     .hero { padding-bottom: 3.1rem; }
-    .scroll-cue { flex-direction: row; align-items: baseline; gap: 0.4rem; bottom: 0.6rem; }
+    .scroll-cue { bottom: 0.6rem; }
     .scroll-cue .cue-go { display: none; }
-    .scroll-cue .arrow { font-size: 1.05rem; }
+    .scroll-cue .cue-label { display: inline; }
+    .scroll-cue .arrow { display: inline; margin: 0 0 0 0.4rem; font-size: 1.05rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1143,7 +1149,7 @@
           <canvas id="dayCanvas" aria-label="Dot chart: one dot for every day Andy has lived, coloured by how the day was spent"></canvas>
           <p class="viz-cue" id="vizCue" aria-hidden="true">keep scrolling <span class="vc-arrow">&darr;</span></p>
         </div>
-        <p class="viz-note" id="vizNote">tap a bucket, or any dot, to inspect a day</p>
+        <p class="viz-note"><span id="vizNote">tap a bucket, or any dot, to inspect a day</span></p>
       </div>
     </div>
   </section>

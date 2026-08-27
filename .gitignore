@@ -2,9 +2,5 @@
 portraits/*
 !portraits/web/
 
-# resized copies no longer used by the page (kept locally)
-portraits/web/baby-1.jpg
-portraits/web/uni-glacier.jpg
-
 # local dev tooling
 .claude/

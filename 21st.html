@@ -24,7 +24,7 @@
 <link rel="icon" type="image/x-icon" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bokor&family=Montserrat:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Montserrat:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
 <style>
   :root {
     --blue: #004d99;
@@ -48,8 +48,9 @@
     --b-work: #d63384;
     --b-life: #9ec8f2;
 
-    /* Bokor sets the headings; Montserrat carries everything meant to be read */
-    --display: "Bokor", "Papyrus", fantasy;
+    /* Merriweather sets the headings, matching the rest of the site;
+       Montserrat carries everything meant to be read */
+    --display: "Merriweather", Georgia, serif;
     --body: "Montserrat", "Segoe UI", sans-serif;
   }
 
@@ -83,7 +84,7 @@
     overflow: hidden;
   }
 
-  /* the invite sits straight on the page — no card, no box */
+  /* the invite sits straight on the page: no card, no box */
   .hero-inner {
     position: relative;
     z-index: 2;
@@ -230,41 +231,37 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.3rem;
     transition: opacity 0.4s ease;
   }
 
   .scroll-cue .cue-label {
     font-family: var(--body);
     font-weight: 600;
-    font-size: 0.92rem;
+    font-size: clamp(0.82rem, 3.6vw, 0.95rem);
+    line-height: 1.3;
     color: var(--blue);
     white-space: nowrap;
   }
 
-  .scroll-cue .arrow {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: var(--blue);
-    color: #fff;
-    font-size: 1.15rem;
+  .scroll-cue .cue-go {
+    font-family: var(--body);
+    font-weight: 700;
+    font-size: clamp(0.62rem, 2.7vw, 0.7rem);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
     line-height: 1;
-    animation: bob 1.6s ease-in-out infinite;
+    color: var(--blue);
+    opacity: 0.72;
+    white-space: nowrap;
   }
 
-  /* a soft ring that keeps pinging outwards, so the cue reads as "go on" */
-  .scroll-cue .arrow::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 2px solid var(--blue);
-    animation: cuePing 1.6s ease-out infinite;
+  .scroll-cue .arrow {
+    display: block;
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--blue);
+    animation: bob 1.6s ease-in-out infinite;
   }
 
   /* nobody has scrolled yet - lean on it harder */
@@ -272,17 +269,12 @@
 
   @keyframes bob {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(8px); }
+    50% { transform: translateY(7px); }
   }
 
   @keyframes bobHard {
     0%, 100% { transform: translateY(0); }
-    45% { transform: translateY(12px) scale(1.06); }
-  }
-
-  @keyframes cuePing {
-    0% { transform: scale(1); opacity: 0.55; }
-    80%, 100% { transform: scale(1.75); opacity: 0; }
+    45% { transform: translateY(11px) scale(1.12); }
   }
 
   .confetti {
@@ -301,6 +293,10 @@
 
   /* ================= STORY ================= */
   .chapter { padding: 4.6rem 1.3rem 2.2rem; max-width: 640px; margin: 0 auto; }
+
+  /* the last chapter has no gallery under it, so it needs its own breathing
+     room before the finale */
+  .chapter:last-of-type { padding-bottom: 5.2rem; }
 
   .chapter h2 {
     font-family: var(--display);
@@ -369,9 +365,9 @@
   /* columns pack the photos vertically, so no ragged gaps between rows */
   .snaps {
     column-count: 2;
-    column-gap: 0.85rem;
+    column-gap: 0.7rem;
     margin: 0 auto;
-    padding: 0.6rem 0.9rem 3.4rem;
+    padding: 0.6rem 0.7rem 3rem;
     max-width: 660px;
   }
 
@@ -382,7 +378,7 @@
     --rot: 0deg;
     display: inline-block;
     width: 100%;
-    margin: 0 0 0.85rem;
+    margin: 0 0 0.7rem;
     break-inside: avoid;
     -webkit-column-break-inside: avoid;
     background: #fff;
@@ -396,11 +392,13 @@
 
   .shot.in { opacity: 1; transform: rotate(var(--rot)) translateY(0); }
 
+  /* Every photo is shown whole: its own aspect ratio, no crop. The masonry
+     columns absorb the differing heights, so nothing is cut off and nothing
+     leaves a gap between one photo and the next. */
   .shot img {
+    display: block;
     width: 100%;
-    aspect-ratio: var(--ar, 4 / 5);
-    object-fit: cover;
-    object-position: var(--pos, 50% 30%);
+    height: auto;
     background: var(--sky-soft);
     border-radius: 1px;
   }
@@ -408,11 +406,16 @@
   .shot figcaption {
     font-family: var(--body);
     font-weight: 500;
-    font-size: 0.8rem;
+    font-size: 0.74rem;
     color: var(--ink);
     text-align: center;
-    line-height: 1.35;
-    padding: 0.5rem 0.2rem 0.55rem;
+    line-height: 1.3;
+    padding: 0.42rem 0.15rem 0.5rem;
+    overflow-wrap: break-word;
+  }
+
+  @media (min-width: 700px) {
+    .shot figcaption { font-size: 0.8rem; padding: 0.5rem 0.2rem 0.58rem; }
   }
 
   /* ================= DAY VIZ ================= */
@@ -556,7 +559,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .scroll-cue .arrow, .scroll-cue .arrow::after, .viz-cue .vc-arrow { animation: none; }
+    .scroll-cue .arrow, .viz-cue .vc-arrow { animation: none; }
   }
 
   #dayCanvas { display: block; touch-action: pan-y; max-width: 100%; }
@@ -1035,13 +1038,17 @@
     .cd-cell { max-width: 90px; padding: 0.55rem 0.25rem 0.5rem; }
     .rsvp-btn { width: auto; display: inline-block; padding-inline: 3.2rem; padding-left: 3.42rem; }
     .chapter { padding: 6rem 2rem 2.8rem; }
-    .snaps { max-width: 780px; column-count: 3; column-gap: 1.1rem; padding-bottom: 4.4rem; }
-    .shot { margin-bottom: 1.1rem; }
+    .chapter:last-of-type { padding-bottom: 6.4rem; }
+    /* Two columns at every width. Three balances badly with five-to-eight
+       photos per chapter and leaves a ragged foot; two packs almost flush and
+       gives every photo half the page instead of a third. */
+    .snaps { max-width: 720px; column-count: 2; column-gap: 1.1rem; padding-bottom: 4.4rem; }
+    .shot { margin-bottom: 1.1rem; padding: 8px 8px 0; }
   }
 
   @media (min-width: 1100px) {
     .chapter { max-width: 720px; }
-    .snaps { max-width: 900px; }
+    .snaps { max-width: 780px; }
     .snaps.single { max-width: 380px; }
   }
 
@@ -1059,11 +1066,11 @@
     .cal-links { margin-top: 0.8rem; }
     .cal-btn { font-size: 0.66rem; padding: 0.48rem 1.25rem 0.42rem; }
 
-    /* not enough height to stack the cue - lay it out on one line instead */
-    .hero { padding-bottom: 3.7rem; }
-    .scroll-cue { flex-direction: row; align-items: center; gap: 0.45rem; bottom: 0.75rem; }
-    .scroll-cue .cue-label { font-size: 0.8rem; }
-    .scroll-cue .arrow { width: 30px; height: 30px; font-size: 0.95rem; }
+    /* not enough height for three lines - put the words on one */
+    .hero { padding-bottom: 3.1rem; }
+    .scroll-cue { flex-direction: row; align-items: baseline; gap: 0.4rem; bottom: 0.6rem; }
+    .scroll-cue .cue-go { display: none; }
+    .scroll-cue .arrow { font-size: 1.05rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1105,7 +1112,8 @@
   </div>
 
   <div class="scroll-cue" id="scrollCue">
-    <span class="cue-label">Who is Andy anyway? Scroll down</span>
+    <span class="cue-label">Who is Andy anyway?</span>
+    <span class="cue-go">Scroll down</span>
     <span class="arrow" aria-hidden="true">&darr;</span>
   </div>
 </header>
@@ -1135,7 +1143,7 @@
           <canvas id="dayCanvas" aria-label="Dot chart: one dot for every day Andy has lived, coloured by how the day was spent"></canvas>
           <p class="viz-cue" id="vizCue" aria-hidden="true">keep scrolling <span class="vc-arrow">&darr;</span></p>
         </div>
-        <p class="viz-note" id="vizNote">tap a bucket &mdash; or any dot &mdash; to inspect a day</p>
+        <p class="viz-note" id="vizNote">tap a bucket, or any dot, to inspect a day</p>
       </div>
     </div>
   </section>
@@ -1148,33 +1156,29 @@
   </section>
 
   <div class="snaps">
-    <figure class="shot" style="--rot:-2.5deg; --ar:4/5; --pos:50% 15%;">
-      <img src="portraits/web/baby-2.jpg" alt="Toddler Andy standing in the garden" loading="lazy">
-      <figcaption>Dirt: an early food group</figcaption>
-    </figure>
-    <figure class="shot" style="--rot:2.2deg; --ar:4/5; --pos:50% 12%;">
-      <img src="portraits/web/tot-sibling.jpg" alt="Andy holding his newborn sibling" loading="lazy">
+    <figure class="shot" style="--rot:-2.4deg;">
+      <img src="portraits/web/toddler-big-brother-duties-begin.jpg" width="834" height="1250" alt="Toddler Andy: Big brother duties begin" loading="lazy" decoding="async">
       <figcaption>Big brother duties begin</figcaption>
     </figure>
-    <figure class="shot" style="--rot:2deg; --ar:3/2; --pos:50% 34%;">
-      <img src="portraits/web/tot-garden.jpg" alt="Young Andy grinning in the garden" loading="lazy">
+    <figure class="shot" style="--rot:2.2deg;">
+      <img src="portraits/web/toddler-chocolate.jpg" width="900" height="675" alt="Toddler Andy: Chocolate!!!!!!!!!!!!!!" loading="lazy" decoding="async">
+      <figcaption>Chocolate!!!!!!!!!!!!!!</figcaption>
+    </figure>
+    <figure class="shot" style="--rot:-1.9deg;">
+      <img src="portraits/web/toddler-grow-into-it-they-said.jpg" width="900" height="675" alt="Toddler Andy: Grow into it, they said" loading="lazy" decoding="async">
+      <figcaption>Grow into it, they said</figcaption>
+    </figure>
+    <figure class="shot" style="--rot:2.5deg;">
+      <img src="portraits/web/toddler-paint-an-early-food-group.jpg" width="833" height="1250" alt="Toddler Andy: Paint: an early food group" loading="lazy" decoding="async">
+      <figcaption>Paint: an early food group</figcaption>
+    </figure>
+    <figure class="shot" style="--rot:-2.1deg;">
+      <img src="portraits/web/toddler-professional-smiler-est-2005.jpg" width="900" height="675" alt="Toddler Andy: Professional smiler, est. 2005" loading="lazy" decoding="async">
       <figcaption>Professional smiler, est. 2005</figcaption>
     </figure>
-    <figure class="shot" style="--rot:-2.2deg; --ar:3/2; --pos:50% 28%;">
-      <img src="portraits/web/tot-tramp.jpg" alt="Andy laughing in front of the trampoline" loading="lazy">
-      <figcaption>Trampoline hair, don't care</figcaption>
-    </figure>
-    <figure class="shot" style="--rot:-1.8deg; --ar:3/2; --pos:50% 32%;">
-      <img src="portraits/web/tot-grass.jpg" alt="Andy smiling in the backyard" loading="lazy">
-      <figcaption>Backyard press conference</figcaption>
-    </figure>
-    <figure class="shot" style="--rot:2.6deg; --ar:3/2; --pos:50% 42%;">
-      <img src="portraits/web/tot-choc.jpg" alt="Andy at the table with chocolate evidence" loading="lazy">
-      <figcaption>Crime scene: chocolate</figcaption>
-    </figure>
-    <figure class="shot wide" style="--rot:-2deg; --ar:3/2; --pos:55% 40%;">
-      <img src="portraits/web/tot-hat.jpg" alt="Andy wearing an oversized hat" loading="lazy">
-      <figcaption>Grow into it, they said</figcaption>
+    <figure class="shot" style="--rot:1.8deg;">
+      <img src="portraits/web/toddler-top-tier-sunday-fit.jpg" width="900" height="675" alt="Toddler Andy: Top tier Sunday fit" loading="lazy" decoding="async">
+      <figcaption>Top tier Sunday fit</figcaption>
     </figure>
   </div>
 
@@ -1186,21 +1190,29 @@
   </section>
 
   <div class="snaps">
-    <figure class="shot" style="--rot:2.4deg; --ar:4/5; --pos:50% 12%;">
-      <img src="portraits/web/kid-bike.jpg" alt="Andy riding a bike down a path" loading="lazy">
-      <figcaption>Two wheels, zero fear</figcaption>
+    <figure class="shot" style="--rot:-2.4deg;">
+      <img src="portraits/web/primary-school-book-week-or-just-a-saturday.jpg" width="900" height="1200" alt="Primary School Andy: Book Week? Or just a Saturday" loading="lazy" decoding="async">
+      <figcaption>Book Week? Or just a Saturday</figcaption>
     </figure>
-    <figure class="shot" style="--rot:-2.6deg; --ar:1/1; --pos:50% 6%;">
-      <img src="portraits/web/kid-scientist.jpg" alt="Andy in a lab coat and safety goggles" loading="lazy">
-      <figcaption>Trust me, I'm a scientist</figcaption>
+    <figure class="shot" style="--rot:2.2deg;">
+      <img src="portraits/web/primary-school-fyi-out-of-frame-there-is-a-bear.jpg" width="900" height="600" alt="Primary School Andy: FYI out of frame there is a bear" loading="lazy" decoding="async">
+      <figcaption>FYI out of frame there is a bear</figcaption>
     </figure>
-    <figure class="shot" style="--rot:-1.9deg; --ar:4/5; --pos:50% 30%;">
-      <img src="portraits/web/kid-gabba.jpg" alt="Andy celebrating on the field at the Gabba" loading="lazy">
-      <figcaption>Living the dream at the Gabba</figcaption>
+    <figure class="shot" style="--rot:-1.9deg;">
+      <img src="portraits/web/primary-school-got-a-part-time-job-at-the-local-lab.jpg" width="900" height="1200" alt="Primary School Andy: Got a part time job at the local lab" loading="lazy" decoding="async">
+      <figcaption>Got a part time job at the local lab</figcaption>
     </figure>
-    <figure class="shot" style="--rot:2.1deg; --ar:4/5; --pos:50% 28%;">
-      <img src="portraits/web/kid-costume.jpg" alt="Andy in costume on the footpath" loading="lazy">
-      <figcaption>Book Week? Or just a Tuesday</figcaption>
+    <figure class="shot" style="--rot:2.5deg;">
+      <img src="portraits/web/primary-school-guess-how-far-i-got-with-my-eyes-clos.jpg" width="832" height="1250" alt="Primary School Andy: Guess how far I got with my eyes closed?" loading="lazy" decoding="async">
+      <figcaption>Guess how far I got with my eyes closed?</figcaption>
+    </figure>
+    <figure class="shot" style="--rot:-2.1deg;">
+      <img src="portraits/web/primary-school-never-did-confirm-whether-these-were.jpg" width="900" height="506" alt="Primary School Andy: Never did confirm whether these were human remains or not" loading="lazy" decoding="async">
+      <figcaption>Never did confirm whether these were human remains or not</figcaption>
+    </figure>
+    <figure class="shot" style="--rot:1.8deg;">
+      <img src="portraits/web/primary-school-yes-i-did-try-to-feed-him-some-gum-gu.jpg" width="900" height="1200" alt="Primary School Andy: Yes, I did try to feed him some gum gum" loading="lazy" decoding="async">
+      <figcaption>Yes, I did try to feed him some gum gum</figcaption>
     </figure>
   </div>
 
@@ -1212,29 +1224,37 @@
   </section>
 
   <div class="snaps">
-    <figure class="shot" style="--rot:-2.4deg; --ar:1/1; --pos:50% 8%;">
-      <img src="portraits/web/teen-starwars.jpg" alt="Andy with a fresh buzzcut in a Star Wars shirt" loading="lazy">
-      <figcaption>The buzzcut era</figcaption>
+    <figure class="shot" style="--rot:-2.4deg;">
+      <img src="portraits/web/high-school-all-i-caught-that-day-was-a-stomach-bug.jpg" width="900" height="675" alt="High School Andy: All I caught that day was a stomach bug" loading="lazy" decoding="async">
+      <figcaption>All I caught that day was a stomach bug</figcaption>
     </figure>
-    <figure class="shot" style="--rot:2.2deg; --ar:1/1; --pos:50% 10%;">
-      <img src="portraits/web/teen-sling.jpg" alt="Andy with his arm in a sling" loading="lazy">
-      <figcaption>The arm survived. Mostly</figcaption>
+    <figure class="shot" style="--rot:2.2deg;">
+      <img src="portraits/web/high-school-decided-to-live.jpg" width="900" height="1200" alt="High School Andy: Decided to live" loading="lazy" decoding="async">
+      <figcaption>Decided to live</figcaption>
     </figure>
-    <figure class="shot" style="--rot:-2deg; --ar:4/5; --pos:50% 30%;">
-      <img src="portraits/web/teen-officeworks.jpg" alt="Andy smiling in his Officeworks uniform" loading="lazy">
-      <figcaption>Officeworks' happiest employee</figcaption>
+    <figure class="shot" style="--rot:-1.9deg;">
+      <img src="portraits/web/high-school-no-road-fatalities-yet.jpg" width="900" height="675" alt="High School Andy: No road fatalities... Yet" loading="lazy" decoding="async">
+      <figcaption>No road fatalities... Yet</figcaption>
     </figure>
-    <figure class="shot" style="--rot:2.6deg; --ar:1/1; --pos:50% 8%;">
-      <img src="portraits/web/teen-dog.jpg" alt="Andy sitting by the pool holding a dog" loading="lazy">
-      <figcaption>Poolside with a mate</figcaption>
+    <figure class="shot" style="--rot:2.5deg;">
+      <img src="portraits/web/high-school-officeworks-happiest-employee.jpg" width="651" height="869" alt="High School Andy: Officework&#x27;s Happiest Employee" loading="lazy" decoding="async">
+      <figcaption>Officework's Happiest Employee</figcaption>
     </figure>
-    <figure class="shot" style="--rot:-1.8deg; --ar:3/2; --pos:45% 26%;">
-      <img src="portraits/web/teen-bike.jpg" alt="Andy with an upturned mountain bike in the backyard" loading="lazy">
-      <figcaption>Bike maintenance 101</figcaption>
+    <figure class="shot" style="--rot:-2.1deg;">
+      <img src="portraits/web/high-school-the-buzzcut-era.jpg" width="900" height="1200" alt="High School Andy: The Buzzcut Era" loading="lazy" decoding="async">
+      <figcaption>The Buzzcut Era</figcaption>
     </figure>
-    <figure class="shot wide" style="--rot:1.9deg; --ar:3/2; --pos:50% 40%;">
-      <img src="portraits/web/hs-scenic.jpg" alt="Andy in front of a mountain view" loading="lazy">
-      <figcaption>Year 12, contemplating the view</figcaption>
+    <figure class="shot" style="--rot:1.8deg;">
+      <img src="portraits/web/high-school-the-most-chinese-ive-ever-looked-in-a-ph.jpg" width="900" height="675" alt="High School Andy: The most chinese I&#x27;ve ever looked in a photo" loading="lazy" decoding="async">
+      <figcaption>The most chinese I've ever looked in a photo</figcaption>
+    </figure>
+    <figure class="shot" style="--rot:2.6deg;">
+      <img src="portraits/web/high-school-turns-out-it-works-better-with-the-wheel.jpg" width="900" height="675" alt="High School Andy: Turns out it works better with the wheels on the ground" loading="lazy" decoding="async">
+      <figcaption>Turns out it works better with the wheels on the ground</figcaption>
+    </figure>
+    <figure class="shot" style="--rot:-2.6deg;">
+      <img src="portraits/web/high-school-you-should-have-seen-the-other-guy.jpg" width="900" height="1200" alt="High School Andy: You should have seen the other guy" loading="lazy" decoding="async">
+      <figcaption>You should have seen the other guy</figcaption>
     </figure>
   </div>
 
@@ -1246,29 +1266,25 @@
   </section>
 
   <div class="snaps">
-    <figure class="shot" style="--rot:-2.3deg; --ar:4/5; --pos:50% 10%;">
-      <img src="portraits/web/grad-suit.jpg" alt="Andy in a suit" loading="lazy">
-      <figcaption>Quite thoroughly done with school</figcaption>
-    </figure>
-    <figure class="shot" style="--rot:2.5deg; --ar:4/5; --pos:50% 16%;">
-      <img src="portraits/web/uni-snow.jpg" alt="Andy holding a snowboard on the slopes" loading="lazy">
-      <figcaption>Study break (extended)</figcaption>
-    </figure>
-    <figure class="shot" style="--rot:2deg; --ar:3/2; --pos:50% 38%;">
-      <img src="portraits/web/uni-mtb.jpg" alt="Andy mountain biking above a lake" loading="lazy">
-      <figcaption>Field research</figcaption>
-    </figure>
-    <figure class="shot" style="--rot:-2.2deg; --ar:3/2; --pos:50% 34%;">
-      <img src="portraits/web/uni-friends.jpg" alt="Andy and friends in a grinning selfie" loading="lazy">
-      <figcaption>Quality companions</figcaption>
-    </figure>
-    <figure class="shot" style="--rot:-1.9deg; --ar:3/2; --pos:50% 40%;">
-      <img src="portraits/web/uni-deer.jpg" alt="Andy crouched beside a deer in a field" loading="lazy">
+    <figure class="shot" style="--rot:-2.4deg;">
+      <img src="portraits/web/uni-dinner-sourced-ethically.jpg" width="900" height="675" alt="Uni Andy: Dinner, sourced ethically" loading="lazy" decoding="async">
       <figcaption>Dinner, sourced ethically</figcaption>
     </figure>
-    <figure class="shot" style="--rot:2.3deg; --ar:3/2; --pos:50% 38%;">
-      <img src="portraits/web/uni-creatures.jpg" alt="Andy standing between two large white creature mascots" loading="lazy">
+    <figure class="shot" style="--rot:2.2deg;">
+      <img src="portraits/web/uni-vodka-martini-shaken-not-stirred.jpg" width="489" height="869" alt="Uni Andy: Vodka martini, shaken not stirred" loading="lazy" decoding="async">
+      <figcaption>Vodka martini, shaken not stirred</figcaption>
+    </figure>
+    <figure class="shot" style="--rot:-1.9deg;">
+      <img src="portraits/web/uni-made-some-new-friends.jpg" width="900" height="675" alt="Uni Andy: Made some new friends" loading="lazy" decoding="async">
       <figcaption>Made some new friends</figcaption>
+    </figure>
+    <figure class="shot" style="--rot:2.5deg;">
+      <img src="portraits/web/uni-study-break-extended.jpg" width="651" height="869" alt="Uni Andy: Study break (extended)" loading="lazy" decoding="async">
+      <figcaption>Study break (extended)</figcaption>
+    </figure>
+    <figure class="shot" style="--rot:-2.1deg;">
+      <img src="portraits/web/uni-sun-safety-is-important.jpg" width="900" height="675" alt="Uni Andy: Sun safety is important" loading="lazy" decoding="async">
+      <figcaption>Sun safety is important</figcaption>
     </figure>
   </div>
 
@@ -1279,12 +1295,6 @@
     <p class="lead reveal">As of today, Andy is completing his last semester of uni, and completely in faith towards what the Lord has in store for the season ahead. And, there's no better way to mark it than by being surrounded by the people who've been part of his journey. Andy would love for you to join him as he celebrates his 21st!</p>
   </section>
 
-  <div class="snaps single">
-    <figure class="shot wide" style="--rot:1.8deg; --ar:3/2; --pos:50% 45%;">
-      <img src="portraits/web/today-beach.jpg" alt="Andy in a bucket hat and sunglasses at the beach" loading="lazy">
-      <figcaption>Ready for whatever's next</figcaption>
-    </figure>
-  </div>
 
 </main>
 
@@ -1354,12 +1364,12 @@
   ];
 
   var BUCKET_BLURB = {
-    church: "{n} Sundays &mdash; nearly three whole years of church, back to back.",
-    primary: "{n} days of primary school &mdash; Qld runs about 195 school days a year, Prep to Year 6.",
-    high: "{n} days at The Gap SHS &mdash; six years of Years 7 to 12.",
-    uni: "{n} days on campus &mdash; Mondays to Wednesdays, 26 teaching weeks a year.",
-    work: "{n} days on the clock &mdash; Saturdays right through Years 11 and 12, then three days a week ever since.",
-    life: "{n} days of everything else &mdash; weekends, holidays, being a baby, and hitting drums with sticks."
+    church: "{n} Sundays. Nearly three whole years of church, back to back.",
+    primary: "{n} days of primary school. Qld runs about 195 school days a year, Prep to Year 6.",
+    high: "{n} days at The Gap SHS. Six years of Years 7 to 12.",
+    uni: "{n} days on campus. Mondays to Wednesdays, 26 teaching weeks a year.",
+    work: "{n} days on the clock. Saturdays right through Years 11 and 12, then three days a week ever since.",
+    life: "{n} days of everything else. Weekends, holidays, being a baby, and hitting drums with sticks."
   };
 
   /* ================= DAY MATHS ================= */
@@ -1457,7 +1467,7 @@
       // Party day: stay celebratory rather than counting into negatives.
       var overBy = -left;
       html = overBy < 6 * 3600000
-        ? '<p class="cd-done">It’s party time — see you there!</p>'
+        ? '<p class="cd-done">It’s party time. See you there!</p>'
         : '<p class="cd-done">What a night. Thanks for coming!</p>';
     } else {
       var secs = Math.floor(left / 1000);
@@ -1534,7 +1544,7 @@
     } else {
       btn.addEventListener("click", function (e) {
         e.preventDefault();
-        showToast("The RSVP form is still getting dressed — check back soon!");
+        showToast("The RSVP form is still getting dressed. Check back soon!");
       });
     }
   });
@@ -1648,7 +1658,7 @@
   var legend = document.getElementById("legend");
   var chips = [];
   var selected = -1;
-  var NOTE_DEFAULT = "tap a bucket &mdash; or any dot &mdash; to inspect a day";
+  var NOTE_DEFAULT = "tap a bucket, or any dot, to inspect a day";
 
   BUCKETS.forEach(function (b, i) {
     var chip = document.createElement("button");
@@ -1699,15 +1709,16 @@
   var INTRO_GREY = "#b7c7d8";   // a day that has not been sorted yet
   var introPitch = 8, rowPitch = 30;
 
-  // Day one gets a face rather than a plain square. The photo is not from the
-  // day itself - the caption under it says so - it is just the youngest Andy
-  // there is, so the first dot means something before it turns into a chart.
+  // Day one gets a face rather than a plain square: the newborn photo, from
+  // the day itself, so the first dot means something before it turns into
+  // a chart.
   var dayOnePic = new Image();
   var dayOneReady = false;
   dayOnePic.onload = function () { dayOneReady = true; needsDraw = true; wake(); };
-  dayOnePic.src = "portraits/web/baby-1.jpg";
-  // square crop around his head, as fractions of the natural size
-  var PIC_CROP = { x: 0.16, y: 0.02, side: 0.47 };
+  dayOnePic.src = "portraits/web/day-one.jpg";
+  // A centred square taken from whatever shape the file happens to be,
+  // biased up the frame because that is where a face sits.
+  var PIC_CROP = { side: 1, yBias: 0.32 };
 
   // scroll milestones, as a fraction of the pinned section
   var S_WEEK = 0.075;           // one dot        -> one week
@@ -1832,9 +1843,9 @@
 
   /* ---- the words that go with each beat of the intro ---- */
   var INTRO_COPY = [
-    { h: "This is one day",
+    { h: "This is Day 1",
       s: "Wednesday, 7 September 2005",
-      n: "The day Andy turned up. One dot &mdash; one day. That is the whole chart." },
+      n: "The day Andy turned up. One dot, one day. That is the whole chart." },
     { h: "Seven dots, one week",
       s: "Andy&rsquo;s first week",
       n: "They line up in the order they happened, oldest first." },
@@ -1859,7 +1870,7 @@
       lastSub = "";
       if (selected < 0) {
         vizNote.innerHTML = view === "calendar"
-          ? "each block is one year of life &mdash; 21 of them, day by day"
+          ? "each block is one year of life, 21 of them, day by day"
           : NOTE_DEFAULT;
       }
     } else {
@@ -1913,8 +1924,10 @@
       return;
     }
     var w = dayOnePic.naturalWidth, h = dayOnePic.naturalHeight;
-    var side = w * PIC_CROP.side;
-    ctx.drawImage(dayOnePic, w * PIC_CROP.x, h * PIC_CROP.y, side, side, x, y, size, size);
+    var side = Math.min(w, h) * PIC_CROP.side;
+    var sx = (w - side) / 2;
+    var sy = (h - side) * PIC_CROP.yBias;
+    ctx.drawImage(dayOnePic, sx, sy, side, side, x, y, size, size);
   }
 
   /* ---- beats 1-4: one day, one week, one year, then the sorting ---- */
@@ -2106,8 +2119,8 @@
     vizCount.textContent = fmt(N);
     setChipCounts(liveCounts);
     setSub(N >= TOTAL_DAYS
-      ? "every dot is one day &mdash; all of them, so far"
-      : "every dot is one day &mdash; keep scrolling");
+      ? "every dot is one day, all of them so far"
+      : "every dot is one day, keep scrolling");
   }
 
   var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -2135,9 +2148,9 @@
       var d = new Date(BIRTH.getTime());
       d.setDate(d.getDate() + best);
       var b = BUCKETS[dayBucket[best]];
-      vizNote.innerHTML = "<b>Day " + fmt(best + 1) + "</b> &mdash; " +
+      vizNote.innerHTML = "<b>Day " + fmt(best + 1) + "</b> &middot; " +
         DOWS[d.getDay()] + ", " + d.getDate() + " " + MONTHS[d.getMonth()] + " " + d.getFullYear() +
-        " &mdash; " + BUCKET_AT[b.key];
+        " &middot; " + BUCKET_AT[b.key];
     }
   });
 
@@ -2812,12 +2825,12 @@
         b2.classList.toggle("on", b2.getAttribute("data-view") === view);
       });
       vizNote.innerHTML = view === "calendar"
-        ? "each block is one year of life &mdash; 21 of them, day by day"
-        : "tap a bucket &mdash; or any dot &mdash; to inspect a day";
+        ? "each block is one year of life, 21 of them, day by day"
+        : "tap a bucket, or any dot, to inspect a day";
       selected = -1;
       updateSelection();
       if (view === "calendar") {
-        vizNote.innerHTML = "each block is one year of life &mdash; 21 of them, day by day";
+        vizNote.innerHTML = "each block is one year of life, 21 of them, day by day";
       }
       needsDraw = true;
       wake();

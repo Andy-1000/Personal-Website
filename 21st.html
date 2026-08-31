@@ -2734,15 +2734,66 @@
     var cue = document.getElementById("scrollCue");
     if (!cue) return;
     var moved = false;
+    var tugging = false;
 
     function seen() {
-      if (moved) return;
+      if (moved || tugging) return;
       moved = true;
       cue.classList.remove("nudge");
       window.removeEventListener("scroll", seen);
     }
 
     window.addEventListener("scroll", seen, { passive: true });
+
+    var mayAnimate = true;
+    try {
+      mayAnimate = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    } catch (e) { mayAnimate = true; }
+
+    // Parked at the very top? Physically tug the page down a touch and let it
+    // ease back, so it is unmistakable that the whole thing scrolls. The scroll
+    // is animated by hand rather than via `behavior:"smooth"`, which some
+    // mobile browsers quietly ignore.
+    function ease(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+
+    function tug(depth, then) {
+      if (moved || window.scrollY > 24) { if (then) then(); return; }
+      tugging = true;
+      var downMs = 260, holdMs = 90, upMs = 520, start = null;
+
+      function step(now) {
+        if (start === null) start = now;
+        if (moved) { tugging = false; return; }   // user took over - bail
+        var el = now - start, y;
+        if (el < downMs) {
+          y = depth * ease(el / downMs);
+        } else if (el < downMs + holdMs) {
+          y = depth;
+        } else if (el < downMs + holdMs + upMs) {
+          y = depth * (1 - ease((el - downMs - holdMs) / upMs));
+        } else {
+          window.scrollTo(0, 0);
+          if (then) then();
+          // hold the guard a beat so the settle's own scroll event, which
+          // lands next frame, is not mistaken for the visitor scrolling
+          setTimeout(function () { tugging = false; }, 80);
+          return;
+        }
+        window.scrollTo(0, y);
+        requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    if (mayAnimate) {
+      setTimeout(function () {
+        tug(48, function () {
+          // a second, slightly deeper tug if they still have not moved
+          setTimeout(function () { tug(66); }, 3200);
+        });
+      }, 1800);
+    }
+
     // still parked at the top after a few seconds? make the point louder
     setTimeout(function () {
       if (!moved && window.scrollY < 24) cue.classList.add("nudge");

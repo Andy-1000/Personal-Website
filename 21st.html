@@ -1065,12 +1065,14 @@
     .cal-links { margin-top: 0.8rem; }
     .cal-btn { font-size: 0.66rem; padding: 0.48rem 1.25rem 0.42rem; }
 
-    /* not enough height for three lines - put the words on one */
-    .hero { padding-bottom: 3.1rem; }
-    .scroll-cue { bottom: 0.6rem; }
-    .scroll-cue .cue-go { display: none; }
-    .scroll-cue .cue-label { display: inline; }
-    .scroll-cue .arrow { display: inline; margin: 0 0 0 0.4rem; font-size: 1.05rem; }
+    /* keep "Scroll down" stacked under the question on every screen - just
+       tighten the three lines and reserve enough room so they still clear
+       the invite */
+    .hero { padding-bottom: 3.9rem; }
+    .scroll-cue { bottom: 0.5rem; }
+    .scroll-cue .cue-label { font-size: 0.82rem; line-height: 1.2; }
+    .scroll-cue .cue-go { margin-top: 0.12rem; }
+    .scroll-cue .arrow { margin-top: 0.1rem; font-size: 1rem; }
   }
 
   @media (prefers-reduced-motion: reduce) {

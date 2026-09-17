@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Albums | Andy Sansness</title>
+<meta name="description" content="Every album Andy has listened to and rated, sortable by star rating or release year.">
+<link rel="icon" type="image/png" href="thumbs_up_.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #004d99;
+    --navy: #003366;
+    --sky: #cce6ff;
+    --sky-soft: #e9f3ff;
+    --paper: #ffffff;
+    --ink: #14243a;
+    --muted: #6b7a8b;
+    --gold: #e0a100;
+    --star-empty: #d9e2ec;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Open Sans", sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { color: #fff; background: var(--blue); }
+
+  img { display: block; max-width: 100%; }
+
+  /* ---------- heading ---------- */
+  header.page {
+    text-align: center;
+    padding: 2rem 1rem 0.25rem;
+  }
+
+  header.page h1 {
+    font-family: "Merriweather", serif;
+    font-weight: 400;
+    font-size: clamp(1.8rem, 7vw, 2.6rem);
+    color: var(--navy);
+    margin: 0;
+  }
+
+  header.page .tally {
+    margin: 0.2rem 0 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- sort switch ---------- */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: center;
+    padding: 0.85rem 1rem;
+    background: rgba(255, 255, 255, 0.92);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  .switch {
+    display: inline-flex;
+    padding: 4px;
+    border: 2px solid var(--sky);
+    border-radius: 999px;
+    background: #fff;
+  }
+
+  .switch button {
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--blue);
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .switch button[aria-pressed="true"] { background: var(--blue); color: #fff; }
+  .switch button:not([aria-pressed="true"]):hover { background: var(--sky-soft); }
+  .switch button:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+
+  /* ---------- shelves ---------- */
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0.5rem 16px 3rem;
+  }
+
+  .shelf { margin-top: 1.6rem; }
+
+  .shelf-head {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding-bottom: 0.55rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--sky);
+  }
+
+  .shelf-head h2 {
+    margin: 0;
+    font-family: "Merriweather", serif;
+    font-weight: 400;
+    font-size: 1.2rem;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .shelf-head .n {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.4rem 1.1rem;
+  }
+
+  .card {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* every cover is the same square, whatever the source image */
+  .art {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--sky-soft);
+    box-shadow: 0 1px 2px rgba(20, 36, 58, 0.12), 0 4px 14px rgba(20, 36, 58, 0.08);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .art img {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .art img.ready { opacity: 1; }
+
+  .art .fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem;
+    text-align: center;
+    font-family: "Merriweather", serif;
+    font-size: 0.85rem;
+    line-height: 1.35;
+    color: var(--navy);
+  }
+
+  .card:hover .art,
+  .card:focus-visible .art {
+    transform: translateY(-3px);
+    box-shadow: 0 2px 4px rgba(20, 36, 58, 0.14), 0 10px 24px rgba(20, 36, 58, 0.16);
+  }
+
+  .card:focus-visible { outline: none; }
+  .card:focus-visible .art { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+  .card .t,
+  .card .a {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+  }
+
+  .card .t {
+    margin-top: 0.55rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .card .a {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--muted);
+  }
+
+  .card .sub {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.15rem;
+    min-height: 14px;
+  }
+
+  /* ---------- stars ---------- */
+  .stars { display: inline-flex; gap: 1px; line-height: 0; }
+  .stars svg { width: 1em; height: 1em; }
+  .stars .on { fill: var(--gold); }
+  .stars .off { fill: var(--star-empty); }
+  .card .stars { font-size: 12px; }
+  .shelf-head .stars { font-size: 18px; }
+  .unrated-label { font-size: 0.75rem; color: var(--muted); }
+
+  /* ---------- detail dialog ---------- */
+  dialog {
+    width: min(860px, calc(100vw - 32px));
+    max-height: calc(100svh - 32px);
+    padding: 0;
+    border: 0;
+    border-radius: 16px;
+    color: var(--ink);
+    background: #fff;
+    box-shadow: 0 24px 70px rgba(0, 25, 51, 0.35);
+    overflow: hidden;
+  }
+
+  dialog::backdrop {
+    background: rgba(0, 25, 51, 0.55);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+
+  dialog[open] { animation: rise 0.22s ease-out; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px) scale(0.98); } }
+
+  .detail {
+    display: grid;
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+    max-height: calc(100svh - 32px);
+  }
+
+  .detail .cover {
+    position: relative;
+    align-self: start;
+    aspect-ratio: 1 / 1;
+    margin: 1.6rem 0 1.6rem 1.6rem;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--sky-soft);
+    box-shadow: 0 4px 18px rgba(20, 36, 58, 0.15);
+  }
+
+  .detail .cover img { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; }
+  .detail .cover .fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    text-align: center;
+    font-family: "Merriweather", serif;
+    font-size: 1.2rem;
+    color: var(--navy);
+  }
+
+  .detail .info {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 1.6rem 1.6rem 1.2rem;
+    overflow-y: auto;
+  }
+
+  .detail h2 {
+    margin: 0 2.2rem 0 0;
+    font-family: "Merriweather", serif;
+    font-weight: 400;
+    font-size: clamp(1.3rem, 4.5vw, 1.75rem);
+    line-height: 1.25;
+    color: var(--navy);
+  }
+
+  .detail .by {
+    margin: 0.35rem 0 0;
+    font-size: 1rem;
+    color: var(--blue);
+    font-weight: 600;
+  }
+
+  .detail .facts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 1rem;
+    margin: 0.8rem 0 0;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+
+  .detail .facts .stars { font-size: 20px; }
+
+  .detail .review {
+    margin: 1.1rem 0 0;
+    font-size: 0.95rem;
+  }
+
+  .detail .review.empty { color: var(--muted); font-style: italic; }
+
+  .detail .pick {
+    margin: 1rem 0 0;
+    padding: 0.6rem 0.8rem;
+    border-left: 3px solid var(--blue);
+    background: var(--sky-soft);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.9rem;
+  }
+
+  .detail .pick b { color: var(--navy); font-weight: 600; }
+
+  .detail nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 1.2rem;
+  }
+
+  .detail nav .pos {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .round {
+    flex: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid var(--blue);
+    background: #fff;
+    color: var(--blue);
+    font-size: 1.05rem;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .round:hover { background: var(--blue); color: #fff; }
+  .round:active { transform: scale(0.94); }
+  .round:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+
+  .close {
+    position: absolute;
+    top: 0.9rem;
+    right: 0.9rem;
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    border-color: var(--sky);
+    font-size: 1.3rem;
+  }
+
+  /* ---------- footer ---------- */
+  footer {
+    border-top: 1px solid var(--sky);
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.78rem;
+    color: #7a8795;
+  }
+
+  /* ---------- custom cursor (desktop only, matches the rest of the site) ---------- */
+  .cursor { pointer-events: none; }
+  .cursor .ball { position: fixed; top: 0; left: 0; z-index: 1000; will-change: transform; }
+  /* the dialog sits in the browser's top layer, above the custom cursor, so it uses the normal pointer */
+  .modal-open .cursor { display: none; }
+
+  @media (pointer: fine) {
+    body, a, button { cursor: none; }
+    dialog, dialog::backdrop { cursor: auto; }
+    dialog button { cursor: pointer; }
+  }
+
+  @media (pointer: coarse) {
+    .cursor { display: none; }
+  }
+
+  /* ---------- small screens ---------- */
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+      gap: 1.1rem 0.75rem;
+    }
+    .card .t { font-size: 0.8rem; }
+    .card .a { font-size: 0.74rem; }
+    .shelf-head h2 { font-size: 1.05rem; }
+
+    .detail {
+      grid-template-columns: 1fr;
+      overflow-y: auto;
+    }
+    .detail .cover { width: 62%; margin: 1.4rem auto 0; }
+    .detail .info { overflow: visible; padding: 1.1rem 1.2rem 1rem; }
+    .detail h2 { margin-right: 0; text-align: center; }
+    .detail .by { text-align: center; }
+    .detail .facts { justify-content: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" aria-hidden="true">
+  <div class="ball big">
+    <svg height="50" width="50"><circle cx="25" cy="25" r="20" stroke-width="0" style="fill:#cce6ff;opacity:.7"></circle></svg>
+  </div>
+  <div class="ball small">
+    <svg height="10" width="10"><circle cx="5" cy="5" r="4" stroke-width="0" style="fill:#004d99"></circle></svg>
+  </div>
+</div>
+
+<header class="page">
+  <h1>Albums</h1>
+  <p class="tally" id="tally"></p>
+</header>
+
+<div class="toolbar">
+  <div class="switch" role="group" aria-label="Sort albums by">
+    <button type="button" data-sort="rating" aria-pressed="true">Rating</button>
+    <button type="button" data-sort="year" aria-pressed="false">Release year</button>
+  </div>
+</div>
+
+<main id="shelves" aria-live="polite"></main>
+
+<footer>
+  All reviews by Andy.
+</footer>
+
+<dialog id="detail" aria-labelledby="dTitle">
+  <button class="round close" id="dClose" type="button" aria-label="Close">&times;</button>
+  <div class="detail">
+    <div class="cover" id="dCover"></div>
+    <div class="info">
+      <h2 id="dTitle"></h2>
+      <p class="by" id="dArtist"></p>
+      <p class="facts" id="dFacts"></p>
+      <p class="review" id="dReview"></p>
+      <p class="pick" id="dPick" hidden></p>
+      <nav>
+        <button class="round" id="dPrev" type="button" aria-label="Previous album">&#10094;</button>
+        <span class="pos" id="dPos"></span>
+        <button class="round" id="dNext" type="button" aria-label="Next album">&#10095;</button>
+      </nav>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  "use strict";
+
+  /* Generated from the Albums note. half = rating in half stars (10 = 5 stars), null = not yet rated */
+  var ALBUMS = [{"slug":"geography-tom-misch","title":"Geography","artist":"Tom Misch","year":2018,"half":10,"pick":"Water Baby","review":"Geography is a melodic explosion, a musical exploration and my favourite album of all time. Smooth grooves and funky, bopable beats provide the backbone for most of the tracks, each of which have a perfect balance of meaningful lyrics, catchy hooks and strong musicality ‒ it all just sounds so good. It is undeniable that the quality control is top tier; this one of the only albums I know which contains not a single bad song. Overall, Geography offers a depth and breadth of sound which is rare as it is masterful."},{"slug":"the-crux-djo","title":"The Crux","artist":"Djo","year":2025,"half":10,"pick":null,"review":"Hauntingly beautiful, complete album feel. Strong 60s, 70s influence, yet modernised in a way that feels both fresh and nostalgic. Alt-rock, superbly recorded guitar driven tracks, with a slight urban folk lean."},{"slug":"get-to-heaven-deluxe-everything-everything","title":"Get to Heaven (Deluxe)","artist":"Everything Everything","year":2015,"half":10,"pick":"Distant Past","review":"Get To Heaven is a subversive smorgasbord of delicious sounds and atypical indie music. A reoccuring structure within many of these songs is the technique of beginning relatively basic, and then building throughout the song to a breathtaking, souring climax. Lyrics are wild as they are dark, and yet not without depth and meaning; this is in stark contrast to most typical pop/rock lyrics. Though not without a miss or two, the majority of songs which do hit are compelling as they are mind-bending."},{"slug":"curve-of-the-earth-mystery-jets","title":"Curve of the Earth","artist":"Mystery Jets","year":2016,"half":9,"pick":"Bubblegum","review":"Curve of the Earth is a fine example of classic indie rock, and is some the best this genre has to offer. Although I can't quite put my finger on it, something about this album makes it unbelievably *listenable*, elevating it far above many (and there are many) indie rock groups. It may be their nuanced and near staggering depth of sound, or maybe their dynamic and interesting lyrics. If I had one qualm it would be that some lyrics could be articulated a bit clearer. Regardless, this album makes for a great listen."},{"slug":"all-for-something-tiny-habits","title":"All for Something","artist":"Tiny Habits","year":2024,"half":9,"pick":null,"review":"Low-key sublime folky goodness. Three lead singers weave three part harmonies between acapella verses, each carrying the unique voice of each individual singer."},{"slug":"songs-in-the-key-of-life-stevie-wonder","title":"Songs in the key of Life","artist":"Stevie Wonder","year":1976,"half":9,"pick":"Isn't She Lovely","review":"Songs in the Key of Life demonstrates the highest levels of funk and groove you may ever potentially listen to. While the music is driven by bass, kit and synth indispersed by some ripping instrumental solos, lyrics touch on religion, love, politics and race; between its lyrics and music, this album truly is in the key of life. This album also features seamlessly melding of one song to the next, reinforcing this album as a cohesive experience in its own right."},{"slug":"infinitely-tall-charlie-burg","title":"Infinitely Tall","artist":"Charlie Burg","year":2022,"half":9,"pick":null,"review":"Groovy, musical bops unique and interesting at every turn with anything but cookie cutter lyrics that have no right being as fun as they are."},{"slug":"decide-djo","title":"DECIDE","artist":"Djo","year":2022,"half":9,"pick":"I Want Your Video","review":"DECIDE presents a dark, psychodelic and synth-heavy soundscape, with heavy use of autotune to surprisingly engaging effect. Though somewhat genre defying, DECIDE lies decidedly in the region of indie and alt-pop; and yet the overall sound of the album is unique in its own right. Cool, edgy lyrics work with experimental, unconventional music to create a deeply moody and almost chaotic vibe. And yet in spite, or maybe because of this, in the end DECIDE just sounds really, really good."},{"slug":"viva-la-vida-or-death-and-all-his-friends-coldplay","title":"Viva La Vida or Death and All His Friends","artist":"Coldplay","year":2008,"half":9,"pick":"Viva La Vida","review":"Viva La Vida (lit. long live life), is a stark contrast to the typical Coldplay sound, showcasing minor riffs which rather than being depressing, instead create a moody and atmosphereic musical experience. Lyrics are impactful and have a cohesive thematic direction in relation to the album title. Repetitive lilting melodic riffs drive much of the sound, allowing for strong builds within songs. Overall, Viva La Vida is unique while remaining completely Coldplay."},{"slug":"the-human-condition-jon-bellion","title":"The Human Condition","artist":"Jon Bellion","year":2016,"half":9,"pick":"Guillotine","review":"Musically insane while still being extremely listenable. Randomosity (eg. strange noises played at weird times) add interest but detract full smoothness... and yet a lot of the time it just works. Actually sick lyrics with depth. Nice interwoven ideas and riffs through the entire album."},{"slug":"all-this-bad-blood-bastille","title":"All this Bad Blood","artist":"Bastille","year":2013,"half":9,"pick":"Pompeii","review":"All this Bad Blood is a cinematic pop-rock album full to the brim with bangers. Though the music itself is simple, compelling lyrical depth in combination with subversive instrumental variety create consistently interesting songs."},{"slug":"kingdom-within-josh-pyke","title":"Kingdom Within","artist":"Josh Pyke","year":2026,"half":9,"pick":null,"review":"Folk-pop ballads which smash at every turn."},{"slug":"play-the-game-ripe","title":"Play the Game","artist":"Ripe","year":2025,"half":9,"pick":null,"review":"Riffs driven grooves, solid brass and electric combos just a bit more out of pocket. Slightly unexpected/atypical chords progression, melodic and lyric direction"},{"slug":"djesse-vol-4-jacob-collier","title":"Djesse Vol.4","artist":"Jacob Collier","year":2024,"half":9,"pick":"Wherever I Go","review":"Djesse Vol. 4 is the culmination of Jacob Colliers musical genius, touching on every genre and style imaginable, including country, gospel, R&B, pop, folk, K-pop, latin, rock and metal, rap. To achieve this, the album includes collaborations with over 28 artists around the world. Above and beyond musicality, and though lyrics can become a touch cliché, Jacob has come to the point of being able to deliver songs which are equally technical as they are listenable."},{"slug":"speak-for-yourself-imogen-heap","title":"Speak for Yourself","artist":"Imogen Heap","year":2005,"half":9,"pick":"Have you got it in you?","review":"Genre defying and utterly brilliant music. This is what happens when insane musicality is done in a way to achieve max listenability. Dark and playful tone."},{"slug":"the-original-motion-picture-soundtrack-saint-motel","title":"The Original Motion Picture Soundtrack","artist":"Saint Motel","year":2021,"half":9,"pick":"A Good Song Never Dies","review":"The Original Motion Picture Soundtrack is a fun indie pop-rock album, complete with retro vibes and bopable grooves. Every song is driven by smooth, simple riffs, and each one can be individually treated as a single in its own right. While the overall sound is undeniably sweet, it admittedly lacks a certain depth. And yet, what may lack in depth is made up for in sheer variety and vibrancy, nicely balancing the line between carefree and cringe."},{"slug":"joy-in-the-wild-unknown-ripe","title":"Joy in the Wild Unknown","artist":"Ripe","year":2018,"half":9,"pick":"Follow Through","review":"Joy in the Wild Unknown is a delightfully funky alt-pop album. Melodic hooks grab you at every turn, while harmonically layering progressions keep the ear engaged. Horns, eletric guitar and crispy vocals drive every song, each of which demonstrates phenomenal musicality and an intoxicating energy. On top of the musically delivery, there is also a compellingly carefree yet edgy vibe, which is then subsequently accentuated by the lyrics."},{"slug":"twenty-one-mystery-jets","title":"Twenty One","artist":"Mystery Jets","year":2008,"half":8,"pick":"Two Doors Down","review":"High level depth of sound. Beatles/Coldplay vibes."},{"slug":"white-lighter-typhoon","title":"White Lighter","artist":"Typhoon","year":2013,"half":8,"pick":null,"review":"Utterly indescribable and yet brilliant"},{"slug":"how-to-let-go-sigrid","title":"How to Let Go","artist":"Sigrid","year":2022,"half":8,"pick":"A Driver Saved My Night","review":"How to Let Go is fun, sunny and enjoyable, all while remaining musically unique. Though tone is emotionally charged, the grooves stay bopable and bubbly. Variety in both lyrics and musical choices elevate this album beyond simply that of the pop genre, and even more so as the album stays true to its easy, carefree style."},{"slug":"gimme-some-peter-bjorn-and-john","title":"Gimme Some","artist":"Peter Bjorn and John","year":2011,"half":8,"pick":"Second Chance","review":"Gimme Some is a indie alternative pop-rock album which is smooth as it is listenable. Scillinating, sometimes darkly humorous lyrics abound, ranging from downright cynical to downright profound. On the music itself, layered sounds rely on the basics of the instrumental toolkit, creating a simplicity which leaves no room for clutter."},{"slug":"living-room-jerome-blaze","title":"Living Room","artist":"Jerome Blaze","year":2024,"half":8,"pick":null,"review":"Jazz and groove driven musical explorations with a much more solid backbone than it's predecessor, aided by some delightful riffs which catch the ear hook, line and sinker."},{"slug":"child-of-god-ii-forrest-frank","title":"CHILD OF GOD II","artist":"Forrest Frank","year":2025,"half":8,"pick":null,"review":"Gospel bops"},{"slug":"glory-sound-prep-jon-bellion","title":"Glory Sound Prep","artist":"Jon Bellion","year":2018,"half":8,"pick":"Mah's Joint","review":"Alt pop with some cracking brass backing tracks. Trademark stories as lyrics, told in intriguing and interesting ways. Depth, both in musicialoty and lyrics."},{"slug":"this-music-may-contain-hope-raye","title":"This Music May Contain Hope","artist":"RAYE","year":2026,"half":8,"pick":null,"review":"Ambitious, genre ambivalent brilliance. Pop bangers make way for jazz splashes. Highly meta self referential lyrics throughout."},{"slug":"don-t-overthink-it-johanna-linnea-jakobsson","title":"Don't Overthink It","artist":"Johanna Linnea Jakobsson","year":2025,"half":8,"pick":null,"review":"When jazz and songwriting meet there is a great joy to be found. Here there is that joy. Easy listening yet a rich sound, there is plenty to enjoy here."},{"slug":"straight-line-was-a-lie-the-beths","title":"Straight Line Was a Lie","artist":"The Beths","year":2025,"half":8,"pick":null,"review":"The indie-rock bops continue in The Beths fourth outing, easily their best yet with a additional infusion of interesting musicality on top of their classic Kiwi riff driven tracks."},{"slug":"pipedream-firewood-forager","title":"Pipedream Firewood","artist":"Forager","year":2023,"half":8,"pick":null,"review":"Musical journeys throughout every song, with enough decent riffs at every turn to keep you engaged."},{"slug":"loved-parcels","title":"LOVED","artist":"Parcels","year":2025,"half":8,"pick":null,"review":"Joyful, sunny, feel good vibes. Intricitly carved, emotionally charged songs. Admittedly second half doesn't hit quite as hard as the first."},{"slug":"aspects-str4ta","title":"Aspects","artist":"STR4TA","year":2021,"half":8,"pick":null,"review":"High groove central, featuring insane musicality while maintaining reliable listenablility. Some tracks purely instrumental, others feature male vocals."},{"slug":"sucker-punch-sigrid","title":"Sucker Punch","artist":"Sigrid","year":2019,"half":8,"pick":"Don't kill my vibe","review":"Poppy, fun and enjoyable"},{"slug":"mountainhead-everything-everything","title":"Mountainhead","artist":"Everything Everything","year":2024,"half":8,"pick":"Cold Reactor","review":"Top tier concept album with top tier lyrics. Music is interesting and experimental as usual but nothing too earthshattering."},{"slug":"darker-days-peter-bjorn-and-john","title":"Darker Days","artist":"Peter Bjorn and John","year":2018,"half":8,"pick":"Sick and Tired","review":"A smooth, light rock which somehow makes itself very different from any mainstream stuff. Legible lyrics with a certain amount of depth. Musical motifs from other songs scattered amounts (eg Endless reruns riff inliving in a dream)."},{"slug":"like-i-used-to-lucy-rose","title":"Like I Used To","artist":"Lucy Rose","year":2012,"half":8,"pick":null,"review":"Low-key rock-pop noticeably unique and innovative in sound and structure without venturing too far into overt musicality."},{"slug":"dawn-yebba","title":"Dawn","artist":"Yebba","year":2021,"half":8,"pick":null,"review":"Alt-pop experimentations which remain really listenable."},{"slug":"a-billion-heartbeats-mystery-jets","title":"A Billion Heartbeats","artist":"Mystery Jets","year":2020,"half":8,"pick":"Campfire Song","review":"Alt indie rock with fascinating post apocalyptic lyrics, driven by great riffs and layers sounds."},{"slug":"sunshower-couch","title":"Sunshower","artist":"Couch","year":2023,"half":8,"pick":"(I Wanted) Summer With You","review":"Smooth, funk, pop. Insane bass with nice horn backing tracks."},{"slug":"room-for-squares-john-mayer","title":"Room for Squares","artist":"John Mayer","year":2001,"half":8,"pick":"Neon","review":"Room for Squares, John Mayer's first album, pioneered his own unique genre, which he subsequently identifed in his 2021 album of the same name: sob rock. Beyond this particular style, Mayer providers a trifector of amazing vocals, staggering guitar riffs and actually interesting lyrics."},{"slug":"foxlore-the-crane-wives","title":"Foxlore","artist":"The Crane Wives","year":2012,"half":8,"pick":null,"review":"Sensational folk rock. Nice balance of storytelling and musical choices, not leaning too far into acoustic or electronic."},{"slug":"family-business-lawrence","title":"Family Business","artist":"Lawrence","year":2024,"half":8,"pick":"Something in the Water","review":"Family Business is soul-pop at its best. Smooth riffs in combination with stunning vocals make for consistently epic songs, catchy, groovy and bopable. An eight piece band only adds to the musicality and soul of the album, allowing for a decadently layered sound."},{"slug":"pick-up-full-of-pink-carnations-the-vaccines","title":"Pick-Up Full of Pink Carnations","artist":"The Vaccines","year":2024,"half":8,"pick":"Sunkissed","review":"Indie rock; all pretty descent. Interesting lyrics."},{"slug":"songs-from-the-big-chair-tears-for-fears","title":"Songs from the Big Chair","artist":"Tears for Fears","year":1985,"half":8,"pick":"Everybody wants to rule the world","review":"80s rock, eletric guitar, kit, bit of synth, drop of sax. Shout, Everybody wants to rule the world, and Head of Heels, all on one album."},{"slug":"saintmotelevision-saint-motel","title":"saintmotelevision","artist":"Saint Motel","year":2016,"half":8,"pick":"Move","review":"Alt pop rock; mostly up pace and groovy. Just really smooth and catchy riffs with a nice overall variety in musical techniques and instruments (nothing too complex however). Lyrics are super easy to follow and engaging."},{"slug":"everything-you-ve-come-to-expect-the-last-shadow-puppets","title":"Everything You've Come to Expect","artist":"The Last Shadow Puppets","year":2016,"half":8,"pick":"The Element of Surprise","review":"A cross between Arctic Monkeys and the soundtrack from an 80s horror movie which somehow works surprisingly well"},{"slug":"absolute-zero-bruce-hornsby","title":"Absolute Zero","artist":"Bruce Hornsby","year":2019,"half":8,"pick":"Absolute Zero","review":"When alt actually works"},{"slug":"group-project-hi-lo-jack","title":"Group Project","artist":"Hi-Lo Jack","year":2026,"half":8,"pick":null,"review":"Yum bops"},{"slug":"strange-desire-bleachers","title":"Strange Desire","artist":"Bleachers","year":2014,"half":8,"pick":null,"review":"Strong alt pop with occasional orchestral feature"},{"slug":"living-room-lawrence","title":"Living Room","artist":"Lawrence","year":2018,"half":8,"pick":"Probably Up","review":"Soul pop bops"},{"slug":"where-the-mind-wants-to-go-where-you-let-it-go-i-the-mighty","title":"Where the mind wants to go/Where you let it go","artist":"I The Mighty","year":2017,"half":8,"pick":"Sleepwalker","review":"Alt rock. Lyricality focused also."},{"slug":"comfort-eagle-cake","title":"Comfort Eagle","artist":"CAKE","year":2001,"half":8,"pick":"Short Skirt/Long Jacket","review":"Varied styles mostly rockcentric. Less about the music itself (which is still great) than the lyrics."},{"slug":"beat-tape-2-tom-misch","title":"Beat Tape 2","artist":"Tom Misch","year":2015,"half":8,"pick":"Wake Up This Day","review":"Pure grooves, nothing more, nothing less. Nothing smashing but thats because its a beat tape... there doesn't need to be!"},{"slug":"parcels-parcels","title":"Parcels","artist":"Parcels","year":2018,"half":8,"pick":"Tieduprightnow","review":"Solid grooves and builds. An unfortunate mix of dud tracks and bangers."},{"slug":"in-between-dreams-jack-johnson","title":"In Between Dreams","artist":"Jack Johnson","year":2005,"half":8,"pick":"Staple It Together","review":"Light, bright accoustic"},{"slug":"spirit-trail-bruce-hornsby","title":"Spirit Trail","artist":"Bruce Hornsby","year":1998,"half":7,"pick":"Sad Moon","review":"Rock, jazz, country. Driven by Hornsby's iconic piano in virtually every song. Excellent storytelling."},{"slug":"paramore-paramore","title":"Paramore","artist":"Paramore","year":2013,"half":7,"pick":"Ain't it Fun","review":"Soft rock with a strong female lead"},{"slug":"only-sparrows-josh-pyke","title":"Only Sparrows","artist":"Josh Pyke","year":2011,"half":7,"pick":"Clovis Son","review":"Nice folk tunes"},{"slug":"supernatural-santana","title":"Supernatural","artist":"Santana","year":1999,"half":7,"pick":null,"review":"A ripsnorter of electric guitar work with a strong Latin backbone, and yet completely creative and innovative across each track."},{"slug":"collage-2-conor-albert","title":"Collage 2","artist":"Conor Albert","year":2022,"half":7,"pick":null,"review":"Strong"},{"slug":"this-ain-t-the-way-you-go-out-lucy-rose","title":"This Ain't the Way You Go Out","artist":"Lucy Rose","year":2024,"half":7,"pick":null,"review":"Strong rhythmic innovation within even stronger alt-pop compositions"},{"slug":"snapshot-tophouse","title":"Snapshot","artist":"Tophouse","year":2021,"half":7,"pick":null,"review":"Fun folk pop with ripping raw instrumentation"},{"slug":"theory-and-practice-tophouse","title":"Theory & Practice","artist":"Tophouse","year":2025,"half":7,"pick":null,"review":"Fun folk pop with ripping raw instrumentation"},{"slug":"mylo-xyloto-coldplay","title":"Mylo Xyloto","artist":"Coldplay","year":2011,"half":7,"pick":"Charlie Brown","review":null},{"slug":"spinning-out-shaed","title":"Spinning Out","artist":"SHAED","year":2024,"half":7,"pick":null,"review":null},{"slug":"metropole-part-ii-anomalie","title":"Metropole Part II","artist":"Anomalie","year":2018,"half":7,"pick":"Canal","review":"Fusion, techno accoustic, musicality."},{"slug":"hotel-tv-lawrence","title":"Hotel TV","artist":"Lawrence","year":2021,"half":7,"pick":"It's gonna be me","review":"Bass pop groove, really fun and listenable. Some decent stories and lyrics also."},{"slug":"the-tortured-poets-department-taylor-swift","title":"The Tortured Poets Department","artist":"Taylor Swift","year":2024,"half":7,"pick":"Who's afraid of little old me?","review":"Dark, moody but still poppy and folky. Minimal backing music with focus on the lyrics instead."},{"slug":"a-head-full-of-dreams-coldplay","title":"A Head Full of Dreams","artist":"Coldplay","year":2015,"half":7,"pick":"A Head Full of Dreams","review":"Very pop"},{"slug":"a-rush-of-blood-to-the-head-coldplay","title":"A Rush of Blood to the Head","artist":"Coldplay","year":2002,"half":7,"pick":"Clocks","review":"Very minor key with nice lilting moments. Guitar, piano and drums used extensively. Takes very unexpected directions, which make it all the more interesting to listen to."},{"slug":"age-of-the-understatement-the-last-shadow-puppets","title":"Age of The Understatement","artist":"The Last Shadow Puppets","year":2008,"half":7,"pick":"My Mistakes Were Made For You","review":"A cross between Arctic Monkeys and the soundtrack from an 80s horror movie which somehow works surprisingly well"},{"slug":"the-long-way-round-maya-delilah","title":"The Long Way Round","artist":"Maya Delilah","year":2025,"half":7,"pick":null,"review":null},{"slug":"ghost-stories-coldplay","title":"Ghost Stories","artist":"Coldplay","year":2014,"half":7,"pick":"O","review":null},{"slug":"freudian-daniel-caesar","title":"Freudian","artist":"Daniel Caesar","year":2017,"half":7,"pick":"The Best Part","review":"Genre defying, chilled beat driven. Takes unexpected twists and turns which make for really interesting listening."},{"slug":"mirage-plini","title":"Mirage","artist":"Plini","year":2023,"half":7,"pick":"Ember","review":"Instrumental only guitar and drums. Plini has always pushed the envelope musically, but this is nothing short of a symphony of eletric guitar. This does come at the cost of lessened listenability; less music and more art."},{"slug":"12-questions-future-utopia","title":"12 Questions","artist":"Future Utopia","year":2020,"half":7,"pick":null,"review":"Alternative"},{"slug":"ok-daoud","title":"ok","artist":"daoud","year":2025,"half":7,"pick":null,"review":"Hip-hop and jazz inspired instrumental tracks which lean more towards musical exploration than straight track building, and yet achieve a remarkably fun and dynamic sound. Trumpet with support from drums and keys drive the show, demonstrating both musical creativity and technical brilliance. Occasionally daoud's creativity gets the better of him in a few nigh unlistenable tracks, but the joy of the remaining tracks more than make up for this yo-yo in quality."},{"slug":"hound-hey-nothing","title":"Hound","artist":"hey, nothing","year":2026,"half":7,"pick":null,"review":"Raw, indie produced emo-folk with strong harmonisation between both the male and female vocalists as well as the layering of the acoustic and electric guitar. The rough, unpolished production seems a deliberate choice which both adds to the vibe and occasionally distracts. Also a definitive improvement on their debut outing."},{"slug":"raise-the-alarm-the-sunshine-underground","title":"Raise the Alarm","artist":"The Sunshine Underground","year":2006,"half":7,"pick":null,"review":"Riff heavy indie rock, with vocals chops that lean sometimes a bit repetitive or a bit moany; however, the strength of the beats and grooves more than make up for this intermittent shortfall."},{"slug":"making-dens-mystery-jets","title":"Making Dens","artist":"Mystery Jets","year":2006,"half":7,"pick":null,"review":"Raw indie exploration intermingled with singles that build and expand with explosive results. Irreverent but undeniably British indie lyrics add strangely thoughtful flavour."},{"slug":"kimama-beats-nahokimama","title":"Kimama Beats","artist":"Nahokimama","year":2025,"half":7,"pick":null,"review":"Electric guitar groooves"},{"slug":"future-me-hates-me-the-beths","title":"Future Me Hates Me","artist":"The Beths","year":2018,"half":7,"pick":null,"review":"Indie rock hits infused with camp and joy. While not too dissimilar to the classic indie scene, the distinctive Kiwi female vocals, actually half-interesting lyrics and extra-tasty riffs elevate this debut album to a level clear above the average."},{"slug":"jump-rope-gazers-the-beths","title":"Jump Rope Gazers","artist":"The Beths","year":2020,"half":7,"pick":null,"review":"Another strong indie-rock installment of popin' riffs and popin' lyrics from The Beths sophomore album."},{"slug":"expert-in-a-dying-field-the-beths","title":"Expert in a Dying Field","artist":"The Beths","year":2022,"half":7,"pick":null,"review":"Indie-rock easy-listening bangers constituted of concentrated exploration, guitar and fun in this solid third album from The Beths."},{"slug":"rome-josh-pyke","title":"Rome","artist":"Josh Pyke","year":2020,"half":7,"pick":"The Closing Eye","review":"Folky Acoustic. Interesting stories for lyrics."},{"slug":"breakfast-lawrence","title":"Breakfast","artist":"Lawrence","year":2017,"half":7,"pick":"Alibi","review":"Pop funk with retro vibes"},{"slug":"breakin-point-peter-bjorn-and-john","title":"Breakin' Point","artist":"Peter Bjorn and John","year":2016,"half":7,"pick":"Breakin' Point","review":"Alt rock with nice musical and lyrical variety"},{"slug":"five-seconds-flat-lizzy-mcalpine","title":"five seconds flat","artist":"Lizzy McAlpine","year":2022,"half":7,"pick":"an ego thing","review":"Nice lyrics which are driven by McAlphine's voice throughout most songs. Beats and backing tracks are used sparingly to create a haunting atmosphere."},{"slug":"not-tight-domi-and-jd-beck","title":"NOT TiGHT","artist":"DOMi and JD BECK","year":2022,"half":7,"pick":"WHATUP","review":"Prog jazz/hip hop/R&B. Extremely creative, interesting and minimalistic music, but just a little repeditive and hard to really get into and enjoy."},{"slug":"ellipse-imogen-heap","title":"Ellipse","artist":"Imogen Heap","year":2009,"half":7,"pick":"Earth","review":"Ellipse is genre defying, utterly brilliant music. This is what happens when insane musicality is done in a way to achieve max listenability. With its dark and playful tone, alongside mesmerising layered vocals, Ellipse is a musical feast."},{"slug":"the-nu-nation-project-kirk-franklin","title":"The Nu Nation Project","artist":"Kirk Franklin","year":1998,"half":7,"pick":null,"review":"Gospel funk which slaps with force, though as with most gospel music unsurprisingly a bit repeditive."},{"slug":"child-of-god-forrest-frank","title":"CHILD OF GOD","artist":"Forrest Frank","year":2024,"half":7,"pick":null,"review":"Gospel bops"},{"slug":"this-is-why-paramore","title":"This is Why","artist":"Paramore","year":2023,"half":7,"pick":"Running out of Time","review":"Great lyrics. Good music, but nothing earth breaking."},{"slug":"riot-paramore","title":"Riot!","artist":"Paramore","year":2007,"half":7,"pick":"When it rains","review":"Emo rock. Solid music."},{"slug":"melancholia-hymns-arcane-roots","title":"Melancholia Hymns","artist":"Arcane Roots","year":2017,"half":7,"pick":"Indigo","review":"Rock (heavier but more musical side). Guitar, drums and synth build with sprinkles of lighter bells or strings. Overall great, but bit repeditive; each song tends to start quiet/minimal and then slowly build to a climax. Lyrics are difficult to make out; a bit of screaming on the back end of some songs."},{"slug":"xandy-coldplay","title":"X&Y","artist":"Coldplay","year":2005,"half":7,"pick":"White Shadows","review":"Alt rock. Very electronic with use of synth and guitar, layered on typical piano."},{"slug":"the-loop-jordan-rakei","title":"The Loop","artist":"Jordan Rakei","year":2024,"half":7,"pick":"Learning","review":"Very artistic, vocals focused with orchestral and choir backing. Not so much grooves but more feels."},{"slug":"wake-up-now-nick-mulvey","title":"Wake Up Now","artist":"Nick Mulvey","year":2017,"half":7,"pick":null,"review":"Gritty folk ballads which hit different."},{"slug":"carrie-and-lowell-sufjan-stevens","title":"Carrie & Lowell","artist":"Sufjan Stevens","year":2015,"half":7,"pick":"Should Have Known Better","review":"Folky Acoustic Melancholia. Some nice builds. Relies heavily on strumming acoustic guitar."},{"slug":"fashion-nugget-cake","title":"Fashion Nugget","artist":"CAKE","year":1996,"half":7,"pick":"The Distance","review":null},{"slug":"lahai-sampha","title":"Lahai","artist":"Sampha","year":2023,"half":7,"pick":null,"review":"Innovative verse-driven songs in the vein of R&B and chill-pop with splashes of samples and layered vocals."},{"slug":"stranger-in-the-alps-phoebe-bridgers","title":"Stranger in the Alps","artist":"Phoebe Bridgers","year":2017,"half":7,"pick":"Emotional Motion Sickness","review":"Moody sad tunes"},{"slug":"brand-new-eyes-paramore","title":"Brand New Eyes","artist":"Paramore","year":2009,"half":7,"pick":"Playing God","review":"Solid soft rock album"},{"slug":"paint-my-bedroom-black-holly-humberstone","title":"Paint My Bedroom Black","artist":"Holly Humberstone","year":2023,"half":7,"pick":"Paint My Bedroom Black","review":"Dark, moody, emo, but kind of pop as well"},{"slug":"wild-world-bastille","title":"Wild World","artist":"Bastille","year":2016,"half":7,"pick":"Good Grief","review":"More traditional pop-rock than previous albums"},{"slug":"plastic-wine-strings-and-heart","title":"Plastic Wine","artist":"Strings & Heart","year":2025,"half":6,"pick":null,"review":"Indie-christian bops make for surprisingly solid songs, toeing the line between unique and just-another-indie-band in their sound."},{"slug":"fly-michael-mayo","title":"Fly","artist":"Michael Mayo","year":2024,"half":6,"pick":null,"review":"Intriguing experiments in vocalisation and instrumental arrangements in the context of neo-jazz, which does well to remain mostly listenable."},{"slug":"come-of-age-the-vaccines","title":"Come of Age","artist":"The Vaccines","year":2012,"half":6,"pick":"Weirdo","review":"Basic soft rock, but still alright"},{"slug":"parachutes-coldplay","title":"Parachutes","artist":"Coldplay","year":2000,"half":6,"pick":"Spies","review":"Pop rock, a bit moan-y, slow and sad. Some solid riffs in there (Shiver, Trouble) which are unfortunately undermined by somewhat weak verses. Overall, a band starting to get their feet."},{"slug":"komorebi-toshiki-soejima","title":"Komorebi","artist":"Toshiki Soejima","year":2026,"half":6,"pick":null,"review":"Electric guitar grooves"},{"slug":"flight-of-the-conchords-flight-of-the-conchords","title":"Flight of the Conchords","artist":"Flight of the Conchords","year":2008,"half":6,"pick":null,"review":"Undeniably funny ditties"},{"slug":"harlequin-dream-boy-and-bear","title":"Harlequin Dream","artist":"Boy & Bear","year":2013,"half":6,"pick":"Southern Sky","review":"Folky tunes but not much happening"},{"slug":"future-nostalgia-dua-lipa","title":"Future Nostalgia","artist":"Dua Lipa","year":2020,"half":6,"pick":"Levitating","review":"Disco pop"},{"slug":"civil-twilight-civil-twilight","title":"Civil Twilight","artist":"Civil Twilight","year":2010,"half":6,"pick":"Letter from the Sky","review":"Moody beats"},{"slug":"giver-jerome-blaze","title":"Giver","artist":"Jerome Blaze","year":2022,"half":6,"pick":null,"review":"Creative playful musicality brought to life through obscure combinations of acoustic and digital instrumentation. Leans more towards atmospheric exploration than clearcut songwriting, and in that exploration meanders into places which are sometimes difficult to follow"},{"slug":"sailing-to-philadelphia-mark-knopfler","title":"Sailing to Philadelphia","artist":"Mark Knopfler","year":2000,"half":6,"pick":null,"review":"Solid songwriting with an acoustic guitar"},{"slug":"one-violet-charlie-burg","title":"One, Violet","artist":"Charlie Burg","year":2017,"half":6,"pick":null,"review":null},{"slug":"everywhere-isn-t-texas-august-ponthier","title":"Everywhere Isn't Texas","artist":"August Ponthier","year":2026,"half":6,"pick":null,"review":"Folk-pop done well, though the shadow of every other folk-pop artist looms."},{"slug":"whatever-and-ever-amen-ben-folds-five","title":"Whatever and Ever Amen","artist":"Ben Folds Five","year":1997,"half":6,"pick":null,"review":"Solid piano driven rock-pop"},{"slug":"who-are-you-now-madison-cunningham","title":"Who Are You Now","artist":"Madison Cunningham","year":2019,"half":6,"pick":"Song In My Head","review":"Very acoustic and folky. Focus primarily on vocals. Musically a bit random and doesn't easily fit into any mainstream style or structure."},{"slug":"permanent-pleasure-joywave","title":"Permanent Pleasure","artist":"Joywave","year":2024,"half":6,"pick":"He's Back!","review":"Indie alt rockpop"},{"slug":"making-mirrors-gotye","title":"Making Mirrors","artist":"Gotye","year":2011,"half":6,"pick":null,"review":"Soft-pop with style"},{"slug":"about-time-connor-price","title":"About Time","artist":"Connor Price","year":2025,"half":6,"pick":null,"review":"A bit more innovative in sound than his last outing, but still not enough to overcome the relentless repetition in lyrical rhythm."},{"slug":"wolfgang-amadeus-phoenix-phoenix","title":"Wolfgang Amadeus Phoenix","artist":"Phoenix","year":2009,"half":6,"pick":"Lisztomania","review":"Soft alt rock, upbeat, major. Hard to make out some words which seem random anyway. Overall decent but not top notch."},{"slug":"can-you-afford-to-lose-me-holly-humberstone","title":"Can You Afford To Lose Me?","artist":"Holly Humberstone","year":2022,"half":6,"pick":"Scarlett","review":"Acoustic, emo pop"},{"slug":"the-visitor-sienna-spiro","title":"The Visitor","artist":"Sienna Spiro","year":2026,"half":6,"pick":null,"review":"Vocal-driven pop ballads with a side of orchestral crescendos. The risk of relying so heavily on vocals - some stretches being pure a cappella - is that while range and dynamism can be shown off, it also draws attention to the detail, and in this case it becomes hard not to notice the breathy, almost asthmatic holding of notes. While strong enough musically, the lyrics suffer from the boring, melodramatic clichés that seem to be expected of pop music."},{"slug":"supernova-supertaste","title":"Supernova","artist":"Supertaste","year":2024,"half":6,"pick":null,"review":"A decadent soundscape of techno-funk bops. Lyrical fixation on space is dispersed with a few pure EDM and instrument driven tracks."},{"slug":"keepers-tiny-habits","title":"Keepers","artist":"Tiny Habits","year":2026,"half":6,"pick":null,"review":"A genre splicing medley of singles effortlessly incorporating elements of funk, folk, pop and country amongst the three vocalists. While strong, the clarity of the vocals and individual instrumentation was a bit clouded, meaning that the impact wasn't quite as hard hitting as it could have been."},{"slug":"the-fearless-flyers-v-the-fearless-flyers","title":"The Fearless Flyers V","artist":"The Fearless Flyers","year":2025,"half":6,"pick":null,"review":"Outrageously funky instrumental tracks."},{"slug":"organ-freeman-organ-freeman","title":"Organ Freeman","artist":"Organ Freeman","year":2015,"half":6,"pick":null,"review":"Groovy instrumental bops comprised of E. guitar, keys and kit."},{"slug":"hot-house-bruce-hornsby","title":"Hot House","artist":"Bruce Hornsby","year":1995,"half":6,"pick":"The Changes","review":"Jazzy, funky grooves"},{"slug":"music-of-the-spheres-coldplay","title":"Music of The Spheres","artist":"Coldplay","year":2021,"half":6,"pick":"My Universe","review":null},{"slug":"give-me-a-minute-lizzy-mcalpine","title":"Give Me a Minute","artist":"Lizzy McAlpine","year":2020,"half":6,"pick":"Over-the-Ocean Call (Andrew)","review":"Soft, poppy, folk acoustic"},{"slug":"walk-of-life-dire-straits","title":"Walk of Life","artist":"Dire Straits","year":1985,"half":6,"pick":null,"review":"Low-key pub-rock ballads."},{"slug":"scene-toshiki-soejima","title":"Scene","artist":"Toshiki Soejima","year":2025,"half":6,"pick":null,"review":"Electric guitar grooves"},{"slug":"notes-on-a-conditional-form-the-1975","title":"Notes on a Conditional Form","artist":"The 1975","year":2020,"half":6,"pick":"If you're too shy (let me know)","review":"Rock, folk, chill beat; honestly a bit of everything. Nice but nothing ear grabbing."},{"slug":"just-as-i-am-bill-withers","title":"Just As I Am","artist":"Bill Withers","year":1971,"half":6,"pick":"Ain't Sunshine","review":null},{"slug":"give-me-the-future-dreams-of-the-past-bastille","title":"Give me the Future + Dreams of the Past","artist":"Bastille","year":2022,"half":6,"pick":"Back to the Future","review":"Futuristic, electro dystopian lyrics"},{"slug":"spin-the-globe-connor-price","title":"Spin the Globe","artist":"Connor Price","year":2023,"half":6,"pick":null,"review":"Interesting but ultimately repetitive as a gif."},{"slug":"something-to-say-cory-henry","title":"Something to Say","artist":"Cory Henry","year":2020,"half":6,"pick":"GawtDamn","review":"Groovy, funky soul music, though generally slower pace. Some nice lyrics, but overall musically deteriorates by the end; not badly, but just in that I lose interest."},{"slug":"no-words-left-lucy-rose","title":"No Words Left","artist":"Lucy Rose","year":2019,"half":6,"pick":null,"review":"Mellow acoustic compositions which never quite gets off the ground to capture the ear"},{"slug":"victory-garden-young-the-giant","title":"Victory Garden","artist":"Young the Giant","year":2026,"half":6,"pick":null,"review":"A decent outing from this indie rock giant which is unfortunately rendered all the more bland by the innovation of their own previous work."},{"slug":"whatever-s-clever-charlie-puth","title":"Whatever's Clever!","artist":"Charlie Puth","year":2026,"half":6,"pick":null,"review":"Yacht rock which leans too far into pure pop"},{"slug":"older-lizzy-mcalpine","title":"Older","artist":"Lizzy McAlpine","year":2024,"half":6,"pick":"Broken Glass","review":"Folky acoustic vocals based. A few nice build moments, but overall somewhat lacking omph on the musical side of things. Strong melancholic lyrics."},{"slug":"room-on-fire-the-strokes","title":"Room on Fire","artist":"The Strokes","year":2003,"half":6,"pick":"Reptilia","review":"Indie Rock. Nothing but basic eletric guitar, kit and voice. Kinda mid, maybe cause its kinda hard to hear what on earth the singer is saying."},{"slug":"a-hole-to-see-the-sky-through-mystery-jets","title":"A Hole to See the Sky Through","artist":"Mystery Jets","year":2026,"half":6,"pick":null,"review":"Indie songwriting with Mystery Jets signature sound, just a little lacking compared to the the playful originality of previous instalments."},{"slug":"three-fever-charlie-burg","title":"Three Fever","artist":"Charlie Burg","year":2019,"half":6,"pick":null,"review":"Solid indie songwriting which leans a little too croony and a little too scattered in its ideas."},{"slug":"we-re-starting-to-look-like-each-other-hey-nothing","title":"We're Starting to Look Like Each Other","artist":"hey, nothing","year":2023,"half":6,"pick":null,"review":"Emo-folk"},{"slug":"french-kiwi-juice-fkj","title":"French Kiwi Juice","artist":"FKJ","year":2017,"half":6,"pick":"Vibin' Out","review":"Grooves and beats, but not many actual songs. High on vibes, low on real interest; either needed more musical intent, or lyrics."},{"slug":"jess-jess-glynne","title":"JESS","artist":"Jess Glynne","year":2024,"half":6,"pick":"Easy","review":"Poppy"},{"slug":"two-moonlight-charlie-burg","title":"Two, Moonlight","artist":"Charlie Burg","year":2018,"half":6,"pick":null,"review":"Decent enough musical exploration & songwriting but not enough to really hit"},{"slug":"origin-jordan-rakei","title":"Origin","artist":"Jordan Rakei","year":2019,"half":6,"pick":"Oasis","review":"Grooves and beats more than songs"},{"slug":"hot-fuss-the-killers","title":"Hot Fuss","artist":"The Killers","year":2004,"half":5,"pick":"Mr Brightside","review":"Solid rock; basic guitar, kit and bass. Lead singer cannot sing at all; the autotune makes his voice unclear and fuzzy. Just kinda mid to be honest."},{"slug":"the-best-of-sade-sade","title":"The Best of Sade","artist":"Sade","year":1994,"half":5,"pick":null,"review":"Chilled vocals driven retro R&B"},{"slug":"what-did-you-expect-from-the-vaccines-the-vaccines","title":"What Did You Expect from the Vaccines?","artist":"The Vaccines","year":2011,"half":5,"pick":"Wetsuit","review":"Basic indie rock. Standard guitar, kit and bass. Somewhat interesting lyrics."},{"slug":"flying-cody-fry","title":"Flying","artist":"Cody Fry","year":2017,"half":5,"pick":null,"review":"Orchestral, movie-soundtrack-esq pop. Nice but nothing special."},{"slug":"santana-iii-santana","title":"Santana III","artist":"Santana","year":1971,"half":5,"pick":null,"review":"Decent latin-rock with clear Chicago & Hendrix influences, but enough latin spice to keep things interesting."},{"slug":"enjoy-it-while-it-lasts-spector","title":"Enjoy it while it lasts","artist":"Spector","year":2012,"half":5,"pick":null,"review":null},{"slug":"stunt-barenaked-ladies","title":"Stunt","artist":"Barenaked Ladies","year":1998,"half":5,"pick":"One Week","review":"A soft rock based comic album. Music is weak but lyrics are funnyish. More seems like a collection of ditties as oppose to songs."},{"slug":"welcome-santana","title":"Welcome","artist":"Santana","year":1973,"half":5,"pick":null,"review":"Latin-funk with alternating vocal driven songs and instrumental breakdowns."},{"slug":"catch-peter-cottontale","title":"CATCH","artist":"Peter CottonTale","year":2020,"half":5,"pick":null,"review":"Gospel nu-funk trips"},{"slug":"purple-rain-prince","title":"Purple Rain","artist":"Prince","year":1984,"half":5,"pick":"I would die 4 U","review":"Classic 80s pop with a bit of nice variety. Some awesome harnonies also, but just lacking that omph."},{"slug":"no-protection-starship","title":"No Protection","artist":"Starship","year":1987,"half":5,"pick":"I don't know why","review":"A classic 80s rock album. Nothing standout."},{"slug":"super-classic-supertaste","title":"Super classic","artist":"Supertaste","year":2021,"half":5,"pick":null,"review":"Repetitive technobeats"},{"slug":"here-because-of-hope-ezra-collective","title":"Here Because of Hope","artist":"Ezra Collective","year":2026,"half":5,"pick":null,"review":"Chilled instrumental afro-beat grooves with a handful of lyrical collabs. Trumpet, keys, bass and kit meld together like layers of pastry, producing a light, buttery, tasty (if somewhat repetitive) snack for the ears. Almost made more for background music than for designated listening."},{"slug":"twenty-twenty-djo","title":"Twenty Twenty","artist":"Djo","year":2019,"half":5,"pick":"Roddy","review":"Basic nothingness"},{"slug":"everyday-life-coldplay","title":"Everyday Life","artist":"Coldplay","year":2019,"half":5,"pick":"Orphans","review":"Alt rock, very varied and inconsistent. This is not an album this is 16 individual songs. Very experimental but without being bold and differentiating itself."},{"slug":"untourable-album-men-i-trust","title":"Untourable Album","artist":"Men I Trust","year":2021,"half":5,"pick":null,"review":"Low key shoegaze"},{"slug":"pressure-chief-cake","title":"Pressure Chief","artist":"CAKE","year":2004,"half":5,"pick":null,"review":null},{"slug":"the-definition-jon-bellion","title":"The Definition","artist":"Jon Bellion","year":2014,"half":5,"pick":"Haunted House","review":null},{"slug":"deep-sea-vents-brhym","title":"Deep Sea Vents","artist":"BrhyM","year":2024,"half":5,"pick":"Wild Whaling Life","review":"Similar to 'Flicted, and Non-Secure Connection, getting just very slightly better. Arranged acapella with an orchesta for backing tracks. Lyrics are genuinely interested (and weird) but just have to get to due to the somewhat unlistenability of the music."},{"slug":"equus-caballus-men-i-trust","title":"Equus Caballus","artist":"Men I Trust","year":2023,"half":5,"pick":null,"review":"Shoegaze with repetitive repetition"},{"slug":"it-could-be-worse-samm-henshaw","title":"It Could Be Worse","artist":"Samm Henshaw","year":2025,"half":5,"pick":null,"review":"I wanted to like this, but the old school R&B didn't quite catch me as much as it should/could/would."},{"slug":"flicted-bruce-hornsby","title":"'Flicted","artist":"Bruce Hornsby","year":2023,"half":5,"pick":"Had Enough (purely because of the chorus)","review":"Experimental alt rock random. Similar to Non-secure Connection."},{"slug":"abraxas-santana","title":"Abraxas","artist":"Santana","year":1970,"half":4,"pick":null,"review":"Latin-rock which suffers from unpolished production and underwhelming songwriting"},{"slug":"i-speak-because-i-can-laura-marling","title":"I Speak Because I Can","artist":"Laura Marling","year":2010,"half":4,"pick":null,"review":"Pleasant low-key acoustic folk"},{"slug":"empire-kasabian","title":"Empire","artist":"Kasabian","year":2006,"half":4,"pick":null,"review":"Rock ballads with potential"},{"slug":"peace-to-make-ruth-b","title":"Peace to Make","artist":"Ruth B.","year":2026,"half":4,"pick":null,"review":"Repetitive collection of lyrically dreary soft-pop singles with a few nice melodic moments"},{"slug":"caravanserai-santana","title":"Caravanserai","artist":"Santana","year":1972,"half":4,"pick":null,"review":"Latin-funk with some traces of light jazz experimentation which ultimately don't pay off beyond half-groovy backing tracks."},{"slug":"kasabian-kasabian","title":"Kasabian","artist":"Kasabian","year":2004,"half":4,"pick":null,"review":"Weaksauce"},{"slug":"non-secure-connection-bruce-hornsby","title":"Non-secure Connection","artist":"Bruce Hornsby","year":2020,"half":4,"pick":"My Resolve","review":"When alt gets too alt, listenability suffers. A few hits (Cleopatra drones, My Resolve), but not much else."},{"slug":"ego-death-at-a-bachelorette-party-hayley-williams","title":"Ego Death at a Bachelorette Party","artist":"Hayley Williams","year":2025,"half":4,"pick":null,"review":"Moany rock-pop"},{"slug":"so-far-so-good-the-chainsmokers","title":"So Far So Good","artist":"The Chainsmokers","year":2022,"half":4,"pick":null,"review":null},{"slug":"santana-santana","title":"Santana","artist":"Santana","year":1969,"half":3,"pick":null,"review":"Weak-sauce, Chicago derivative rock-funk"},{"slug":"sun-sammy-rae-and-the-friends","title":"SUN","artist":"Sammy Rae & The Friends","year":2026,"half":3,"pick":null,"review":"Forgettable weaksauce."},{"slug":"mystery-girl-roy-orbison","title":"Mystery Girl","artist":"Roy Orbison","year":1989,"half":3,"pick":null,"review":"Weaksauce"},{"slug":"waves-moonchild","title":"Waves","artist":"Moonchild","year":2026,"half":3,"pick":null,"review":null},{"slug":"train-on-the-island-aldous-harding","title":"Train on the island","artist":"Aldous Harding","year":2026,"half":3,"pick":null,"review":"Alternative something."},{"slug":"ok-computer-radiohead","title":"OK Computer","artist":"Radiohead","year":1997,"half":3,"pick":null,"review":"Weaksauce."},{"slug":"venus-copper-rose-aiden-ayers","title":"Venus Copper Rose","artist":"Aiden Ayers","year":2022,"half":2,"pick":null,"review":"Weak folky singles."},{"slug":"marquee-moon-television","title":"Marquee Moon","artist":"Television","year":1977,"half":2,"pick":null,"review":"Unlistenable trash."},{"slug":"raw-data-feel-everything-everything","title":"Raw Data Feel","artist":"Everything Everything","year":2022,"half":null,"pick":null,"review":null},{"slug":"sgt-pepper-s-lonely-hearts-club-band-the-beatles","title":"Sgt. Pepper's Lonely Hearts Club Band","artist":"The Beatles","year":1967,"half":null,"pick":null,"review":null},{"slug":"tranquility-base-hotel-and-casino-arctic-monkeys","title":"Tranquility Base Hotel & Casino","artist":"Arctic Monkeys","year":2018,"half":null,"pick":null,"review":null},{"slug":"the-new-abnormal-the-strokes","title":"The New Abnormal","artist":"The Strokes","year":2020,"half":null,"pick":null,"review":null},{"slug":"all-my-demons-greeting-me-as-a-friend-aurora","title":"All My Demons Greeting Me as a Friend","artist":"AURORA","year":2016,"half":null,"pick":null,"review":"Hauntingly beautiful folk pop tunes."},{"slug":"saint-motel-and-the-symphony-in-the-sky-saint-motel","title":"Saint Motel & the Symphony in the Sky","artist":"Saint Motel","year":2025,"half":null,"pick":null,"review":"Damn good"},{"slug":"midnights-taylor-swift","title":"Midnights","artist":"Taylor Swift","year":2022,"half":null,"pick":null,"review":null},{"slug":"the-life-of-a-showgirl-taylor-swift","title":"The Life of a Showgirl","artist":"Taylor Swift","year":2025,"half":null,"pick":null,"review":null},{"slug":"are-you-experienced-jimi-hendrix","title":"Are You Experienced","artist":"Jimi Hendrix","year":1967,"half":null,"pick":null,"review":null},{"slug":"bleachers-bleachers","title":"Bleachers","artist":"Bleachers","year":2024,"half":null,"pick":null,"review":null},{"slug":"nothing-happens-wallows","title":"Nothing Happens","artist":"Wallows","year":2019,"half":null,"pick":null,"review":null},{"slug":"the-stranger-billy-joel","title":"The Stranger","artist":"Billy Joel","year":1977,"half":null,"pick":null,"review":null},{"slug":"turnstiles-billy-joel","title":"Turnstiles","artist":"Billy Joel","year":1976,"half":null,"pick":null,"review":null},{"slug":"an-innocent-man-billy-joel","title":"An Innocent Man","artist":"Billy Joel","year":1983,"half":null,"pick":null,"review":null},{"slug":"cold-spring-harbor-billy-joel","title":"Cold Spring Harbor","artist":"Billy Joel","year":1971,"half":null,"pick":null,"review":null},{"slug":"knee-deep-in-the-hoopla-starship","title":"Knee Deep in the Hoopla","artist":"Starship","year":1985,"half":null,"pick":null,"review":null},{"slug":"the-good-life-sammy-rae-and-the-friends","title":"The Good Life","artist":"Sammy Rae & The Friends","year":2018,"half":null,"pick":null,"review":null},{"slug":"sleep-through-the-static-jack-johnson","title":"Sleep Through the Static","artist":"Jack Johnson","year":2008,"half":null,"pick":null,"review":null},{"slug":"all-the-light-above-it-too-jack-johnson","title":"All the Light Above It Too","artist":"Jack Johnson","year":2017,"half":null,"pick":null,"review":null},{"slug":"beyond-beyond-beyond-the-crane-wives","title":"Beyond Beyond Beyond","artist":"The Crane Wives","year":2019,"half":null,"pick":null,"review":null},{"slug":"i-won-t-let-me-down-stolen-jars","title":"I Won't Let Me Down","artist":"Stolen Jars","year":2023,"half":null,"pick":null,"review":null},{"slug":"the-rise-and-fall-of-ziggy-stardust-and-the-spiders-from-mars-david-bowie","title":"The Rise and Fall of Ziggy Stardust and the Spiders from Mars","artist":"David Bowie","year":1972,"half":null,"pick":null,"review":null},{"slug":"hounds-of-love-kate-bush","title":"Hounds of Love","artist":"Kate Bush","year":1985,"half":null,"pick":null,"review":null},{"slug":"bad-michael-jackson","title":"Bad","artist":"Michael Jackson","year":1987,"half":null,"pick":null,"review":null},{"slug":"secret-dreams-and-forbidden-fire-bonnie-tyler","title":"Secret Dreams and Forbidden Fire","artist":"Bonnie Tyler","year":1986,"half":null,"pick":null,"review":null},{"slug":"woodface-crowded-house","title":"Woodface","artist":"Crowded House","year":1991,"half":null,"pick":null,"review":null},{"slug":"sympathetic-magic-typhoon","title":"Sympathetic Magic","artist":"Typhoon","year":2021,"half":null,"pick":null,"review":null},{"slug":"august-and-everything-after-counting-crows","title":"August and Everything After","artist":"Counting Crows","year":1993,"half":null,"pick":null,"review":null},{"slug":"made-in-lagos-wizkid","title":"Made in Lagos","artist":"Wizkid","year":2020,"half":null,"pick":null,"review":null},{"slug":"humanhood-the-weather-station","title":"Humanhood","artist":"The Weather Station","year":2025,"half":null,"pick":null,"review":null},{"slug":"home-of-the-strange-young-the-giant","title":"Home of the Strange","artist":"Young the Giant","year":2016,"half":null,"pick":null,"review":null},{"slug":"mind-over-matter-young-the-giant","title":"Mind Over Matter","artist":"Young the Giant","year":2014,"half":null,"pick":null,"review":null},{"slug":"moments-in-between-ruth-b","title":"Moments in Between","artist":"Ruth B.","year":2021,"half":null,"pick":null,"review":null},{"slug":"west-ryder-pauper-lunatic-asylum-kasabian","title":"West Ryder Pauper Lunatic Asylum","artist":"Kasabian","year":2009,"half":null,"pick":null,"review":null},{"slug":"as-i-am-alicia-keys","title":"As I Am","artist":"Alicia Keys","year":2007,"half":null,"pick":null,"review":null},{"slug":"moment-bends-architecture-in-helsinki","title":"Moment Bends","artist":"Architecture in Helsinki","year":2011,"half":null,"pick":null,"review":null},{"slug":"puddinghead-ball-park-music","title":"Puddinghead","artist":"Ball Park Music","year":2014,"half":null,"pick":null,"review":null},{"slug":"every-kingdom-ben-howard","title":"Every Kingdom","artist":"Ben Howard","year":2011,"half":null,"pick":null,"review":null},{"slug":"superdream-big-wild","title":"Superdream","artist":"Big Wild","year":2019,"half":null,"pick":null,"review":null},{"slug":"the-efferusphere-big-wild","title":"The Efferusphere","artist":"Big Wild","year":2022,"half":null,"pick":null,"review":null},{"slug":"wild-child-big-wild","title":"Wild Child","artist":"Big Wild","year":2025,"half":null,"pick":null,"review":null},{"slug":"menagerie-bill-withers","title":"Menagerie","artist":"Bill Withers","year":1977,"half":null,"pick":null,"review":null},{"slug":"black-pumas-black-pumas","title":"Black Pumas","artist":"Black Pumas","year":2019,"half":null,"pick":null,"review":null},{"slug":"gone-now-bleachers","title":"Gone Now","artist":"Bleachers","year":2017,"half":null,"pick":null,"review":null},{"slug":"i-had-the-blues-but-i-shook-them-loose-bombay-bicycle-club","title":"I Had the Blues But I Shook Them Loose","artist":"Bombay Bicycle Club","year":2009,"half":null,"pick":null,"review":null},{"slug":"these-here-are-crazy-times-boom-crash-opera","title":"These Here Are Crazy Times","artist":"Boom Crash Opera","year":1989,"half":null,"pick":null,"review":null},{"slug":"eddie-busty-and-the-bass","title":"Eddie","artist":"Busty and the Bass","year":2019,"half":null,"pick":null,"review":null},{"slug":"back-to-earth-charlie-burg","title":"Back to Earth","artist":"Charlie Burg","year":2025,"half":null,"pick":null,"review":null},{"slug":"chicago-ii-chicago","title":"Chicago II","artist":"Chicago","year":1970,"half":null,"pick":null,"review":null},{"slug":"death-and-love-pt-1-circa-waves","title":"Death & Love, Pt. 1","artist":"Circa Waves","year":2025,"half":null,"pick":null,"review":null},{"slug":"young-chasers-circa-waves","title":"Young Chasers","artist":"Circa Waves","year":2015,"half":null,"pick":null,"review":null},{"slug":"how-will-you-know-if-you-never-try-coin","title":"How Will You Know If You Never Try","artist":"COIN","year":2017,"half":null,"pick":null,"review":null},{"slug":"uncanny-valley-coin","title":"Uncanny Valley","artist":"COIN","year":2022,"half":null,"pick":null,"review":null},{"slug":"trail-songs-dusk-cory-wong","title":"Trail Songs: Dusk","artist":"Cory Wong","year":2020,"half":null,"pick":null,"review":null},{"slug":"lost-in-the-wonder-cory-wong","title":"Lost in the Wonder","artist":"Cory Wong","year":2026,"half":null,"pick":null,"review":null},{"slug":"random-access-memories-daft-punk","title":"Random Access Memories","artist":"Daft Punk","year":2013,"half":null,"pick":null,"review":null},{"slug":"dire-straits-dire-straits","title":"Dire Straits","artist":"Dire Straits","year":1978,"half":null,"pick":null,"review":null},{"slug":"lamp-lit-prose-dirty-projectors","title":"Lamp Lit Prose","artist":"Dirty Projectors","year":2018,"half":null,"pick":null,"review":null},{"slug":"radical-optimism-dua-lipa","title":"Radical Optimism","artist":"Dua Lipa","year":2024,"half":null,"pick":null,"review":null},{"slug":"re-animator-everything-everything","title":"Re-Animator","artist":"Everything Everything","year":2020,"half":null,"pick":null,"review":null},{"slug":"arc-everything-everything","title":"Arc","artist":"Everything Everything","year":2013,"half":null,"pick":null,"review":null},{"slug":"tango-in-the-night-fleetwood-mac","title":"Tango in the Night","artist":"Fleetwood Mac","year":1987,"half":null,"pick":null,"review":null},{"slug":"holy-fire-foals","title":"Holy Fire","artist":"Foals","year":2013,"half":null,"pick":null,"review":null},{"slug":"life-is-yours-foals","title":"Life Is Yours","artist":"Foals","year":2022,"half":null,"pick":null,"review":null},{"slug":"welcome-home-gareth-donkin","title":"Welcome Home","artist":"Gareth Donkin","year":2023,"half":null,"pick":null,"review":null},{"slug":"warm-on-a-cold-night-honne","title":"Warm on a Cold Night","artist":"HONNE","year":2016,"half":null,"pick":null,"review":null},{"slug":"love-me-love-me-not-honne","title":"Love Me / Love Me Not","artist":"HONNE","year":2018,"half":null,"pick":null,"review":null},{"slug":"phase-jack-garratt","title":"Phase","artist":"Jack Garratt","year":2016,"half":null,"pick":null,"review":null},{"slug":"pillars-jack-garratt","title":"Pillars","artist":"Jack Garratt","year":2025,"half":null,"pick":null,"review":null},{"slug":"brushfire-fairytales-jack-johnson","title":"Brushfire Fairytales","artist":"Jack Johnson","year":2001,"half":null,"pick":null,"review":null},{"slug":"djesse-vol-1-jacob-collier","title":"Djesse Vol. 1","artist":"Jacob Collier","year":2018,"half":null,"pick":null,"review":null},{"slug":"travelling-without-moving-jamiroquai","title":"Travelling Without Moving","artist":"Jamiroquai","year":1996,"half":null,"pick":null,"review":null},{"slug":"synkronized-jamiroquai","title":"Synkronized","artist":"Jamiroquai","year":1999,"half":null,"pick":null,"review":null},{"slug":"dynamite-jamiroquai","title":"Dynamite","artist":"Jamiroquai","year":2005,"half":null,"pick":null,"review":null},{"slug":"eternally-even-jim-james","title":"Eternally Even","artist":"Jim James","year":2016,"half":null,"pick":null,"review":null},{"slug":"axis-bold-as-love-jimi-hendrix","title":"Axis: Bold as Love","artist":"Jimi Hendrix","year":1967,"half":null,"pick":null,"review":null},{"slug":"heavier-things-john-mayer","title":"Heavier Things","artist":"John Mayer","year":2003,"half":null,"pick":null,"review":null},{"slug":"continuum-john-mayer","title":"Continuum","artist":"John Mayer","year":2006,"half":null,"pick":null,"review":null},{"slug":"the-search-for-everything-john-mayer","title":"The Search for Everything","artist":"John Mayer","year":2017,"half":null,"pick":null,"review":null},{"slug":"sob-rock-john-mayer","title":"Sob Rock","artist":"John Mayer","year":2021,"half":null,"pick":null,"review":null},{"slug":"we-are-jon-batiste","title":"We Are","artist":"Jon Batiste","year":2021,"half":null,"pick":null,"review":null},{"slug":"father-figure-jon-bellion","title":"Father Figure","artist":"Jon Bellion","year":2025,"half":null,"pick":null,"review":null},{"slug":"foreigner-jordan-mackampa","title":"Foreigner","artist":"Jordan Mackampa","year":2019,"half":null,"pick":null,"review":null},{"slug":"jungle-jungle","title":"Jungle","artist":"Jungle","year":2014,"half":null,"pick":null,"review":null},{"slug":"golden-hour-kacey-musgraves","title":"Golden Hour","artist":"Kacey Musgraves","year":2018,"half":null,"pick":null,"review":null},{"slug":"obviously-lake-street-dive","title":"Obviously","artist":"Lake Street Dive","year":2021,"half":null,"pick":null,"review":null},{"slug":"good-together-lake-street-dive","title":"Good Together","artist":"Lake Street Dive","year":2024,"half":null,"pick":null,"review":null},{"slug":"work-it-out-lucy-rose","title":"Work It Out","artist":"Lucy Rose","year":2015,"half":null,"pick":null,"review":null},{"slug":"something-s-changing-lucy-rose","title":"Something's Changing","artist":"Lucy Rose","year":2017,"half":null,"pick":null,"review":null},{"slug":"haven-marianas-trench","title":"Haven","artist":"Marianas Trench","year":2019,"half":null,"pick":null,"review":null},{"slug":"what-s-going-on-marvin-gaye","title":"What's Going On","artist":"Marvin Gaye","year":1971,"half":null,"pick":null,"review":null},{"slug":"currency-of-man-melody-gardot","title":"Currency of Man","artist":"Melody Gardot","year":2015,"half":null,"pick":null,"review":null},{"slug":"off-the-wall-michael-jackson","title":"Off the Wall","artist":"Michael Jackson","year":1979,"half":null,"pick":null,"review":null},{"slug":"thriller-michael-jackson","title":"Thriller","artist":"Michael Jackson","year":1982,"half":null,"pick":null,"review":null},{"slug":"dangerous-michael-jackson","title":"Dangerous","artist":"Michael Jackson","year":1991,"half":null,"pick":null,"review":null},{"slug":"lost-friends-middle-kids","title":"Lost Friends","artist":"Middle Kids","year":2018,"half":null,"pick":null,"review":null},{"slug":"today-we-re-the-greatest-middle-kids","title":"Today We're the Greatest","artist":"Middle Kids","year":2021,"half":null,"pick":null,"review":null},{"slug":"faith-crisis-pt-1-middle-kids","title":"Faith Crisis Pt 1","artist":"Middle Kids","year":2024,"half":null,"pick":null,"review":null},{"slug":"babel-mumford-and-sons","title":"Babel","artist":"Mumford & Sons","year":2012,"half":null,"pick":null,"review":null},{"slug":"maybe-you-ve-been-brainwashed-too-new-radicals","title":"Maybe You've Been Brainwashed Too","artist":"New Radicals","year":1998,"half":null,"pick":null,"review":null},{"slug":"messy-olivia-dean","title":"Messy","artist":"Olivia Dean","year":2023,"half":null,"pick":null,"review":null},{"slug":"the-art-of-loving-olivia-dean","title":"The Art of Loving","artist":"Olivia Dean","year":2025,"half":null,"pick":null,"review":null},{"slug":"these-streets-paolo-nutini","title":"These Streets","artist":"Paolo Nutini","year":2006,"half":null,"pick":null,"review":null},{"slug":"after-laughter-paramore","title":"After Laughter","artist":"Paramore","year":2017,"half":null,"pick":null,"review":null},{"slug":"day-night-parcels","title":"Day/Night","artist":"Parcels","year":2021,"half":null,"pick":null,"review":null},{"slug":"graceland-paul-simon","title":"Graceland","artist":"Paul Simon","year":1986,"half":null,"pick":null,"review":null},{"slug":"writer-s-block-peter-bjorn-and-john","title":"Writer's Block","artist":"Peter Bjorn and John","year":2006,"half":null,"pick":null,"review":null},{"slug":"endless-dream-peter-bjorn-and-john","title":"Endless Dream","artist":"Peter Bjorn and John","year":2020,"half":null,"pick":null,"review":null},{"slug":"sweet-reunion-phoebe-katis","title":"Sweet Reunion","artist":"Phoebe Katis","year":2021,"half":null,"pick":null,"review":null},{"slug":"handmade-cities-plini","title":"Handmade Cities","artist":"Plini","year":2016,"half":null,"pick":null,"review":null},{"slug":"woodstock-portugal-the-man","title":"Woodstock","artist":"Portugal. The Man","year":2017,"half":null,"pick":null,"review":null},{"slug":"iron-post-animal","title":"Iron","artist":"Post Animal","year":2025,"half":null,"pick":null,"review":null},{"slug":"odyssey-number-five-powderfinger","title":"Odyssey Number Five","artist":"Powderfinger","year":2000,"half":null,"pick":null,"review":null},{"slug":"totems-renegade-brass-band","title":"Totems","artist":"Renegade Brass Band","year":2017,"half":null,"pick":null,"review":null},{"slug":"ricky-skaggs-and-bruce-hornsby-ricky-skaggs-and-bruce-hornsby","title":"Ricky Skaggs & Bruce Hornsby","artist":"Ricky Skaggs & Bruce Hornsby","year":2000,"half":null,"pick":null,"review":null},{"slug":"bright-blues-ripe","title":"Bright Blues","artist":"Ripe","year":2023,"half":null,"pick":null,"review":null},{"slug":"afterglow-saint-motel","title":"Afterglow","artist":"Saint Motel","year":2025,"half":null,"pick":null,"review":null},{"slug":"scatman-s-world-scatman-john","title":"Scatman's World","artist":"Scatman John","year":1995,"half":null,"pick":null,"review":null},{"slug":"high-dive-shaed","title":"High Dive","artist":"SHAED","year":2022,"half":null,"pick":null,"review":null},{"slug":"7summers-shaun-martin","title":"7Summers","artist":"Shaun Martin","year":2015,"half":null,"pick":null,"review":null},{"slug":"always-live-for-always-skott","title":"Always Live for Always","artist":"Skott","year":2020,"half":null,"pick":null,"review":null},{"slug":"we-like-it-here-snarky-puppy","title":"We Like It Here","artist":"Snarky Puppy","year":2014,"half":null,"pick":null,"review":null},{"slug":"the-1975-the-1975","title":"The 1975","artist":"The 1975","year":2013,"half":null,"pick":null,"review":null},{"slug":"tales-from-the-backseat-the-academic","title":"Tales from the Backseat","artist":"The Academic","year":2018,"half":null,"pick":null,"review":null},{"slug":"heartbeat-city-the-cars","title":"Heartbeat City","artist":"The Cars","year":1984,"half":null,"pick":null,"review":null},{"slug":"no-need-to-argue-the-cranberries","title":"No Need to Argue","artist":"The Cranberries","year":1994,"half":null,"pick":null,"review":null},{"slug":"destiny-the-jacksons","title":"Destiny","artist":"The Jacksons","year":1978,"half":null,"pick":null,"review":null},{"slug":"through-the-deep-dark-valley-the-oh-hellos","title":"Through the Deep, Dark Valley","artist":"The Oh Hellos","year":2012,"half":null,"pick":null,"review":null},{"slug":"reading-writing-and-arithmetic-the-sundays","title":"Reading, Writing and Arithmetic","artist":"The Sundays","year":1990,"half":null,"pick":null,"review":null},{"slug":"urban-hymns-the-verve","title":"Urban Hymns","artist":"The Verve","year":1997,"half":null,"pick":null,"review":null},{"slug":"full-circle-tom-misch","title":"Full Circle","artist":"Tom Misch","year":2026,"half":null,"pick":null,"review":null},{"slug":"toto-iv-toto","title":"Toto IV","artist":"Toto","year":1982,"half":null,"pick":null,"review":null},{"slug":"the-seventh-one-toto","title":"The Seventh One","artist":"Toto","year":1988,"half":null,"pick":null,"review":null},{"slug":"model-wallows","title":"Model","artist":"Wallows","year":2024,"half":null,"pick":null,"review":null},{"slug":"young-the-giant-young-the-giant","title":"Young the Giant","artist":"Young the Giant","year":2010,"half":null,"pick":null,"review":null},{"slug":"black-classical-music-yussef-dayes","title":"Black Classical Music","artist":"Yussef Dayes","year":2023,"half":null,"pick":null,"review":null}];
+
+  var COVERS = "album-covers/";
+  var shelvesEl = document.getElementById("shelves");
+  var dialog = document.getElementById("detail");
+  var sortMode = "rating";
+  var order = [];   // albums in the order currently on screen, for prev / next
+
+  document.getElementById("tally").textContent =
+    ALBUMS.length + " albums · " + ALBUMS.filter(function (a) { return a.half !== null; }).length + " rated";
+
+  /* ---------- stars ---------- */
+  var STAR = "M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z";
+  var uid = 0;
+
+  function stars(half) {
+    var id = "h" + (uid++);
+    var html = '<span class="stars" role="img" aria-label="' + (half / 2) + ' out of 5 stars">';
+    for (var i = 0; i < 5; i++) {
+      var fill = Math.max(0, Math.min(2, half - i * 2));
+      if (fill === 1) {
+        html += '<svg viewBox="0 0 24 24" aria-hidden="true"><defs><clipPath id="' + id + '"><rect width="12" height="24"/></clipPath></defs>' +
+                '<path class="off" d="' + STAR + '"/><path class="on" clip-path="url(#' + id + ')" d="' + STAR + '"/></svg>';
+      } else {
+        html += '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="' + (fill ? "on" : "off") + '" d="' + STAR + '"/></svg>';
+      }
+    }
+    return html + "</span>";
+  }
+
+  function starWords(half) {
+    var whole = Math.floor(half / 2);
+    return (whole ? whole : "") + (half % 2 ? "½" : "") + (half === 2 ? " star" : " stars");
+  }
+
+  /* ---------- helpers ---------- */
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function reviewHtml(s) {
+    return esc(s).replace(/\*([^*]+)\*/g, "<em>$1</em>");
+  }
+
+  function coverHtml(a, eager) {
+    return '<img src="' + COVERS + a.slug + '.jpg" alt="' + esc(a.title) + ' cover" ' +
+           (eager ? "" : 'loading="lazy" ') + 'decoding="async" ' +
+           'onload="this.classList.add(\'ready\')" onerror="this.remove()">' +
+           '<span class="fallback" aria-hidden="true">' + esc(a.title) + '</span>';
+  }
+
+  function byRating(a, b) {
+    var ra = a.half === null ? -1 : a.half, rb = b.half === null ? -1 : b.half;
+    return rb - ra || b.year - a.year || a.title.localeCompare(b.title);
+  }
+
+  /* ---------- shelves ---------- */
+  function groups() {
+    var map = {}, keys = [];
+    ALBUMS.forEach(function (a) {
+      var k = sortMode === "rating" ? (a.half === null ? "unrated" : a.half) : a.year;
+      if (!map[k]) { map[k] = []; keys.push(k); }
+      map[k].push(a);
+    });
+    keys.sort(function (x, y) {
+      if (x === "unrated") return 1;
+      if (y === "unrated") return -1;
+      return y - x;
+    });
+    return keys.map(function (k) {
+      var list = map[k].slice();
+      if (sortMode === "rating") list.sort(function (a, b) { return b.year - a.year || a.title.localeCompare(b.title); });
+      else list.sort(byRating);
+      return { key: k, list: list };
+    });
+  }
+
+  function render() {
+    order = [];
+    var html = "";
+    groups().forEach(function (g) {
+      var head;
+      if (sortMode === "year") head = '<h2>' + g.key + '</h2>';
+      else if (g.key === "unrated") head = '<h2>Not yet rated</h2>';
+      else head = '<h2>' + stars(g.key) + '<span>' + starWords(g.key) + '</span></h2>';
+
+      html += '<section class="shelf" aria-label="' + (sortMode === "year" ? g.key : g.key === "unrated" ? "Not yet rated" : starWords(g.key)) + '">' +
+              '<div class="shelf-head">' + head + '<span class="n">' + g.list.length + (g.list.length === 1 ? " album" : " albums") + '</span></div>' +
+              '<div class="grid">';
+      g.list.forEach(function (a) {
+        var i = order.push(a) - 1;
+        var sub = sortMode === "year"
+          ? (a.half === null ? '<span class="unrated-label">Unrated</span>' : stars(a.half))
+          : '<span class="unrated-label">' + a.year + '</span>';
+        html += '<button class="card" type="button" data-i="' + i + '">' +
+                  '<div class="art">' + coverHtml(a) + '</div>' +
+                  '<span class="t">' + esc(a.title) + '</span>' +
+                  '<span class="a">' + esc(a.artist) + '</span>' +
+                  '<span class="sub">' + sub + '</span>' +
+                '</button>';
+      });
+      html += '</div></section>';
+    });
+    shelvesEl.innerHTML = html;
+    bindHover(shelvesEl);
+  }
+
+  shelvesEl.addEventListener("click", function (e) {
+    var card = e.target.closest(".card");
+    if (card) open(+card.dataset.i);
+  });
+
+  document.querySelectorAll(".switch button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      if (btn.dataset.sort === sortMode) return;
+      sortMode = btn.dataset.sort;
+      document.querySelectorAll(".switch button").forEach(function (b) {
+        b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+      });
+      try { localStorage.setItem("albumSort", sortMode); } catch (err) {}
+      render();
+    });
+  });
+
+  /* ---------- detail ---------- */
+  var current = -1;
+
+  function open(i) {
+    current = (i + order.length) % order.length;
+    var a = order[current];
+
+    document.getElementById("dCover").innerHTML = coverHtml(a, true);
+    document.getElementById("dTitle").textContent = a.title;
+    document.getElementById("dArtist").textContent = a.artist;
+    document.getElementById("dFacts").innerHTML =
+      '<span>' + a.year + '</span>' +
+      (a.half === null ? '<span>Not yet rated</span>' : stars(a.half) + '<span>' + starWords(a.half) + '</span>');
+
+    var review = document.getElementById("dReview");
+    review.innerHTML = a.review ? reviewHtml(a.review) : "No review written yet.";
+    review.classList.toggle("empty", !a.review);
+
+    var pick = document.getElementById("dPick");
+    pick.hidden = !a.pick;
+    pick.innerHTML = a.pick ? "<b>Top pick:</b> " + esc(a.pick) : "";
+
+    document.getElementById("dPos").textContent = (current + 1) + " / " + order.length;
+    dialog.querySelector(".info").scrollTop = 0;
+
+    if (!dialog.open) {
+      dialog.showModal();
+      document.documentElement.classList.add("modal-open");
+    }
+    history.replaceState(null, "", "#" + a.slug);
+
+    // warm the neighbours so paging feels instant
+    [current + 1, current - 1].forEach(function (j) {
+      new Image().src = COVERS + order[(j + order.length) % order.length].slug + ".jpg";
+    });
+  }
+
+  function closeDetail() { dialog.close(); }
+
+  dialog.addEventListener("close", function () {
+    document.documentElement.classList.remove("modal-open");
+    tScale = 1;
+    history.replaceState(null, "", location.pathname + location.search);
+    var card = shelvesEl.querySelector('.card[data-i="' + current + '"]');
+    if (card) card.focus({ preventScroll: false });
+  });
+
+  document.getElementById("dClose").addEventListener("click", closeDetail);
+  document.getElementById("dPrev").addEventListener("click", function () { open(current - 1); });
+  document.getElementById("dNext").addEventListener("click", function () { open(current + 1); });
+
+  // click on the backdrop closes
+  dialog.addEventListener("click", function (e) { if (e.target === dialog) closeDetail(); });
+
+  document.addEventListener("keydown", function (e) {
+    if (!dialog.open) return;
+    if (e.key === "ArrowRight") { e.preventDefault(); open(current + 1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); open(current - 1); }
+  });
+
+  // swipe between albums on phones
+  var sx = 0, sy = 0, tracking = false;
+  dialog.addEventListener("touchstart", function (e) {
+    if (e.touches.length !== 1) { tracking = false; return; }
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; tracking = true;
+  }, { passive: true });
+  dialog.addEventListener("touchend", function (e) {
+    if (!tracking) return;
+    tracking = false;
+    var t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.6) open(current + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  /* ---------- start ---------- */
+  try {
+    var saved = localStorage.getItem("albumSort");
+    if (saved === "year" || saved === "rating") {
+      sortMode = saved;
+      document.querySelectorAll(".switch button").forEach(function (b) {
+        b.setAttribute("aria-pressed", b.dataset.sort === sortMode ? "true" : "false");
+      });
+    }
+  } catch (err) {}
+
+  render();
+
+  // links like /albums#geography-tom-misch open straight to that album
+  function openFromHash() {
+    var slug = decodeURIComponent((location.hash || "").slice(1));
+    if (!slug) return;
+    var at = order.findIndex(function (a) { return a.slug === slug; });
+    if (at > -1) open(at);
+  }
+
+  openFromHash();
+  window.addEventListener("hashchange", openFromHash);
+
+  /* ---------- custom cursor (desktop pointers only) ---------- */
+  var fine = window.matchMedia("(pointer: fine)").matches;
+  var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var tScale = 1;
+
+  function bindHover(root) {
+    if (!fine || calm) return;
+    root.querySelectorAll("a, button").forEach(function (el) {
+      el.addEventListener("mouseenter", function () { tScale = 0.001; });
+      el.addEventListener("mouseleave", function () { tScale = 1; });
+    });
+  }
+
+  if (fine && !calm) {
+    var cursor = document.querySelector(".cursor");
+    var big = cursor.querySelector(".ball.big");
+    var small = cursor.querySelector(".ball.small");
+    var mx = -100, my = -100, bx = -100, by = -100, scale = 1;
+
+    document.addEventListener("mousemove", function (e) { mx = e.clientX; my = e.clientY; });
+    bindHover(document);
+
+    (function loop() {
+      bx += (mx - bx) * 0.14;
+      by += (my - by) * 0.14;
+      scale += (tScale - scale) * 0.2;
+      big.style.transform = "translate(" + (bx - 25) + "px," + (by - 25) + "px) scale(" + scale + ")";
+      small.style.transform = "translate(" + (mx - 5) + "px," + (my - 5) + "px)";
+      requestAnimationFrame(loop);
+    })();
+  } else {
+    var c = document.querySelector(".cursor");
+    if (c) c.style.display = "none";
+  }
+})();
+</script>
+
+</body>
+</html>

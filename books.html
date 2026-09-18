@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Books | Andy Sansness</title>
+<meta name="description" content="Every non-fiction book Andy has read and rated, sortable by star rating, release year or author.">
+<meta name="theme-color" content="#ffffff">
+<meta name="robots" content="noindex, follow">
+<link rel="icon" type="image/png" href="thumbs_up_.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="nonfiction-covers/sprite.jpg?v=b458ad632f">
+<style>
+  :root {
+    --blue: #004d99;
+    --navy: #003366;
+    --sky: #cce6ff;
+    --sky-soft: #e9f3ff;
+    --paper: #ffffff;
+    --ink: #14243a;
+    --muted: #6b7a8b;
+    --hairline: #dbe6f1;
+    --gold: #e0a100;
+    --star-empty: #d9e2ec;
+    --gutter: 16px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Open Sans", sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { color: #fff; background: var(--blue); }
+
+  img { display: block; max-width: 100%; }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ---------- heading ---------- */
+  header.page {
+    text-align: center;
+    padding: calc(2rem + env(safe-area-inset-top)) var(--gutter) 0.25rem;
+  }
+
+  header.page h1 {
+    font-family: "Merriweather", serif;
+    font-weight: 400;
+    font-size: clamp(1.8rem, 7vw, 2.6rem);
+    line-height: 1.2;
+    color: var(--navy);
+    margin: 0;
+  }
+
+  /* ---------- sort switch ---------- */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    padding: 0.75rem var(--gutter);
+    background: rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .toolbar.stuck { box-shadow: 0 1px 0 var(--hairline); }
+
+  .switch {
+    display: inline-flex;
+    padding: 4px;
+    border: 2px solid var(--sky);
+    border-radius: 999px;
+    background: #fff;
+  }
+
+  .switch button {
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--blue);
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem;
+    min-height: 40px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .switch button[aria-pressed="true"] { background: var(--blue); color: #fff; }
+  .switch button:not([aria-pressed="true"]):hover { background: var(--sky-soft); }
+  .switch button:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+
+  /* ---------- page column ---------- */
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0.25rem calc(var(--gutter) + env(safe-area-inset-right)) 3rem calc(var(--gutter) + env(safe-area-inset-left));
+  }
+
+  /* ---------- overview chart ---------- */
+  .viz {
+    margin: 0.75rem 0 0.5rem;
+    padding: 1.1rem 1.25rem 0.9rem;
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    background: linear-gradient(180deg, #fbfdff 0%, #ffffff 70%);
+  }
+
+  .viz-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.2rem 1rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .viz-head h2 {
+    margin: 0;
+    font-family: "Open Sans", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  .viz-key {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  /* the key swatch is one sprite cell, kept at the same 2:3 as every other cover */
+  .viz-key i {
+    display: inline-block;
+    width: 8px;
+    height: 12px;
+    border-radius: 2px;
+    background: url("nonfiction-covers/sprite.jpg?v=b458ad632f") 0 0 / 64px auto;
+  }
+
+  .plot {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    transition: height 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .plot.instant, .plot.instant * { transition: none !important; }
+
+  /* one tiny cover per book: 16 x 24, so it scales as a 2:3 poster, never a square */
+  .dot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 24px;
+    transform-origin: 0 0;
+    will-change: transform;
+    transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease;
+    pointer-events: none;
+  }
+
+  .dot .face {
+    display: block;
+    width: 16px;
+    height: 24px;
+    border-radius: 2px;
+    background-image: url("nonfiction-covers/sprite.jpg?v=b458ad632f");
+    background-size: 128px auto;
+    background-color: var(--sky);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .plot.hovering .dot { opacity: 0.45; }
+  .plot.hovering .dot.hot { opacity: 1; z-index: 3; }
+
+  .dot.hot .face {
+    transform: scale(2.6);
+    box-shadow: 0 0 0 1px #fff, 0 3px 10px rgba(0, 25, 51, 0.35);
+  }
+
+  .axis {
+    position: absolute;
+    background: var(--hairline);
+    transition: all 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+  }
+
+  .labels { position: absolute; inset: 0; pointer-events: none; }
+  .labels.fade { animation: labelsIn 0.45s ease both 0.2s; }
+  @keyframes labelsIn { from { opacity: 0; } }
+
+  .lab {
+    position: absolute;
+    font-size: 0.72rem;
+    line-height: 1;
+    color: var(--muted);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lab.center { transform: translateX(-50%); }
+  .lab.right { transform: translate(-100%, -50%); }
+  .lab.left { transform: translateY(-50%); }
+  .lab.count { font-weight: 600; color: var(--ink); opacity: 0.7; }
+  .lab.peak { font-weight: 600; color: var(--navy); }
+
+  button.lab {
+    pointer-events: auto;
+    font: inherit;
+    font-size: 0.74rem;
+    line-height: 1;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    padding: 6px 7px;
+    margin: -6px -7px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button.lab.center { transform: translateX(-50%); }
+  button.lab.right { transform: translate(-100%, -50%); }
+  button.lab:hover { background: var(--sky-soft); color: var(--blue); }
+  button.lab:focus-visible { outline: 2px solid var(--blue); outline-offset: 0; }
+  button.lab[disabled] { cursor: default; color: #a7b3bf; background: transparent; }
+  .lab svg { width: 0.95em; height: 0.95em; fill: var(--gold); flex: none; }
+  button.lab[disabled] svg { fill: var(--star-empty); }
+  .lab.unrated { color: var(--muted); }
+
+  /* ---------- tooltip ---------- */
+  .tip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    width: max-content;
+    max-width: min(300px, calc(100vw - 24px));
+    padding: 0.55rem 0.75rem 0.55rem 0.55rem;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 25, 51, 0.12), 0 12px 32px rgba(0, 25, 51, 0.22);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity 0.14s ease, transform 0.14s ease, visibility 0s linear 0.14s;
+    pointer-events: none;
+  }
+
+  .tip.on {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 0.14s ease, transform 0.14s ease;
+  }
+
+  .tip.touch { pointer-events: auto; cursor: pointer; }
+
+  .tip .tc {
+    flex: none;
+    width: 44px;
+    height: 66px;
+    border-radius: 4px;
+    background-color: var(--sky-soft);
+    background-size: cover;
+  }
+
+  .tip .tt {
+    font-size: 0.86rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .tip .ta { font-size: 0.78rem; line-height: 1.35; color: var(--muted); }
+
+  .tip .tm {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.2rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .tip .tm .stars { font-size: 12px; }
+  .tip .go { display: none; margin-top: 0.25rem; font-size: 0.75rem; font-weight: 600; color: var(--blue); }
+  .tip.touch .go { display: block; }
+
+  /* ---------- shelves ---------- */
+  .shelf { margin-top: 1.8rem; scroll-margin-top: 76px; }
+
+  .shelf-head {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding-bottom: 0.55rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--sky);
+  }
+
+  .shelf-head h2 {
+    margin: 0;
+    font-family: "Merriweather", serif;
+    font-weight: 400;
+    font-size: 1.2rem;
+    line-height: 1.3;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .shelf-head .n {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.4rem 1.1rem;
+  }
+
+  .card {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* every cover is the same 2:3 poster, whatever the source image */
+  .art {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--sky-soft);
+    box-shadow: 0 1px 2px rgba(20, 36, 58, 0.12), 0 4px 14px rgba(20, 36, 58, 0.08);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .art img {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .art img.ready { opacity: 1; }
+
+  .fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem;
+    text-align: center;
+    font-family: "Merriweather", serif;
+    font-size: 0.85rem;
+    line-height: 1.35;
+    color: var(--navy);
+    overflow-wrap: anywhere;
+  }
+
+  @media (hover: hover) {
+    .card:hover .art {
+      transform: translateY(-3px);
+      box-shadow: 0 2px 4px rgba(20, 36, 58, 0.14), 0 10px 24px rgba(20, 36, 58, 0.16);
+    }
+  }
+
+  .card:active .art { transform: scale(0.97); }
+  .card:focus-visible { outline: none; }
+  .card:focus-visible .art { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+  .card .t,
+  .card .a {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+  }
+
+  .card .t {
+    margin-top: 0.55rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .card .a {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--muted);
+  }
+
+  .card .sub {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.15rem;
+    min-height: 14px;
+  }
+
+  /* ---------- stars ---------- */
+  .stars { display: inline-flex; gap: 1px; line-height: 0; flex: none; }
+  .stars svg { width: 1em; height: 1em; }
+  .stars .on { fill: var(--gold); }
+  .stars .off { fill: var(--star-empty); }
+  .card .stars { font-size: 12px; }
+  .shelf-head .stars { font-size: 18px; }
+  .unrated-label { font-size: 0.75rem; line-height: 1.2; color: var(--muted); }
+
+  /* ---------- detail dialog ---------- */
+  dialog {
+    width: min(880px, calc(100vw - 32px));
+    max-width: none;
+    max-height: calc(100dvh - 32px);
+    padding: 0;
+    border: 0;
+    border-radius: 16px;
+    color: var(--ink);
+    background: #fff;
+    box-shadow: 0 24px 70px rgba(0, 25, 51, 0.35);
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+
+  dialog::backdrop {
+    background: rgba(0, 25, 51, 0.55);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+
+  dialog[open] { animation: rise 0.22s ease-out; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px) scale(0.98); } }
+
+  .detail {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    /* the row has to be allowed to shrink, or a long review makes .info taller
+       than the dialog and the prev / next arrows fall outside it */
+    grid-template-rows: minmax(0, 1fr);
+    max-height: calc(100dvh - 32px);
+  }
+
+  /* a 2:3 cover is half again as tall as it is wide, so the height budget sets the width */
+  .detail .cover {
+    position: relative;
+    align-self: start;
+    width: min(260px, calc((100dvh - 32px - 3.2rem) / 1.5));
+    aspect-ratio: 2 / 3;
+    margin: 1.6rem 0 1.6rem 1.6rem;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--sky-soft);
+    box-shadow: 0 4px 18px rgba(20, 36, 58, 0.15);
+  }
+
+  .detail .cover img { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; }
+  .detail .cover .fallback { font-size: 1.1rem; padding: 1.2rem; }
+
+  .detail .info {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    padding: 1.6rem 1.6rem 1.2rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .detail h2 {
+    margin: 0 2.4rem 0 0;
+    font-family: "Merriweather", serif;
+    font-weight: 400;
+    font-size: clamp(1.3rem, 4.5vw, 1.75rem);
+    line-height: 1.25;
+    color: var(--navy);
+    overflow-wrap: anywhere;
+  }
+
+  .detail .by {
+    margin: 0.35rem 0 0;
+    font-size: 1rem;
+    color: var(--blue);
+    font-weight: 600;
+  }
+
+  .detail .facts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 1rem;
+    margin: 0.8rem 0 0;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+
+  .detail .facts .stars { font-size: 20px; }
+
+  .detail .review { margin: 1.1rem 0 0; font-size: 0.95rem; white-space: pre-line; }
+  .detail .review.empty { color: var(--muted); font-style: italic; }
+
+  .detail .pick {
+    margin: 1rem 0 0;
+    padding: 0.6rem 0.8rem;
+    border-left: 3px solid var(--blue);
+    background: var(--sky-soft);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.9rem;
+  }
+
+  .detail .pick b { color: var(--navy); font-weight: 600; }
+
+  .detail nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 1.2rem;
+  }
+
+  .detail nav .pos { font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .round {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--blue);
+    background: #fff;
+    color: var(--blue);
+    font-size: 1.05rem;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .round:hover { background: var(--blue); color: #fff; }
+  .round:active { transform: scale(0.94); }
+  .round:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+
+  .close {
+    position: absolute;
+    top: 0.9rem;
+    right: 0.9rem;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    border-color: var(--sky);
+    background: rgba(255, 255, 255, 0.92);
+    font-size: 1.35rem;
+  }
+
+  /* ---------- footer ---------- */
+  footer {
+    border-top: 1px solid var(--sky);
+    text-align: center;
+    padding: 1rem var(--gutter) calc(1rem + env(safe-area-inset-bottom));
+    font-size: 0.78rem;
+    color: #7a8795;
+  }
+
+  /* ---------- custom cursor (desktop only, matches the rest of the site) ---------- */
+  .cursor { pointer-events: none; }
+  .cursor .ball { position: fixed; top: 0; left: 0; z-index: 1000; will-change: transform; }
+
+  /* the dialog sits in the browser's top layer, above the custom cursor, so it uses the normal pointer */
+  .modal-open .cursor { display: none; }
+
+  @media (pointer: fine) {
+    body, a, button { cursor: none; }
+    dialog, dialog::backdrop { cursor: auto; }
+    dialog button { cursor: pointer; }
+  }
+
+  @media (pointer: coarse) {
+    .cursor { display: none; }
+  }
+
+  /* ---------- tablets ---------- */
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 1.25rem 0.9rem; }
+  }
+
+  /* ---------- phones ---------- */
+  @media (max-width: 640px) {
+    header.page { padding-top: calc(1.5rem + env(safe-area-inset-top)); }
+    .viz { padding: 0.9rem 0.9rem 0.8rem; border-radius: 14px; }
+    .viz-head { margin-bottom: 0.75rem; }
+    .viz-head h2 { font-size: 0.9rem; }
+    .viz-key { font-size: 0.72rem; }
+
+    .shelf { margin-top: 1.5rem; }
+    .shelf-head h2 { font-size: 1.05rem; gap: 0.45rem; }
+    .shelf-head .stars { font-size: 15px; }
+
+    .grid {
+      grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+      gap: 1.1rem 0.7rem;
+    }
+    .card .t { font-size: 0.8rem; }
+    .card .a { font-size: 0.74rem; }
+    .card .stars { font-size: 11px; }
+
+    dialog { width: calc(100vw - 20px); max-height: calc(100dvh - 20px); border-radius: 14px; }
+    .detail {
+      grid-template-columns: minmax(0, 1fr);
+      /* on phones the whole card scrolls as one, so the rows size to content */
+      grid-template-rows: auto;
+      max-height: calc(100dvh - 20px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    .detail .cover { width: min(46%, 24dvh); margin: 1.4rem auto 0; }
+    .detail .info { overflow: visible; padding: 1.1rem 1.15rem 1rem; }
+    .detail h2 { margin: 0 0.5rem; text-align: center; }
+    .detail .by { text-align: center; }
+    .detail .facts { justify-content: center; }
+    .detail nav {
+      position: sticky;
+      bottom: -1rem;
+      margin: 0 -1.15rem -1rem;
+      padding: 0.7rem 1.15rem calc(0.7rem + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 30%);
+    }
+    .close { top: 0.6rem; right: 0.6rem; }
+  }
+
+  @media (max-width: 360px) {
+    :root { --gutter: 12px; }
+    .switch button { padding: 0.45rem 0.8rem; font-size: 0.82rem; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" aria-hidden="true">
+  <div class="ball big">
+    <svg height="50" width="50"><circle cx="25" cy="25" r="20" stroke-width="0" style="fill:#cce6ff;opacity:.7"></circle></svg>
+  </div>
+  <div class="ball small">
+    <svg height="10" width="10"><circle cx="5" cy="5" r="4" stroke-width="0" style="fill:#004d99"></circle></svg>
+  </div>
+</div>
+
+<header class="page">
+  <h1>Books</h1>
+</header>
+
+<div class="toolbar" id="toolbar">
+  <div class="switch" role="group" aria-label="Sort books by">
+    <button type="button" data-sort="rating" aria-pressed="true">Rating</button>
+    <button type="button" data-sort="year" aria-pressed="false">Release year</button>
+    <button type="button" data-sort="author" aria-pressed="false">Author</button>
+  </div>
+</div>
+
+<main>
+  <section class="viz" aria-labelledby="vizTitle" aria-describedby="vizSummary">
+    <div class="viz-head">
+      <h2 id="vizTitle">Every book, by rating</h2>
+      <span class="viz-key" aria-hidden="true"><i></i>Each cover is one book</span>
+    </div>
+    <div class="plot" id="plot">
+      <div class="tiles" id="tiles" aria-hidden="true"></div>
+      <div class="labels" id="labels"></div>
+    </div>
+    <p class="sr-only" id="vizSummary" aria-live="polite"></p>
+  </section>
+
+  <div id="shelves"></div>
+</main>
+
+<footer>
+  All reviews by Andy.
+</footer>
+
+<div class="tip" id="tip" role="status" aria-live="off">
+  <span class="tc" id="tipCover"></span>
+  <span>
+    <span class="tt" id="tipTitle"></span>
+    <span class="ta" id="tipAuthor"></span>
+    <span class="tm" id="tipMeta"></span>
+    <span class="go">View book &rsaquo;</span>
+  </span>
+</div>
+
+<dialog id="detail" aria-labelledby="dTitle">
+  <button class="round close" id="dClose" type="button" aria-label="Close">&times;</button>
+  <div class="detail">
+    <div class="cover" id="dCover"></div>
+    <div class="info">
+      <h2 id="dTitle"></h2>
+      <p class="by" id="dAuthor"></p>
+      <p class="facts" id="dFacts"></p>
+      <p class="review" id="dReview"></p>
+      <p class="pick" id="dPick" hidden></p>
+      <nav>
+        <button class="round" id="dPrev" type="button" aria-label="Previous book">&#10094;</button>
+        <span class="pos" id="dPos"></span>
+        <button class="round" id="dNext" type="button" aria-label="Next book">&#10095;</button>
+      </nav>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  "use strict";
+
+  /* Generated from the Non-Fiction Reviews notes. half = rating in half stars (10 = 5 stars), null = not yet rated */
+  var BOOKS = [{"slug":"american-prometheus-kai-bird-martin-j-sherwin","title":"American Prometheus","author":"Kai Bird & Martin J. Sherwin","year":2005,"half":null,"pick":null,"review":"This biography of Oppenheimer, the father of the atomic bomb, is as gripping and engaging as any work of fiction. Where many biographies suffer from a few too many chapters, American Prometheus somehow manages to make just about every one of its forty, highly detailed and encompassing chapters both highly relevant and highly entertaining.\n\nA part of this probably has to do with the actual drama and intrigue of the subject matter in question. But more than this, the sheer level of detail and background perspective on each event is staggering, to the point where you can tell that only the most relevant tidbits or illuminating anecdotes were kept. Such background is seemingly inextricable from Oppenheimer's life to truly understand it, all the while adding interest in their own right. Prose-wise, American Prometheus remains some of the most readable non-fiction I've encountered, leaning more on straight storytelling than recounting straight facts, though these facts are too numerous to cram into narrative form.\n\nAmerican Prometheus is a fascinating insight into a fascinating man."},{"slug":"einstein-his-life-and-universe-walter-isaacson","title":"Einstein: His Life and Universe","author":"Walter Isaacson","year":2007,"half":null,"pick":null,"review":"Drawing from many other biographies, this particular tapestry of the life and mind of Albert Einstein is highly accessible and masterfully written."},{"slug":"godel-escher-bach-douglas-hofstadter","title":"Gödel, Escher, Bach","author":"Douglas Hofstadter","year":1979,"half":null,"pick":null,"review":"A richly fascinating exploration of consciousness and meaning, touching on topics as varied as programming, zen koans, musical theory, mathematical proofs, self referencing art and the social organisation of ants (just to name a few).\n\nNow usually a book as dense and deep as this would be difficult to understand; however, Hofstadter does an excellent job of slow and steady explanation, which is complemented by intermittent fictional dialogues, which are both witty, allegorical and highly entertaining. I'm only about a quarter in, and will provide a more in depth review when I finish it."},{"slug":"guns-germs-and-steel-jared-diamond","title":"Guns, Germs, and Steel","author":"Jared Diamond","year":1997,"half":null,"pick":null,"review":"The book aims to answer the question of why some societies achieved advancement before others. Though its answer is in its title, the breaking down of factors proves to be a fascinating exercise, drawing from a highly macro perspective of 13000 years of history across every continent.\n\nThe insights are interesting, but what's less interesting is how they are presented. It is clear this is a work of an academic; there is just a bit too much fluff scattered amongst the gold. Also way too many rhetorical questions, spare me please.\n\nRemove a couple chapters here, a couple sections there and you'd have dynamite."},{"slug":"is-this-anything-jerry-seinfeld","title":"Is This Anything?","author":"Jerry Seinfeld","year":2020,"half":null,"pick":"Grook Head Protect Page 162 - The Platforms of Humiliation Page 232 - Drug Store Page 332 - Everything is Garbage Page 336 - Baby Born Page 392 - The Raisin Page 439 - Mae Babies (p. 142)","review":"Is this Anything is an anthology of Jerry Seinfeld's best bits as a comic, ordered by era. Genius abounds on every page, and yet the genius is mostly in identifying commonplace circumstances or peculiarities and showing how stupid they are. It amazed me how ruthlessly pessimistic, borderline nihilistic, these bits are, especially toward the latter eras, and yet how funny they are at the very same time. It goes to show how intertwined these two strands are; tragedy and comedy, stupidity and hilarity. What is also amazing about Seinfeld's writing is the leanness. Not a single word is wasted; where fluff could be, and is, abundant, Seinfeld condenses to the juiciest, most potent morsels. And how potent they are. The quality control on this man is unbelievable, but at the same time Seinfeld confesses consistently that he's still making this up as he goes along. What a legend."},{"slug":"leonardo-da-vinci-walter-isaacson","title":"Leonardo da Vinci","author":"Walter Isaacson","year":2017,"half":null,"pick":null,"review":"This vivid biography of arguably history's most innovative and wide-ranging geniuses is an absolute gem. Walter Isaacson thoughtfully and artfully boils down each facet of Da Vinci's life, drawing from the works of scholars, specialists and Leonardo's own handbooks alike to produce a work as succinct as it is all-encompassing. But more than this, Isaacson condenses not only facts, but a holistic appreciation of the motivations, beliefs and quirks of Da Vinci. Through such detail, we are able to glimpse at the mind of the man himself. And yet he was just a man, and we are shown his flaws and failures without prejudice. It's clear Isaacson truly admires the genius of Da Vinci, and while his entire life is painted objectively, you can't help but agree with the proposition that his ultimate flaw in never finishing projects ultimately is to his benefit in the sheer expanse of different ideas explored. What makes this biography such a joy is its readability, employing a refined yet simple prose designed to express both those facts and ideas with the utmost clarity. And through such clarity, we see a picture painted of the symbolic Renaissance man, an inspiration and fascination for years to come."},{"slug":"misbehaving-richard-h-thaler","title":"Misbehaving","author":"Richard H. Thaler","year":2015,"half":7,"pick":null,"review":"*Worth reading only if you are already interested in behavioural economics.*\n\nMisbehaving is less a guide to behavioral economics than it is a history of the field and its development. While Richard Thaler's companion book, Nudge, breaks down the theory and practical application of behavioral economics, misbehaving considers a systematic development journey of how it came into being.\n\nThough Thaler has been the primary pioneer, numerous other schools academies from numerous other fields are all mentioned, including supporters, innovators and mentors. It's gives to begin. Thaler starts with anomalies. Strange, or inexplicable occurances in essay exists longstanding economic theory and models. As behavioral science begins to shed light on these anomalies, slowly but surely Thaler and others begin to integrate these insights into economic theory.\n\nThe underlying premise of this book and behavioral economics as a whole is that humans are not rational - economics should stop expecting humans to make the perfect, efficient decisions. It adds an extra layer of relevance to know that a few years after writing this book, Thaler won the Nobel prize in economics for the exact research and insights described in this book. Overall, though Misbehaving is indubitably readable (Thaler has refreshingly accessible prose for an academic), unless you already have an existing interest in economics or behavioral economics in particular, I would leave it - Nudge remains a more practical and absorbing alternative."},{"slug":"range-david-epstein","title":"Range","author":"David Epstein","year":2019,"half":null,"pick":null,"review":"Range is a book about why generalists are better than specialists. The general premise is very compelling, namely, that while specialists may triumph in their own little domains, with their neat and tidy rules – Epstein calls these ‘kind’ environments – they fall to pieces when placed in more realistic domains where the rules and conditions change – they are denoted ‘wicked’ environments. And these are the environments where the natural range of generalists prevail. While very readable in terms of prose, in content.\n\nRange relies on one part theory, three parts anecdote; effective initially until anecdote the twenty-something, at which point it has gotten old. All that really needed to happen was cutting the last couple of chapters; nothing said by the back half of the book was anything that hadn't been said already. But what was said was perspectives subversive to the norm and yet empirically demonstrable - myths like the head-start and early specialization are thoroughly debunked. As an insight into success, no matter the domain, Range provides a highly useful lens; more than this, Range equips the reader with the tools to pursue their own personal success - range"},{"slug":"steve-jobs-walter-isaacson","title":"Steve Jobs","author":"Walter Isaacson","year":2011,"half":null,"pick":null,"review":"This biography of the CEO of Apple & Pixar, creator of the computer, iPad and iPhone, is a fascinating story and a fascinating insight into the man behind it. As with all of Isaacson's writing, it is highly readable, with not a wasted word or sentence on any page. Different key snapshots of Jobs' life are packaged neatly into chapters, told with first-person sources, providing multifaceted perspectives, all ultimately painting the portrait of one man. Beyond simply great story-telling, there are anecdotes and lessons which can be applied to anyone. I think everyone should read this book."},{"slug":"team-of-rivals-doris-kearns-goodwin","title":"Team of Rivals","author":"Doris Kearns Goodwin","year":2005,"half":null,"pick":null,"review":"This biography of Abraham Lincoln through the perspective of his political rivals turned allies is too much textbook and not enough storytelling for my liking. Fully lost me about a third of the way through. By focusing not only on Lincoln but by equal parts also his four key cabinet members, there is too much info, again reading like a textbook with a very specific thesis.\n\nI would have much preferred a straight profile of the president only, without any of the peripheral fluff which is uplifted here. If I were more interested in American history it may have been more manageable. But not this time."},{"slug":"the-art-thief-michael-finkel","title":"The Art Thief","author":"Michael Finkel","year":2023,"half":null,"pick":null,"review":"The Art Thief is a short, highly readable account of the most prolific art thief in history, a man who amassed over 300 items across Europe worth over $2 Billion dollars.\n\nFundamentally, this is just a good story well told. We follow the thief's beginnings, his exploits and his eventual downfall, accompanied by the dramatic influences of his girlfriend and mother. Like the best non-fiction, the story is entertaining and interesting, not drawn out too much, while still peeking down some relevant tangents in terms of art history, criminal psychology and comparative precedents. The Art Thief is a fun story worth reading."},{"slug":"the-dictators-handbook-bruce-bueno-de-mesquita-alastair-smith","title":"The Dictator's Handbook","author":"Bruce Bueno de Mesquita & Alastair Smith","year":2011,"half":null,"pick":null,"review":"The Dictator's Handbook is a fresh perspective on politics, condensing academic theory into highly accessible explanations of political phenomena across a wide variety of anecdotes. To be both highly readable and insightful is a rare combination, one that is achieved here, fairly consistently. The only trouble lay in length - the final third of the book felt as if it repeated many of the ideas already introduced, and didn't capture my engagement as the first two thirds did.\n\nIn addition to a useful lens on politics everywhere, conventional wisdom in multiple facets was challenged.\n\nas well, including the prerogative behind foreign aid and wars. Though the focus was on communicating its ideas, the underlying pessimistic slant did grate at times – essentially that rulers should stay in power by any means possible, uplifting assassination, genocide, corruption and extortion as necessary actions for autocrats. However, only by understanding the underlying mechanics which drive such rulers can we hope to ever promote change (or something like this). Yet can tell these academics have embraced themselves in these ideas on an abstract level for many years."},{"slug":"the-psychology-of-money-morgan-housel","title":"The Psychology of Money","author":"Morgan Housel","year":2020,"half":null,"pick":null,"review":"The Psychology of Money is an absolute exemplar of what a book on finance should be - in fact, of just about what any non-fiction book should be. Brilliant insights are communicated through impressively cohesive yet readable prose, alongside dozens of anecdotes, stories which work to make Housel's point far better than any explanation could.\n\nThe book is short - most readers don't finish books... because most simple topics don't require 300 pages of explanation. Damn, got that right. Housel goes for maximum impact and maximum insight. Like the very best books, he completely changed the way I view his topic; a pretty essential one-money."}];
+  var COVERS = "nonfiction-covers/";
+  var SPRITE_COLS = 8;             // sprite.jpg: 8 columns of 32x48 covers, in BOOKS order
+  var BASE = 16;                   // .dot width before scaling
+  var BASE_H = 24;                 // .dot height - covers are 2:3, never square
+
+  var shelvesEl = document.getElementById("shelves");
+  var dialog = document.getElementById("detail");
+  var plot = document.getElementById("plot");
+  var tilesEl = document.getElementById("tiles");
+  var labelsEl = document.getElementById("labels");
+  var tip = document.getElementById("tip");
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var sortMode = "rating";
+  var order = [];   // books in the order the shelves show them, for prev / next
+
+  BOOKS.forEach(function (a, i) { a.i = i; });
+  window.BOOK_COUNT = BOOKS.length;   // the layout audit checks the chart drew one tile each
+  var ratedCount = BOOKS.filter(function (a) { return a.half !== null; }).length;
+
+  /* ---------- stars ---------- */
+  var STAR = "M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z";
+  var uid = 0;
+
+  function stars(half) {
+    var id = "h" + (uid++);
+    var html = '<span class="stars" role="img" aria-label="' + (half / 2) + ' out of 5 stars">';
+    for (var i = 0; i < 5; i++) {
+      var fill = Math.max(0, Math.min(2, half - i * 2));
+      if (fill === 1) {
+        html += '<svg viewBox="0 0 24 24" aria-hidden="true"><defs><clipPath id="' + id + '"><rect width="12" height="24"/></clipPath></defs>' +
+                '<path class="off" d="' + STAR + '"/><path class="on" clip-path="url(#' + id + ')" d="' + STAR + '"/></svg>';
+      } else {
+        html += '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="' + (fill ? "on" : "off") + '" d="' + STAR + '"/></svg>';
+      }
+    }
+    return html + "</span>";
+  }
+
+  function halfText(half) {
+    var whole = Math.floor(half / 2);
+    return (whole || half % 2 === 0 ? String(whole) : "") + (half % 2 ? "½" : "");
+  }
+
+  function starWords(half) {
+    return halfText(half) + (half === 2 ? " star" : " stars");
+  }
+
+  /* ---------- helpers ---------- */
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function reviewHtml(s) {
+    return esc(s).replace(/\*([^*]+)\*/g, "<em>$1</em>");
+  }
+
+  function coverHtml(a, eager) {
+    return '<span class="fallback" aria-hidden="true">' + esc(a.title) + '</span>' +
+           '<img src="' + COVERS + a.slug + '.jpg" alt="' + esc(a.title) + ' cover" ' +
+           (eager ? "" : 'loading="lazy" ') + 'decoding="async" ' +
+           'onload="this.classList.add(\'ready\')" onerror="this.remove()">';
+  }
+
+  function authorKey(name) {
+    return name.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/^the\s+/, "").trim();
+  }
+
+  // Authors file by surname, the way a shelf does: Walter Isaacson under I.
+  // A particle belongs to the surname, so Bueno de Mesquita is under B, not M.
+  var PARTICLES = /^(de|del|della|di|da|dos|du|la|le|van|von|der|den|ten|ter|bin|ibn|st)\.?$/;
+  // and a surname the rule cannot read off the name is spelled out here
+  var NAMED_SURNAME = { "bruce bueno de mesquita": "Bueno de Mesquita" };
+
+  function surnameOf(name) {
+    // a book by two authors shelves under the first of them
+    var first = name.split("&")[0].trim();
+    // unless the first half is only a given name: "Arkady & Boris Strugatsky" share a surname
+    if (first.split(/\s+/).length < 2) first = name.replace(/&/g, " ");
+    var named = NAMED_SURNAME[authorKey(first)];
+    if (named) return named;
+    var parts = first.split(/\s+/).filter(function (p) { return p; });
+    if (parts.length < 2) return parts[0] || name;
+    var i = parts.length - 1;
+    while (i > 1 && PARTICLES.test(authorKey(parts[i - 1]))) i--;
+    return parts.slice(i).join(" ");
+  }
+
+  // sort on the surname first, then the whole name, so two Johns keep a stable order
+  function authorSort(name) {
+    return authorKey(surnameOf(name)) + " " + authorKey(name);
+  }
+
+  // anything not starting with a letter files under #
+  function authorLetter(name) {
+    var c = authorKey(surnameOf(name)).charAt(0).toUpperCase();
+    return c >= "A" && c <= "Z" ? c : "#";
+  }
+
+  function byAuthor(a, b) {
+    return authorSort(a.author).localeCompare(authorSort(b.author)) || a.year - b.year || a.title.localeCompare(b.title);
+  }
+
+  function byRatingThenYear(a, b) {
+    var ra = a.half === null ? -1 : a.half, rb = b.half === null ? -1 : b.half;
+    return rb - ra || b.year - a.year || a.title.localeCompare(b.title);
+  }
+
+  // 13 books spread over 45 years, so the year view shelves and bins by decade
+  function decadeOf(y) { return Math.floor(y / 10) * 10; }
+  function decadeName(d) { return d + "s"; }
+
+  /* ---------- shelves ---------- */
+  function groups() {
+    var map = {}, keys = [];
+    BOOKS.forEach(function (a) {
+      var k = sortMode === "rating" ? (a.half === null ? "unrated" : a.half)
+            : sortMode === "author" ? authorLetter(a.author)
+            : decadeOf(a.year);
+      if (!map[k]) { map[k] = []; keys.push(k); }
+      map[k].push(a);
+    });
+    keys.sort(function (x, y) {
+      if (sortMode === "author") return x === "#" ? 1 : y === "#" ? -1 : (x < y ? -1 : 1);
+      if (x === "unrated") return 1;
+      if (y === "unrated") return -1;
+      return y - x;
+    });
+    return keys.map(function (k) {
+      var list = map[k].slice();
+      if (sortMode === "rating") list.sort(function (a, b) { return b.year - a.year || a.title.localeCompare(b.title); });
+      else if (sortMode === "author") list.sort(byAuthor);
+      else list.sort(byRatingThenYear);
+      return { key: k, list: list };
+    });
+  }
+
+  function letterId(k) { return "a-" + (k === "#" ? "other" : k); }
+
+  function letterName(k) { return k === "#" ? "Authors whose surname starts with a number or symbol" : "Authors whose surname starts with " + k; }
+
+  function decadeId(d) { return "y-" + d; }
+
+  function renderShelves() {
+    order = [];
+    var html = "";
+    groups().forEach(function (g) {
+      var head, name, id;
+      if (sortMode === "year") { name = decadeName(g.key); head = "<h2>" + name + "</h2>"; id = decadeId(g.key); }
+      else if (sortMode === "author") { name = letterName(g.key); head = "<h2>" + esc(g.key) + "</h2>"; id = letterId(g.key); }
+      else if (g.key === "unrated") { name = "Not yet rated"; head = "<h2>Not yet rated</h2>"; id = "r-unrated"; }
+      else { name = starWords(g.key); head = "<h2>" + stars(g.key) + "<span>" + name + "</span></h2>"; id = "r-" + g.key; }
+
+      html += '<section class="shelf" id="' + id + '" aria-label="' + esc(name) + '">' +
+              '<div class="shelf-head">' + head + '<span class="n">' + g.list.length + (g.list.length === 1 ? " book" : " books") + "</span></div>" +
+              '<div class="grid">';
+      g.list.forEach(function (a) {
+        var i = order.push(a) - 1;
+        var sub = sortMode === "rating"
+          ? '<span class="unrated-label">' + a.year + "</span>"
+          : sortMode === "year"
+            ? (a.half === null ? '<span class="unrated-label">Unrated</span>' : stars(a.half) + '<span class="unrated-label">' + a.year + "</span>")
+            : (a.half === null ? '<span class="unrated-label">' + a.year + "</span>"
+                               : stars(a.half) + '<span class="unrated-label">' + a.year + "</span>");
+        html += '<button class="card" type="button" data-i="' + i + '">' +
+                  '<div class="art">' + coverHtml(a) + "</div>" +
+                  '<span class="t">' + esc(a.title) + "</span>" +
+                  '<span class="a">' + esc(a.author) + "</span>" +
+                  '<span class="sub">' + sub + "</span>" +
+                "</button>";
+      });
+      html += "</div></section>";
+    });
+    shelvesEl.innerHTML = html;
+    bindHover(shelvesEl);
+  }
+
+  shelvesEl.addEventListener("click", function (e) {
+    var card = e.target.closest(".card");
+    if (card) openAt(+card.dataset.i);
+  });
+
+  /* ================================================================
+     Overview chart: one tiny 2:3 cover per book.
+     Rating -> histogram (half-star bins + unrated), Year -> timeline,
+     Author -> one column per initial, A to Z.
+     Wide screens run left to right, narrow screens top to bottom.
+     ================================================================ */
+  var MODES = ["rating", "year", "author"];
+  var HALVES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  var minYear = Math.min.apply(null, BOOKS.map(function (a) { return a.year; }));
+  var maxYear = Math.max.apply(null, BOOKS.map(function (a) { return a.year; }));
+  var YEARS = [];
+  for (var yy = minYear; yy <= maxYear; yy++) YEARS.push(yy);
+  var DECADES = [];
+  for (var dd = decadeOf(minYear); dd <= decadeOf(maxYear); dd += 10) DECADES.push(dd);
+  var LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").concat("#");
+
+  var dots = BOOKS.map(function (a) {
+    var d = document.createElement("div");
+    d.className = "dot";
+    var f = document.createElement("span");
+    f.className = "face";
+    f.style.backgroundPosition = -(a.i % SPRITE_COLS) * BASE + "px " + -Math.floor(a.i / SPRITE_COLS) * BASE_H + "px";
+    d.appendChild(f);
+    tilesEl.appendChild(d);
+    return d;
+  });
+
+  var axisA = document.createElement("div");
+  var axisB = document.createElement("div");
+  axisA.className = axisB.className = "axis";
+  plot.insertBefore(axisA, labelsEl);
+  plot.insertBefore(axisB, labelsEl);
+
+  var layout = null;        // {pos: [{x, y, t}], ...}
+  var lastMode = null;
+
+  // Bins in axis order, each with its books stacked from the axis outwards
+  function bins(mode, byDecade) {
+    var list;
+    if (mode === "rating") {
+      list = HALVES.map(function (h) { return { key: h, items: [] }; });
+      var unrated = { key: "unrated", items: [], apart: true };
+      BOOKS.forEach(function (a) {
+        (a.half === null ? unrated.items : list[a.half - 1].items).push(a);
+      });
+      if (unrated.items.length) list.push(unrated);   // the column only exists while something is unrated
+      list.forEach(function (b) {
+        b.items.sort(function (a, c) { return a.year - c.year || a.title.localeCompare(c.title); });
+      });
+    } else if (mode === "author") {
+      list = LETTERS.map(function (c) { return { key: c, items: [] }; });
+      var at = {};
+      LETTERS.forEach(function (c, i) { at[c] = i; });
+      BOOKS.forEach(function (a) { list[at[authorLetter(a.author)]].items.push(a); });
+      list.forEach(function (b) { b.items.sort(byAuthor); });
+    } else if (byDecade) {
+      list = DECADES.map(function (d) { return { key: d, items: [] }; });
+      var dAt = {};
+      DECADES.forEach(function (d, i) { dAt[d] = i; });
+      BOOKS.forEach(function (a) { list[dAt[decadeOf(a.year)]].items.push(a); });
+      list.forEach(function (b) { b.items.sort(byRatingThenYear); });
+    } else {
+      list = YEARS.map(function (y) { return { key: y, items: [] }; });
+      BOOKS.forEach(function (a) { list[a.year - minYear].items.push(a); });
+      list.forEach(function (b) {
+        b.items.sort(function (a, c) {
+          var ra = a.half === null ? -1 : a.half, rc = c.half === null ? -1 : c.half;
+          return rc - ra || a.title.localeCompare(c.title);
+        });
+      });
+    }
+    return list;
+  }
+
+  function computeLayout(mode) {
+    var W = plot.clientWidth;
+    var vertical = W < 600;
+    var isYear = mode === "year";
+    // stacked top to bottom, a year-per-row timeline would run past 1000px, so it bins by decade
+    var byDecade = isYear && vertical;
+    var hist = !isYear || byDecade;           // rating, author and the decade view all draw as columns
+    var countEveryBin = mode === "rating";    // 10 counts is helpful, 27 or 164 would be noise
+    var B = bins(mode, byDecade);
+    // on phones the chart runs top to bottom, best first: 5 stars down to a half,
+    // newest decade down to oldest. A to Z already reads the right way.
+    if (vertical && mode !== "author") {
+      B = B.filter(function (b) { return !b.apart; }).reverse().concat(B.filter(function (b) { return b.apart; }));
+    }
+    var N = B.length;
+    var maxCount = Math.max.apply(null, B.map(function (b) { return b.items.length; }));
+    var pos = new Array(BOOKS.length);
+    var labels = [];
+    var axes = [];
+    var t, th, g, H;
+
+    if (!vertical) {
+      var colGap = hist ? Math.max(4, Math.min(18, W / (N * 6))) : (W / N > 14 ? 2 : 1);
+      var apartGap = B.some(function (b) { return b.apart; }) ? colGap * 1.6 : 0;
+      var topBand = 18, bottomBand = hist ? 30 : 26;
+      var budget = Math.max(180, Math.min(240, W * 0.2));
+      var colW = (W - colGap * (N - 1) - apartGap) / N;
+      var perRow, rows, plotH;
+
+      // 16 is the sprite's own cell width, so a tile never has to be upscaled
+      for (t = 16; t >= 3; t--) {
+        th = t * 1.5;
+        g = t >= 8 ? 2 : 1;
+        perRow = Math.floor((colW + g) / (t + g));
+        if (perRow < 1) continue;
+        rows = Math.ceil(maxCount / perRow);
+        plotH = rows * (th + g) - g;
+        if (plotH <= budget) break;
+      }
+      if (t < 3) {
+        t = 3; th = 4.5; g = 1;
+        perRow = Math.max(1, Math.floor((colW + g) / (t + g)));
+        rows = Math.ceil(maxCount / perRow);
+        plotH = rows * (th + g) - g;
+      }
+
+      var baseY = topBand + plotH;
+      H = baseY + bottomBand;
+
+      // a "1970s" label is about 44px wide, so thin the timeline out until they clear each other
+      var perDecade = 10 * (colW + colGap);
+      var decadeStep = perDecade >= 56 ? 10 : perDecade >= 28 ? 20 : 50;
+
+      B.forEach(function (b, i) {
+        var x0 = i * (colW + colGap) + (b.apart ? apartGap : 0);
+        var per = Math.min(perRow, Math.max(1, b.items.length));
+        var blockW = perRow * (t + g) - g;
+        var start = x0 + (colW - blockW) / 2;
+        b.items.forEach(function (a, k) {
+          var c = k % perRow, r = Math.floor(k / perRow);
+          pos[a.i] = { x: start + c * (t + g), y: baseY - (r + 1) * (th + g) + g, t: t, d: x0 / W };
+        });
+        var stackRows = Math.ceil(b.items.length / perRow);
+        var cx = x0 + colW / 2;
+
+        if (hist) {
+          labels.push({ kind: "bin", mode: mode, key: b.key, x: cx, y: baseY + 9, cls: "center" });
+          if (countEveryBin && b.items.length) labels.push({ kind: "text", text: b.items.length, x: cx, y: baseY - stackRows * (th + g) - 13, cls: "center count" });
+          else if (!countEveryBin && b.items.length === maxCount) labels.push({ kind: "text", text: b.items.length, x: cx, y: baseY - stackRows * (th + g) - 13, cls: "center peak" });
+        } else {
+          // a 164-year timeline: name the decades that have room, and the two ends
+          if (b.key % decadeStep === 0) labels.push({ kind: "bin", mode: mode, key: b.key, x: cx, y: baseY + 9, cls: "center" });
+          else if (i === 0 || i === N - 1) labels.push({ kind: "text", text: b.key, x: cx, y: baseY + 9, cls: "center edge" });
+          if (b.items.length === maxCount) labels.push({ kind: "text", text: b.items.length, x: cx, y: baseY - stackRows * (th + g) - 13, cls: "center peak" });
+        }
+      });
+
+      var apartAt = B.findIndex(function (b) { return b.apart; });
+      if (apartAt > -1) {
+        // the unrated column sits past a gap, so the rule breaks with it
+        axes.push({ left: 0, top: baseY + 2, width: apartAt * (colW + colGap) - colGap, height: 1 });
+        axes.push({ left: apartAt * (colW + colGap) + apartGap, top: baseY + 2, width: colW, height: 1 });
+      } else {
+        axes.push({ left: 0, top: baseY + 2, width: W, height: 1 });
+        axes.push({ left: 0, top: baseY + 2, width: 0, height: 1 });
+      }
+      // edge-year labels hide when they would collide with a decade label
+      labels = labels.filter(function (l) {
+        if (!/edge/.test(l.cls || "")) return true;
+        return !labels.some(function (o) { return o !== l && !/edge|peak/.test(o.cls || "") && o.y === l.y && Math.abs(o.x - l.x) < 52; });
+      });
+    } else {
+      var labelW = mode === "rating" ? 64 : mode === "author" ? 34 : 58;
+      var tail = countEveryBin ? 30 : 26;
+      var plotW = W - labelW - tail;
+      var rowGap = mode === "rating" ? 9 : mode === "author" ? 5 : 6;
+      var apartGapV = B.some(function (b) { return b.apart; }) ? 14 : 0;
+      var budgetV = mode === "rating" ? 400 : mode === "author" ? 470 : 430;
+      var labelEveryRow = true;   // every row is named in all three views, so it needs room to breathe
+      var topPad = 8;             // the first and last row labels are centred on their row, so leave them room
+      var cols, R, rowH, gap;
+
+      function fit(tile) {
+        th = tile * 1.5;
+        g = tile >= 8 ? 2 : 1;
+        cols = Math.max(1, Math.floor((plotW + g) / (tile + g)));
+        R = Math.ceil(maxCount / cols);
+        rowH = R * (th + g) - g;
+        gap = labelEveryRow ? Math.max(rowGap, 16 - rowH) : rowGap;
+        H = N * rowH + (N - 1) * gap + apartGapV + topPad * 2;
+      }
+
+      for (t = 16; t >= 3; t--) {
+        fit(t);
+        if (H <= budgetV) break;
+      }
+      if (t < 3) { t = 3; fit(3); }
+      rowGap = gap;
+
+      var axisX = labelW;
+      B.forEach(function (b, i) {
+        var y0 = topPad + i * (rowH + rowGap) + (b.apart ? apartGapV : 0);
+        b.items.forEach(function (a, k) {
+          var c = Math.floor(k / R), r = k % R;
+          pos[a.i] = { x: axisX + 4 + c * (t + g), y: y0 + r * (th + g), t: t, d: y0 / H };
+        });
+        var cy = y0 + rowH / 2;
+        var used = Math.ceil(b.items.length / R);
+        labels.push({ kind: "bin", mode: mode, key: b.key, x: axisX - 8, y: cy, cls: "right" });
+        if (countEveryBin && b.items.length) labels.push({ kind: "text", text: b.items.length, x: axisX + 4 + used * (t + g) + 5, y: cy, cls: "left count" });
+        else if (!countEveryBin && b.items.length === maxCount) labels.push({ kind: "text", text: b.items.length, x: axisX + 4 + used * (t + g) + 5, y: cy, cls: "left peak" });
+      });
+
+      var apartAtV = B.findIndex(function (b) { return b.apart; });
+      if (apartAtV > -1) {
+        axes.push({ left: axisX, top: 0, width: 1, height: topPad + apartAtV * (rowH + rowGap) - rowGap + 2 });
+        var uy = topPad + apartAtV * (rowH + rowGap) + apartGapV;
+        axes.push({ left: axisX, top: uy - 2, width: 1, height: rowH + 4 });
+      } else {
+        axes.push({ left: axisX, top: 0, width: 1, height: H });
+        axes.push({ left: axisX, top: 0, width: 1, height: 0 });
+      }
+    }
+
+    return { pos: pos, labels: labels, axes: axes, H: Math.ceil(H), W: W, vertical: vertical, hist: hist, t: t, th: th };
+  }
+
+  var BIN_STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + STAR + '"/></svg>';
+
+  // shift a horizontal layout down so its baseline sits at the bottom of a taller box
+  function dropTo(L, H) {
+    var dy = H - L.H;
+    if (dy <= 0) return L;
+    L.pos.forEach(function (p) { p.y += dy; });
+    L.labels.forEach(function (l) { l.y += dy; });
+    L.axes.forEach(function (a) { a.top += dy; });
+    L.H = H;
+    return L;
+  }
+
+  function drawChart(animate) {
+    var L = computeLayout(sortMode);
+    // on wide screens every view shares one height, so switching never moves the page
+    if (!L.vertical) {
+      dropTo(L, Math.max.apply(null, MODES.map(function (m) { return m === sortMode ? L.H : computeLayout(m).H; })));
+    }
+    var modeChanged = lastMode !== null && lastMode !== sortMode;
+    layout = L;
+
+    plot.classList.toggle("instant", !animate || reduced);
+    plot.style.height = L.H + "px";
+
+    L.pos.forEach(function (p, i) {
+      var d = dots[i];
+      d.style.transitionDelay = animate && modeChanged && !reduced ? Math.round(p.d * 260) + "ms" : "0ms";
+      d.style.transform = "translate(" + p.x.toFixed(2) + "px," + p.y.toFixed(2) + "px) scale(" + (p.t / BASE) + ")";
+    });
+
+    [axisA, axisB].forEach(function (el, i) {
+      var a = L.axes[i];
+      el.style.left = a.left + "px"; el.style.top = a.top + "px";
+      el.style.width = a.width + "px"; el.style.height = a.height + "px";
+    });
+
+    // labels are rebuilt (they are cheap) and fade in after a mode change
+    labelsEl.innerHTML = "";
+    L.labels.forEach(function (l) {
+      var el;
+      if (l.kind === "bin") {
+        el = document.createElement("button");
+        el.type = "button";
+        el.className = "lab " + l.cls + (l.key === "unrated" ? " unrated" : "");
+        var missing;
+        if (l.mode === "author") {
+          el.textContent = l.key;
+          el.dataset.target = letterId(l.key);
+          missing = "No books under " + l.key;
+          el.setAttribute("aria-label", "Jump to " + letterName(l.key).toLowerCase());
+        } else if (l.mode === "year") {
+          el.textContent = decadeName(l.key);
+          el.dataset.target = decadeId(l.key);
+          missing = "No books from the " + decadeName(l.key);
+          el.setAttribute("aria-label", "Jump to the " + decadeName(l.key));
+        } else if (l.key === "unrated") {
+          el.textContent = "Unrated";
+          el.dataset.target = "r-unrated";
+          missing = "No unrated books";
+          el.setAttribute("aria-label", "Jump to unrated books");
+        } else {
+          el.innerHTML = "<span>" + halfText(l.key) + "</span>" + BIN_STAR;
+          el.dataset.target = "r-" + l.key;
+          missing = "No books at " + starWords(l.key);
+          el.setAttribute("aria-label", "Jump to " + starWords(l.key));
+        }
+        if (!document.getElementById(el.dataset.target)) { el.disabled = true; el.setAttribute("aria-label", missing); }
+      } else {
+        el = document.createElement("span");
+        el.className = "lab " + l.cls;
+        el.textContent = l.text;
+        el.setAttribute("aria-hidden", "true");
+      }
+      el.style.left = l.x + "px";
+      el.style.top = l.y + "px";
+      labelsEl.appendChild(el);
+    });
+    // an end-of-axis label can reach past the plot; slide it back in rather than let it clip
+    var pr = plot.getBoundingClientRect();
+    Array.prototype.forEach.call(labelsEl.children, function (el) {
+      var r = el.getBoundingClientRect();
+      if (!r.width) return;
+      var px = el.tagName === "BUTTON" ? 7 : 0, py = el.tagName === "BUTTON" ? 6 : 0;
+      var left = r.left + px - pr.left, right = r.right - px - pr.left;
+      var top = r.top + py - pr.top, bottom = r.bottom - py - pr.top;
+      var dx = left < 0 ? -left : right > L.W ? L.W - right : 0;
+      var dy = top < 0 ? -top : bottom > L.H ? L.H - bottom : 0;
+      if (dx) el.style.left = (parseFloat(el.style.left) + dx) + "px";
+      if (dy) el.style.top = (parseFloat(el.style.top) + dy) + "px";
+    });
+
+    if (modeChanged && animate && !reduced) {
+      labelsEl.classList.remove("fade");
+      void labelsEl.offsetWidth;
+      labelsEl.classList.add("fade");
+    }
+    bindHover(labelsEl);
+
+    if (!animate || reduced) {
+      requestAnimationFrame(function () { plot.classList.remove("instant"); });
+    }
+    lastMode = sortMode;
+  }
+
+  labelsEl.addEventListener("click", function (e) {
+    var b = e.target.closest("button.lab");
+    if (!b || b.disabled) return;
+    var target = document.getElementById(b.dataset.target);
+    if (target) target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  });
+
+  function chartSummary() {
+    if (sortMode === "author") {
+      var letters = {};
+      BOOKS.forEach(function (a) { var c = authorLetter(a.author); letters[c] = (letters[c] || 0) + 1; });
+      var top = Object.keys(letters).sort(function (x, y) { return letters[y] - letters[x]; })[0];
+      return "Chart of " + BOOKS.length + " books by the first letter of the author's surname, A to Z. " +
+             top + " has the most, with " + letters[top] + " books.";
+    }
+    if (sortMode === "rating") {
+      var parts = HALVES.slice().reverse().map(function (h) {
+        var n = BOOKS.filter(function (a) { return a.half === h; }).length;
+        return n ? starWords(h) + ": " + n : null;
+      }).filter(Boolean);
+      return "Histogram of " + BOOKS.length + " books by rating. " + parts.join(", ") +
+             (ratedCount < BOOKS.length ? ", unrated: " + (BOOKS.length - ratedCount) : "") + ".";
+    }
+    var counts = {};
+    BOOKS.forEach(function (a) { counts[decadeOf(a.year)] = (counts[decadeOf(a.year)] || 0) + 1; });
+    var peak = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; })[0];
+    return "Timeline of " + BOOKS.length + " books published from " + minYear + " to " + maxYear +
+           ". The busiest decade is the " + decadeName(peak) + " with " + counts[peak] + " books.";
+  }
+
+  /* ---------- chart hover / tap ---------- */
+  var hot = -1;
+  var touchSelected = false;
+
+  function nearest(clientX, clientY) {
+    if (!layout) return -1;
+    var r = plot.getBoundingClientRect();
+    var px = clientX - r.left, py = clientY - r.top;
+    var best = -1, bestD = Infinity;
+    var reach = Math.max(12, layout.t * 2.2);
+    for (var i = 0; i < layout.pos.length; i++) {
+      var p = layout.pos[i];
+      var cx = p.x + p.t / 2, cy = p.y + p.t * 0.75;
+      var dx = px - cx, dy = py - cy;
+      var dd = dx * dx + dy * dy;
+      if (dd < bestD) { bestD = dd; best = i; }
+    }
+    return bestD <= reach * reach ? best : -1;
+  }
+
+  function setHot(i, clientX, clientY, touch) {
+    if (hot === i && !touch) { placeTip(clientX, clientY); return; }
+    if (hot > -1) dots[hot].classList.remove("hot");
+    hot = i;
+    if (i < 0) {
+      plot.classList.remove("hovering");
+      tip.classList.remove("on", "touch");
+      touchSelected = false;
+      return;
+    }
+    dots[i].classList.add("hot");
+    plot.classList.add("hovering");
+
+    var a = BOOKS[i];
+    document.getElementById("tipCover").style.backgroundImage = 'url("' + COVERS + a.slug + '.jpg")';
+    document.getElementById("tipTitle").textContent = a.title;
+    document.getElementById("tipAuthor").textContent = a.author;
+    document.getElementById("tipMeta").innerHTML =
+      (a.half === null ? "<span>Unrated</span>" : stars(a.half)) + "<span>· " + a.year + "</span>";
+    tip.classList.toggle("touch", !!touch);
+    tip.classList.add("on");
+    touchSelected = !!touch;
+    placeTip(clientX, clientY, touch);
+  }
+
+  function placeTip(clientX, clientY, touch) {
+    var tw = tip.offsetWidth, th = tip.offsetHeight;
+    var vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    var x, y;
+    if (touch && hot > -1) {
+      // anchor above the chosen cover so the finger does not cover the card
+      var r = plot.getBoundingClientRect(), p = layout.pos[hot];
+      clientX = r.left + p.x + p.t / 2;
+      clientY = r.top + p.y;
+      x = clientX - tw / 2;
+      y = clientY - th - 14;
+      if (y < 70) y = clientY + p.t * 1.5 + 16;
+    } else {
+      x = clientX + 16;
+      y = clientY - th - 12;
+      if (x + tw > vw - 12) x = clientX - tw - 16;
+      if (y < 8) y = clientY + 18;
+    }
+    x = Math.max(12, Math.min(x, vw - tw - 12));
+    y = Math.max(8, Math.min(y, vh - th - 8));
+    tip.style.transform = "";
+    tip.style.left = x + "px";
+    tip.style.top = y + "px";
+  }
+
+  plot.addEventListener("pointermove", function (e) {
+    if (e.pointerType !== "mouse") return;
+    setHot(nearest(e.clientX, e.clientY), e.clientX, e.clientY, false);
+  });
+
+  plot.addEventListener("pointerleave", function (e) {
+    if (e.pointerType === "mouse") setHot(-1);
+  });
+
+  plot.addEventListener("click", function (e) {
+    if (e.target.closest("button.lab")) return;
+    var i = nearest(e.clientX, e.clientY);
+    var touchLike = !window.matchMedia("(hover: hover)").matches;
+    if (i < 0) { setHot(-1); return; }
+    if (touchLike) {
+      // first tap previews, tapping the preview (or the same cover again) opens it
+      if (touchSelected && hot === i) { openBook(BOOKS[i]); setHot(-1); }
+      else setHot(i, e.clientX, e.clientY, true);
+    } else {
+      openBook(BOOKS[i]);
+    }
+  });
+
+  tip.addEventListener("click", function () {
+    if (touchSelected && hot > -1) { var a = BOOKS[hot]; setHot(-1); openBook(a); }
+  });
+
+  document.addEventListener("pointerdown", function (e) {
+    if (touchSelected && !plot.contains(e.target) && !tip.contains(e.target)) setHot(-1);
+  });
+
+  window.addEventListener("scroll", function () {
+    if (hot > -1 && !touchSelected) setHot(-1);
+    else if (touchSelected) placeTip(0, 0, true);
+    toolbar.classList.toggle("stuck", toolbar.getBoundingClientRect().top <= 0 && window.scrollY > 10);
+  }, { passive: true });
+
+  var toolbar = document.getElementById("toolbar");
+
+  /* ---------- sort switch ---------- */
+  function applySort(mode, animate) {
+    sortMode = mode;
+    document.querySelectorAll(".switch button").forEach(function (b) {
+      b.setAttribute("aria-pressed", b.dataset.sort === mode ? "true" : "false");
+    });
+    document.getElementById("vizTitle").textContent =
+      mode === "rating" ? "Every book, by rating" : mode === "year" ? "Every book, by release year" : "Every book, by author";
+    setHot(-1);
+    renderShelves();
+    drawChart(animate);
+    document.getElementById("vizSummary").textContent = chartSummary();
+  }
+
+  document.querySelectorAll(".switch button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      if (btn.dataset.sort === sortMode) return;
+      try { localStorage.setItem("bookSort", btn.dataset.sort); } catch (err) {}
+      applySort(btn.dataset.sort, true);
+    });
+  });
+
+  /* ---------- detail ---------- */
+  var current = -1;
+
+  function openBook(a) {
+    var at = order.indexOf(a);
+    if (at > -1) openAt(at);
+  }
+
+  function openAt(i) {
+    current = (i + order.length) % order.length;
+    var a = order[current];
+
+    document.getElementById("dCover").innerHTML = coverHtml(a, true);
+    document.getElementById("dTitle").textContent = a.title;
+    document.getElementById("dAuthor").textContent = a.author;
+    document.getElementById("dFacts").innerHTML =
+      "<span>" + a.year + "</span>" +
+      (a.half === null ? "<span>Not yet rated</span>" : stars(a.half) + "<span>" + starWords(a.half) + "</span>");
+
+    var review = document.getElementById("dReview");
+    review.innerHTML = a.review ? reviewHtml(a.review) : "No review written yet.";
+    review.classList.toggle("empty", !a.review);
+
+    var pick = document.getElementById("dPick");
+    pick.hidden = !a.pick;
+    pick.innerHTML = a.pick ? "<b>Top pick:</b> " + esc(a.pick) : "";
+
+    document.getElementById("dPos").textContent = (current + 1) + " / " + order.length;
+    dialog.querySelector(".info").scrollTop = 0;
+    dialog.querySelector(".detail").scrollTop = 0;
+
+    if (!dialog.open) {
+      dialog.showModal();
+      document.documentElement.classList.add("modal-open");
+    }
+    history.replaceState(null, "", "#" + a.slug);
+
+    // warm the neighbours so paging feels instant
+    [current + 1, current - 1].forEach(function (j) {
+      new Image().src = COVERS + order[(j + order.length) % order.length].slug + ".jpg";
+    });
+  }
+
+  dialog.addEventListener("close", function () {
+    document.documentElement.classList.remove("modal-open");
+    tScale = 1;
+    history.replaceState(null, "", location.pathname + location.search);
+    var card = shelvesEl.querySelector('.card[data-i="' + current + '"]');
+    if (card) card.focus({ preventScroll: true });
+  });
+
+  document.getElementById("dClose").addEventListener("click", function () { dialog.close(); });
+  document.getElementById("dPrev").addEventListener("click", function () { openAt(current - 1); });
+  document.getElementById("dNext").addEventListener("click", function () { openAt(current + 1); });
+
+  // click on the backdrop closes
+  dialog.addEventListener("click", function (e) { if (e.target === dialog) dialog.close(); });
+
+  document.addEventListener("keydown", function (e) {
+    if (!dialog.open) { if (e.key === "Escape") setHot(-1); return; }
+    if (e.key === "ArrowRight") { e.preventDefault(); openAt(current + 1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); openAt(current - 1); }
+  });
+
+  // swipe between books on phones
+  var sx = 0, sy = 0, tracking = false;
+  dialog.addEventListener("touchstart", function (e) {
+    if (e.touches.length !== 1) { tracking = false; return; }
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; tracking = true;
+  }, { passive: true });
+  dialog.addEventListener("touchend", function (e) {
+    if (!tracking) return;
+    tracking = false;
+    var t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.6) openAt(current + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  /* ---------- custom cursor (desktop pointers only) ---------- */
+  var fine = window.matchMedia("(pointer: fine)").matches;
+  var tScale = 1;
+
+  function bindHover(root) {
+    if (!fine || reduced) return;
+    root.querySelectorAll("a, button").forEach(function (el) {
+      el.addEventListener("mouseenter", function () { tScale = 0.001; });
+      el.addEventListener("mouseleave", function () { tScale = 1; });
+    });
+  }
+
+  if (fine && !reduced) {
+    var cursor = document.querySelector(".cursor");
+    var big = cursor.querySelector(".ball.big");
+    var small = cursor.querySelector(".ball.small");
+    var mx = -100, my = -100, bx = -100, by = -100, scale = 1;
+
+    document.addEventListener("mousemove", function (e) { mx = e.clientX; my = e.clientY; });
+    bindHover(document.querySelector(".switch"));
+
+    (function loop() {
+      bx += (mx - bx) * 0.14;
+      by += (my - by) * 0.14;
+      scale += (tScale - scale) * 0.2;
+      big.style.transform = "translate(" + (bx - 25) + "px," + (by - 25) + "px) scale(" + scale + ")";
+      small.style.transform = "translate(" + (mx - 5) + "px," + (my - 5) + "px)";
+      requestAnimationFrame(loop);
+    })();
+  } else {
+    var c = document.querySelector(".cursor");
+    if (c) c.style.display = "none";
+  }
+
+  /* ---------- start ---------- */
+  var startMode = "rating";
+  try {
+    var saved = localStorage.getItem("bookSort");
+    if (MODES.indexOf(saved) > -1) startMode = saved;
+  } catch (err) {}
+
+  applySort(startMode, false);
+
+  // the first draw measures labels in the fallback font; Open Sans is wider, so
+  // lay the chart out again once it lands or a label can end up over the edge
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { drawChart(false); });
+  }
+
+  // re-flow the chart when its width changes (rotation, window resize), without animating
+  var lastW = plot.clientWidth, resizeRaf = 0;
+  new ResizeObserver(function () {
+    var w = plot.clientWidth;
+    if (w === lastW) return;
+    lastW = w;
+    cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(function () { setHot(-1); drawChart(false); });
+  }).observe(plot);
+
+  // links like /books#range-david-epstein open straight to that book
+  function openFromHash() {
+    var slug = decodeURIComponent((location.hash || "").slice(1));
+    if (!slug) return;
+    var at = order.findIndex(function (a) { return a.slug === slug; });
+    if (at > -1) openAt(at);
+  }
+
+  openFromHash();
+  window.addEventListener("hashchange", openFromHash);
+})();
+</script>
+
+</body>
+</html>

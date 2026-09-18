@@ -837,9 +837,25 @@
            'onload="this.classList.add(\'ready\')" onerror="this.remove()">';
   }
 
-  // "The Wachowskis" files under W; anything not starting with a letter files under #
+  // Directors file under their surname: Christopher Nolan under N.
+  // A name that is part of the surname stays with it, so Joaquim Dos Santos
+  // files under D, not S.
+  var PARTICLE = /^(de|del|della|der|di|dos|du|la|le|van|von|ten|ter|bin|al)$/i;
+
+  function surname(name) {
+    var people = String(name).split(/\s*(?:,|&|\sand\s)\s*/).filter(Boolean);
+    var words = (people[0] || String(name)).trim().split(/\s+/);
+    // "Joel & Ethan Coen": the first credit is a bare first name, so the
+    // surname is the one shared at the end of the list
+    if (words.length < 2 && people.length > 1) words = people[people.length - 1].trim().split(/\s+/);
+    var i = words.length - 1;
+    while (i > 0 && PARTICLE.test(words[i - 1])) i--;
+    return words.slice(i).join(" ");
+  }
+
+  // anything not starting with a letter files under #
   function directorKey(name) {
-    return name.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/^the\s+/, "").trim();
+    return surname(name).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
   }
 
   function directorLetter(name) {
@@ -848,7 +864,9 @@
   }
 
   function byDirector(a, b) {
-    return directorKey(a.director).localeCompare(directorKey(b.director)) || a.year - b.year || a.title.localeCompare(b.title);
+    return directorKey(a.director).localeCompare(directorKey(b.director)) ||
+           a.director.localeCompare(b.director) ||
+           a.year - b.year || a.title.localeCompare(b.title);
   }
 
   function byRatingThenYear(a, b) {
@@ -880,7 +898,7 @@
 
   function letterId(k) { return "d-" + (k === "#" ? "other" : k); }
 
-  function letterName(k) { return k === "#" ? "Directors starting with a number or symbol" : "Directors starting with " + k; }
+  function letterName(k) { return k === "#" ? "Directors whose surname starts with a number or symbol" : "Directors whose surname starts with " + k; }
 
   function renderShelves() {
     order = [];
@@ -1217,7 +1235,7 @@
       var letters = {};
       MOVIES.forEach(function (a) { var c = directorLetter(a.director); letters[c] = (letters[c] || 0) + 1; });
       var top = Object.keys(letters).sort(function (x, y) { return letters[y] - letters[x]; })[0];
-      return "Chart of " + MOVIES.length + " films by the first letter of the director, A to Z. " +
+      return "Chart of " + MOVIES.length + " films by the first letter of the director's surname, A to Z. " +
              top + " has the most, with " + letters[top] + " films.";
     }
     if (sortMode === "rating") {

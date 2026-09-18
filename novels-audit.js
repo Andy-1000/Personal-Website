@@ -128,27 +128,47 @@
     if (strays) add("tile-outside", strays + " of " + dots.length + " tiles outside the plot (" + worst + ")");
     if (dots.length !== (win.NOVEL_COUNT || dots.length)) add("tile-count", "expected " + win.NOVEL_COUNT + " tiles");
 
-    /* ---- 4. the detail dialog fits on screen ---- */
-    var card = doc.querySelector(".card");
-    if (!card) { add("no-cards", "no shelves rendered"); return issues; }
-    card.click();
+    /* ---- 4. the detail dialog fits on screen, for every novel ----
+       the longest review is the one that breaks the layout, so open them all
+       rather than trusting whichever card happens to come first */
+    var cards = Array.prototype.slice.call(doc.querySelectorAll(".card"));
+    if (!cards.length) { add("no-cards", "no shelves rendered"); return issues; }
     var dlg = doc.getElementById("detail");
-    if (!dlg.open) { add("dialog", "clicking a cover did not open the detail dialog"); return issues; }
-    var dr = dlg.getBoundingClientRect();
     var vp = { left: 0, top: 0, right: win.innerWidth, bottom: win.innerHeight };
-    var od = outside(dr, vp, SLACK);
-    if (od.length) add("dialog-offscreen", "dialog spills " + od.join(", "));
-    var inner = dlg.querySelector(".detail");
-    if (inner.scrollWidth > inner.clientWidth + SLACK) {
-      add("dialog-hscroll", "dialog content scrolls sideways (" + inner.scrollWidth + " > " + inner.clientWidth + ")");
-    }
-    // the close button and the prev/next arrows have to be reachable
-    ["dClose", "dPrev", "dNext"].forEach(function (id) {
-      var r = doc.getElementById(id).getBoundingClientRect();
-      if (r.width < 24 || r.height < 24) add("control-small", id + " is " + r.width.toFixed(0) + "x" + r.height.toFixed(0));
-      if (r.right > win.innerWidth + SLACK || r.left < -SLACK) add("control-offscreen", id + " is off the side");
+    var worstSpill = null, worstCtl = null, hscroll = null;
+
+    cards.forEach(function (card) {
+      card.click();
+      if (!dlg.open) { add("dialog", "clicking a cover did not open the detail dialog"); return; }
+      var title = doc.getElementById("dTitle").textContent;
+      var dr = dlg.getBoundingClientRect();
+      var od = outside(dr, vp, SLACK);
+      if (od.length && !worstSpill) worstSpill = title + ": " + od.join(", ");
+
+      var inner = dlg.querySelector(".detail");
+      if (inner.scrollWidth > inner.clientWidth + SLACK && !hscroll) {
+        hscroll = title + " (" + inner.scrollWidth + " > " + inner.clientWidth + ")";
+      }
+      // the prev / next arrows live at the end of a scrolling column, so the
+      // question is whether you can reach them, not where they sit unscrolled
+      inner.scrollTop = inner.scrollHeight;
+      var info = dlg.querySelector(".info");
+      info.scrollTop = info.scrollHeight;
+
+      ["dClose", "dPrev", "dNext"].forEach(function (id) {
+        var r = doc.getElementById(id).getBoundingClientRect();
+        if (r.width < 24 || r.height < 24) add("control-small", id + " is " + r.width.toFixed(0) + "x" + r.height.toFixed(0));
+        var off = Math.max(r.bottom - dr.bottom, dr.top - r.top, r.right - dr.right, dr.left - r.left);
+        if (off > 8 && (!worstCtl || off > worstCtl.off)) {
+          worstCtl = { off: off, msg: id + " is still " + Math.round(off) + "px outside the dialog on " + title + ", scrolled to the end" };
+        }
+      });
+      dlg.close();
     });
-    dlg.close();
+
+    if (worstSpill) add("dialog-offscreen", "dialog spills " + worstSpill);
+    if (hscroll) add("dialog-hscroll", "dialog content scrolls sideways on " + hscroll);
+    if (worstCtl) add("control-outside", worstCtl.msg);
     return issues;
   }
 

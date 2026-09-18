@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Novels | Andy Sansness</title>
+<meta name="description" content="Every novel Andy has read and rated, sortable by star rating, release year or author.">
+<meta name="theme-color" content="#ffffff">
+<meta name="robots" content="noindex, follow">
+<link rel="icon" type="image/png" href="thumbs_up_.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="book-covers/sprite.jpg?v=7c06b012dd">
+<style>
+  :root {
+    --blue: #004d99;
+    --navy: #003366;
+    --sky: #cce6ff;
+    --sky-soft: #e9f3ff;
+    --paper: #ffffff;
+    --ink: #14243a;
+    --muted: #6b7a8b;
+    --hairline: #dbe6f1;
+    --gold: #e0a100;
+    --star-empty: #d9e2ec;
+    --gutter: 16px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Open Sans", sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { color: #fff; background: var(--blue); }
+
+  img { display: block; max-width: 100%; }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ---------- heading ---------- */
+  header.page {
+    text-align: center;
+    padding: calc(2rem + env(safe-area-inset-top)) var(--gutter) 0.25rem;
+  }
+
+  header.page h1 {
+    font-family: "Merriweather", serif;
+    font-weight: 400;
+    font-size: clamp(1.8rem, 7vw, 2.6rem);
+    line-height: 1.2;
+    color: var(--navy);
+    margin: 0;
+  }
+
+  /* ---------- sort switch ---------- */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    padding: 0.75rem var(--gutter);
+    background: rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .toolbar.stuck { box-shadow: 0 1px 0 var(--hairline); }
+
+  .switch {
+    display: inline-flex;
+    padding: 4px;
+    border: 2px solid var(--sky);
+    border-radius: 999px;
+    background: #fff;
+  }
+
+  .switch button {
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--blue);
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem;
+    min-height: 40px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .switch button[aria-pressed="true"] { background: var(--blue); color: #fff; }
+  .switch button:not([aria-pressed="true"]):hover { background: var(--sky-soft); }
+  .switch button:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+
+  /* ---------- page column ---------- */
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0.25rem calc(var(--gutter) + env(safe-area-inset-right)) 3rem calc(var(--gutter) + env(safe-area-inset-left));
+  }
+
+  /* ---------- overview chart ---------- */
+  .viz {
+    margin: 0.75rem 0 0.5rem;
+    padding: 1.1rem 1.25rem 0.9rem;
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    background: linear-gradient(180deg, #fbfdff 0%, #ffffff 70%);
+  }
+
+  .viz-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.2rem 1rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .viz-head h2 {
+    margin: 0;
+    font-family: "Open Sans", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  .viz-key {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  /* the key swatch is one sprite cell, kept at the same 2:3 as every other cover */
+  .viz-key i {
+    display: inline-block;
+    width: 8px;
+    height: 12px;
+    border-radius: 2px;
+    background: url("book-covers/sprite.jpg?v=7c06b012dd") 0 0 / 64px auto;
+  }
+
+  .plot {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    transition: height 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .plot.instant, .plot.instant * { transition: none !important; }
+
+  /* one tiny cover per novel: 16 x 24, so it scales as a 2:3 poster, never a square */
+  .dot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 24px;
+    transform-origin: 0 0;
+    will-change: transform;
+    transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease;
+    pointer-events: none;
+  }
+
+  .dot .face {
+    display: block;
+    width: 16px;
+    height: 24px;
+    border-radius: 2px;
+    background-image: url("book-covers/sprite.jpg?v=7c06b012dd");
+    background-size: 128px auto;
+    background-color: var(--sky);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .plot.hovering .dot { opacity: 0.45; }
+  .plot.hovering .dot.hot { opacity: 1; z-index: 3; }
+
+  .dot.hot .face {
+    transform: scale(2.6);
+    box-shadow: 0 0 0 1px #fff, 0 3px 10px rgba(0, 25, 51, 0.35);
+  }
+
+  .axis {
+    position: absolute;
+    background: var(--hairline);
+    transition: all 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+  }
+
+  .labels { position: absolute; inset: 0; pointer-events: none; }
+  .labels.fade { animation: labelsIn 0.45s ease both 0.2s; }
+  @keyframes labelsIn { from { opacity: 0; } }
+
+  .lab {
+    position: absolute;
+    font-size: 0.72rem;
+    line-height: 1;
+    color: var(--muted);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lab.center { transform: translateX(-50%); }
+  .lab.right { transform: translate(-100%, -50%); }
+  .lab.left { transform: translateY(-50%); }
+  .lab.count { font-weight: 600; color: var(--ink); opacity: 0.7; }
+  .lab.peak { font-weight: 600; color: var(--navy); }
+
+  button.lab {
+    pointer-events: auto;
+    font: inherit;
+    font-size: 0.74rem;
+    line-height: 1;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    padding: 6px 7px;
+    margin: -6px -7px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button.lab.center { transform: translateX(-50%); }
+  button.lab.right { transform: translate(-100%, -50%); }
+  button.lab:hover { background: var(--sky-soft); color: var(--blue); }
+  button.lab:focus-visible { outline: 2px solid var(--blue); outline-offset: 0; }
+  button.lab[disabled] { cursor: default; color: #a7b3bf; background: transparent; }
+  .lab svg { width: 0.95em; height: 0.95em; fill: var(--gold); flex: none; }
+  button.lab[disabled] svg { fill: var(--star-empty); }
+  .lab.unrated { color: var(--muted); }
+
+  /* ---------- tooltip ---------- */
+  .tip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    width: max-content;
+    max-width: min(300px, calc(100vw - 24px));
+    padding: 0.55rem 0.75rem 0.55rem 0.55rem;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 25, 51, 0.12), 0 12px 32px rgba(0, 25, 51, 0.22);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity 0.14s ease, transform 0.14s ease, visibility 0s linear 0.14s;
+    pointer-events: none;
+  }
+
+  .tip.on {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 0.14s ease, transform 0.14s ease;
+  }
+
+  .tip.touch { pointer-events: auto; cursor: pointer; }
+
+  .tip .tc {
+    flex: none;
+    width: 44px;
+    height: 66px;
+    border-radius: 4px;
+    background-color: var(--sky-soft);
+    background-size: cover;
+  }
+
+  .tip .tt {
+    font-size: 0.86rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .tip .ta { font-size: 0.78rem; line-height: 1.35; color: var(--muted); }
+
+  .tip .tm {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.2rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .tip .tm .stars { font-size: 12px; }
+  .tip .go { display: none; margin-top: 0.25rem; font-size: 0.75rem; font-weight: 600; color: var(--blue); }
+  .tip.touch .go { display: block; }
+
+  /* ---------- shelves ---------- */
+  .shelf { margin-top: 1.8rem; scroll-margin-top: 76px; }
+
+  .shelf-head {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding-bottom: 0.55rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--sky);
+  }
+
+  .shelf-head h2 {
+    margin: 0;
+    font-family: "Merriweather", serif;
+    font-weight: 400;
+    font-size: 1.2rem;
+    line-height: 1.3;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .shelf-head .n {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.4rem 1.1rem;
+  }
+
+  .card {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* every cover is the same 2:3 poster, whatever the source image */
+  .art {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--sky-soft);
+    box-shadow: 0 1px 2px rgba(20, 36, 58, 0.12), 0 4px 14px rgba(20, 36, 58, 0.08);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .art img {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .art img.ready { opacity: 1; }
+
+  .fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem;
+    text-align: center;
+    font-family: "Merriweather", serif;
+    font-size: 0.85rem;
+    line-height: 1.35;
+    color: var(--navy);
+    overflow-wrap: anywhere;
+  }
+
+  @media (hover: hover) {
+    .card:hover .art {
+      transform: translateY(-3px);
+      box-shadow: 0 2px 4px rgba(20, 36, 58, 0.14), 0 10px 24px rgba(20, 36, 58, 0.16);
+    }
+  }
+
+  .card:active .art { transform: scale(0.97); }
+  .card:focus-visible { outline: none; }
+  .card:focus-visible .art { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+  .card .t,
+  .card .a {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+  }
+
+  .card .t {
+    margin-top: 0.55rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .card .a {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--muted);
+  }
+
+  .card .sub {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.15rem;
+    min-height: 14px;
+  }
+
+  /* ---------- stars ---------- */
+  .stars { display: inline-flex; gap: 1px; line-height: 0; flex: none; }
+  .stars svg { width: 1em; height: 1em; }
+  .stars .on { fill: var(--gold); }
+  .stars .off { fill: var(--star-empty); }
+  .card .stars { font-size: 12px; }
+  .shelf-head .stars { font-size: 18px; }
+  .unrated-label { font-size: 0.75rem; line-height: 1.2; color: var(--muted); }
+
+  /* ---------- detail dialog ---------- */
+  dialog {
+    width: min(880px, calc(100vw - 32px));
+    max-width: none;
+    max-height: calc(100dvh - 32px);
+    padding: 0;
+    border: 0;
+    border-radius: 16px;
+    color: var(--ink);
+    background: #fff;
+    box-shadow: 0 24px 70px rgba(0, 25, 51, 0.35);
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+
+  dialog::backdrop {
+    background: rgba(0, 25, 51, 0.55);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+
+  dialog[open] { animation: rise 0.22s ease-out; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px) scale(0.98); } }
+
+  .detail {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    max-height: calc(100dvh - 32px);
+  }
+
+  /* a 2:3 cover is half again as tall as it is wide, so the height budget sets the width */
+  .detail .cover {
+    position: relative;
+    align-self: start;
+    width: min(260px, calc((100dvh - 32px - 3.2rem) / 1.5));
+    aspect-ratio: 2 / 3;
+    margin: 1.6rem 0 1.6rem 1.6rem;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--sky-soft);
+    box-shadow: 0 4px 18px rgba(20, 36, 58, 0.15);
+  }
+
+  .detail .cover img { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; }
+  .detail .cover .fallback { font-size: 1.1rem; padding: 1.2rem; }
+
+  .detail .info {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    padding: 1.6rem 1.6rem 1.2rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .detail h2 {
+    margin: 0 2.4rem 0 0;
+    font-family: "Merriweather", serif;
+    font-weight: 400;
+    font-size: clamp(1.3rem, 4.5vw, 1.75rem);
+    line-height: 1.25;
+    color: var(--navy);
+    overflow-wrap: anywhere;
+  }
+
+  .detail .by {
+    margin: 0.35rem 0 0;
+    font-size: 1rem;
+    color: var(--blue);
+    font-weight: 600;
+  }
+
+  .detail .facts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 1rem;
+    margin: 0.8rem 0 0;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+
+  .detail .facts .stars { font-size: 20px; }
+
+  .detail .review { margin: 1.1rem 0 0; font-size: 0.95rem; white-space: pre-line; }
+  .detail .review.empty { color: var(--muted); font-style: italic; }
+
+  .detail .pick {
+    margin: 1rem 0 0;
+    padding: 0.6rem 0.8rem;
+    border-left: 3px solid var(--blue);
+    background: var(--sky-soft);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.9rem;
+  }
+
+  .detail .pick b { color: var(--navy); font-weight: 600; }
+
+  .detail nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 1.2rem;
+  }
+
+  .detail nav .pos { font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .round {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--blue);
+    background: #fff;
+    color: var(--blue);
+    font-size: 1.05rem;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .round:hover { background: var(--blue); color: #fff; }
+  .round:active { transform: scale(0.94); }
+  .round:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+
+  .close {
+    position: absolute;
+    top: 0.9rem;
+    right: 0.9rem;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    border-color: var(--sky);
+    background: rgba(255, 255, 255, 0.92);
+    font-size: 1.35rem;
+  }
+
+  /* ---------- footer ---------- */
+  footer {
+    border-top: 1px solid var(--sky);
+    text-align: center;
+    padding: 1rem var(--gutter) calc(1rem + env(safe-area-inset-bottom));
+    font-size: 0.78rem;
+    color: #7a8795;
+  }
+
+  /* ---------- custom cursor (desktop only, matches the rest of the site) ---------- */
+  .cursor { pointer-events: none; }
+  .cursor .ball { position: fixed; top: 0; left: 0; z-index: 1000; will-change: transform; }
+
+  /* the dialog sits in the browser's top layer, above the custom cursor, so it uses the normal pointer */
+  .modal-open .cursor { display: none; }
+
+  @media (pointer: fine) {
+    body, a, button { cursor: none; }
+    dialog, dialog::backdrop { cursor: auto; }
+    dialog button { cursor: pointer; }
+  }
+
+  @media (pointer: coarse) {
+    .cursor { display: none; }
+  }
+
+  /* ---------- tablets ---------- */
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); gap: 1.25rem 0.9rem; }
+  }
+
+  /* ---------- phones ---------- */
+  @media (max-width: 640px) {
+    header.page { padding-top: calc(1.5rem + env(safe-area-inset-top)); }
+    .viz { padding: 0.9rem 0.9rem 0.8rem; border-radius: 14px; }
+    .viz-head { margin-bottom: 0.75rem; }
+    .viz-head h2 { font-size: 0.9rem; }
+    .viz-key { font-size: 0.72rem; }
+
+    .shelf { margin-top: 1.5rem; }
+    .shelf-head h2 { font-size: 1.05rem; gap: 0.45rem; }
+    .shelf-head .stars { font-size: 15px; }
+
+    .grid {
+      grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+      gap: 1.1rem 0.7rem;
+    }
+    .card .t { font-size: 0.8rem; }
+    .card .a { font-size: 0.74rem; }
+    .card .stars { font-size: 11px; }
+
+    dialog { width: calc(100vw - 20px); max-height: calc(100dvh - 20px); border-radius: 14px; }
+    .detail {
+      grid-template-columns: minmax(0, 1fr);
+      max-height: calc(100dvh - 20px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    .detail .cover { width: min(46%, 24dvh); margin: 1.4rem auto 0; }
+    .detail .info { overflow: visible; padding: 1.1rem 1.15rem 1rem; }
+    .detail h2 { margin: 0 0.5rem; text-align: center; }
+    .detail .by { text-align: center; }
+    .detail .facts { justify-content: center; }
+    .detail nav {
+      position: sticky;
+      bottom: -1rem;
+      margin: 0 -1.15rem -1rem;
+      padding: 0.7rem 1.15rem calc(0.7rem + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 30%);
+    }
+    .close { top: 0.6rem; right: 0.6rem; }
+  }
+
+  @media (max-width: 360px) {
+    :root { --gutter: 12px; }
+    .switch button { padding: 0.45rem 0.8rem; font-size: 0.82rem; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" aria-hidden="true">
+  <div class="ball big">
+    <svg height="50" width="50"><circle cx="25" cy="25" r="20" stroke-width="0" style="fill:#cce6ff;opacity:.7"></circle></svg>
+  </div>
+  <div class="ball small">
+    <svg height="10" width="10"><circle cx="5" cy="5" r="4" stroke-width="0" style="fill:#004d99"></circle></svg>
+  </div>
+</div>
+
+<header class="page">
+  <h1>Novels</h1>
+</header>
+
+<div class="toolbar" id="toolbar">
+  <div class="switch" role="group" aria-label="Sort novels by">
+    <button type="button" data-sort="rating" aria-pressed="true">Rating</button>
+    <button type="button" data-sort="year" aria-pressed="false">Release year</button>
+    <button type="button" data-sort="author" aria-pressed="false">Author</button>
+  </div>
+</div>
+
+<main>
+  <section class="viz" aria-labelledby="vizTitle" aria-describedby="vizSummary">
+    <div class="viz-head">
+      <h2 id="vizTitle">Every novel, by rating</h2>
+      <span class="viz-key" aria-hidden="true"><i></i>Each cover is one novel</span>
+    </div>
+    <div class="plot" id="plot">
+      <div class="tiles" id="tiles" aria-hidden="true"></div>
+      <div class="labels" id="labels"></div>
+    </div>
+    <p class="sr-only" id="vizSummary" aria-live="polite"></p>
+  </section>
+
+  <div id="shelves"></div>
+</main>
+
+<footer>
+  All reviews by Andy.
+</footer>
+
+<div class="tip" id="tip" role="status" aria-live="off">
+  <span class="tc" id="tipCover"></span>
+  <span>
+    <span class="tt" id="tipTitle"></span>
+    <span class="ta" id="tipAuthor"></span>
+    <span class="tm" id="tipMeta"></span>
+    <span class="go">View novel &rsaquo;</span>
+  </span>
+</div>
+
+<dialog id="detail" aria-labelledby="dTitle">
+  <button class="round close" id="dClose" type="button" aria-label="Close">&times;</button>
+  <div class="detail">
+    <div class="cover" id="dCover"></div>
+    <div class="info">
+      <h2 id="dTitle"></h2>
+      <p class="by" id="dAuthor"></p>
+      <p class="facts" id="dFacts"></p>
+      <p class="review" id="dReview"></p>
+      <p class="pick" id="dPick" hidden></p>
+      <nav>
+        <button class="round" id="dPrev" type="button" aria-label="Previous novel">&#10094;</button>
+        <span class="pos" id="dPos"></span>
+        <button class="round" id="dNext" type="button" aria-label="Next novel">&#10095;</button>
+      </nav>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  "use strict";
+
+  /* Generated from the Fiction Reviews notes. half = rating in half stars (10 = 5 stars), null = not yet rated */
+  var NOVELS = [{"slug":"a-naked-singularity-sergio-de-la-pava","title":"A Naked Singularity","author":"Sergio De La Pava","year":2012,"half":10,"pick":null,"review":"Hands down the best book I've read this year. Maybe ever? In fact very likely ever. A Naked Singularity is a lot of things; it is the story of a young lawyer in New York; it is a crime thriller; it's a philosophical discourse; it is a riveting snapshot of 80s boxing; it is a biting satire of the American criminal justice system; it is a fever dream of a novel that alternates between the starkness of reality and the surrealness of the mind. It is also sharply hilarious. The way this novel can be all these things is through copious amounts of tangents, tangents which nevertheless flow with the momentum of the narrative, sometimes shifting into completely new territory but always moving forward. The reason every tangent remains so engaging is twofold – for one, the flow acts like all human thought does, thought unrestrained and unleashed. Of course, it's going to find connections, follow rabbit holes. For another, the writing prose is stellar. Readable to the utmost while explaining heavy concepts, shifting arrays of character and weaving various levels of abstraction. It helps as well to have a hefty scattering of zingers hidden amongst the fold. because there is a certain element of subtlety at play, the kind where you blink and you miss it. All these elements may seem like a bit much for the average reader, the kind who just want a simple, straightforward story. Not for me. There's something in that post-modern literary fiction which hits different. Reflection on the overall impression it left on me. A Naked Singularity seems so much more human, a story that transcends being a mere story and becomes a reflection of life. It's also simply as entertaining as hell."},{"slug":"a-prisoner-of-birth-jeffrey-archer","title":"A Prisoner of Birth","author":"Jeffrey Archer","year":2008,"half":7,"pick":null,"review":"A powerful story of revenge complete with Archer's characteristic storytelling and a razor sharp plot"},{"slug":"a-tale-of-two-cities-charles-dickens","title":"A Tale of Two Cities","author":"Charles Dickens","year":1859,"half":3,"pick":null,"review":"This particular Dickens didn't do it for me. I enjoyed Oliver Twist. I hated Great Expectations. And I can't say I have much feeling at all around A Tale of Two Cities. About a third of the way in, there was nothing keeping me engaged, invested in the story. So I stopped. I don't deny it could be enjoyed; I don't deny it could be hated. In the end I remain on the fence between the two. The writing had to be read slowly, if you get what I mean, and suffered from some cultural dissonance. The characters seemed more like characteristics, while the plot stagnated."},{"slug":"the-alloy-of-law-brandon-sanderson","title":"The Alloy of Law","author":"Brandon Sanderson","year":2011,"half":6,"pick":null,"review":"*Mistborn Era 2 Book 1*\n\nThough fun, The Alloy of Law feels just a bit lackluster as a complete story. Between the character introductions and establishment of setting, as well as references and plot point setting up future payoff, there was little room left for the actual plot itself. Even the plot was left disappointed - a criminal organisation is committing robberies and the apparent solution is to... kill them all? Apart from this, the primary redeeming feature beyond the customarily epic worldbuilding was the whimsy of one particular character, who was, while not quite laugh out loud, was undeniably amusing. Overall though, there just wasn't quite enough substance."},{"slug":"annihilation-jeff-vandermeer","title":"Annihilation","author":"Jeff VanderMeer","year":2014,"half":4,"pick":null,"review":"Took too long. Did not finish. Too bad."},{"slug":"billy-summers-stephen-king","title":"Billy Summers","author":"Stephen King","year":2021,"half":1,"pick":null,"review":"Too long, too boring, too witless. Nice try."},{"slug":"children-of-time-adrian-tchaikovsky","title":"Children of Time","author":"Adrian Tchaikovsky","year":2015,"half":8,"pick":null,"review":"Children of Time is sci-fi of the best kind (or at least best in its expectation of genre). What drives the story is its ideas, ideas so numerous and diverse that you can't help but want to know more.\n\nAll these ideas are built on the premise of a terraforming project gone wrong, creating a society of steadily spiders, as well as a ship carrying the last remaining humans.\n\nWhile as a sci-fi this novel does well, it does admitted lack a little in the character department (as so many often do). A remarkable job is done presenting the spider characters as the timeline jumps from generation to generation - instead of individuals, we are presented with recurring archetypes of a similar character.\n\nIramiathy, it is the human characters, and in particular the main human character, who seems stuck just dosening it all without any real agency.\n\nHowever, a ripper plot saves the day here, with the underlying tension of an eventual showdown hanging between the pages from the very start, and the progression towards it only heightening the effectiveness of the ideas at play.\n\nSpanning centuries at breakneck pace, Children of Time makes for a smart, enjoyable and engaging read."},{"slug":"dark-matter-blake-crouch","title":"Dark Matter","author":"Blake Crouch","year":2016,"half":5,"pick":null,"review":"First off, don't be fooled by the title or the blurb - this is not a science fiction, this is a thriller. Sure, the mechanics of the plot rely on some sort of a science fiction concept, but they remain squarely on the periphery.\n\nWhat drives this book is action; short, fast-paced scenes, clipped fast-paced dialogue and rushed fast-paced characterization.\n\nAnd because the driver is action, not the writing itself, prose is handled very superficially. There's rhythm is undeniably there, but there is no art to it. I must say that this is a bad thing. This style of writing is purely in service to the plot, and as this it does a masterful job. As for the plot itself, conceptually it was very well handled, though one could argue that it lacked a certain depth.\n\nMan kidnapped by alternant self, alternant self finds his way back to his world, alternant self reclaims life. And yet the twists and turns along the way make the journey of top quality. Again - this is reminiscent of the fact that this is written as a thriller, not a sci-fi.\n\nFor the record, as a thriller it does an outstanding job - to be on the edge of your seat, to want to know at every moment what happens next. But once it all happens, it leaves you wondering if there is just a bit more... P31"},{"slug":"deaths-end-liu-cixin","title":"Death's End","author":"Liu Cixin","year":2010,"half":7,"pick":null,"review":"Death's End marks the conclusion of the Earth's Past trilogy, and marks the end of a wildly creative history spanning space and time at its very furthest limits. This book is brimming with enough ideas to populate a lesser author's entire body of work. And yet the expression of these ideas is not just in terms of density, but also complexity.\n\nInterrelations between ideas abound - even more, the building of and upon them as well. And yet this is all necessary to cram so much into the story. The protagonist, another representative of humanity, is this time a more empathetic, though equally helpless soul. It this way she serves as both a contrast for humanity's desperate, survivalist drive, as well as a parallel for the hopeless, doomed situation humanity continues to find itself in, decade after decade, century after century. And yet in spite of this, Death's End remains a restlessly human story.\n\nThough the form is on humanity's and how it unfolds, this character and their development are still the vehicle for telling this story. Of course, because they are not the primary focus, characterization suffers a bit, especially when the a completely new character is introduced purely for the sake of a be exposition. So be it. What makes this story worth reading is its ideas, ideas that are so captivating that every step of the way I remained absolutely dying to know what happened next."},{"slug":"false-impression-jeffrey-archer","title":"False Impression","author":"Jeffrey Archer","year":2006,"half":6,"pick":null,"review":"Fake Impression, by Jeffrey Archer, is a fast-paced thriller set in the world of classical art collectors, dealers, and consumers. Although often times wildly improbable, Fake Impression was also wildly enjoyable; it's the type of story where you excuse un-believability, for the pure reason that you want to see what happens next.\n\nAfter an action-packed first act - one of the first plot points in the 9/11 attack, and it doesn't get much more action packed than than - the story then shifts gear into a high paced, globetrotting chase. From then on until the finale, the story is driven primarily by tension, not action. Despite the business of the plot, the it remains remarkably grounded in its characters and stakes. Talking of stakes, the plot revolves around the possession of a valuable Von forth, and like many McGuffin's, you wonder sometimes whether it's really worth the effort. Two other more nit's to pick:\n\n1. Why do so many character need photographic vision? 9 times at of 10 it is totally needless. 2. Why does the bad guy need a second in command if they are going to be barely differentiable characters?\n\nOther than that, the plot moves along wonderfully, which is helped by sharp, speedy prose. Characters are diverse, but ultimately secondary to the plot; they are only just interesting enough for the audience be invested in them."},{"slug":"farewell-my-lovely-raymond-chandler","title":"Farewell, My Lovely","author":"Raymond Chandler","year":1940,"half":7,"pick":null,"review":"Farewell, My lovely is another triumph of dramatic prose and hardboiled noir from the world of Raymond Chandler's Phillip Marlowe. The plot takes similar in formula to some other installments, follows two separate crimes, seemingly unrelated, and then slowly but surely links them together.\n\nThe array of shared supporting characters in this particular installment is much wider, and yet each of them are rendered so complete, and instantly recognizable, yet completely unique. You know the kind of person they are without them being some clichéd archetype. The devil's in the details.\n\nOverall, another highly satisfying mystery."},{"slug":"honour-among-thieves-jeffrey-archer","title":"Honour Among Thieves","author":"Jeffrey Archer","year":1993,"half":4,"pick":null,"review":"An entertaining but shallow thriller"},{"slug":"if-we-were-villains-m-l-rio","title":"If We Were Villains","author":"M.L. Rio","year":2017,"half":5,"pick":null,"review":"There's a fine line between a narrative, and a bunch of characters with a bunch of things happening to them. Though the narrative is definitely there, the slow burn structure makes it difficult to see. If We Were Villains is at its core, a murder mystery, layered upon this is what's known as dark academia, as well as Shakespearean theatre, not to prod mention a frankly redundant nested call back from some year in the future. The ingredients were there for a decent who-dunnit, the trouble was needless extra weight. Slow burns can be powerful, but something does have to burn eventually."},{"slug":"little-big-john-crowley","title":"Little, Big","author":"John Crowley","year":1981,"half":6,"pick":null,"review":"Little, Big left me seriously conflicted as to whether it was worth reading or not. On one hand you have a generously proportioned narr where very little happens for the first 150 or so pages, and doesn't really have what are I might typically call a plot. But on the other hand you have some of the most consistently magnificent prose I've ever seen, along with the most visceral realisation of wonder and magic. This is truly unlike any book I've read before - there are elements of fantasy, myth, postmodernism, romance, stream-of-consciousness. The direction of the novel is very squarely takes the route of storytelling as opposed to any structured approach. The perspective shifts from chapter to expansive chapter between the members of the five generational Drinkwater family, swiftly and somewhat spontaneously switching between generations. See, this family are part of A Tale, and because of it they are protected. And so their tale is told, full of love and betrayal and happenings of all sorts, until finally it comes to a conclusion, or rather an increasing abstract and figurative resolution. If you are after a unique, occasionally baffling, occasionally frustratingly so story, this is worth a try."},{"slug":"magpie-murders-anthony-horowitz","title":"Magpie Murders","author":"Anthony Horowitz","year":2016,"half":6,"pick":null,"review":"This nested meta-fictional who-done-it does well to edge the line between gimmicky and novelty (novelty for the sake of novelty) and innovative (novelty as a result of imitation). Where it doesn't quite come up to scratch is in the full impact of the reveal. The best reveals leave you kicking yourself wondering has you didn't see it earlier; these reveals upon reflection seemed fairly left of field. Regardless, the plotting in and of itself is nigh flawless, a complex web is laid bare, though not without a fair amount of effort. Homages to the golden age of crime novels are saturated throughout the novel, both implicated in the first half, and explicitly in the second. Ironically, without the second half of metafictional commentary and avant-teasing then work, the first half would by inexcusably cliché. Equally, the slower, more procedural nature of the first half is paid off in its necessity to the second half. A lesser author could have handled the entire concept far more clumsily than the intelligent, tight work which Horavity serves. If only it were just a little more impactful, a little more engaging every step of the way, it could be one of the greats. As it stands, it's still a ripping damn strong read."},{"slug":"night-watch-terry-pratchett","title":"Night Watch","author":"Terry Pratchett","year":2002,"half":10,"pick":null,"review":"What sounds a bit silly on paper makes unquestionable sense in the context of the story and the Disc World in which it is set in. This, the thing is, Night Watch is clear about what it needs to do, and it does it well. It is not trying to be a satire; a pure police procedural; a pure fantasy; a pure time travel adventure; a pure revolution novel; a pure comedy. It is in fact all of these things, and it is this unique, unparalleled combination of things that transcend a cliché and make Night Watch a truly great novel story. And to then wrap up this story in such biting, effortless prose make Night Watch a truly great novel."},{"slug":"no-country-for-old-men-cormac-mccarthy","title":"No Country for Old Men","author":"Cormac McCarthy","year":2005,"half":7,"pick":null,"review":"No Country for Old Men is a visceral, brutal Western of a distinctly modern flavor. Three characters – a sheriff, a psychopathic killer and an opportunistic civilian – collide in the wake of a drug deal which has produced a MacGuffin in the form of a bag of money. Now as a thriller it does its job, but the unique prose was employed works to create something a work far deeper and richer than any mere thriller. While simplistic, the sentences and turns of phrase used conjure up so much meaning, so much detail. Such writing then works to deal with the other stylistic choice from McCarthy, which is to show it. In this way, no lantry for Old Man is a very visual, almost cinematic novel; where a cheap thriller would have a character tell another tot character what's going on in the story, this novel doesn't. This forces you to take in every word, and especially towards the end - have a somewhat lower understanding of what's going on. There is no climax or resolution as such. There are a few climaxes throughout, while the final few charas chapters opt for a quiet peter-art. This novel is sophisticated yet reads simply; it is introspective yet impactful. It is also very vidust."},{"slug":"not-a-penny-more-not-a-penny-less-jeffrey-archer","title":"Not a Penny More, Not a Penny Less","author":"Jeffrey Archer","year":1976,"half":7,"pick":null,"review":"A well-built revenge sting, with strong characters and an entertaining (but slightly unbelievable) plot"},{"slug":"out-of-the-silent-planet-c-s-lewis","title":"Out of the Silent Planet","author":"C.S. Lewis","year":1938,"half":7,"pick":null,"review":"A climatic and somehow believable combination of mythos and science fiction, telling a story of good versus evil in the most cunning of forms - where it lacks slightly in plot, it makes up with outstanding prose"},{"slug":"piranesi-susanna-clarke","title":"Piranesi","author":"Susanna Clarke","year":2020,"half":7,"pick":null,"review":"Piranesi is a unique, spellbinding story told in a unique, spellbinding way. Uniqueness in both stones and storytelling is a rarity, so it's a joy to encounter both them. Both these aspects start simple, but as the book progresses, they snowball into something much greater. Piranesi starts with a world of statue-laden, sea-drenched halls, depicted and described the through journal logs. As the world, or The House, is explored more deeply, the mystery at the heart of this story rises to mythic proportions; and, slowly but surely, each of its mysteries are revealed. Mythic truly is the word for the underlying atmosphere, one which’s is ever-present as it is compelling. These is virtually no evidence of what would be classified as classical sci-fi, nor even fantasy. Rather, a sci-fi idea has been presented as a mythos. This narrative laying of myth onto an already mystifying, laden story works to great effect. The characters are few and far between, and as with many world driven novels, they are simply vehicles of exploration and of the plot.\n\nWhile some mysteries can become tedious, Piranesi is fortunately a very short book, offering an absorbing package granted to take you places."},{"slug":"project-hail-mary-andy-weir","title":"Project Hail Mary","author":"Andy Weir","year":2021,"half":8,"pick":null,"review":"Project Hail Mary is an exemplary work of hard science fiction. An impending apocalypse, a space adventure and a scientific exploration. The set up – of an astronaut waking up in space with no memory of why he is there – is compelling, to say the least, and the slow pacing of events together is handled masterfully. To be perfectly honest, I can barely fault this book for what it is. Sure, the prose is basic and sometimes meanders a bit too deep into scientific context and sure, characterisation, or what little there is, is pretty flimsy – but that is what it's meant to be. What this novel does so well is nailing the exact genre niche it's supposed to be. Though this means that some aspects soup suffer, or the flip-side it means that interesting and novel scientific ideas are introduced left, right and centre. If sci-fi introduced a novel, scientific ideas and explores them, hard sci-fi doesn't just explore these ideas, it dissects them, extends them, brings out every angle from which to view it, every angle bringing in a new and novel perspective to an already novel idea. This is what Project Hail Mary excels at in combination with decent storytelling, the kind of storytelling which knows how to keep an audience guessing."},{"slug":"rhythm-of-war-brandon-sanderson","title":"Rhythm of War","author":"Brandon Sanderson","year":2020,"half":6,"pick":null,"review":"*Stormlight Archive Book 4*\n\nWhat these books lack in brevity, they make up for in epicness. This fourth installment of the Stormlight Archive poses this paradox - is it worth trudging through approximately 200 redundant pages in a 1000+ page book? The answer, in this case, is yes. As a high fantasy come sci-fi epic, the main driver of this series is its worldbuilding, and in this Brandon Sanderson has done a work of unprecedented genius. Each installment without fail en extends the border of its world at a remarkable rate. And, because the paradigm of the world shifts so consistent, consistently, so too does the plot. To solve a mystery is good, but if you can add some adventure, some fun, all the better. Where in other fantasy or sci-fi the world and plot are connected, here they are so closely knit as to be occasionally indistinguishable. Again, the paradox is in being presented with so much interesting details, all key to the plot, while also struggling to keep track of it all. I guess this is part of the prerogative regarding length - it allows you to get clear on what's what. The final piece to this narrative is that of the character. These characters are rich, flawed, multifaceted individuals; done well is an understatement. Rhythm of War is a slog, but a triumphant one."},{"slug":"ripleys-game-patricia-highsmith","title":"Ripley's Game","author":"Patricia Highsmith","year":1974,"half":6,"pick":null,"review":"Ripley's Game is set very squarely in the thriller genre, and yet at times it reads almost like a mystery. When it does, the mystery almost always is how something will be achieved. It is this fantisimal underlying interference which elevates the suspense. Most obviously, what differentiates Ripley's from the typical ludicrous globetrotting, high-stakes political/historical/spy thriller is that it is far more quaint and far more refined. The plot of the novel revolves around an acquaintance of Tom Ripley needing a murder to be done. Tom Ripley lives a life of leisure and has a past of dubious origins. Of course, Tom has just the person in mind. The game then is Ripley's manipulation of a perfectly ordinary man into committing murder. Compelling to be sure. To fully play out how this is done, the perspective rapidly shifts between Ripley and his victim.\n\nAt times it's as if Ripley has real compassion for this man, and at other times it seems as though he is completely using him. This moral ambiguity is played at, not only here, but also in the minds of both protagonists individually. When is it moral to murder a human being? Prose is basic, as no usually befits a thriller, while the atmosphere has an enchanting European, 60s era plainness, but not the focus. Murder is the focus."},{"slug":"roadside-picnic-arkady-and-boris-strugatsky","title":"Roadside Picnic","author":"Arkady & Boris Strugatsky","year":1972,"half":6,"pick":null,"review":"Roadside Picnic is a neat little sci-fi novella, but not one I would go out of my way to find. What you get is more of a quick foray into rather than a deep dive, meaning the overall payoff of the story suffers. However, the premise is sound - random regions across the Earth are flooded with lethal scraps of alien paraphernalia, some of which can do some cool stuff. What brings an interesting point of difference to other sci-fi is the micro view rather than a macro view, that of a lawlife devoted to seto scavenging."},{"slug":"shadows-of-self-brandon-sanderson","title":"Shadows of Self","author":"Brandon Sanderson","year":2015,"half":7,"pick":null,"review":"*Mistborn Era 2 Book 2*\n\nWhere the first installment lacked the cohesion it needed, this second installment lifted the series considerably. Somehow the banter felt a bit wittier, the plot a bit tighter – with the characters and world already established, this makes sense. Most of all, it was a certain ‘bigger things at play’ which Sanderson brings, too, a feature that was noticeably missing from the first one. The plot followed Wax and Wayne, big city lawmen, opening after a powerful new foe. More than ever, the influence of Pratchett is evident, or rather attempted emulation. While an improvement, Shadows of Self still remains just a smidge unpolished. Unblushingly unsophisticated don't mean it shouldn't have any."},{"slug":"shall-we-tell-the-president-jeffrey-archer","title":"Shall We Tell the President","author":"Jeffrey Archer","year":1977,"half":6,"pick":null,"review":"A taught political thriller"},{"slug":"sophies-world-jostein-gaarder","title":"Sophie's World","author":"Jostein Gaarder","year":1991,"half":8,"pick":null,"review":"Sophie's world is both a guide to the history of philosophy and a complementary meta-fictional narrative. By embedding elaborate and tricky ideas within a lager context, it becomes far more accessible; also, its conversational nature helps as well. In this way, the history of philosophy, including its key figures, eras and ideas are packaged in a highly understandable and graspable format. Prose suffers a little due to translation but this is not a book based primarily on its writing but instead the focus is on the philosophical ideas and how they are presented and explored. And my are they explored. Sophie's world is truly a true delight."},{"slug":"that-hideous-strength-c-s-lewis","title":"That Hideous Strength","author":"C.S. Lewis","year":1945,"half":8,"pick":null,"review":"A masterfully written battle between good and evil, detailing the diabolical machinations which unfold in the region of Belbury. From the beginning to the end of the novel a gradual transition occurs from political and humanitarian ideas, to a rich and dense tapestry of what can only be described as mythos; a blend of Arthurian legend, Greek religion, Christianity, all blended together effortlessly. The weakest part is the resolution (an embodiment of the mythos kind just appears and deals with the evil), and yet the build around it is just so well done."},{"slug":"the-bands-of-mourning-brandon-sanderson","title":"The Bands of Mourning","author":"Brandon Sanderson","year":2016,"half":5,"pick":null,"review":"*Mistborn Era 2 Book 3*\n\nThis third installment of Mistborn Era II shows Sanderson's skill in building upon the foundation he's already set, in plot, characters and world. Where other authors slip into formulaic repetition, Sanderson excels in finding a fresh take with familiar characters, all of which by this point the audience has become firmly invested in. As always it is the worldbuilding which takes center stage, with just enough development in character and plot to keep us engaged. Unfortunately the two major reveals were fairly predictable this time, but the climax still hit."},{"slug":"the-blade-itself-joe-abercrombie","title":"The Blade Itself","author":"Joe Abercrombie","year":2006,"half":5,"pick":null,"review":"The Blade Itself posed a conundrum, a dilemma universal to narrative - the balance between setup and payoff. As the first in a trilogy, it would be completely understood to go fairly exposition heavy in the first installment, but denying plot altogether is just too heavy handed for my liking. Not a single arc to be seen. All we are given is character, character, character. Not that this is a bad thing. But for my particular taste, I need something more than character to chew on. Even fantasy elements are subdued, nigh barely even noticeable. You see a few magical uses & magic all up, and all of them are just flagrant violence. In fact, other than character, this is easily the oft second greatest portion of writing. The writing itself is closer to a thriller. Fast paced and adores very easy to read. You'll find not a single trace of sophistication here. The blade itself is like most of its characters - brutish. Not dumb, not mindless, just gritty and grim in a simplistic, straightforward way. And so we come back to the conundrum. As a book, highly readable, highly engaging, right up until the moment you turn the final page. From there, there is no lasting payoff, no satisfying resolution, no effective closure. Nothing is resolved because there's barely anything to resolve in the first place."},{"slug":"city-of-glass-paul-auster","title":"City of Glass","author":"Paul Auster","year":1985,"half":3,"pick":null,"review":"Though a magnificent example of postmodernism, it's for this very reason an eventually anticlimactic conclusion. The City of Glass takes the premise of a typical detective, hard-boiled detective novel, but in doing so deconstructs what such narratives create. Most of the novel, though short enough to be called a novella, follows the 'detective' and so reads like a typical mystery. However, the further along you go, the further events become curiously uncanny, creating a shard of confused, and indeterminate atmosphere. The prose is excellent, and the reading itself is actually enjoyable. The trouble is that it just stops. Deeper and deeper you've been led down this rabbit hole, and suddenly it drops into oblivion. Where the conclusion of a normal detective novel solves the mystery, there is a deep resolution, tying everything into a neat bow and casting a new light on the events that preceded. Here, the effect is the opposite; though the reading itself was enjoyable, without a satisfactory conclusion, you are left unsatisfied. That's not to say it ends mid-mystery, it's just that the ending is not satisfying. As an example of postmodernist literature, you couldn't ask for better."},{"slug":"the-colour-of-magic-terry-pratchett","title":"The Colour of Magic","author":"Terry Pratchett","year":1983,"half":4,"pick":null,"review":"An inventive, witty and interesting fantasy but Pratchett's debut - it shows"},{"slug":"the-dark-forest-liu-cixin","title":"The Dark Forest","author":"Liu Cixin","year":2008,"half":6,"pick":null,"review":"The Dark Forest is an epic, spanning hundreds of years and thousands of light-years. And yet, despite this, still remains grounded in its characters and in particular its protagonist. What sets up this book for success before it even begins is its premise: humanity is threatened by an all-seeing alien enemy who are approaching earth from across the galaxy; but, this enemy has no concept of deception. So, humanity has staked its resources and hopes on 'Wallfacers', whose strategy remains a secret. If I had one qualm in relation to this book, it would be that too much time is spent on characters in the periphery. Though, holistically, many of them were necessary for ongoing expedition There were three old people who were completely redundant. Other than this, conceptual exploration was sublime, and focused not only on the traditional sci-fi vein of technology, but also cultural implications on the cultural and political landscape also. The richness of these consideration is in no in part due to the ever & terrific pacing of the Dark Forest - to say that a lot happens is a massive understatement. However, where other novels may balk at such bulk, the plot and ideas considered are rendered highly coherent, and remain grounded in individuals, not events. Most impressive about the Dark Forest is the linking of thematic elements which are brought together in the final act, making for a resounding and powerful catharsis."},{"slug":"the-extraordinary-adventures-of-arsene-lupin-gentleman-burglar-maurice-leblanc","title":"The Extraordinary Adventures of Arsène Lupin, Gentleman-Burglar","author":"Maurice Leblanc","year":1907,"half":7,"pick":null,"review":"A highly entertaining collection of short stories detailing, well, its in the name"},{"slug":"the-final-empire-brandon-sanderson","title":"The Final Empire","author":"Brandon Sanderson","year":2006,"half":7,"pick":null,"review":"*Mistborn Book 1*\n\nThe Final Empire has all of the intrigue of a classic Sanderson fantasy world, with an added touch of a neat, nicely (enough) resolved plot. (This is a rare find in the fantasy genre, where such resolution is typically traded for never-ceasing set-ups and for never-ceasing sequels). The world is of enslaved, feudal kingdoms, set in the aftermath of a 'Lord Rulers' conquer, where some people of noble blood can have powers when they consume metal.\n\nThe characters: a thriving crew, led by a rebellious leader and with a young girl in tow. The plot: a wanna-be heist, but really just a hero's journey. Each aspect on the surface seems fraught.\n\nwith insubstantial potential cliché, but they are admittedly handled with poise every step of the way. And thank goodness for this; without such an engaging narrative this novel would be in dire straights. This is been all due to its prose, or rather lack thereof.\n\nSentences flow on the whole, but never shine. In the end, The Final Empire is more popcorn entertainment then seriously well written piece of literature. Part of this is also demonstrated in the subtle counterplay between whimsy and grittiness, never falling to far in either direction, while still providing sizable doses of both.\n\nA good read. A great narrative. A fine novel."},{"slug":"the-firm-john-grisham","title":"The Firm","author":"John Grisham","year":1991,"half":6,"pick":null,"review":"Interesting but ultimately one-dimensional thriller of a lawyer who accidently falls in with a morally questionable law firm. Again, starts well but ends up become slightly ludicrous and unbelievable. Still, easy to read and doesn't require mich thought."},{"slug":"the-goldfinch-donna-tartt","title":"The Goldfinch","author":"Donna Tartt","year":2013,"half":10,"pick":null,"review":"distributed and more thankful. Bel Behind the soning of age, set alongside orphanhood in the enigma of a painting, stolen in pure coincidence, and the hidden driver behind of the plot. Pacing is somewhat slow, especially around the middle but in retrospect this reflects the plot and character in a way that seems very deliberate. What makes the pacing more forgivable is the deep knowledge embedded within every technical detail in art, antique furniture & sports gambling to the cities where the events take place. Though long, this was a highly rewarding read. Also, I'd also go so far as to say the best conclusion to the novel."},{"slug":"the-hero-of-ages-brandon-sanderson","title":"The Hero of Ages","author":"Brandon Sanderson","year":2008,"half":6,"pick":null,"review":"*Mistborn Book 3*\n\nWhile this was undoubtedly the third installment in a fantasy of trilogy, at times it felt more like the third act of a murder mystery. That's the primary driver because here is plot-tying up multitudes of loose ends, some of which you didn't even realized existed. And, like any good third act of a murder mystery, these final conclusions and resolutions hit so hard. Like a puzzle that's been solved, a mechanism which clicks right into place, suddenly every element makes sense and fits into one cohesive whole. My one qualm is that it could have happened just a little quicker. That's not to fault the story as a\n\nWhile, but just suggest that there still was a fat bit of fat which could be trimmed.\n\nThe character arcs here definitely take the backfoot - not necessarily a bad thing. What's amazing though is how embedded world development is with plot development, almost using the world itself as the mystery which is being solved - its history, religion, economics, power - each gradually being revealed to further the immediate plot at hand. Further, and eventually resolve.\n\nWhile the writing and prose itself is fairly ordinary, the payoff of the story itself more than makes up for this.\n\nI challenge you to find a better trilogy one."},{"slug":"the-last-policeman-ben-h-winters","title":"The Last Policeman","author":"Ben H. Winters","year":2012,"half":4,"pick":null,"review":"The Last Policeman takes a hard boiled detective story and puts it right in the context of a pre-apocalyptic society. The world will soon be destroyed by a meteorite, and in a time when suicides have become common-place, Detective Palace decides to investigate one suspicious case.\n\nIn terms of the hard boiled, police procedural elements are done very well, influencing and parallels with the works of Chandler are undeniably present. The Last Policeman subverts enough element to make it unique. For one, the protagonist, detective Palace, is borderline neurotic fantastic that finds the sheer intensity to find explain every monstrosity.\n\nFor another, the world which is gradually portrayed, of what society might look like in the wake of an imminent apocalypse.\n\nThis is shown though exposition directly but more often than not indirectly - for example using new colloquialisms, like hangers, bucket lists. If anything, this could even have been doubled down on. This may have bridged the two driving features of the novel (murder mystery x pre-apocalypse) a bit better. Though there was some nice bridging not only in terms of behavior and motives but also existential reflections. My only qualm was a questionable side plot which lacked sense or closure, but I'm guessing is followed upon in a later installment! Nice and shot too."},{"slug":"the-little-sister-raymond-chandler","title":"The Little Sister","author":"Raymond Chandler","year":1949,"half":8,"pick":null,"review":"The master of detective prose does it again, complete with a riveting plot and zingers coming off every page. Though I still concluded the plot of The Little Sister demonstrated demonstrates a bit more depth and overall cohesiveness, which allows for some epic twists and a for more resolved concise conclusion. Marlowe's character is moral compass gets him involved in the worst kind of trouble, and yet provides a subtle characterization. Between blackmail via taupe, ice-pick murders and the obligatory dodgy doctor, Marlowe gets cause in a right mess, and yet he somehow (as always) gets on right as rain."},{"slug":"the-long-goodbye-raymond-chandler","title":"The Long Goodbye","author":"Raymond Chandler","year":1953,"half":9,"pick":null,"review":"There are two things which make The Long Goodbye the very best the mystery genre has to offer. The first is its prose. Every line of dialogue is sharp as it is smooth. Every description is immaculate as it is effective. And every other word either shows both insight into the characters or progression of the plot. The second is its atmosphere. This is noir at its finest. The world of John Marlowe, private detective, is harsh, bitter and unforgiving. As a result, this make Marlowe harsh, bitter and unforgiving as well. But, unlike most of the other characters, of which there is a dynamic and eclectic display, John still has a streak of sentimentality, of a quite-but-not-quite honour. In one scene he'll be insulting the life out of somebody, and in the next he'll be refusing payment because he says he hasn't completed the job. The plot is occasionally disjointed, but ultimately cathartic. While most murder mysteries tend to rely on that final reveal, The Long Goodbye makes every step of the procedure just as interesting as the reveal itself. In fact, The Long Goodbye barely even reads like a murder mystery, even though that's fundamentally what it is. My summative thoughts? A masterpiece."},{"slug":"the-lost-metal-brandon-sanderson","title":"The Lost Metal","author":"Brandon Sanderson","year":2022,"half":6,"pick":null,"review":"*Mistborn Era 2 Book 4*\n\nThis final installment in the second era of the Mistborn series makes for an epic conclusion. Many long-standing plot threads are resolved, but every question answered there naturally seemed to be another question implicitly raised. In a way this book in particular acts almost as an advertisement for Sanderson's other novels tied into the same universe, dubbed 'the cosmere'. Outside of this or same scale the scale of individual characters, we had some decent character arcs concluded as well, though they admittedly felt fairly forced and in some ways handled clumsily. And yet in spite of this the each resolution of an arc has an almost inevitable satisfaction. Likewise with the plot – not quite as tight as it could have been, but had a solid resolution. To be perfectly honest, without the wider intrigue of the cosmere level worldbuilding, this quartet would probably be worth a miss. Though there are glimmers of mastery, the key point of interest has always been the worldbuilding. Character has been strong enough, plot just so; the writing itself remains in service of the story, not in itself. Era 2 of Mistborn is by no means bad, but by no means perfect."},{"slug":"the-mezzanine-nicholson-baker","title":"The Mezzanine","author":"Nicholson Baker","year":1988,"half":7,"pick":null,"review":"The Mezzanine, by Nicholson Baker, is a postmodern masterpiece which follows the thoughts of an officeworker as he travels up the escalator of a 1980s officespace mezzanine.\n\nThough fictional, The Mezzanine is very much set in the real world; however, something odd is occuring as you progress through the story (could you even call it that?).\n\nThe trick Baker employs here is something you would very easily miss if you took the story at its surface value, and the trick is that every thought which the unnamed protagnist has, every unremarkable and commonplace observation, insight or anecdote is *carried out to the very end*.\n\nWhat I mean by this is when the protagonist mentions milk, having just bought some, he then delves in the historical progression of milk delivery and milk containers, touching also on the mechanics of ice cubes and societal isolation.\n\nAs this goes on, and continues in many different ways, the reader begins to realise that in the supposed course of five minutes travelling outside and then back up an escalator, the protagonist has conveyed several hours worth of thoughts.\n\nIn real life this is completely impossible, and in this way The Mezzanine is very much fictional.And yet somehow there is some element of this which we can all relate to. We have all made insights which are not remarkable, nor groundbreaking, but are nevertheless interesting, and it's this, this fundamental phenomanon, is what Baker is counting on for everyone to appreciate."},{"slug":"the-overstory-richard-powers","title":"The Overstory","author":"Richard Powers","year":2018,"half":7,"pick":null,"review":"The Overstory begins with what is essentially 8 short stories detailing the background of each of the 9 main characters.\n\nMy first impression of The Overstory was that it was simply a book about the lives of nine random people. But as their lives intertwine, you begin to realise that this is not a book about people. This is a book about trees.\n\nI reason I began this book was because I had heard it recommended in an interview by Hugh Jackman, and had been briefly mentioned in half a dozen other places in passing. Sure, a Pulitzer Prize as well. Whatever. At this point I'm only about halfway through, but man... The Overstory's prose is just staggering. Sure, the characters are interesting, and endearing, and flawed. I'm sure the subplots will cascade into a beautiful and heart-renching climax. But the thing is, the only reason I've kept reading is the effortless and smooth flow of Power's prose. All I can say is keep it coming.\n\nSomething of a postmodern feel. Subtle self reference and analogies of books to trees, nature and life abound.\n\n8 short stories of 9 different characters.\n\nIntelligent- ideas of programing, sociology, therapy, accounting.\n\nI couldnt decide whether it was a drama about the lives of 9 different people with underlying themes of trees\n\nWith so many absurdly dramatic things happening, it couldnt have been to hard to achieve two of three more cross overs to achieve an entirely unified plot.\n\nWhat is Neelay doing?\n\nRay and Dorothy\n\nQuotes: The older the word, the more likely it is to be both useful and true\n\nLife has a way of talking to the future. It’s called memory.\n\nSome see the glass as half empty, some as half full; an engineer sees a containment device twice as big as it needs to be.\n\nLife will not answer to reason. And meaning is too young a thing to have much power over it.\n\nI only went out for a walk and finally concluded to stay out till sundown, for going out, I found, was really going in.\n\nTrees fall with spectacular crashes. But planting is silent and growth is invisible.\n\nThey mean to hit his pride, but Douglas preempts them by having none."},{"slug":"the-paper-menagerie-ken-liu","title":"The Paper Menagerie","author":"Ken Liu","year":2016,"half":3,"pick":null,"review":"A collection of short stories which dance effortlessly between fantasy and science fiction. Smooth easy reading, but nothing particularly top tier."},{"slug":"the-secret-history-donna-tartt","title":"The Secret History","author":"Donna Tartt","year":1992,"half":10,"pick":null,"review":"The secret history is an immersive. Between the sheer strength of both writing, and what that writing creates, it is almost impossible not to be drawn into the world which Donna Tartt creates. The contents of this world are a handful of entitled, flawed college students, in a small Hampton college and a murder. For from the very beginning we know who committed the murder, as well as where and when and how. What we don't, and what keeps us reading is the question of why. However, this is not actually a book about a murder at all; nor the murder, as well as the other events described in this book is an illustration of the rightness of human nature. Though each character searches and is driven by a search for beauty and meaning, they fail to recognize the terrible nature of such a change. Of the novel itself I remain, breath taken. The prose is astounding, simultaneously creating perfectly realistic descriptions, so realistic they play out like scenes in the mind's eye, and alongside a slow burning pace which always perpetually demands 'what happens next?'. There are many novels in which you have some indication of what will actually happen next, but from the second half of this novel onwards, you truly do have no earthly clue of what will happen next. The Secret History is one of the best novels I have read in a long long time."},{"slug":"the-space-trilogy-c-s-lewis","title":"The Space Trilogy","author":"C.S. Lewis","year":1938,"half":8,"pick":null,"review":"Just finished reading C.S Lewis's Space Trilogy - *Out of the Silent Planet, Perelandra* and *That Hideous Strength.*\n\nInsane and utterly underated trilogy - undoubtably C.S. Lewis's magnum opus. The first book takes a fairly typical space adventure plot - more or less man vs unfamiliar environment, but fleshed out with such detail as to make it compellingly believable. The second book follows takes the same premise but is centered more around a man vs man plot, but in such a brutal and fundamental way as to leave one breathless. The final book is again different, located back on Earth but takes some of the key ideas of the previous books and creates a epic, grand mythos, while also pitting two forces of good and evil in a truly spectacular fashion. Characters and prose are impeccible; the story suffers in parts with a slower pace and the last book is a little wanting in its resolution, but other than that... sheer brilliance."},{"slug":"the-three-body-problem-liu-cixin","title":"The Three-Body Problem","author":"Liu Cixin","year":2008,"half":7,"pick":null,"review":"This Three Body Problem is undeniably unique. It is a hard science sci-fi set against the backdrop of the cultural revolution. It reads sometimes like a mystery, sometimes like a periodical, sometimes like a speculative science magazine, sometimes like something out of a dream. It's prose is immensely different, which is the result of it being translated from Chinese. You can tell that sometimes things have been lost in translation, but somethings have been gained. The translation note in the back does well to explain this. In terms of the contents of the book itself, The Three Body Problem is brimming with ideas, which are expressed excellently through clever world building and incorporated nicely within the plot itself. Maybe because of all the effort put towards this characterisation suffers significantly. Of the few characters developed, all of them feel fairly empty; and I'm not complaining to much though, for all the development seemingly was channeled into worldbuilding.\n\nThe pacing of the novel moves along nicely, though the beginning takes its time setting up the contextual history, which is then followed up later. Themes of nihilism are thrown around on more than one occasion, but ultimately this is a story of survival, and who the cat of it is great. For all its high science explanation and indirect exposition, The Three Body Problem remains an absorbing read which sucks you in the further you progress. The book also ends on a massive cliffhanger (though admittedly does well to present a complete story in itself), so don't expect complete consume closure."},{"slug":"the-well-of-ascension-brandon-sanderson","title":"The Well of Ascension","author":"Brandon Sanderson","year":2007,"half":6,"pick":null,"review":"*Mistborn Book 2*\n\nThe Well of Ascention unfortunately demonstrates classic sequel behavior, relying a little too much on the aftermath of the first installment rather than crafting more of its own narrative. However, this being said, it still remains a strong installment. Twists and turns, revelations and intrigue abound, though there is entertainment to be found, there just isn't as much as the first. Or, maybe just a different type of entertainment, playing with existing character arcs and plots, rather than completely new ones.\n\nThe political machinations of the major plotline were well handled, while the subplot of a side character felt aimless and\n\nReeked of long term set up rather than immediate engagement. The character development across the board felt ambiguous and many, but an argument could be made that this is more realistic anyway. Again, it is worth remarking that what we are being delivered here is entertainment, not sophistication - and on that part, The Well of Ascension delivers.\n\nOne last thing. Inherent in this installment is subtle but noticeable efforts towards further set up. While not necessarily a bad thing, it forces expectations of the eventual payoff to be awesome."},{"slug":"the-lathe-of-heaven-ursula-k-le-guin","title":"The Lathe of Heaven","author":"Ursula K. Le Guin","year":1971,"half":5,"pick":null,"review":"While the actual story was enjoyable to read, the preput just didn't do it for me. A solid sci-fi to be sure, and well written as well but for such high-concept material I was hoping for the threads to be tied together a little more neatly. The concepts that George Orr can dream new realities. This is interesting enough to explore; it's use, it's exploitation, it's eventual finalisation. But the arc of plot didn't quite land, unfortunately saving the strength of page to page. This undeniably is strong; prose is employed efficiently and relentlessly, making an already slim work move even faster.\n\nMaybe even too fast. The lathe of Heaven is lacking, but only in a small way."},{"slug":"the-strange-case-of-dr-jekyll-and-mr-hyde-robert-louis-stevenson","title":"The Strange Case of Dr Jekyll and Mr Hyde","author":"Robert Louis Stevenson","year":1886,"half":4,"pick":null,"review":"A Victorian London era classic with decent prose but minimal plot"},{"slug":"there-is-no-antimemetics-division-qntm","title":"There Is No Antimemetics Division","author":"qntm","year":2020,"half":9,"pick":null,"review":"This book is very short, very sharp and pure genius. What constitutes the genius are the underlying ideas, or more specifically, how these complex and abstract ideas are expressed in an easily graspable form. When I say ideas, what I'm really referring to is one core underlying idea, that of an anti-meme. The concept goes that if a meme is a highly viral idea, then an anti-meme is a highly forgettable idea; so much so that you completely forget all about it the second you think about it. Like almost all good sci-fi, the focus is primarily on world-building and world-exploration. Interestingly, when it comes to plot. There is no Anti-memetic Division series heavily on implied narrative. Each chapter is highly fragment, reading closer to conjoined short stories. It is implied that there are many other divisions of what's called \"the Foundation\", who fight even anti-memes. It is implied there are many instances of capturing or killing many other anti-memes. And so on. In addition to this agency given to the audience to join up the dots, horror elements lend another layer of intrigue. Each resolution is very oh-ka Terry Pratchett in its lateral but logical solution. As I said, genius."},{"slug":"thief-of-time-terry-pratchett","title":"Thief of Time","author":"Terry Pratchett","year":2001,"half":7,"pick":null,"review":"There was a scream from somewhere in the mob. ‘Democracy at work' said Lee Tzu.\n\nPeople like that don’t need a reason apart from “because I can”. They have a nightmare and try to make it happen.\n\nShe gave Igor the willies, and he was a man not usually subject to even the smallest willy.\n\nHe was definitely a boy with special needs. In the view of the staffroom, these began with an exorcism.\n\nIf children were weapons, Jason would have been banned by international treaty.\n\nI’ve never been very venerable, except in cases of bad spelling.\n\nIf Vincent’s hand had gone up any faster it would have fried by air friction.\n\nThe Auditors, Death's perpetual antagonists, commission a clockmaker to create a perfectly accurate clock, which if created will stop time itself. A schoolteacher (who also happens to be the granddaughter of death) and a young apprentice to the history monks (who also happens to be the son of time) go on a desperate mission to to prevent catastrophe.\n\nYes, the plot is complicated, probably a little more so than Pratchett's usual approach (switching between three different perspectives, each separated by the tick of a clock to create something like chapters). But somehow... it works. The flow is nice, the pacing is excellent. Admittedly, looking back, the overall resolution was probably not up to scratch, with plot conveniences being used a little too much. Ignoring the plot integrity, the actual reading itself was nothing short of top notch. While there weren't as many laugh out loud moments as other Pratchett, there were plenty of chuckles, with Pratchett's trademark witticisms scattered throughout.\n\n7.2/10"},{"slug":"ubik-philip-k-dick","title":"Ubik","author":"Philip K. Dick","year":1969,"half":7,"pick":null,"review":"This nefariously tantalizing work of Philip K. Dick is definitively sci-fi. What is presented in this novel is not really an ideas driven narrative, but narrative driven ideas. From the very first page we are given a smorgasbord of futuristic machines, abilities, technologies and cultures, and every moment forward is a progression of a few key ideas. All sci-fi has novel ideas, but the best sci-fi takes these ideas to their furthest limit (it takes these ideas further and). This is what Philip K. Dick does in Ubik. making it undoubtedly a triumph as a work of science fiction, but, as simply a work of fiction it doesn't quite do it for me. The prose a little jotted, the characters fairly shallow, the plot inexplicably scattered (though the finale came together sensationally). This is a good book purely for it ideas, and as such I would rate it highly. Ironically, however, relying only on the worthy of worldbuilding ideas makes its readability suffer - instead I'd rather read something else of his with new ideas. Ubik is ultimately a unique work, though being my first experience of Philip K. Dick, I'm guessing it won't be for long."},{"slug":"uneasy-money-p-g-wodehouse","title":"Uneasy Money","author":"P.G. Wodehouse","year":1916,"half":6,"pick":null,"review":"A quaint romatic comedy"},{"slug":"witches-abroad-terry-pratchett","title":"Witches Abroad","author":"Terry Pratchett","year":1991,"half":4,"pick":null,"review":"As good as Pratchett is, this relies too much on parody."}];
+  var COVERS = "book-covers/";
+  var SPRITE_COLS = 8;             // sprite.jpg: 8 columns of 32x48 covers, in NOVELS order
+  var BASE = 16;                   // .dot width before scaling
+  var BASE_H = 24;                 // .dot height - covers are 2:3, never square
+
+  var shelvesEl = document.getElementById("shelves");
+  var dialog = document.getElementById("detail");
+  var plot = document.getElementById("plot");
+  var tilesEl = document.getElementById("tiles");
+  var labelsEl = document.getElementById("labels");
+  var tip = document.getElementById("tip");
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var sortMode = "rating";
+  var order = [];   // novels in the order the shelves show them, for prev / next
+
+  NOVELS.forEach(function (a, i) { a.i = i; });
+  var ratedCount = NOVELS.filter(function (a) { return a.half !== null; }).length;
+
+  /* ---------- stars ---------- */
+  var STAR = "M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z";
+  var uid = 0;
+
+  function stars(half) {
+    var id = "h" + (uid++);
+    var html = '<span class="stars" role="img" aria-label="' + (half / 2) + ' out of 5 stars">';
+    for (var i = 0; i < 5; i++) {
+      var fill = Math.max(0, Math.min(2, half - i * 2));
+      if (fill === 1) {
+        html += '<svg viewBox="0 0 24 24" aria-hidden="true"><defs><clipPath id="' + id + '"><rect width="12" height="24"/></clipPath></defs>' +
+                '<path class="off" d="' + STAR + '"/><path class="on" clip-path="url(#' + id + ')" d="' + STAR + '"/></svg>';
+      } else {
+        html += '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="' + (fill ? "on" : "off") + '" d="' + STAR + '"/></svg>';
+      }
+    }
+    return html + "</span>";
+  }
+
+  function halfText(half) {
+    var whole = Math.floor(half / 2);
+    return (whole || half % 2 === 0 ? String(whole) : "") + (half % 2 ? "½" : "");
+  }
+
+  function starWords(half) {
+    return halfText(half) + (half === 2 ? " star" : " stars");
+  }
+
+  /* ---------- helpers ---------- */
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function reviewHtml(s) {
+    return esc(s).replace(/\*([^*]+)\*/g, "<em>$1</em>");
+  }
+
+  function coverHtml(a, eager) {
+    return '<span class="fallback" aria-hidden="true">' + esc(a.title) + '</span>' +
+           '<img src="' + COVERS + a.slug + '.jpg" alt="' + esc(a.title) + ' cover" ' +
+           (eager ? "" : 'loading="lazy" ') + 'decoding="async" ' +
+           'onload="this.classList.add(\'ready\')" onerror="this.remove()">';
+  }
+
+  // "The Strugatskys" files under S; anything not starting with a letter files under #
+  function authorKey(name) {
+    return name.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/^the\s+/, "").trim();
+  }
+
+  function authorLetter(name) {
+    var c = authorKey(name).charAt(0).toUpperCase();
+    return c >= "A" && c <= "Z" ? c : "#";
+  }
+
+  function byAuthor(a, b) {
+    return authorKey(a.author).localeCompare(authorKey(b.author)) || a.year - b.year || a.title.localeCompare(b.title);
+  }
+
+  function byRatingThenYear(a, b) {
+    var ra = a.half === null ? -1 : a.half, rb = b.half === null ? -1 : b.half;
+    return rb - ra || b.year - a.year || a.title.localeCompare(b.title);
+  }
+
+  // 56 novels spread over 164 years, so the year view shelves and bins by decade
+  function decadeOf(y) { return Math.floor(y / 10) * 10; }
+  function decadeName(d) { return d + "s"; }
+
+  /* ---------- shelves ---------- */
+  function groups() {
+    var map = {}, keys = [];
+    NOVELS.forEach(function (a) {
+      var k = sortMode === "rating" ? (a.half === null ? "unrated" : a.half)
+            : sortMode === "author" ? authorLetter(a.author)
+            : decadeOf(a.year);
+      if (!map[k]) { map[k] = []; keys.push(k); }
+      map[k].push(a);
+    });
+    keys.sort(function (x, y) {
+      if (sortMode === "author") return x === "#" ? 1 : y === "#" ? -1 : (x < y ? -1 : 1);
+      if (x === "unrated") return 1;
+      if (y === "unrated") return -1;
+      return y - x;
+    });
+    return keys.map(function (k) {
+      var list = map[k].slice();
+      if (sortMode === "rating") list.sort(function (a, b) { return b.year - a.year || a.title.localeCompare(b.title); });
+      else if (sortMode === "author") list.sort(byAuthor);
+      else list.sort(byRatingThenYear);
+      return { key: k, list: list };
+    });
+  }
+
+  function letterId(k) { return "a-" + (k === "#" ? "other" : k); }
+
+  function letterName(k) { return k === "#" ? "Authors starting with a number or symbol" : "Authors starting with " + k; }
+
+  function decadeId(d) { return "y-" + d; }
+
+  function renderShelves() {
+    order = [];
+    var html = "";
+    groups().forEach(function (g) {
+      var head, name, id;
+      if (sortMode === "year") { name = decadeName(g.key); head = "<h2>" + name + "</h2>"; id = decadeId(g.key); }
+      else if (sortMode === "author") { name = letterName(g.key); head = "<h2>" + esc(g.key) + "</h2>"; id = letterId(g.key); }
+      else if (g.key === "unrated") { name = "Not yet rated"; head = "<h2>Not yet rated</h2>"; id = "r-unrated"; }
+      else { name = starWords(g.key); head = "<h2>" + stars(g.key) + "<span>" + name + "</span></h2>"; id = "r-" + g.key; }
+
+      html += '<section class="shelf" id="' + id + '" aria-label="' + esc(name) + '">' +
+              '<div class="shelf-head">' + head + '<span class="n">' + g.list.length + (g.list.length === 1 ? " novel" : " novels") + "</span></div>" +
+              '<div class="grid">';
+      g.list.forEach(function (a) {
+        var i = order.push(a) - 1;
+        var sub = sortMode === "rating"
+          ? '<span class="unrated-label">' + a.year + "</span>"
+          : sortMode === "year"
+            ? (a.half === null ? '<span class="unrated-label">Unrated</span>' : stars(a.half) + '<span class="unrated-label">' + a.year + "</span>")
+            : (a.half === null ? '<span class="unrated-label">' + a.year + "</span>"
+                               : stars(a.half) + '<span class="unrated-label">' + a.year + "</span>");
+        html += '<button class="card" type="button" data-i="' + i + '">' +
+                  '<div class="art">' + coverHtml(a) + "</div>" +
+                  '<span class="t">' + esc(a.title) + "</span>" +
+                  '<span class="a">' + esc(a.author) + "</span>" +
+                  '<span class="sub">' + sub + "</span>" +
+                "</button>";
+      });
+      html += "</div></section>";
+    });
+    shelvesEl.innerHTML = html;
+    bindHover(shelvesEl);
+  }
+
+  shelvesEl.addEventListener("click", function (e) {
+    var card = e.target.closest(".card");
+    if (card) openAt(+card.dataset.i);
+  });
+
+  /* ================================================================
+     Overview chart: one tiny 2:3 cover per novel.
+     Rating -> histogram (half-star bins + unrated), Year -> timeline,
+     Author -> one column per initial, A to Z.
+     Wide screens run left to right, narrow screens top to bottom.
+     ================================================================ */
+  var MODES = ["rating", "year", "author"];
+  var HALVES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  var minYear = Math.min.apply(null, NOVELS.map(function (a) { return a.year; }));
+  var maxYear = Math.max.apply(null, NOVELS.map(function (a) { return a.year; }));
+  var YEARS = [];
+  for (var yy = minYear; yy <= maxYear; yy++) YEARS.push(yy);
+  var DECADES = [];
+  for (var dd = decadeOf(minYear); dd <= decadeOf(maxYear); dd += 10) DECADES.push(dd);
+  var LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").concat("#");
+
+  var dots = NOVELS.map(function (a) {
+    var d = document.createElement("div");
+    d.className = "dot";
+    var f = document.createElement("span");
+    f.className = "face";
+    f.style.backgroundPosition = -(a.i % SPRITE_COLS) * BASE + "px " + -Math.floor(a.i / SPRITE_COLS) * BASE_H + "px";
+    d.appendChild(f);
+    tilesEl.appendChild(d);
+    return d;
+  });
+
+  var axisA = document.createElement("div");
+  var axisB = document.createElement("div");
+  axisA.className = axisB.className = "axis";
+  plot.insertBefore(axisA, labelsEl);
+  plot.insertBefore(axisB, labelsEl);
+
+  var layout = null;        // {pos: [{x, y, t}], ...}
+  var lastMode = null;
+
+  // Bins in axis order, each with its novels stacked from the axis outwards
+  function bins(mode, byDecade) {
+    var list;
+    if (mode === "rating") {
+      list = HALVES.map(function (h) { return { key: h, items: [] }; });
+      var unrated = { key: "unrated", items: [], apart: true };
+      NOVELS.forEach(function (a) {
+        (a.half === null ? unrated.items : list[a.half - 1].items).push(a);
+      });
+      if (unrated.items.length) list.push(unrated);   // the column only exists while something is unrated
+      list.forEach(function (b) {
+        b.items.sort(function (a, c) { return a.year - c.year || a.title.localeCompare(c.title); });
+      });
+    } else if (mode === "author") {
+      list = LETTERS.map(function (c) { return { key: c, items: [] }; });
+      var at = {};
+      LETTERS.forEach(function (c, i) { at[c] = i; });
+      NOVELS.forEach(function (a) { list[at[authorLetter(a.author)]].items.push(a); });
+      list.forEach(function (b) { b.items.sort(byAuthor); });
+    } else if (byDecade) {
+      list = DECADES.map(function (d) { return { key: d, items: [] }; });
+      var dAt = {};
+      DECADES.forEach(function (d, i) { dAt[d] = i; });
+      NOVELS.forEach(function (a) { list[dAt[decadeOf(a.year)]].items.push(a); });
+      list.forEach(function (b) { b.items.sort(byRatingThenYear); });
+    } else {
+      list = YEARS.map(function (y) { return { key: y, items: [] }; });
+      NOVELS.forEach(function (a) { list[a.year - minYear].items.push(a); });
+      list.forEach(function (b) {
+        b.items.sort(function (a, c) {
+          var ra = a.half === null ? -1 : a.half, rc = c.half === null ? -1 : c.half;
+          return rc - ra || a.title.localeCompare(c.title);
+        });
+      });
+    }
+    return list;
+  }
+
+  function computeLayout(mode) {
+    var W = plot.clientWidth;
+    var vertical = W < 600;
+    var isYear = mode === "year";
+    // stacked top to bottom, a year-per-row timeline would run past 1000px, so it bins by decade
+    var byDecade = isYear && vertical;
+    var hist = !isYear || byDecade;           // rating, author and the decade view all draw as columns
+    var countEveryBin = mode === "rating";    // 10 counts is helpful, 27 or 164 would be noise
+    var B = bins(mode, byDecade);
+    // on phones the chart runs top to bottom, best first: 5 stars down to a half,
+    // newest decade down to oldest. A to Z already reads the right way.
+    if (vertical && mode !== "author") {
+      B = B.filter(function (b) { return !b.apart; }).reverse().concat(B.filter(function (b) { return b.apart; }));
+    }
+    var N = B.length;
+    var maxCount = Math.max.apply(null, B.map(function (b) { return b.items.length; }));
+    var pos = new Array(NOVELS.length);
+    var labels = [];
+    var axes = [];
+    var t, th, g, H;
+
+    if (!vertical) {
+      var colGap = hist ? Math.max(4, Math.min(18, W / (N * 6))) : (W / N > 14 ? 2 : 1);
+      var apartGap = B.some(function (b) { return b.apart; }) ? colGap * 1.6 : 0;
+      var topBand = 18, bottomBand = hist ? 30 : 26;
+      var budget = Math.max(180, Math.min(240, W * 0.2));
+      var colW = (W - colGap * (N - 1) - apartGap) / N;
+      var perRow, rows, plotH;
+
+      // 16 is the sprite's own cell width, so a tile never has to be upscaled
+      for (t = 16; t >= 3; t--) {
+        th = t * 1.5;
+        g = t >= 8 ? 2 : 1;
+        perRow = Math.floor((colW + g) / (t + g));
+        if (perRow < 1) continue;
+        rows = Math.ceil(maxCount / perRow);
+        plotH = rows * (th + g) - g;
+        if (plotH <= budget) break;
+      }
+      if (t < 3) {
+        t = 3; th = 4.5; g = 1;
+        perRow = Math.max(1, Math.floor((colW + g) / (t + g)));
+        rows = Math.ceil(maxCount / perRow);
+        plotH = rows * (th + g) - g;
+      }
+
+      var baseY = topBand + plotH;
+      H = baseY + bottomBand;
+
+      // a "1970s" label is about 44px wide, so thin the timeline out until they clear each other
+      var perDecade = 10 * (colW + colGap);
+      var decadeStep = perDecade >= 56 ? 10 : perDecade >= 28 ? 20 : 50;
+
+      B.forEach(function (b, i) {
+        var x0 = i * (colW + colGap) + (b.apart ? apartGap : 0);
+        var per = Math.min(perRow, Math.max(1, b.items.length));
+        var blockW = perRow * (t + g) - g;
+        var start = x0 + (colW - blockW) / 2;
+        b.items.forEach(function (a, k) {
+          var c = k % perRow, r = Math.floor(k / perRow);
+          pos[a.i] = { x: start + c * (t + g), y: baseY - (r + 1) * (th + g) + g, t: t, d: x0 / W };
+        });
+        var stackRows = Math.ceil(b.items.length / perRow);
+        var cx = x0 + colW / 2;
+
+        if (hist) {
+          labels.push({ kind: "bin", mode: mode, key: b.key, x: cx, y: baseY + 9, cls: "center" });
+          if (countEveryBin && b.items.length) labels.push({ kind: "text", text: b.items.length, x: cx, y: baseY - stackRows * (th + g) - 13, cls: "center count" });
+          else if (!countEveryBin && b.items.length === maxCount) labels.push({ kind: "text", text: b.items.length, x: cx, y: baseY - stackRows * (th + g) - 13, cls: "center peak" });
+        } else {
+          // a 164-year timeline: name the decades that have room, and the two ends
+          if (b.key % decadeStep === 0) labels.push({ kind: "bin", mode: mode, key: b.key, x: cx, y: baseY + 9, cls: "center" });
+          else if (i === 0 || i === N - 1) labels.push({ kind: "text", text: b.key, x: cx, y: baseY + 9, cls: "center edge" });
+          if (b.items.length === maxCount) labels.push({ kind: "text", text: b.items.length, x: cx, y: baseY - stackRows * (th + g) - 13, cls: "center peak" });
+        }
+      });
+
+      var apartAt = B.findIndex(function (b) { return b.apart; });
+      if (apartAt > -1) {
+        // the unrated column sits past a gap, so the rule breaks with it
+        axes.push({ left: 0, top: baseY + 2, width: apartAt * (colW + colGap) - colGap, height: 1 });
+        axes.push({ left: apartAt * (colW + colGap) + apartGap, top: baseY + 2, width: colW, height: 1 });
+      } else {
+        axes.push({ left: 0, top: baseY + 2, width: W, height: 1 });
+        axes.push({ left: 0, top: baseY + 2, width: 0, height: 1 });
+      }
+      // edge-year labels hide when they would collide with a decade label
+      labels = labels.filter(function (l) {
+        if (!/edge/.test(l.cls || "")) return true;
+        return !labels.some(function (o) { return o !== l && !/edge|peak/.test(o.cls || "") && o.y === l.y && Math.abs(o.x - l.x) < 52; });
+      });
+    } else {
+      var labelW = mode === "rating" ? 64 : mode === "author" ? 34 : 58;
+      var tail = countEveryBin ? 30 : 26;
+      var plotW = W - labelW - tail;
+      var rowGap = mode === "rating" ? 9 : mode === "author" ? 5 : 6;
+      var apartGapV = B.some(function (b) { return b.apart; }) ? 14 : 0;
+      var budgetV = mode === "rating" ? 400 : mode === "author" ? 470 : 430;
+      var labelEveryRow = true;   // every row is named in all three views, so it needs room to breathe
+      var topPad = 8;             // the first and last row labels are centred on their row, so leave them room
+      var cols, R, rowH, gap;
+
+      function fit(tile) {
+        th = tile * 1.5;
+        g = tile >= 8 ? 2 : 1;
+        cols = Math.max(1, Math.floor((plotW + g) / (tile + g)));
+        R = Math.ceil(maxCount / cols);
+        rowH = R * (th + g) - g;
+        gap = labelEveryRow ? Math.max(rowGap, 16 - rowH) : rowGap;
+        H = N * rowH + (N - 1) * gap + apartGapV + topPad * 2;
+      }
+
+      for (t = 16; t >= 3; t--) {
+        fit(t);
+        if (H <= budgetV) break;
+      }
+      if (t < 3) { t = 3; fit(3); }
+      rowGap = gap;
+
+      var axisX = labelW;
+      B.forEach(function (b, i) {
+        var y0 = topPad + i * (rowH + rowGap) + (b.apart ? apartGapV : 0);
+        b.items.forEach(function (a, k) {
+          var c = Math.floor(k / R), r = k % R;
+          pos[a.i] = { x: axisX + 4 + c * (t + g), y: y0 + r * (th + g), t: t, d: y0 / H };
+        });
+        var cy = y0 + rowH / 2;
+        var used = Math.ceil(b.items.length / R);
+        labels.push({ kind: "bin", mode: mode, key: b.key, x: axisX - 8, y: cy, cls: "right" });
+        if (countEveryBin && b.items.length) labels.push({ kind: "text", text: b.items.length, x: axisX + 4 + used * (t + g) + 5, y: cy, cls: "left count" });
+        else if (!countEveryBin && b.items.length === maxCount) labels.push({ kind: "text", text: b.items.length, x: axisX + 4 + used * (t + g) + 5, y: cy, cls: "left peak" });
+      });
+
+      var apartAtV = B.findIndex(function (b) { return b.apart; });
+      if (apartAtV > -1) {
+        axes.push({ left: axisX, top: 0, width: 1, height: topPad + apartAtV * (rowH + rowGap) - rowGap + 2 });
+        var uy = topPad + apartAtV * (rowH + rowGap) + apartGapV;
+        axes.push({ left: axisX, top: uy - 2, width: 1, height: rowH + 4 });
+      } else {
+        axes.push({ left: axisX, top: 0, width: 1, height: H });
+        axes.push({ left: axisX, top: 0, width: 1, height: 0 });
+      }
+    }
+
+    return { pos: pos, labels: labels, axes: axes, H: Math.ceil(H), W: W, vertical: vertical, hist: hist, t: t, th: th };
+  }
+
+  var BIN_STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + STAR + '"/></svg>';
+
+  // shift a horizontal layout down so its baseline sits at the bottom of a taller box
+  function dropTo(L, H) {
+    var dy = H - L.H;
+    if (dy <= 0) return L;
+    L.pos.forEach(function (p) { p.y += dy; });
+    L.labels.forEach(function (l) { l.y += dy; });
+    L.axes.forEach(function (a) { a.top += dy; });
+    L.H = H;
+    return L;
+  }
+
+  function drawChart(animate) {
+    var L = computeLayout(sortMode);
+    // on wide screens every view shares one height, so switching never moves the page
+    if (!L.vertical) {
+      dropTo(L, Math.max.apply(null, MODES.map(function (m) { return m === sortMode ? L.H : computeLayout(m).H; })));
+    }
+    var modeChanged = lastMode !== null && lastMode !== sortMode;
+    layout = L;
+
+    plot.classList.toggle("instant", !animate || reduced);
+    plot.style.height = L.H + "px";
+
+    L.pos.forEach(function (p, i) {
+      var d = dots[i];
+      d.style.transitionDelay = animate && modeChanged && !reduced ? Math.round(p.d * 260) + "ms" : "0ms";
+      d.style.transform = "translate(" + p.x.toFixed(2) + "px," + p.y.toFixed(2) + "px) scale(" + (p.t / BASE) + ")";
+    });
+
+    [axisA, axisB].forEach(function (el, i) {
+      var a = L.axes[i];
+      el.style.left = a.left + "px"; el.style.top = a.top + "px";
+      el.style.width = a.width + "px"; el.style.height = a.height + "px";
+    });
+
+    // labels are rebuilt (they are cheap) and fade in after a mode change
+    labelsEl.innerHTML = "";
+    L.labels.forEach(function (l) {
+      var el;
+      if (l.kind === "bin") {
+        el = document.createElement("button");
+        el.type = "button";
+        el.className = "lab " + l.cls + (l.key === "unrated" ? " unrated" : "");
+        var missing;
+        if (l.mode === "author") {
+          el.textContent = l.key;
+          el.dataset.target = letterId(l.key);
+          missing = "No novels under " + l.key;
+          el.setAttribute("aria-label", "Jump to " + letterName(l.key).toLowerCase());
+        } else if (l.mode === "year") {
+          el.textContent = decadeName(l.key);
+          el.dataset.target = decadeId(l.key);
+          missing = "No novels from the " + decadeName(l.key);
+          el.setAttribute("aria-label", "Jump to the " + decadeName(l.key));
+        } else if (l.key === "unrated") {
+          el.textContent = "Unrated";
+          el.dataset.target = "r-unrated";
+          missing = "No unrated novels";
+          el.setAttribute("aria-label", "Jump to unrated novels");
+        } else {
+          el.innerHTML = "<span>" + halfText(l.key) + "</span>" + BIN_STAR;
+          el.dataset.target = "r-" + l.key;
+          missing = "No novels at " + starWords(l.key);
+          el.setAttribute("aria-label", "Jump to " + starWords(l.key));
+        }
+        if (!document.getElementById(el.dataset.target)) { el.disabled = true; el.setAttribute("aria-label", missing); }
+      } else {
+        el = document.createElement("span");
+        el.className = "lab " + l.cls;
+        el.textContent = l.text;
+        el.setAttribute("aria-hidden", "true");
+      }
+      el.style.left = l.x + "px";
+      el.style.top = l.y + "px";
+      labelsEl.appendChild(el);
+    });
+    // an end-of-axis label can reach past the plot; slide it back in rather than let it clip
+    var pr = plot.getBoundingClientRect();
+    Array.prototype.forEach.call(labelsEl.children, function (el) {
+      var r = el.getBoundingClientRect();
+      if (!r.width) return;
+      var px = el.tagName === "BUTTON" ? 7 : 0, py = el.tagName === "BUTTON" ? 6 : 0;
+      var left = r.left + px - pr.left, right = r.right - px - pr.left;
+      var top = r.top + py - pr.top, bottom = r.bottom - py - pr.top;
+      var dx = left < 0 ? -left : right > L.W ? L.W - right : 0;
+      var dy = top < 0 ? -top : bottom > L.H ? L.H - bottom : 0;
+      if (dx) el.style.left = (parseFloat(el.style.left) + dx) + "px";
+      if (dy) el.style.top = (parseFloat(el.style.top) + dy) + "px";
+    });
+
+    if (modeChanged && animate && !reduced) {
+      labelsEl.classList.remove("fade");
+      void labelsEl.offsetWidth;
+      labelsEl.classList.add("fade");
+    }
+    bindHover(labelsEl);
+
+    if (!animate || reduced) {
+      requestAnimationFrame(function () { plot.classList.remove("instant"); });
+    }
+    lastMode = sortMode;
+  }
+
+  labelsEl.addEventListener("click", function (e) {
+    var b = e.target.closest("button.lab");
+    if (!b || b.disabled) return;
+    var target = document.getElementById(b.dataset.target);
+    if (target) target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  });
+
+  function chartSummary() {
+    if (sortMode === "author") {
+      var letters = {};
+      NOVELS.forEach(function (a) { var c = authorLetter(a.author); letters[c] = (letters[c] || 0) + 1; });
+      var top = Object.keys(letters).sort(function (x, y) { return letters[y] - letters[x]; })[0];
+      return "Chart of " + NOVELS.length + " novels by the first letter of the author, A to Z. " +
+             top + " has the most, with " + letters[top] + " novels.";
+    }
+    if (sortMode === "rating") {
+      var parts = HALVES.slice().reverse().map(function (h) {
+        var n = NOVELS.filter(function (a) { return a.half === h; }).length;
+        return n ? starWords(h) + ": " + n : null;
+      }).filter(Boolean);
+      return "Histogram of " + NOVELS.length + " novels by rating. " + parts.join(", ") +
+             (ratedCount < NOVELS.length ? ", unrated: " + (NOVELS.length - ratedCount) : "") + ".";
+    }
+    var counts = {};
+    NOVELS.forEach(function (a) { counts[decadeOf(a.year)] = (counts[decadeOf(a.year)] || 0) + 1; });
+    var peak = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; })[0];
+    return "Timeline of " + NOVELS.length + " novels published from " + minYear + " to " + maxYear +
+           ". The busiest decade is the " + decadeName(peak) + " with " + counts[peak] + " novels.";
+  }
+
+  /* ---------- chart hover / tap ---------- */
+  var hot = -1;
+  var touchSelected = false;
+
+  function nearest(clientX, clientY) {
+    if (!layout) return -1;
+    var r = plot.getBoundingClientRect();
+    var px = clientX - r.left, py = clientY - r.top;
+    var best = -1, bestD = Infinity;
+    var reach = Math.max(12, layout.t * 2.2);
+    for (var i = 0; i < layout.pos.length; i++) {
+      var p = layout.pos[i];
+      var cx = p.x + p.t / 2, cy = p.y + p.t * 0.75;
+      var dx = px - cx, dy = py - cy;
+      var dd = dx * dx + dy * dy;
+      if (dd < bestD) { bestD = dd; best = i; }
+    }
+    return bestD <= reach * reach ? best : -1;
+  }
+
+  function setHot(i, clientX, clientY, touch) {
+    if (hot === i && !touch) { placeTip(clientX, clientY); return; }
+    if (hot > -1) dots[hot].classList.remove("hot");
+    hot = i;
+    if (i < 0) {
+      plot.classList.remove("hovering");
+      tip.classList.remove("on", "touch");
+      touchSelected = false;
+      return;
+    }
+    dots[i].classList.add("hot");
+    plot.classList.add("hovering");
+
+    var a = NOVELS[i];
+    document.getElementById("tipCover").style.backgroundImage = 'url("' + COVERS + a.slug + '.jpg")';
+    document.getElementById("tipTitle").textContent = a.title;
+    document.getElementById("tipAuthor").textContent = a.author;
+    document.getElementById("tipMeta").innerHTML =
+      (a.half === null ? "<span>Unrated</span>" : stars(a.half)) + "<span>· " + a.year + "</span>";
+    tip.classList.toggle("touch", !!touch);
+    tip.classList.add("on");
+    touchSelected = !!touch;
+    placeTip(clientX, clientY, touch);
+  }
+
+  function placeTip(clientX, clientY, touch) {
+    var tw = tip.offsetWidth, th = tip.offsetHeight;
+    var vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    var x, y;
+    if (touch && hot > -1) {
+      // anchor above the chosen cover so the finger does not cover the card
+      var r = plot.getBoundingClientRect(), p = layout.pos[hot];
+      clientX = r.left + p.x + p.t / 2;
+      clientY = r.top + p.y;
+      x = clientX - tw / 2;
+      y = clientY - th - 14;
+      if (y < 70) y = clientY + p.t * 1.5 + 16;
+    } else {
+      x = clientX + 16;
+      y = clientY - th - 12;
+      if (x + tw > vw - 12) x = clientX - tw - 16;
+      if (y < 8) y = clientY + 18;
+    }
+    x = Math.max(12, Math.min(x, vw - tw - 12));
+    y = Math.max(8, Math.min(y, vh - th - 8));
+    tip.style.transform = "";
+    tip.style.left = x + "px";
+    tip.style.top = y + "px";
+  }
+
+  plot.addEventListener("pointermove", function (e) {
+    if (e.pointerType !== "mouse") return;
+    setHot(nearest(e.clientX, e.clientY), e.clientX, e.clientY, false);
+  });
+
+  plot.addEventListener("pointerleave", function (e) {
+    if (e.pointerType === "mouse") setHot(-1);
+  });
+
+  plot.addEventListener("click", function (e) {
+    if (e.target.closest("button.lab")) return;
+    var i = nearest(e.clientX, e.clientY);
+    var touchLike = !window.matchMedia("(hover: hover)").matches;
+    if (i < 0) { setHot(-1); return; }
+    if (touchLike) {
+      // first tap previews, tapping the preview (or the same cover again) opens it
+      if (touchSelected && hot === i) { openNovel(NOVELS[i]); setHot(-1); }
+      else setHot(i, e.clientX, e.clientY, true);
+    } else {
+      openNovel(NOVELS[i]);
+    }
+  });
+
+  tip.addEventListener("click", function () {
+    if (touchSelected && hot > -1) { var a = NOVELS[hot]; setHot(-1); openNovel(a); }
+  });
+
+  document.addEventListener("pointerdown", function (e) {
+    if (touchSelected && !plot.contains(e.target) && !tip.contains(e.target)) setHot(-1);
+  });
+
+  window.addEventListener("scroll", function () {
+    if (hot > -1 && !touchSelected) setHot(-1);
+    else if (touchSelected) placeTip(0, 0, true);
+    toolbar.classList.toggle("stuck", toolbar.getBoundingClientRect().top <= 0 && window.scrollY > 10);
+  }, { passive: true });
+
+  var toolbar = document.getElementById("toolbar");
+
+  /* ---------- sort switch ---------- */
+  function applySort(mode, animate) {
+    sortMode = mode;
+    document.querySelectorAll(".switch button").forEach(function (b) {
+      b.setAttribute("aria-pressed", b.dataset.sort === mode ? "true" : "false");
+    });
+    document.getElementById("vizTitle").textContent =
+      mode === "rating" ? "Every novel, by rating" : mode === "year" ? "Every novel, by release year" : "Every novel, by author";
+    setHot(-1);
+    renderShelves();
+    drawChart(animate);
+    document.getElementById("vizSummary").textContent = chartSummary();
+  }
+
+  document.querySelectorAll(".switch button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      if (btn.dataset.sort === sortMode) return;
+      try { localStorage.setItem("novelSort", btn.dataset.sort); } catch (err) {}
+      applySort(btn.dataset.sort, true);
+    });
+  });
+
+  /* ---------- detail ---------- */
+  var current = -1;
+
+  function openNovel(a) {
+    var at = order.indexOf(a);
+    if (at > -1) openAt(at);
+  }
+
+  function openAt(i) {
+    current = (i + order.length) % order.length;
+    var a = order[current];
+
+    document.getElementById("dCover").innerHTML = coverHtml(a, true);
+    document.getElementById("dTitle").textContent = a.title;
+    document.getElementById("dAuthor").textContent = a.author;
+    document.getElementById("dFacts").innerHTML =
+      "<span>" + a.year + "</span>" +
+      (a.half === null ? "<span>Not yet rated</span>" : stars(a.half) + "<span>" + starWords(a.half) + "</span>");
+
+    var review = document.getElementById("dReview");
+    review.innerHTML = a.review ? reviewHtml(a.review) : "No review written yet.";
+    review.classList.toggle("empty", !a.review);
+
+    var pick = document.getElementById("dPick");
+    pick.hidden = !a.pick;
+    pick.innerHTML = a.pick ? "<b>Top pick:</b> " + esc(a.pick) : "";
+
+    document.getElementById("dPos").textContent = (current + 1) + " / " + order.length;
+    dialog.querySelector(".info").scrollTop = 0;
+    dialog.querySelector(".detail").scrollTop = 0;
+
+    if (!dialog.open) {
+      dialog.showModal();
+      document.documentElement.classList.add("modal-open");
+    }
+    history.replaceState(null, "", "#" + a.slug);
+
+    // warm the neighbours so paging feels instant
+    [current + 1, current - 1].forEach(function (j) {
+      new Image().src = COVERS + order[(j + order.length) % order.length].slug + ".jpg";
+    });
+  }
+
+  dialog.addEventListener("close", function () {
+    document.documentElement.classList.remove("modal-open");
+    tScale = 1;
+    history.replaceState(null, "", location.pathname + location.search);
+    var card = shelvesEl.querySelector('.card[data-i="' + current + '"]');
+    if (card) card.focus({ preventScroll: true });
+  });
+
+  document.getElementById("dClose").addEventListener("click", function () { dialog.close(); });
+  document.getElementById("dPrev").addEventListener("click", function () { openAt(current - 1); });
+  document.getElementById("dNext").addEventListener("click", function () { openAt(current + 1); });
+
+  // click on the backdrop closes
+  dialog.addEventListener("click", function (e) { if (e.target === dialog) dialog.close(); });
+
+  document.addEventListener("keydown", function (e) {
+    if (!dialog.open) { if (e.key === "Escape") setHot(-1); return; }
+    if (e.key === "ArrowRight") { e.preventDefault(); openAt(current + 1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); openAt(current - 1); }
+  });
+
+  // swipe between novels on phones
+  var sx = 0, sy = 0, tracking = false;
+  dialog.addEventListener("touchstart", function (e) {
+    if (e.touches.length !== 1) { tracking = false; return; }
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; tracking = true;
+  }, { passive: true });
+  dialog.addEventListener("touchend", function (e) {
+    if (!tracking) return;
+    tracking = false;
+    var t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.6) openAt(current + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  /* ---------- custom cursor (desktop pointers only) ---------- */
+  var fine = window.matchMedia("(pointer: fine)").matches;
+  var tScale = 1;
+
+  function bindHover(root) {
+    if (!fine || reduced) return;
+    root.querySelectorAll("a, button").forEach(function (el) {
+      el.addEventListener("mouseenter", function () { tScale = 0.001; });
+      el.addEventListener("mouseleave", function () { tScale = 1; });
+    });
+  }
+
+  if (fine && !reduced) {
+    var cursor = document.querySelector(".cursor");
+    var big = cursor.querySelector(".ball.big");
+    var small = cursor.querySelector(".ball.small");
+    var mx = -100, my = -100, bx = -100, by = -100, scale = 1;
+
+    document.addEventListener("mousemove", function (e) { mx = e.clientX; my = e.clientY; });
+    bindHover(document.querySelector(".switch"));
+
+    (function loop() {
+      bx += (mx - bx) * 0.14;
+      by += (my - by) * 0.14;
+      scale += (tScale - scale) * 0.2;
+      big.style.transform = "translate(" + (bx - 25) + "px," + (by - 25) + "px) scale(" + scale + ")";
+      small.style.transform = "translate(" + (mx - 5) + "px," + (my - 5) + "px)";
+      requestAnimationFrame(loop);
+    })();
+  } else {
+    var c = document.querySelector(".cursor");
+    if (c) c.style.display = "none";
+  }
+
+  /* ---------- start ---------- */
+  var startMode = "rating";
+  try {
+    var saved = localStorage.getItem("novelSort");
+    if (MODES.indexOf(saved) > -1) startMode = saved;
+  } catch (err) {}
+
+  applySort(startMode, false);
+
+  // re-flow the chart when its width changes (rotation, window resize), without animating
+  var lastW = plot.clientWidth, resizeRaf = 0;
+  new ResizeObserver(function () {
+    var w = plot.clientWidth;
+    if (w === lastW) return;
+    lastW = w;
+    cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(function () { setHot(-1); drawChart(false); });
+  }).observe(plot);
+
+  // links like /novels#piranesi-susanna-clarke open straight to that novel
+  function openFromHash() {
+    var slug = decodeURIComponent((location.hash || "").slice(1));
+    if (!slug) return;
+    var at = order.findIndex(function (a) { return a.slug === slug; });
+    if (at > -1) openAt(at);
+  }
+
+  openFromHash();
+  window.addEventListener("hashchange", openFromHash);
+})();
+</script>
+
+</body>
+</html>

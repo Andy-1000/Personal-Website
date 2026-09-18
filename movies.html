@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Movies | Andy Sansness</title>
+<meta name="description" content="Every film Andy has watched and rated, sortable by star rating, release year or director.">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/png" href="thumbs_up_.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="movie-posters/sprite.jpg?v=7a6dc5ac0b">
+<style>
+  :root {
+    --blue: #004d99;
+    --navy: #003366;
+    --sky: #cce6ff;
+    --sky-soft: #e9f3ff;
+    --paper: #ffffff;
+    --ink: #14243a;
+    --muted: #6b7a8b;
+    --hairline: #dbe6f1;
+    --gold: #e0a100;
+    --star-empty: #d9e2ec;
+    --gutter: 16px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Open Sans", sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { color: #fff; background: var(--blue); }
+
+  img { display: block; max-width: 100%; }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ---------- heading ---------- */
+  header.page {
+    text-align: center;
+    padding: calc(2rem + env(safe-area-inset-top)) var(--gutter) 0.25rem;
+  }
+
+  header.page h1 {
+    font-family: "Merriweather", serif;
+    font-weight: 400;
+    font-size: clamp(1.8rem, 7vw, 2.6rem);
+    line-height: 1.2;
+    color: var(--navy);
+    margin: 0;
+  }
+
+  /* ---------- sort switch ---------- */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    padding: 0.75rem var(--gutter);
+    background: rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    transition: box-shadow 0.2s ease;
+  }
+
+  .toolbar.stuck { box-shadow: 0 1px 0 var(--hairline); }
+
+  .switch {
+    display: inline-flex;
+    padding: 4px;
+    border: 2px solid var(--sky);
+    border-radius: 999px;
+    background: #fff;
+  }
+
+  .switch button {
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--blue);
+    background: transparent;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.45rem 1.1rem;
+    min-height: 40px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .switch button[aria-pressed="true"] { background: var(--blue); color: #fff; }
+  .switch button:not([aria-pressed="true"]):hover { background: var(--sky-soft); }
+  .switch button:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+
+  /* ---------- page column ---------- */
+  main {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0.25rem calc(var(--gutter) + env(safe-area-inset-right)) 3rem calc(var(--gutter) + env(safe-area-inset-left));
+  }
+
+  /* ---------- overview chart ---------- */
+  .viz {
+    margin: 0.75rem 0 0.5rem;
+    padding: 1.1rem 1.25rem 0.9rem;
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    background: linear-gradient(180deg, #fbfdff 0%, #ffffff 70%);
+  }
+
+  .viz-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.2rem 1rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .viz-head h2 {
+    margin: 0;
+    font-family: "Open Sans", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--navy);
+  }
+
+  .viz-key {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .viz-key i {
+    display: inline-block;
+    width: 8px;
+    height: 12px;
+    border-radius: 1.5px;
+    background: url("movie-posters/sprite.jpg?v=7a6dc5ac0b") 0 0 / 80px auto;
+  }
+
+  .plot {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    transition: height 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .plot.instant, .plot.instant * { transition: none !important; }
+
+  /* posters are 2:3, so the tile is 16 x 24 and scales as one piece */
+  .dot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 24px;
+    transform-origin: 0 0;
+    will-change: transform;
+    transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.25s ease;
+    pointer-events: none;
+  }
+
+  .dot .face {
+    display: block;
+    width: 16px;
+    height: 24px;
+    border-radius: 2px;
+    background-image: url("movie-posters/sprite.jpg?v=7a6dc5ac0b");
+    background-size: 160px auto;
+    background-color: var(--sky);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .plot.hovering .dot { opacity: 0.45; }
+  .plot.hovering .dot.hot { opacity: 1; z-index: 3; }
+
+  .dot.hot .face {
+    transform: scale(2.6);
+    box-shadow: 0 0 0 1px #fff, 0 3px 10px rgba(0, 25, 51, 0.35);
+  }
+
+  .axis {
+    position: absolute;
+    background: var(--hairline);
+    transition: all 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+  }
+
+  .labels { position: absolute; inset: 0; pointer-events: none; }
+  .labels.fade { animation: labelsIn 0.45s ease both 0.2s; }
+  @keyframes labelsIn { from { opacity: 0; } }
+
+  .lab {
+    position: absolute;
+    font-size: 0.72rem;
+    line-height: 1;
+    color: var(--muted);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lab.center { transform: translateX(-50%); }
+  .lab.right { transform: translate(-100%, -50%); }
+  .lab.left { transform: translateY(-50%); }
+  .lab.count { font-weight: 600; color: var(--ink); opacity: 0.7; }
+  .lab.peak { font-weight: 600; color: var(--navy); }
+
+  button.lab {
+    pointer-events: auto;
+    font: inherit;
+    font-size: 0.74rem;
+    line-height: 1;
+    color: var(--ink);
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    padding: 6px 7px;
+    margin: -6px -7px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button.lab.center { transform: translateX(-50%); }
+  button.lab.right { transform: translate(-100%, -50%); }
+  button.lab:hover { background: var(--sky-soft); color: var(--blue); }
+  button.lab:focus-visible { outline: 2px solid var(--blue); outline-offset: 0; }
+  button.lab[disabled] { cursor: default; color: #a7b3bf; background: transparent; }
+  .lab svg { width: 0.95em; height: 0.95em; fill: var(--gold); flex: none; }
+  button.lab[disabled] svg { fill: var(--star-empty); }
+
+  /* ---------- tooltip ---------- */
+  .tip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    width: max-content;
+    max-width: min(300px, calc(100vw - 24px));
+    padding: 0.55rem 0.75rem 0.55rem 0.55rem;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 25, 51, 0.12), 0 12px 32px rgba(0, 25, 51, 0.22);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity 0.14s ease, transform 0.14s ease, visibility 0s linear 0.14s;
+    pointer-events: none;
+  }
+
+  .tip.on {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 0.14s ease, transform 0.14s ease;
+  }
+
+  .tip.touch { pointer-events: auto; cursor: pointer; }
+
+  .tip .tc {
+    flex: none;
+    width: 44px;
+    height: 66px;
+    border-radius: 5px;
+    background-color: var(--sky-soft);
+    background-size: cover;
+    background-position: center;
+  }
+
+  .tip .tt {
+    font-size: 0.86rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .tip .ta { font-size: 0.78rem; line-height: 1.35; color: var(--muted); }
+
+  .tip .tm {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.2rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .tip .tm .stars { font-size: 12px; }
+  .tip .go { display: none; margin-top: 0.25rem; font-size: 0.75rem; font-weight: 600; color: var(--blue); }
+  .tip.touch .go { display: block; }
+
+  /* ---------- shelves ---------- */
+  .shelf { margin-top: 1.8rem; scroll-margin-top: 76px; }
+
+  .shelf-head {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding-bottom: 0.55rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--sky);
+  }
+
+  .shelf-head h2 {
+    margin: 0;
+    font-family: "Merriweather", serif;
+    font-weight: 400;
+    font-size: 1.2rem;
+    line-height: 1.3;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .shelf-head .n {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 1.4rem 1.1rem;
+  }
+
+  .card {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* every poster is the same 2:3 rectangle, whatever the source image */
+  .art {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--sky-soft);
+    box-shadow: 0 1px 2px rgba(20, 36, 58, 0.12), 0 4px 14px rgba(20, 36, 58, 0.08);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .art img {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .art img.ready { opacity: 1; }
+
+  .fallback {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem;
+    text-align: center;
+    font-family: "Merriweather", serif;
+    font-size: 0.85rem;
+    line-height: 1.35;
+    color: var(--navy);
+    overflow-wrap: anywhere;
+  }
+
+  @media (hover: hover) {
+    .card:hover .art {
+      transform: translateY(-3px);
+      box-shadow: 0 2px 4px rgba(20, 36, 58, 0.14), 0 10px 24px rgba(20, 36, 58, 0.16);
+    }
+  }
+
+  .card:active .art { transform: scale(0.97); }
+  .card:focus-visible { outline: none; }
+  .card:focus-visible .art { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+  .card .t,
+  .card .a {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+  }
+
+  .card .t {
+    margin-top: 0.55rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .card .a {
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--muted);
+  }
+
+  .card .sub {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.15rem;
+    min-height: 14px;
+  }
+
+  .card .year-label { font-size: 0.75rem; line-height: 1.2; color: var(--muted); }
+
+  /* ---------- stars ---------- */
+  .stars { display: inline-flex; gap: 1px; line-height: 0; flex: none; }
+  .stars svg { width: 1em; height: 1em; }
+  .stars .on { fill: var(--gold); }
+  .stars .off { fill: var(--star-empty); }
+  .card .stars { font-size: 12px; }
+  .shelf-head .stars { font-size: 18px; }
+
+  /* ---------- detail dialog ---------- */
+  dialog {
+    width: min(880px, calc(100vw - 32px));
+    max-width: none;
+    max-height: calc(100dvh - 32px);
+    padding: 0;
+    border: 0;
+    border-radius: 16px;
+    color: var(--ink);
+    background: #fff;
+    box-shadow: 0 24px 70px rgba(0, 25, 51, 0.35);
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+
+  dialog::backdrop {
+    background: rgba(0, 25, 51, 0.55);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+
+  dialog[open] { animation: rise 0.22s ease-out; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px) scale(0.98); } }
+
+  .detail {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    /* the row has to be allowed to shrink, or a long review makes .info taller
+       than the dialog and the prev / next arrows fall outside it */
+    grid-template-rows: minmax(0, 1fr);
+    max-height: calc(100dvh - 32px);
+  }
+
+  /* the poster is 2:3, so its width is capped by the height the dialog can give it */
+  .detail .cover {
+    position: relative;
+    align-self: start;
+    width: min(260px, calc((100dvh - 32px - 3.2rem) / 1.5));
+    aspect-ratio: 2 / 3;
+    margin: 1.6rem 0 1.6rem 1.6rem;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--sky-soft);
+    box-shadow: 0 4px 18px rgba(20, 36, 58, 0.15);
+  }
+
+  .detail .cover img { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover; }
+  .detail .cover .fallback { font-size: 1.1rem; padding: 1.2rem; }
+
+  .detail .info {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    min-width: 0;
+    padding: 1.6rem 1.6rem 1.2rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .detail h2 {
+    margin: 0 2.4rem 0 0;
+    font-family: "Merriweather", serif;
+    font-weight: 400;
+    font-size: clamp(1.3rem, 4.5vw, 1.75rem);
+    line-height: 1.25;
+    color: var(--navy);
+    overflow-wrap: anywhere;
+  }
+
+  .detail .by {
+    margin: 0.35rem 0 0;
+    font-size: 1rem;
+    color: var(--blue);
+    font-weight: 600;
+  }
+
+  .detail .facts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 1rem;
+    margin: 0.8rem 0 0;
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+
+  .detail .facts .stars { font-size: 20px; }
+
+  .detail .review { margin: 1.1rem 0 0; font-size: 0.95rem; white-space: pre-line; }
+  .detail .review.empty { color: var(--muted); font-style: italic; }
+
+  .detail nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 1.2rem;
+  }
+
+  .detail nav .pos { font-size: 0.78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .round {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--blue);
+    background: #fff;
+    color: var(--blue);
+    font-size: 1.05rem;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.12s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .round:hover { background: var(--blue); color: #fff; }
+  .round:active { transform: scale(0.94); }
+  .round:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+
+  .close {
+    position: absolute;
+    top: 0.9rem;
+    right: 0.9rem;
+    z-index: 2;
+    width: 40px;
+    height: 40px;
+    border-color: var(--sky);
+    background: rgba(255, 255, 255, 0.92);
+    font-size: 1.35rem;
+  }
+
+  /* ---------- footer ---------- */
+  footer {
+    border-top: 1px solid var(--sky);
+    text-align: center;
+    padding: 1rem var(--gutter) calc(1rem + env(safe-area-inset-bottom));
+    font-size: 0.78rem;
+    color: #7a8795;
+  }
+
+  /* ---------- custom cursor (desktop only, matches the rest of the site) ---------- */
+  .cursor { pointer-events: none; }
+  .cursor .ball { position: fixed; top: 0; left: 0; z-index: 1000; will-change: transform; }
+
+  /* the dialog sits in the browser's top layer, above the custom cursor, so it uses the normal pointer */
+  .modal-open .cursor { display: none; }
+
+  @media (pointer: fine) {
+    body, a, button { cursor: none; }
+    dialog, dialog::backdrop { cursor: auto; }
+    dialog button { cursor: pointer; }
+  }
+
+  @media (pointer: coarse) {
+    .cursor { display: none; }
+  }
+
+  /* ---------- tablets ---------- */
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: repeat(auto-fill, minmax(116px, 1fr)); gap: 1.25rem 0.9rem; }
+  }
+
+  /* ---------- phones ---------- */
+  @media (max-width: 640px) {
+    header.page { padding-top: calc(1.5rem + env(safe-area-inset-top)); }
+    .viz { padding: 0.9rem 0.9rem 0.8rem; border-radius: 14px; }
+    .viz-head { margin-bottom: 0.75rem; }
+    .viz-head h2 { font-size: 0.9rem; }
+    .viz-key { font-size: 0.72rem; }
+
+    /* the stacked chart puts one label per row, so they have to sit tighter */
+    button.lab { padding: 4px 7px; margin: -4px -7px; }
+
+    .shelf { margin-top: 1.5rem; }
+    .shelf-head h2 { font-size: 1.05rem; gap: 0.45rem; }
+    .shelf-head .stars { font-size: 15px; }
+
+    .grid {
+      grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+      gap: 1.1rem 0.7rem;
+    }
+    .card .t { font-size: 0.8rem; }
+    .card .a { font-size: 0.74rem; }
+    .card .stars { font-size: 11px; }
+
+    dialog { width: calc(100vw - 20px); max-height: calc(100dvh - 20px); border-radius: 14px; }
+    .detail {
+      grid-template-columns: minmax(0, 1fr);
+      /* on phones the whole card scrolls as one, so the rows size to content */
+      grid-template-rows: auto;
+      max-height: calc(100dvh - 20px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    .detail .cover { width: min(46%, calc(34dvh / 1.5)); margin: 1.4rem auto 0; }
+    .detail .info { overflow: visible; padding: 1.1rem 1.15rem 1rem; }
+    .detail h2 { margin: 0 0.5rem; text-align: center; }
+    .detail .by { text-align: center; }
+    .detail .facts { justify-content: center; }
+    .detail nav {
+      position: sticky;
+      bottom: -1rem;
+      margin: 0 -1.15rem -1rem;
+      padding: 0.7rem 1.15rem calc(0.7rem + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #fff 30%);
+    }
+    .close { top: 0.6rem; right: 0.6rem; }
+  }
+
+  @media (max-width: 360px) {
+    :root { --gutter: 12px; }
+    .switch button { padding: 0.45rem 0.7rem; font-size: 0.82rem; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" aria-hidden="true">
+  <div class="ball big">
+    <svg height="50" width="50"><circle cx="25" cy="25" r="20" stroke-width="0" style="fill:#cce6ff;opacity:.7"></circle></svg>
+  </div>
+  <div class="ball small">
+    <svg height="10" width="10"><circle cx="5" cy="5" r="4" stroke-width="0" style="fill:#004d99"></circle></svg>
+  </div>
+</div>
+
+<header class="page">
+  <h1>Movies</h1>
+</header>
+
+<div class="toolbar" id="toolbar">
+  <div class="switch" role="group" aria-label="Sort films by">
+    <button type="button" data-sort="rating" aria-pressed="true">Rating</button>
+    <button type="button" data-sort="year" aria-pressed="false">Release year</button>
+    <button type="button" data-sort="director" aria-pressed="false">Director</button>
+  </div>
+</div>
+
+<main>
+  <section class="viz" aria-labelledby="vizTitle" aria-describedby="vizSummary">
+    <div class="viz-head">
+      <h2 id="vizTitle">Every film, by rating</h2>
+      <span class="viz-key" aria-hidden="true"><i></i>Each poster is one film</span>
+    </div>
+    <div class="plot" id="plot">
+      <div class="tiles" id="tiles" aria-hidden="true"></div>
+      <div class="labels" id="labels"></div>
+    </div>
+    <p class="sr-only" id="vizSummary" aria-live="polite"></p>
+  </section>
+
+  <div id="shelves"></div>
+</main>
+
+<footer>
+  All reviews by Andy.
+</footer>
+
+<div class="tip" id="tip" role="status" aria-live="off">
+  <span class="tc" id="tipCover"></span>
+  <span>
+    <span class="tt" id="tipTitle"></span>
+    <span class="ta" id="tipDirector"></span>
+    <span class="tm" id="tipMeta"></span>
+    <span class="go">View film &rsaquo;</span>
+  </span>
+</div>
+
+<dialog id="detail" aria-labelledby="dTitle">
+  <button class="round close" id="dClose" type="button" aria-label="Close">&times;</button>
+  <div class="detail">
+    <div class="cover" id="dCover"></div>
+    <div class="info">
+      <h2 id="dTitle"></h2>
+      <p class="by" id="dDirector"></p>
+      <p class="facts" id="dFacts"></p>
+      <p class="review" id="dReview"></p>
+      <nav>
+        <button class="round" id="dPrev" type="button" aria-label="Previous film">&#10094;</button>
+        <span class="pos" id="dPos"></span>
+        <button class="round" id="dNext" type="button" aria-label="Next film">&#10095;</button>
+      </nav>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  "use strict";
+
+  /* Generated from the Movie Reviews notes. half = rating in half stars (10 = 5 stars) */
+  var MOVIES = [{"slug":"inception-2010","title":"Inception","director":"Christopher Nolan","year":2010,"half":10,"review":"Personally, Inception is my favourite movie ever. The score, the script, the acting... all just brilliant. The plot, though complex, is nothing short of genius.\n\nInception takes the established format of a heist movie, and puts it in the mindbending context of a dream. The action packed prologue of the movie throws the audience into the deep end, and brief exposition sets up the underlying mechanism and premise of the rest of the movie. Put simply, imagine a drug which allowed you to enter someone else's dream. Inception is then the process by which an idea can be implanted within someone's mind in the dream state.\n\nThe heist format then follows: specialists (architect, forger, chemist) are recruited into the team, and they then plan the heist. All the while we follow Cobb (Leonardo De Caprio), a skilled extractor and operator within dreams, who is haunted by his mysterious past.\n\nThe 'heist' itself - implanting an idea in their targets mind - is just sublime. Importantly, in order to achieve inception, their target, Fischer (Cilian Murphy), must give himself the idea they are implanting. To get Fischer to do this, they recruit his help within a deeper dream state. At first this seems strange, especially as Fischer in a deeper dream state even breaks into the fortress of his own mind. However, that's the beauty of a dream - what may seem perposterous in reality seems entirely normal within a dream. Where in other action movies I might roll my eyes at needless stunts, unbelievable fight scenes and ludicrous chase scenes, Inception makes them perfectly believable because they are occuring in a dream.\n\nCobb's wife, Mal, appears in dreams and threatens Cobb's operations. Interestingly, Mal's acting is flat and emotionless, which makes sense as you learn that she is just a projection within the dream. This is given even more impact when Cobb is forced to let go of her near the end - while this version of Mal is all the audience has known of her, Cobb finally recognises that this is not his wife. 'With all you perfections, all your imperfections... you're not my wife... you're just a shade.'\n\nThis is almost an inception moment for Cobb as well, for halfway through the heist we learn that 'the further we go into Fischer, the further we go into your mind as well'. The idea being planted in Cobb's mind is 'something he once knew... a truth from a half remebered dream'... namely, that Cobb did in fact live out a lifetime with his wife, and in doing so fulfilled his marriage vow. Like much of Nolan's film, themes and thoughts like these are reinforced and given greater meaning as they are repeated throughout the movie.\n\nBy coming to terms with the truth of his wife's death, Cobb is now able to live his life without guilt and shame, and can now look at his children's faces. Previous to this Cobb's inception moment, Cobb refused to look at his children's faces, maybe in part because he knew that if he did see them, that's what he would accept as reality. When Cobb returns to what he considers reality and looks upon his children's faces, he no longer cares whether or not he is living in a dream or not.\n\nThe ambiguity of the final sequence - Cobb's totem teetering - shows that neither the audience or Cobb knows whethee he is living in reality or a dream. This provides a nice commentry on our own reality, and whether what we percieve to be reality, truly is reality. No matter what we think, like Cobb, we can never truly be sure."},{"slug":"there-will-be-blood-2007","title":"There Will Be Blood","director":"Paul Thomas Anderson","year":2007,"half":10,"review":"This film is a true cinematic force. From a purely technical point of view it is a masterpiece. From a narrative point of view it is a brutal, unforgiving portrayal of human nature at its very darkest; darkest not in an overt way, but in a more unsettlingly subtle way. While the story itself was fairly slow, each scene was completely and utterly enrapturing. Following an oilman in early 1900s America, the story starts in greed and ends in madness. And yet early on you can sense the outcome with a kind of terrifying yet captivating inevitability. As you learn more and more about this character, his hatred, his fury and the impact he has on those who enter his sphere, the ending thematically becomes clearer and dearer. With the focus dwelling on the scene by scene, the elements which make up a scene are elevated to an impact.\n\nThe main character performance is a thing of brilliance. Haunting, tension building score is too much at times, where too much is exactly where director Paul Thomas Anderson wants to go. And yet it is all treated with such subtlety – for a title with the word blood in it, there isn't much blood. But that doesn't stop it being a bleak, brooding masterpiece."},{"slug":"spider-man-across-the-spider-verse-2023","title":"Spider-Man: Across the Spider-Verse","director":"Joaquim Dos Santos, Kemp Powers & Justin K. Thompson","year":2023,"half":9,"review":"A postmodern stylistic masterpiece (or half of one at least). The trouble with multipart movies is that the hype is so high for the second half - if you're gonna end on a cliff hanger, you better have an outstanding resolution. We shall see. But for a first part I can barely fault it, though that doesn't mean it was faultless. For one, I've never been a fan of prophetic vision scenerios in any movie, aka. 'oh no Spot is gonna kill everyone'. This just teases a battle for no other reason than to say: 'bad things are going to happen' *spooky voice*. Whatever. We get it.\n\nOther than that, the stylisation worked to tantalising effect, truly differentiating it from any other animation style (even if it was a little bit much at times, like in Gwens universe). My absolute highlight was the direction it took witb the plot. Essentially, the Spider universes are supposed to follow 'canon', that is, certain things are supposed to happen. But what jf they didn't? Enter Miles Morales. Spiderman: Into the Spide-verse was basically just an origin story for him, setting the groundwork for this main production. When I describe it as postmodern, what I mean is a playful self-reference, a nuanced balance between fiction and metafiction (and sometimes even metametafiction). By acknowledging and intergrating the 'universal' spiderman story into this one, Spiderman: Across the Spide-verse makes room to play on this.\n\nAnd play it does."},{"slug":"knives-out-2019","title":"Knives Out","director":"Rian Johnson","year":2019,"half":9,"review":"'In for a penny, in for a pound'\n\nKnives Out is a your quintessential murder mystery, but with a subtle twist. From the very beginning the typical whodunnit formula is stark - a hated, rich father is killed in secluded manor and seemingly everyone has a motive. However, while a solution is presented fairly early, something of a mystery remains, leaving the audience intrigued and compelled from start to finish.\n\nThe plot is absolutely impeccable, and provides the backbone of the entire movie. Acting is really solid and the soundtrack is used highly effectively.\n\nScript is sharp and keeps the pace moving along nicely, especially when considering that a stereotypical murder mystery tends to dawdle through the investigation before the big reveal. Modern details and pop culture references, from Biscoff biscuits to New Yorker articles, also gave a nice contrast to the typical 1900s cliche.\n\nOverall, the best murder mystery I've ever seen."},{"slug":"mollys-game-2017","title":"Molly's Game","director":"Aaron Sorkin","year":2017,"half":9,"review":"Molly's Game is a semi-biographic crime drama of Molly Bloom, an ex-skier player who created some of the most exclusive and expensive poker games ever.\n\nThe writer and director, Aaron Sorkin, takes on a bad fast-paced, drama filled tom of Molly's life, bouncing between her origins to her criminal prosecution, a non-linear framework not unlike what he did with the Social Network. Because this is Aaron Sorkin, the dialogue is filled with absolute zingers, whilst the ongoing narratives adds further flavour to events unfolding. As a film Molly's Game feels different from standard Hollywood; somehow it is more gritty, more down to earth, and definitely more intelligent. Even postmodern flourishes like the discussion of the film rights within the actual film adds a subtle depth, uncharacteristic to say the least. Of such psychological analysis whose insight pinch so cathartically that they essentially constitute the resolution in and of themselves, without being trivial or unrigorous. You just don't get that in many novels, novelty adds value, yes, but when it's so cleverly and effectively added into the storytelling and the actual story itself, the value is far amplified. Molly's Game is a triumph."},{"slug":"arrival-2016","title":"Arrival","director":"Denis Villeneuve","year":2016,"half":9,"review":"Dang this movie hits hard. Arrival tells a world-shattering narrative of aliens, unintelligible and mysterious, and humanities attempts to communicate with them. And yet it also is a much smaller narrative of a melancholic woman reflecting on life, both of these narratives are deeply intertwined. What could have been a true cliche sci-fi action is instead a thoughtful mystery drama of the highest order. Though captivating in many ways, one of the most spellbinding elements of this film are the aliens. Far more eerie yet strangely expressive. they are also then almost always accompanied by equally alien music, a brooding, atmospheric twang of other-worldliness. Just an engaging as the soundtrack is the cinematography at play here; some truly magnificent shots are both. But it's the character of the protagonist which keeps you mused.\n\nWe are her, desperate for answers, confused, concerned, amazed. It's cool to see how deliberately the story takes us in different directions, both emotionally and thematically. At its core through this is a mystery, and a mystery is only as good as its reveal. This one will knock your socks off."},{"slug":"la-la-land-2016","title":"La La Land","director":"Damien Chazelle","year":2016,"half":9,"review":"Some films make you think. This film makes you feel. Wonder. Awe. Joy. Sadness. Anger. Respite. Hope. How does it make you feel these things? Though music and through words, mostly. Sublime acting, exquisite cinematography, and a razor sharp script. Individually these features are strong, but the way they are perfectly fit together is even stronger.\n\nLa La Land follows an actor and a jazz pianist in L.A., whose lives intersect in their cause of pursuing their dreams. It is a romance, not only in the traditional sense, but also in the two characters' romance for their dream; therein lies the tension, but also the resolution, a compelling yet melancholy ending. This is also a musical, with a specific focus on jazz. In each music number, what happens onscreen reflects the character's interpretation of what's going on around them, making for highly stylized, ambiguous sequences. I usually stay away from both musicals and romances, finding them either boring or annoying (or just plain stupid). But in this case, as I let myself enjoy each moment, was an entirely different experience. Such pure cinematic prowess is beyond a joy to watch."},{"slug":"interstellar-2014","title":"Interstellar","director":"Christopher Nolan","year":2014,"half":9,"review":""},{"slug":"moneyball-2011","title":"Moneyball","director":"Bennett Miller","year":2011,"half":9,"review":"Moneyball takes the typical Underdog Comeback Story, and turns it on its head in the best way possible. Instead of pitting a team against other teams Moneyball pits a baseball general manager against the the system itself. Moneyball swaps cliched teamwork and comradery for intellectual rebellion and boldness. This makes for a much deeper, more interesting exploration of both the characters and the systems of baseball itself. The stakes of Moneyball is tied directly to the Oakland A's GM: Billy Bean, played by Brad Pitt. Importantly, these stakes transition throughout the movie from winning a championship, to changing the very game of baseball itself. \"The first man through the wall always gets bloody. Always.\" Witty lines like this are rampant, and while the story itself is interesting, what's even better is the writing. Though not the engine of the movie, the writing works worders to enhance the story in a million different ways. This comes down to subtlety, not just in writing but in acting, in cinematography, in score. A culmination of all these details help to produce not just a fascinating story, but a story with heart."},{"slug":"the-dark-knight-2008","title":"The Dark Knight","director":"Christopher Nolan","year":2008,"half":9,"review":"'You either die a hero, or live long enough to see yourself become the villain'\n\nThe Dark Knight is undoubtably the greatest superhero movie ever made. That's because it doesn't particularly feel like a superhero movie in the first place. For one, CGI is minimal, with action instead relying on stuntwork and the occasional dramatic explosion. But even action itself is not the driving force of the movie... what elevates The Dark Knight to another level beyond its predecessors is its plot and characters.\n\nA hero movie is only as good as its villains, and boy does The Dark Knight deliver. The Joker (Heath Ledger), is not only acted to chilling perfection, but also provides the driving force of the plot from the very beginning of the movie (while we're on the subject, I'm going to propose that the opening sequence of The Dark Knight is one of the greater ever made).\n\nAlthough the Joker is characterised as a sociopathic, sadistic mastermind - in the words of Alfred, 'some people just want to watch the world burn' - it's undeniably that he's also got style. Every step of the way, the Joker is seven steps in front of everyone else, even in the moment you think he has finally been defeated. This makes for a Batman less of a hero and more of force in and of himself. Instead of clear cut good guys and bad guys, The Dark Knight portrays more shades of grey across all of its characters.\n\nThis is especially shown in the film's secondary villain, Two-face, who is probably the most well developed character portrayed. His relationship to both Batman and The Joker makes for a dynamic and dramatic trifector.\n\nDispite being pretty dark at times, The Dark Knight also somehow provides a fair few laughs as well, though still while remaining completely and utterly serious. While some moments are obvious (the Joker making a pencil 'disappear' by slamming a mobsters head on it) others are far more subtle (the Joker setting a firetruck on fire to block a police route). My personal favourite occurs after Rachel lashes out at the Joker.\n\nJoker: Oooo... you've got a bit of fight left in you - I like that (Batman appears from nowhere and tackles the Joker) Batman: Then you're gonna love me!\n\nDialogue like this is prolific. One liners and razor sharp dialogue help to create some highly dramatic moments, the peak of which would have to be the closing dialogue, which very neatly ties everything together both thematically and logistically.\n\nOverall, The Dark Knight provides a refreshing new portrayal of Batman, breaking free of the superhero genre to become an independently top tier movie."},{"slug":"the-prestige-2006","title":"The Prestige","director":"Christopher Nolan","year":2006,"half":9,"review":"'If you want to become a good magician, you've got to get your hands dirty'\n\nSecrets, lies, murder... all in the name of magic. A professional rivalry between two magicians escalates to dangerous levels.\n\nLike most Christopher Nolan movies, the plot has brain-twistingly expansive depths. Because of this, not a single second is wasted; rewatching reveals so much more and makes even more sense, especially with respect to the twists.\n\nContrasting on the firm foundation of its historical period, I was initially thrown by the elements of sci-fi thrown in. But, while some movies may employ elements of sci-fi for mere plot conviences (think marvel movies), its use here was in fact intergral to the plot, aiding also to the underlying themes playing throughout the movie.\n\nFinally, I was a bit fan of the fact that there wasn't really a good guy or a bad guy - in the end it was up to the audience to decide for themselves. The way Nolan wrote it was that the audience may initially root for Angier/The Great Danton, but by the end are instead rooting for Borden/The Professor. Or, is Angier simply a victim of what Borden wrought upon him?\n\n8.4/10\n\n*SPOILER ALERT* Additional Notes: 1. Were the twins in fact cloned? To recommend Tesla to Angier, one of them must have known. If so, it would have had to have been the innocent twin, because the condemned twin should have known about the trick and wouldn't have been surprise to see Angier alive.\n\n2. When Borden's wife hangs herself, it is not in fact because her husband is having an affair, but because she somehow learns she has married two men - this is what she threatens she will tell the mistress\n\n3. At the same as the events of the movie it is implied also that Tesla and Edison are having a similar rivalry which is also escalating\n\n4. Cutter knew from the very beginning that Borden was using a double, and was thus unsurprised when it was as if Borden was still alive\n\n5. In the climatic sequence after Angier is shot, Angier's dialogue for why they did what they did could easily be likened to Nolan's prerogative behind the movie also: 'it was the looks on their faces... The world is bleak and miserable... solid all the way through... but if just for a second you could make them wonder...'"},{"slug":"changing-lanes-2002","title":"Changing Lanes","director":"Roger Michell","year":2002,"half":9,"review":"*Changing Lanes* is a sharp, biting drama about two men locked in a brutal psychological battle. Their conflict begins with a minor traffic accident, something that could have been resolved immediately, but one man’s desperation causes him to flee, igniting a war of escalation. What follows is ingenious and unsettling. Each man attacks the other without ever laying a hand on him, with every move ratcheting the stakes higher. The entire conflict unfolds over a single day, giving the film a relentless momentum. While tightly plotted and nail-biting, what you're really staying for at the character. Slowly but surely you explore the circumstances which push them to make the actions they do, and over the course of the film you shift from indignation to complete empathy with both of them. Although there is plenty to think about, all of it happening with a relentless pace, this movie is primarily making you feel, to feel what the characters are feeling. Technically, in terms of acting, score, cinematography, we have not brilliance, because brilliance is not what this movie needs, but in its own context, a competence with is perfection."},{"slug":"gladiator-2000","title":"Gladiator","director":"Ridley Scott","year":2000,"half":9,"review":"'A general who became a slave. A slave who became a gladiator. A gladiator who defied an emperor.'\n\nUtterly epic. Acting is sensation, with the obvious highlight being Joaqan Phonix. Though Russel Crowe may have some naysayers, I rate him. Any other actor may have gone over the top; instead Crowe provided exactly what the role of Maximus required, a character world weary but revenge fueled.\n\nThe best part about this movie was the script - almost every single line spoken throughout the movie is quotable. (My personal favourite: 'Death smiles upon all of us. The best a man can do is smile back').\n\nPlot is strong enough and realistically didn't even need to be too complex - just enough to tie in with the historical context, and complement the overall epicness of it.\n\nOverall, close to a masterpiece. I mean come on... 'Are you not entertained?!'"},{"slug":"la-chimera-2023","title":"La Chimera","director":"Alice Rohrwacher","year":2023,"half":8,"review":"La chimera is a modern day folk tale, a long lost dream, a vision of the lost and the broken and the free. This is a film which fundamentally makes you feel human. Forget the age-old narrative beats of plot and character; here we are given moods, and reflections, and echos. While in principle the film follows Archer, a leader of his own merry band of grave robbers in rural Italy, what we are given goes more deeper. In fact, the surreal holds more to the true story than any twist of plot.\n\nLa Chimera at first seems to move slow (frustratingly so), but in actuality it is just moving at a different rhythm than the typical Hollywood offering. In this respective, La Chimera is unrecognisable in what would typically be labelled a movie. This is not a Movie, but a Film. Where a Movie is designed to entertain, a Film is designed to express. And La Chimera does just that.\n\nIn the end, La Chimera left me breathless, an etheral wonder and a reflective masterpiece."},{"slug":"the-killer-2023","title":"The Killer","director":"David Fincher","year":2023,"half":8,"review":"The Killer left me... divided. On one hand a cinematic masterckass in suspense and tension to rival even that of Hitchcock. On the other hand, a simplistic plot (hitman botches job, hitmans partner is assaulted as punishment, hitmam takes revenge on all parties involved) meant that the pacing suffered.\n\nFirst, the suspense. We learn early in the movie that every time the Killer meets someone, at some point he is going to kill them - the tension is not knowing when. In terms of soundtrack, the background whine - similar to the one used in The Social Network - working brilliantly to sustain and build this tension. A selection of The Smiths tunes then dryly balances out the intensity with a human element (I would have liked to hear a bit more of the songs though).\n\nSecondly, the plot. Now usually a simplistic plot would indicate that you are watching a movie about a character, which in this case you very much are. We get inside the Killer's head through a seemingly neverending monologue comprised of gloomy observations and weetbix dry humour, which works well to keep the character human. These monologue are made all the more tantalising by Fassbenders voice, one of those voices you could listen all day to. Apart from this, Fassbenders acting is superb in creating the Killer's dull, sometimes seemingly lifeless role (double kudos to Fassbender for not blinking until the very last scene).\n\nSo, if the character is acted and build superbly, why not 5 stars? The thing is, Fincher here is a victim of his own style. The Killer is an excellently realistic hitman, but the fact the he has no feeling, no emotion - well, I don't really care about him that much. And so, why should I care about his quaint little murder spree? In answer to my own question, what I do care about is everything around the Killer - the monologues, the suspense, the aliases he uses, the hitman tips and tricks he employs, the constant dumping of possensions, the cultural references, the Smith songs.\n\nThe Killer feels so different from all tylical Hollywood filmography - you won't find mindless action here (okay, maybe a little bit) - and because of this I love it. Instead, what Fincher has created is a cold, hard slice of reality, or at least what reality would be.\n\nAnd just remember if you're ever being chased for accidently killing the wrong guy: WWJWBD"},{"slug":"tenet-2020","title":"Tenet","director":"Christopher Nolan","year":2020,"half":8,"review":"Tenet is the most Christopher Nolan-esq movie you will ever see. While Time is an underlying belief in most of his film, in Tenet, Time is the primary underlying mechanism. Most of the time, time travel in a movie is a bit of a red flag - I don't know if I've ever seen an top notch movie with time travel. Tenet however does not use time travel; instead, reversed entropy, which causes object to run backwards in time. Like most of Nolan's science fiction, it's based on a very solid scientific foundation (In Feynman diagrams anti-particles actually do move backwards in time).\n\nThe plot of the movie runs almost along Bond lines - a sinister villain threatens to destroy the world, and the protagonist must stop this from happening. And yes, the protagonist in this movie is only known throughout the movie as The Protagonist. Personally, I like this as an idea because it suggests on a postmodern level that the protagonist could be anyone, that this is just a story and the protagonist is expected to fulfil his role and remove the antagonists (yeah, bad guys are also referred to as antagonists as well).\n\nWhat makes Tenet so different is the use of this reverse entropy mechanism is a variety of contexts, and man does it look sick. From people moving backwards in time to fight scenes, car chases and battle scenes. What makes it even better is that you are able to see two sides of the exact same scene: one from the perspective of the Protagonist moving forward in time, and another from the Protagonist moving backwards in time.\n\nUnfortunately this insane visual masterpiece comes at a cost. There is minimal emotion depth - some sob story about a child we never see doesn't really cut it. Contruction of character depth is traded instead for exposition, although the exposition of this particular movie is comparably pretty interesting.\n\nSome people seem to think the plot of Tenet is too complex and doesn't resolve itself. Personally, I very much disagree. A first watch may leave you confused plot-wise, but very much satisfied in terms of visual entertainment. A second watch allows for a greater understanding of plot and the mechanism at play. While some may think that a movie should be able to be fully appreciated on its first watch, I consider this level of depth refreshingly uncharacteristic of Hollywood movies, which seem to consider the average viewer to be of below-average intelligence.\n\nOther than this, dialogue is razor sharp, and the score is bold but superb. Because the soundtrack sometimes drowns out dialogue, subtitles are very recommended - a small price to pay for a much greater viewing experience."},{"slug":"a-quiet-place-2018","title":"A Quiet Place","director":"John Krasinski","year":2018,"half":8,"review":"Man, this movie is stressful. From start to finish, there is a masterful, terrible tension, the kind that can only be produced by the protagonist being a sneeze away from dying at any given moment. It is also, maybe, because of this, a completely unique movie in both vision and execution. For one, the premise is perfect for cinema - a family must survive in a world where savage aliens kill anything that makes a sound. And so you as the audience don't dare to make a peep; even hearing sounds within the movie gives you anxiety, except for the fact that because this."},{"slug":"logan-lucky-2017","title":"Logan Lucky","director":"Steven Soderbergh","year":2017,"half":8,"review":"8/10 - Worth Rewatching\n\nLogan Lucky is a hillbilly comedy crime caper, and man does it pull it off. It is also one of the most of beat movies I've watched in a very long time. The timing of sequences, the direction of conversation, the visual and spoken gags, even the very characters and plot itself - it is all just a bit unexpected, all handled a bit differently from how you thought it was going to be presented.\n\nAll this works very heavily in the films favor, both by making some genuinely funny moments, and also by differentiating itself from the typical Hollywood cutting and pasting. Admittedly, some ideas may have been borrowed, but the way it is presented more than makes up for it. Logan Lucky is a film which takes itself seriously just enough to make completely surreal scenes somehow perfectly possible. At the back of your mind you know that it's ridiculous, but while you're watching you can't help but see that maybe this could actually happen. The plot itself is as intricate as a watch, and upon first inspection has contains no obvious imperfections. And yet for all its gags, plot points and off-beat quirkiness, Logan Lucky has real heart. It's a story about a West Virginian father, brother and ex-husband, who's fallen on a rough patch but has a plan to make a few bucks.\n\nThere is another movie this could have been where he doesn't show up to his daughter's pageant, but doing so shows that this isn't a movie about criminals, but just ordinary people."},{"slug":"the-founder-2016","title":"The Founder","director":"John Lee Hancock","year":2016,"half":8,"review":"The Founder Some movies make you think, other movies make you feel. The Founder makes you feel. At first you feel pity for Richard Kroc - a 50 something mixer salesman, who we learn has been hustling and and pitching for a very long time. So, when he discovered McDonald's, a revolutionary new restaurant, he wants in. Here we feel hope that things will take a turn for the better. But the movie ain't over yet. By its conclusion Richard has bullied, estorted, stole and cheated his way to the global success McDonalds becomes, and all we are left feeling in pure disgust, horror and a very different kind of pity. To achieve These shifts are in large part due to some truly phenomenal acting. Alongside our main characters are the two brothers he stole the original idea from, who play such wholesome yet defiant individuals, starkly watching their idea get plundered without being able to lift a finger in defence. It helps also to have a strong script, which though starting slowly initially due to some exposition dumps, picks up pace as it progresses. All this is framed by a cheerfully, if slightly melancholic score, which at first works well, and then progresses as the story turns to create a great underlying dissonance. As a film great stuff."},{"slug":"the-man-from-u-n-c-l-e-2015","title":"The Man from U.N.C.L.E.","director":"Guy Ritchie","year":2015,"half":8,"review":"The man from UNCLE is a slightly unbelievable cold war spy movie. But what makes it so compelling and so unorthodox is its swagger. While all spy movies carry this to an extent, The Man from UNCLE, takes it even further through the use of on-the-nose scenes, such that would never appear in active spy flick but are happily at home here. This is true for dialogue, for cinematography, for soundtrack. It's a stylish, cool yet amusing vibe, similar to Oceans franchise but of its own specific and entertaining variety. Watch this movie for the joy of each moment, not for a perfect plot or realism. This is where it triumphs."},{"slug":"edge-of-tomorrow-2014","title":"Edge of Tomorrow","director":"Doug Liman","year":2014,"half":8,"review":"Edge of Tomorrow\n\nThis sci-fi action blockbuster is the perfect marriage of strong cinematic and strong entertainment value. A riff on groundhog day with an alien invasion, Edge of Tomorrow at times feels almost like a computer game - Fight, die, then restart until you reach the next level. But by grounding the plot in real the main character, Cruise, there is a much stronger connection. Even better, this character has admirably pushed out the arc of character development, which is generally more and more scant from the silver screen. To slowly see a man transition\n\nfor from an arrogant naive narcissist to an infused soldier to a battle-hardened store is as absorbing as what actually happens onscreen.\n\nThere are admitted a few beats in the third act which feel a little forced, especially plot wise, but a good job is done bringing it all together.\n\nAside from this, the other highlight of this film is the pure wizardry of the visual effects. The also aliens being battled back awesome; the action sequences are all awesome; even the human soldier look awesome.\n\nOther than looking awesome, this importantly as also adds to the dispension suspension of disbelief for the story itself. Just an epic film."},{"slug":"the-incredibles-2004","title":"The Incredibles","director":"Brad Bird","year":2004,"half":8,"review":"Incredibles is a surprisingly watchable film, even, if not more so, as an adult. Incredibles could have very easily followed a classic (a.k.a cliché) superhero arc – maybe a origin story, or a redemption story, packaged up for a child audience. Instead, the team at Pixar cooked up a completely new take on the genre, subverting almost every element, complete with undertones of postmodernist and borderline to satire. One of my favorite times of the movie, Frozone is ranting a battle with an enemy… \"And then he starts monologing!\"\n\nWithin the first few scenes the movie is making fun of the superhero tropes, everything from people who don't need saving to property damages from their acts. And yet this then works as a stellar premise for the substance of the movie itself. Just to be clear, all this is before the butthood of Marvel and DC junk to come. Even the soundtrack is subversive and innovative, both with lively big band and jazz themes replacing the typical orchestral arrangement. Though the animation graphics are a little dirty at times (though even this was an innovation for its time), the writing, voice acting, score and plot all vastly make up for it, working together to create one of the best kids' movies out there."},{"slug":"oceans-eleven-2001","title":"Ocean's Eleven","director":"Steven Soderbergh","year":2001,"half":8,"review":"Oceans Eleven is the ultimate heist movie. It is a superb, superbly executed piece of cinema, in every way designed to entertain. Forget high art films, films designed to make you think, to feel - Oceans Eleven just wants you to kick back and enjoy the ride. By all accounts this could have been another trashy heist flick, but it is demonstrably not. I'd say yes, the tried and true formula was used, but the supreme execution forgives any cliché. What rises Oceans Eleven to the top is for its script - stacked full of zingers and witty verbal repartee - and its star power - stacked full of magnetic personalities which bring a subtly and personality to every scene. Clooney of course is the key factor here, but by packing such a cast there is brought a diversity and chemistry rare to films as a whole. The soundtrack is smooth, fits the vibe. Everything about this movie is smooth. Even the plot, a beast of false plays, twists and turns, is handled and presented with ease. Cinematically it is something of a magic trick, even upon rewatching. Most of all, it is so ingenious, or at least presented to be so, that it is completely believable. I'm sure there might be plot holes, but I'm too caught up in the trick that I honestly don't care."},{"slug":"wake-up-dead-man-a-knives-out-mystery-2025","title":"Wake Up Dead Man: A Knives Out Mystery","director":"Rian Johnson","year":2025,"half":7,"review":"This third installment of mysteries tackled by Detective Benor Blank has the tightest mystery yet, but perhaps the least entainment because factor.\n\nI don't mean to say it isn't engaging because it definitely is. But the spark of whimsy is greatly diminished. The mystery here is everything, and it finally nails what the very best achieve, that moment of the reveal when you are not just shocked, but you kick yourself for how obvious the answer was.\n\nJosh O'lamor as the lead man here slaps. An ensemble cast, as always. A stoptimist religious subtext adds idan. Solid stuff."},{"slug":"trap-2024","title":"Trap","director":"M. Night Shyamalan","year":2024,"half":7,"review":"Trap takes a mildly interesting concept and provides some good solid entertainment. Nothing too fancy, nothing too flashy, just some a pop-worthy movie.\n\nThis: The concept: what if a serial killer was caught in a trap at a concert? The twist is that you find yourself rooting for the serial killer. This is no mastermind, mind you. It's only by pure bad luck that he is able to maneuver through the trap, but that doesn't stop it from being made of pure, concentrated suspense. Violence is barely even present in this movie, but though the expectation of violence certainly is. Hitchcock would d proud (there's another homage I won't mention due to spoils). Sure, there were a few small let-downs and a few plot points which weren't fully fleshed out. But that didn't detract that much from the fun. The main character's performance was the key contributor in that respect. Initially I was convinced I was looking at the next Razzie winner - the conversation felt so forced and awkward as a stereotypical uncool Dad. But as the more progressed, the more I began to see the deliberateness, and thereby its brilliance.\n\nWell worth a watch, Trap has all the trappings of a pre-perfect Friday Night Flick."},{"slug":"mission-impossible-dead-reckoning-part-one-2023","title":"Mission: Impossible – Dead Reckoning Part One","director":"Christopher McQuarrie","year":2023,"half":7,"review":"After numerous interpretations the Mission Impossible franchise has settled into a comfortable iteration, and not a moment too soon, with this installment being the first part of the franchise conclusion. The general formula of these movies are all the same, and the last few in particular have focused doubled down on pure, unadulterated action. There is enough plotting to keep us engaged, but all know in our heart of hearts that the direction of the plot is at the whims of the creative direction of the action. They want a fight on top a moving train? - make an exchange happen there. Want a climb out of a dangling carriage? - plant a bomb. I'm not critiquing this aspect, just noting where the beats of a scene lean, and in this I respect the more delivers. Other previous installments admittedly provided more complete packages, but as a film it does what it set out to do, both to set up the sequel and provide three hours worth of visual engagement. A broadened cast of characters also adds the appeal of novelty, with old favourites also returning to help Tom Cruise, I mean Ethan Hunt, save the world as usual. Themes of AI dystopianism and proclaimed behaviourism as are tho attached on but not explored in any great detail. In the end though we'd rather see Tom Cruise running."},{"slug":"jojo-rabbit-2019","title":"Jojo Rabbit","director":"Taika Waititi","year":2019,"half":7,"review":"Jojo Rabbit is a small firecracker of a film. It's no blockbuster, not work of art, but decidedly a very strong film. This is a film which cracks a genre few can execute without falling into parody – that of the satire. To use dark comedy as an instrument of social commentary is a difficult trick, let alone on the subject of Nazism and anti-Semitism. To make it work, the stroke of brilliance in Jojo Rabbit is to enter Nazi Germany through the mind of a 10 year old, but enrobed in a world of pure naiveté. Having Hitler as his imaginary friend worked a treat, and there are an impressive number of chucklable moments scattered throughout (the excessive fleeting being and the 'German Shepards' bring two solid examples). And yet this film still has a serious story to tell. This is in stark contrast to most American comedies, where absurd situations are all just a part of an absurd story. Jojo Rabbit is going for something deeper here - and while it does achieve, I can't help but wonder if it couldn't have pushed the boundaries a little further. Script, acting, cinematography, story - all of this was undeniably good, even great, but I think just a little way off perfect. Even so, this is a film which is far more original than most Hollywood outputs."},{"slug":"the-lego-batman-movie-2017","title":"The Lego Batman Movie","director":"Chris McKay","year":2017,"half":7,"review":"The Lego Batman Movie has no right being as funny as it is for a Lego-based spin of a endlessly reinvented superhero, but it. And yet somehow it is because of this that it is made all the funnier, not in spite of it. Lego animation is far almost imbuilt with whimsy, while the Batman franchise makes for some fat hilarious references. Without watching this film you might expect some sort of action-adventure – instead we are given is the definition of a rom-com. The 'romance' in question is that of the more of a relationship between arch-enemies, that of Batman and The Joker. An while all the laughs are there, all the feels are there as well. Don't ask me how, but by the third act I felt as if I'd been on an emotional rollercoaster. The Lego Batman Movie is a movie which aims to subvert expectations, and in doing so has managed to produce one of the best animations of the 2010s (a decade sorely suffering under the shadow of the Pixar golden era).\n\nThe writer ALL credit goes to the writer for this-absolute zingers abounded abound, not to mention strong pacing, a decent plot and developed characters. The Lego Batman movie is worth a watch."},{"slug":"10-cloverfield-lane-2016","title":"10 Cloverfield Lane","director":"Dan Trachtenberg","year":2016,"half":7,"review":"This film is a showcase in tension and suspense, as befitting a true psychological thriller. Every step of the way keeps you guessing, deepening the elements of horror, and making the action to be far more powerful and effective. The plot follows a woman in a car crash who is taken to an underground bunker by a doomsday prepper who says it's unsafe to leave the bunker. Every moment awards introduces information and clues which make the audience question everything they think they know. Impressively, almost the entire movie was shot in one setting, with just three actors, and yet it is better than most thrillers."},{"slug":"hunt-for-the-wilderpeople-2016","title":"Hunt for the Wilderpeople","director":"Taika Waititi","year":2016,"half":7,"review":"8/10 - Worth Rewatching\n\nHunt for the Wilderpeople is an oddity, a curiosity, and a wondrous kiwi coming of age which defies what you may have been expecting from it.\n\nRicky Baker is a character labelled a bad egg, and is relocated to a new home. One thing leads to another, and before you know it Ricky is on the run with his new surrogate father. These two characters play off each other, effortlessly, made all the more entertaining by how different they are.\n\nThis movie is part off beat comedy, part fugitive on the run, part coming of age, though not in the ways you might imagine. At times it is reflective, but most of the time it is sharp dialogue, montages to old classics and breathtaking snapshots of the New Zealand wilderness.\n\nAt times the movie's pacing from stagnating in places where other movies would. But I admit its occasional digressions, Hunt for the Wilderpeople remains cruising, not to slow, but not to fast that you can't pause and enjoy your surroundings.\n\nThe plot, if you could even call it that, is split into 10 chapters, which work well to postmark the different sections within the movie. Where this movie excells also is it's cinematography. Taika Waititi knows he is dealing with a beautiful environment.\n\nHunt for the Wilderpeople was never going to be a groundbreaking epic, but in it's own way it is undeniably a classic, a homely story beautifully told. What more can you ask for?"},{"slug":"steve-jobs-2015","title":"Steve Jobs","director":"Danny Boyle","year":2015,"half":7,"review":"So much to appreciate here. But first of all, this is not so much a biopic as a drama, instead of an entire of Steve Jobs' life, this film aims to provide an artime of Steve Jobs' character. This is achieved by following Steve backstage for three of his product launches - yes that's right; only three settings for the entire movie, which essentially form from in 3 acts.\n\nWhat carries this good film and allows it to cleanly pull off such a structure is its Sorkin's scripts. The words coming out of a character's mouth are spitfire and superb. And they have to be - words like these. provide just as much action as any blockbuster. More could be said on the script, but it speaks for itself. What makes it even more effective the one is a forceful, staggering performance from Fassbender, alongside a slew of supporting cast members. Additionally, the cinematography is highly, highly innovative, at times like nothing else I've ever really seen onscreen.\n\nEssentially what is being verbalised is also at times being visualised; on a wall, in a flashback. Put this in tandem with a bit of moving perspective walk and takes and what could have been a very dry movie moves along at a rip-roaring pace."},{"slug":"penguins-of-madagascar-2014","title":"Penguins of Madagascar","director":"Eric Darnell & Simon J. Smith","year":2014,"half":7,"review":"This animation is a joy to watch. The script is filled to the brim with witticisms, whether puns, references or one-liners. This humour is then expressed in glossy, detail rich visuals, stylised to great effect. There is nothing groundbreaking going on here, but this is one of maybe half a dozen animations so rich in humour that is can be enjoyed equally as an adult or a child. It is a rare thing. The focus is solely and completely on entertainment, whether from moment to moment or from scene to scene. Mission accomplished."},{"slug":"haywire-2011","title":"Haywire","director":"Steven Soderbergh","year":2011,"half":7,"review":"This martial-arts thriller is all style, no substance – but who needs substance anyway? For me it is enough to enjoy brutally, chess choreographed fight scenes, immersive, and interesting cinematography and a smooth jazzy soundtrack behind it all.\n\nTo be fair, there is enough of a plot to keep the film together, but the focus isn’t on the plot in the first place. An impeccable ensemble cast adds to the charm, allowing an unknown leading lady to shine.\n\nSoderberg’s fingerprints are all evident in the best way possible; what he’s given us is almost an art-house thriller, a take on the genre which is engaging as it is enjoyable."},{"slug":"oceans-thirteen-2007","title":"Ocean's Thirteen","director":"Steven Soderbergh","year":2007,"half":7,"review":"Oceans Thirteen is another triumph, in smooth, down-to-earth, effortless filmmaking, a unique flavor which is specific to the Oceans franchise. Again Soderbergh does well not to fall into the trap of just another heist - this is a revenge job first and foremost, but with enough many parts as to be just as engaging. The all dynamic chemistry between this cast is familiar to us now, so it's refreshing to see some development here. And as always, Pitt and Clooney shine, their very presence drawing you in every scene they are present. Admirably, the human continues as well - the worth Mexican worker revolution sequence has is comedic gold. Overall a strong conclusion to an outstanding franchise."},{"slug":"casino-royale-2006","title":"Casino Royale","director":"Martin Campbell","year":2006,"half":7,"review":"Premium entertainment. Action, romance, spies, villains, poker... what more could you ask for? Well for one, one of the best opening sequences in cinema. And for another, one of the most disturbing and also one of the most hilarious torture scenes you will ever witness. Love Casino Royale just hits all the right beats; the dialogue drives witty without being cringy, the action captivating without being created for the characters, likeable without being flawed. This is a James Bond flick as it should be; most importantly, indivualness without being unbelievable. Though cinematically nothing groundbreaking it's more than makes up in entertainment value."},{"slug":"madagascar-2005","title":"Madagascar","director":"Eric Darnell & Tom McGrath","year":2005,"half":7,"review":"A childhood classic which remains as funny and entertaining as the first time I watched it. The characters are unique, the plot original, but what really makes this movie is its script. Each line is quotable to the extreme, at once equally both iconic and funny. And funny this is most definitely. From references, to raunchy statements, to even the voices of each character (Ben Stiller here is excellent), the scene is brimming with charm. As for movies, it doesn't get more iconic than King Julian & the penguins, let alone \"oh, sugar honey iced tea\" or \"all that, the giant pansies\". Without a doubt one of the top animations ever to be created."},{"slug":"oceans-twelve-2004","title":"Ocean's Twelve","director":"Steven Soderbergh","year":2004,"half":7,"review":"Oceans Twelve does what Oceans Eleven did, but pulls it off in a marginally lower way. The only real let down here is the plot convenience, though, ironically, what seem like plot conveniences are planned acts; it's just their seeming spontaneity bespeaks their integrity. Either way, despite this, the film itself is a blast - it's only really afterwards that you begin to question. But what you don't question is magnificent casting, acting, scoring and, not of all, scripting. What could have been a fairly thoughtless follow up is instead brimming with character and energy renewed, adding in elements of reinventing familiar beats into fresh takes."},{"slug":"primer-2004","title":"Primer","director":"Shane Carruth","year":2004,"half":7,"review":"Primer is an indie, $7000 film about time travel, presented in a visceral and mindbending form. Even in The dialogue and action scene, presentation is like an overheard conversation as the happening of progress from mundane to extraordinary.\n\nThis is a movie not for the faint hearted in the sense that at some point in the third act you will have no earthly idea what is going on. Paradoxes, causality and consequences are all explored, without a single hint of cliché. Virtually non-existent exposition leaves you figuring things out as they go along. And yet in spite of this I can only describe myself as captured in the buzz of each moment as it unfolds."},{"slug":"the-terminal-2004","title":"The Terminal","director":"Steven Spielberg","year":2004,"half":7,"review":"\"We're all waiting for something.\"\n\nSubtety is rare in Hollywood. Not so in The Terminal. The Terminal follows Viktor Navorski (Tom Hanks), who becomes stuck in a New York airport terminal after his country, Krakozhia ceases to exist following a coup. There is not much of a plot, but that's because there doesn't need to be one; instead, The Terminal tells a story, and all we as the audience want to know is what happens next.\n\nAlthough Steven Spielberg can undoubtably deliver massive blockbusters, what he has done here feels like a much smaller, much more relatable piece of work. Almost all of us have spent some time at an airport, and even that in itself allows us to empath with Viktor's unfortunate predicament.\n\n\"What can I do?\" \"There's only one thing you can do here Viktor... Shop\"\n\nThere are genuinely funny moments scattered generously throughout, and what makes them all the better is that they just don't seem forced. Tom Hanks works effortlessly in this role, somehow perfectly capturing the naivë and confusion of a foreigner surrounded by the beauracracy of American border security. He also employs a thick accent (Bulgarian?) which somehow doesn't come off as ridiculous or unnatural. Honestly, he's just too good.\n\nHank's naivë is complemented by Frank Dixon (Stanley Tucci), the head officer of customs and the one who has to figure out what to do with Viktor. Various methods are employed by Dixon to get rid of him, but Viktor's naivë, luck, or nature means that he doesn't bite, so, for now, he stays. As the movie progresses, a love interest and a gradual unpacking of why Viktor is in New York in the first place both add to the story, all culminating in a sentimental but somewhat ambiguous conclusion. Overall, the Terminal is quaint, light and just generally enjoyable."},{"slug":"matchstick-men-2003","title":"Matchstick Men","director":"Ridley Scott","year":2003,"half":7,"review":"In film there are twists and then there are twists. The first are only ones you see from a mile away, the ones poorly designed and something sometimes barely thought out. The second are the ones which you missed but realize are completely obvious once you know. More importantly, it's this kind of twist in which you must re-evaluate everything single frame of the entire ware. Matchstick Men has a twist of the latter. The plot follows a con man and his neurotic partner band try to on a big job. Meanwhile, Mr. con man finds himself with a teenage daughter who he's only just must meeting for the very first time.\n\nThe Nick Cage plays the protagonist, and does a superb job at bringing art the emotions, the neurosis and the humanity from his complex, and yet oftentimes so very simple character. What this film does – better than many of its compatriots – is provide exposition through implication. Not a word of dialogue is directed to the protagonist’s neurosis, or him and his partners’ history, even what they do. Instead, the words which are spoken tell much; also of Cage's acting speaks from itself in terms of what his character is thinking or feeling.\n\nThis is no groundbreaking exposé of a film, nor is it some grand, crime thriller – this is actually a small, somewhat quiet film – but damn is it done well."},{"slug":"runaway-jury-2003","title":"Runaway Jury","director":"Gary Fleder","year":2003,"half":7,"review":"Runaway Jury is a brilliant cat and mouse legal thriller. Framed against the gun industry, the focus is not so much on the case itself but the dynamics of the jury and those looking to manipulate them. Even outside of the execution of the movie, just ever the simple idea of jury-fixing in the first place was a fascinating topic in and of itself. But to layer in the dynamics of both sides of the courtroom, not to mention the jurors themselves, makes for a irresistibly compelling watch. At its most core level, Runaway Jury is a more chess game of a movie, with moves and contemaves. The court is really just the board they're playing on. And man is it fun to watch. A surprisingly large cast make the game feel all the bigger, while some outstanding performances ground the plot in rock solid stakes. There are some subtle details in these performances which sell the characters even more; little inflections in tone or tweaks in expression which go that much further in selling the story. The score is spare, with the focus primarily on the dialogue turning the gears of the story plot forward. On a meta level, the manipulations of different characters are also manipulating us at the audience."},{"slug":"the-italian-job-2003","title":"The Italian Job","director":"F. Gary Gray","year":2003,"half":7,"review":"A classic heist movie. Nothing more, nothing less.\n\nFrom the very beginning the audience is instantly captured by the action-packed initial heist. A betrayal from one of the members then sets up the premise for the rest of the movie. Although following a fairly cliché format - scope out target, prepare for heist, something goes wrong in the execution of the heist, a hidden factor gets the job done - The Italian Job nevertheless does it very well.\n\nUnfortunately, like many heist movies, just a little bit too much relies on unrealistic hacking and technology; in this instance, the manipulation of every traffic light in the whole of LA. However, what was done well was the opening of the vault - as in a typical heist movie, one member of the team is the safecracker, but in this instance, by making that particular member's occupation be a 'security and vault specialist', this suddenly becomes a bit more feasible.\n\nActing was fine; characters were all likable enough - my only gripe here was that the main mastermind, Charlie Crocker (played by Mark Wahlberg), was smooth without being that likable... if I'm being perfectly honest, kind of boring. On the other hand, Steve (played by Edward Norton) was utterly excellent, being totally annoying and hate-able in the best way possible.\n\nBecause The Italian Job follows somewhat of a cliché, there really isn't much to the depth of the plot. Though its integrity is sound enough, it is in a word just a bit... basic? In the end though, this doesn't matter too much; the action throughout keeps the pace nicely and overall makes for highly entertaining viewing."},{"slug":"a-beautiful-mind-2001","title":"A Beautiful Mind","director":"Ron Howard","year":2001,"half":7,"review":"7/10 - Worth Watching\n\nAs a story, A Beautiful Mind is a effective exemplar of the plot twist. Rather than positioning the plot twist at the very end, in this instance it is located in the very middle.\n\nLike any good plot twists it turns the entire story on its head, leaving you dumbfounded, surprised and amazed. Additionally, the twist also lends itself very nicely to rewatchability. However, by having a plot twist not only as a payoff at the end, the audience is then invited to explored the aftermath.\n\nThe pacing of A Beautiful Mind never misses a beat - numerous jumps forward in time keep the plot moving along nicely, though one could argue that the price of this is that each stage isn't explored in much depth.\n\nA star-studded cast helps considerably as well, lead by Russell Crowe in the titular role.\n\nThe role is undeniably an overt one, but Crowe does well to tease out its subtleties. The nature of the story thematically meant that moments and stretches of the film were basically a bit depressive, but the resolution does well to uplift the character and his heart-wrenching story.\n\nIf anything I think it could have been dwelt on a little further, as well as what else he actually accomplished, but in the end this was not a story devoted to his accomplishments nor even his mind! This is a story devoted to a man's heart, to overcome the obstacles before him and eventually become at peace with himself and the world."},{"slug":"mission-impossible-the-final-reckoning-2025","title":"Mission: Impossible – The Final Reckoning","director":"Christopher McQuarrie","year":2025,"half":6,"review":"As the name suggests, this is the supposed last installment of the Mission Impossible franchise, and the second part to the previous movie film. The first act plays out like best- of Hunt's exploits, at once both reminiscent and pseudo-inspiration.\n\nBut there's not enough time to dwell on this; after a few more exposition dumps just to solidify the fact that the stakes are higher than ever, we launch into the action we have come to expect. The second act is a protracted sequence of pure suspense pressure, from the high stakes, the stress of individuals, the ticking time limit, the mass of water on a body.\n\nAll that is to say that I was left gasping for air by the time that tension was released. Coming then to the third act, we are presented with action at its finest. At its heart action is a visual spectacle, not just mindless violence, if that at all. Stuntwork, one of two cruises specialties, is equally as entertaining and action-packed as any hand-to-hand code combat. Then, in its characteristic right-on-time conclusion, we are given a deeply cathartic send off. Certain plot elements in the aftermath are glossed over, nigh deus ex machina, the but the story is rounded out so nicely it doesn't quick matter too much."},{"slug":"conclave-2024","title":"Conclave","director":"Edward Berger","year":2024,"half":6,"review":"Conclave is an outstanding work of both aesthetic and thematical brilliance. The film follows the subtly tense drama of a conclave following after the pope's death to select a new one. Ambiguity is the primary mechanism that makes what could have been a good more truly great.\n\nThe no backgrounds of all the key players begin obscured, even the time circumstances of the old pope's passing. This creates an atmosphere of instant intrigue, which is also assisted by a score straight out of an old school high murder mystery (the thought of such a plot reveal did cross my mind). Ambiguity also marks the film's conclusion, which while initially doesn't hit as hard, upon reflection reveals depth and further plot points which resolve nicely. Nothing in corelse is ever really said explicitly - it is up to the audience much of the time to read between the lines. As they do they will be greatly rewarded. In addition to the dramatic and thematic interplay which makes up the rest of the mare, how that meat is presented is outstanding. Purely from a cinematography point of view lovelove is a triumph. Shot framing not only looks & acts as a visual feast, but also works to set the tone of scenes. lovelove is an undeniable (if somewhat subtle) ripper of a film"},{"slug":"roman-j-israel-esq-2017","title":"Roman J. Israel, Esq.","director":"Dan Gilroy","year":2017,"half":6,"review":"I remain on the fence with this one. Roman J. Israel, Esq. is a rags to riches adjacent story, complete with moral quandries, a sort of awe interest, the and The Meaning of everything. The plot follows the journey and moral arc of a legal savant (you know this because they tell you; also, he apparently knows every legal story documentation ever written) after the demise of his public facing partner. As you may guess, subtlety is minimal. The trouble is, it's as if this film doesn't know what it's trying to say. Though Denzel Washingtons role as the bill titular character is fantastic, the true direction is unclear. It's hard trying to face as a true story when you've got nothing to base it on."},{"slug":"hail-caesar-2016","title":"Hail, Caesar!","director":"Joel & Ethan Coen","year":2016,"half":6,"review":"Hail Caesar relies not on plot, character or any other traditional driver of more, but pure what seems to be pure momentum. The film is fundamentally a tone comedy/satire, and genuinely hilarious scenes abound. Conceptually Hail Caesar follows a Hollywood \"fixer\", someone the person who covers up or resolves the misdeeds of movie stars to maintain the reputation of the studio. A day in the life involves dealing with a husbandless pregnancy, an immoral lead and a kidnapped lead.\n\nThroughout the playing out of these scenarios, we also get snippets of the fictional films they are in, providing an interesting insight into 1940s cinema. Trippingly, the cast of these fictional films are all famous actors in reality, blurring the line between where Hail, Caesar the movie starts and Hail, Caesar the movie within the movie ends. On the casting, such an ensemble would be enough to convince us that half of Hollywood was present, but what makes the casting even better is how well they have each been used: George Clooney as a dumb but charismatic lead man, Scarlett Johansen as a whiny karen, Jonah Hill as a quiet 'person'. Much of the human are actually visual gags, though decent writing helps as well.\n\nThrough such ingredients, mixed with zippy pacing, the momentum pushes this movie from start to finish."},{"slug":"the-imitation-game-2014","title":"The Imitation Game","director":"Morten Tyldum","year":2014,"half":6,"review":"The Imitation Game is a seriously well made biographical drama chronicling the efforts of Alan Turing in World War 2 trying to break Germany's enigma code.\n\nThe tortured, arrogant, lonely genius motif comes into its own, and with what could have been (and is) a very predictable plot, this film could very easily have slipped into mediocrity. However, the Imitation Game rises to borderline luminescence; this is achieved through nested framing of the events as they appear, rich tracking of drama from the sheer lucidity and intrigue of these events, and a deep exploration of character, which is only aided by a masterful performance From Benedict Cumberbach. In retrospect, its predictability adds some sting, simply from the fact that you know at some point they will crack the code and that will be that. There was one point where a shady MI6 entered the story and I could help but think a little film focused on his story would be more interesting. This is a serious film with serious themes, with not a single frame of cinematic indulgence. All the action that happens is in the dialogue, which is fairly crackling, out of necessity more than anything else. The Imitation Game is a strong film."},{"slug":"safe-house-2012","title":"Safe House","director":"Daniel Espinosa","year":2012,"half":6,"review":"Safehouse is an amazing spy thriller, the kind with a convoluted plot involving government secrets and characters everyone is after, including the government, because they hold possession of the aforementioned secrets. Now these movies are fine in and of themselves - Denzel and Ryan Reynolds make for great leads, and there are a handful of good moment scattered in there - but what kills this one is the so-so cinematography.\n\nMore specificially, the kind which opts to shoot the action sequences with a shaky camera. Uh. Unfortunately flickers of greatness and stretches of watchability don't make up for these fundamental flaws (not to mention a truly un-engaging conclusion)."},{"slug":"quantum-of-solace-2008","title":"Quantum of Solace","director":"Marc Forster","year":2008,"half":6,"review":"The second Bond installment starring Daniel Craig. Quantum of Solace peers a little deeper into the characters psyche, teasing out a little further the depth of this strange and enigmatic character. The main plot is passable, weighed down by a somewhat superfluous secondary plot attached to a somewhat superfluous supporting character. The same tight dialogue and generous action sequences keep things moving nicely, but you wander sometimes at the direction of the plot; it's not quite aimless, just a little confused. Part of this is in presenting two villains - one, a CEO with nefarious plans for a third-world nation, the other, a petty dictator of sand third-world nation. The villains' plans both are inexplicable. No matter. Bond's suaveness will always save the day."},{"slug":"starsky-and-hutch-2004","title":"Starsky & Hutch","director":"Todd Phillips","year":2004,"half":6,"review":"This was a stupid but funny buddy-up comedy. When I say stupid, I mean that in a positive way, the kind which has corny lines, a predictable plot and various idiotic situations; and yet, it's for a buddy-up comedy. I wouldn't have it any other way. See, the purpose of movies is to engage its audience - the way a comedy does this is by making people laugh.\n\nThough stupid, this movie made me not only grin and chuckle, it made me laugh, so in my books, it is a successful comedy. By no means a cinematic tour de force, Starsky and Hutch is nevertheless a comedic riot."},{"slug":"bandits-2001","title":"Bandits","director":"Barry Levinson","year":2001,"half":6,"review":"Bandits is a off-beat heist flick, with strong elements of comedy and romance to boot. The story is told framed as if through a true crime special, which itself is framed through extended flashbacks.\n\nTwo bank robbers escape from prison and go on a series of bank robberies; one, a smooth confidence man, the other a neurotic, but schemer medically obsessed schemer.\n\nThe comedy comes from their sleeper kidnapping of the bank manager, or, in one notable case, a random woman who stays with them. Suffice to say, the heist parts are terrific (notably the beginning and end) but the romance kinda boring (second act)."},{"slug":"all-the-presidents-men-1976","title":"All the President's Men","director":"Alan J. Pakula","year":1976,"half":6,"review":"\"How have you gone with getting in?\" \"We haven't had any luck yet.\" \"Get some.\"\n\nAll The Presidents Men follows two Washington Post reporters - Bob Woodwode and Carl Burnstein - as they investigate and report what we now know as the Watergate affair. What at first seems like a suspicious break in at a government facility, eventually escalates into a wide scale political conspiracy, of rigged elections, bribed officials, hushed up informants and stolen documents... And, it all actually happened.\n\nTo uncover what occured required scores of interviews, telephone calls and good old investigative work. Even when legitimate information was uncovered, all sources refused to go on the record.\n\nUnfortunately, with so many names and shady accusations being thrown around, its fairly difficult to keep track of what's specifically going on, other than a vague direction of Bob and Carl getting closer to a story.\n\nThe score is virtually non-existent, and is only used for brief tense moments... This is a pity. Something like music would have helped to move along the snail speed pace of the investigation. Acting is adequate, with the two main reporters providing just enough star power.\n\nThough a slow slog at times, All The President's Men was undeniably interesting purely by virture of its content. Furthermore, its style has set a strong precedent in investigative journalism movies; most notably, I think of Steven Spielberg's, The Post. If you're interested, give it a watch, but on the whole I'd say its probably not worth it."},{"slug":"the-woman-in-cabin-10-2025","title":"The Woman in Cabin 10","director":"Simon Stone","year":2025,"half":5,"review":"If you're looking for a decent enough thriller-mystery to pass your evening, by all means go for it, but just be prepared for something highly derivative. Unfortunately a strong cast, solid acting and stimulating visuals don't much make up for a tragically cliché plot. And instead of leading into the mystery, the film's attention is instead focused on the thriller aspects, to varying degrees of success. There are a few sequences which embody the paranoia and fear through how they are presented and edited, which was a novel and engaging feature. But fundamentally, it just doesn't do it for me."},{"slug":"gladiator-ii-2024","title":"Gladiator II","director":"Ridley Scott","year":2024,"half":5,"review":"Though a little disjointed in parts, Gladiator 2 still carried the epicness which made the first installment so good in the first place. Large scale battles and intense hand-to-hand combat carry the action, while political power plays and scheming carry the plot. Though this undeniably makes for premium entertainment, the overall focus remains just a little muddled; the cause of which is due to in relying far too much on the first installment. Unneeded flashbacks and callbacks drew away from the drama at hand. On the flip side, truly sublime acting from Denzel Washington kept things interesting, whose character threw thing it all into sharp relief."},{"slug":"operation-fortune-ruse-de-guerre-2023","title":"Operation Fortune: Ruse de Guerre","director":"Guy Ritchie","year":2023,"half":5,"review":"Operation Fortune is all style and no substance - in short, a popcorn pic, full of snarky chatque and even snarkier action sequences. And yet in spite of this there are a few real gems which are able to set themselves apart from the flagrant and rampant use of cliché. The first is Hugh Grant, here a swanky billionaire arms deals, and frankly hilarious. The second is the dispersion of a few really good scenes; the opening scene, the marque finale, the conclusion of the elevator & chase scene. Aside from this, the pacing is also quite impressive; not a single moment is wasted, progressing quickly from the set up to the unfolding of the operation itself. The technical working of this more is up to scratch, it just lacks any real stakes or substance."},{"slug":"just-mercy-2019","title":"Just Mercy","director":"Destin Daniel Cretton","year":2019,"half":5,"review":"Just mercy is a slow burn legal procedural centered around innocent black men on death row in Alabama. The narrative choices and cinematic choices to tell this story are resounding; a character focused approach allows for a far more emotional attachment to the story while a minimalist soundtrack, slow pacing and plentiful close-up shots complement this. What complements it even further is the sheer magnetism of the acting, both of Michael B. Jordan's forcefully-hopeful attorney and even more so Jamie Foxx's death row inmate. As a movie this is good, but as a means of telling this particular story, this is top notch!"},{"slug":"instant-family-2018","title":"Instant Family","director":"Sean Anders","year":2018,"half":5,"review":"This is a comedy-drama about foster families. It's about what you'd expect it to be, with the added bonus of being actually funny. By leaning on a actual realistic representation, we get all the feels, but also all the real laughs as well.\n\nThough it leans a bit more on the drama than it does the comedy, any more which can genuinely make me laugh will be worth watching. And in terms of the drama as well, though there was some inevitable cliché, which was fairly novel. Strong momentum also made two a two hour flick pretty quick. Overall, not nearly as bad as I thought it was going to be."},{"slug":"knowing-2009","title":"Knowing","director":"Alex Proyas","year":2009,"half":5,"review":"Knowing is an admittedly well made Nicholas Cage flick which relies too much on its premise and ultimately fails to deliver on its purport. The premise is superb - a girl accurately predicts 50 years worth of disaster whose predictions are found in a time capsule 50 years later. The last prediction is the end of the world. The exploration of this premise is highly visual and intriguing and entertaining. However, it runs out of steam in the second half, leading to trapping itself in an almost inevitable conclusion. To some, the way lies further meaning, but to me, this remained vague entertainment, neither good nor bad."},{"slug":"get-smart-2008","title":"Get Smart","director":"Peter Segal","year":2008,"half":5,"review":"Though it may have had some mildly funny moments, this action comedy remake of the classic 80s show doesn't try hard enough to be more than exactly that. Fair chunks of this movie you will spend cringing in that awkward, awful way which somehow still pops up consistently in P.G. Hollywood comedies. But in addition this movie earnestly wants to be an action as well, but the obvious is directed, written and staged by people used to comedy (if you could call it that). Absurd situations abound. It just doesn't lean for enough in either direction and suffers because it"},{"slug":"the-great-debaters-2007","title":"The Great Debaters","director":"Denzel Washington","year":2007,"half":5,"review":"The Great Debaters is a surprisingly strong period piece, set in 50s black America, and centered on the story of how a group of black debaters from some backwater college went on to beat Harvard. I'd say spoiler, but from the very beginning you have a pretty good idea on the final outcome. What makes this film stand out from any other sports movie, and the painful cliché of a work based solely on winning or losing, is that the focus is instead on the individuals, enough so that the movie could probably managed to be entertaining even without the debating. And yet, debating ends up being a thoughtful tool in communicating the themes and ideas of the movie. Racism is always rich ground for drama, a fact that is in full force here. This to be clear, this is the raw and deep kind of drama I'm referring to, the kind that is so emotionally charged as to be electric. This is impressively conveyed by three strong minor lead actors, the students, as well as the teacher, Denzel Washington, is played masterfully. Washington also directed, which portraying a simple but brutally effective small town community; though the focus in every frame is on the characters.\n\nThis is a great film - not quite groundbreaking or breathtaking, or mind-bending, but great in a quiet, grounded kind of way."},{"slug":"october-sky-1999","title":"October Sky","director":"Joe Johnston","year":1999,"half":5,"review":"While vaguely interesting and mildly entertaining, October Sky don't have enough substance to make it truly engaging. Four kids in an American coal town build rockets in an attempt to win a science fair – that should tell you anything you need to know about this movie.\n\nAnd as you might guess, the only reason such a movie could possibly exist is because it is based on a true story. If you like that sort of thing, there's a lot to like; otherwise, strap yourself in for a slow, quaint coming-of-age story, never quite entering the stage of what I would call boredom, but getting close."},{"slug":"ronin-1998","title":"Ronin","director":"John Frankenheimer","year":1998,"half":5,"review":"3 stars - Worth Watching\n\nWho needs a plot anyway? This is an action thriller distilled to only the most essential elements: car chases, double-crosses and fatalities. However, that doesn't mean necessarily translate to trashiness. The directing here is surprisingly refined, while a high-calibre all-star cast led by Al Picino makes it all even better. Which brings me back to plot. Cool character in cool places doing cool things will inevitably be entertaining, but won't necessarily engage beyond entertainment. This being true, a mere McGuffin - in the unimaginitive form of a briefcase no less - - will have to suffice for plot."},{"slug":"the-rainmaker-1997","title":"The Rainmaker","director":"Francis Ford Coppola","year":1997,"half":5,"review":"*The Rainmaker* is a legal drama told in an unusually meandering, multifaceted way. Rather than a single driving plot, the film presents a cluster of interrelated struggles faced by a young lawyer entering the profession: financial pressure, ethical dilemmas, corrupt corporate power, and romantic entanglements.\n\nThese threads are not tightly bundled in the conventional way, but unfold as parallel endeavors. While this structure initially feels unfocused, it works in retrospect, allowing character to take precedence over courtroom theatrics. The result is thoughtful rather than explosive, anchored by moral tension rather than spectacle. Also, Danny DeVito appears—for reasons that are never entirely clear."},{"slug":"a-quiet-place-day-one-2024","title":"A Quiet Place: Day One","director":"Michael Sarnoski","year":2024,"half":4,"review":"Alt was done right in this A Quiet Place prequel. Set in NYC, the set-up is the first day of the noise sensitive and vicious creatures landing on Ear Earth. Where this could have been a disastrous cash grab, the story instead opts to introduce a few interesting ideas; the trouble is that they goon't quite excited right.\n\nThe biggest mishap of all was the baggage of to much sentimentality - this is a thriller after all. Maybe this would have landed better if I was able to be invested into the main character more? Technically, the harrowing sense of suspense is still omnipresent, but the impact not quite as effective as the originals-"},{"slug":"juror-2-2024","title":"Juror #2","director":"Clint Eastwood","year":2024,"half":4,"review":"Juno #2 is a fairly basic courtroom drama, with the focus on the titular 2nd Juno, who realises he has a little more to do with the case than he initially realized. This is a small film in presence, filled with common, down-to-earth characters and driven by a run of the plot which could happen to anyone.\n\nAnd while these are all by no means bad qualities in a movie, they do mean in them unremarkable nature that a little more is demanded of from somewhere else. But no; the script and cinematography and acting are all equally as commonplace. This is a well-enough made movie, but unfortunately it lacks enough presence to truly character, in all their raw humanity.\n\nIn fact, humanity is the key underlying thematic driver of this movie, put in contrast with the merciless authority of governmental bodies.\n\nAnd while it is a kind of little guy sticking it to the man, the man isn't so much a bad guy as an overmarked, frustrated little guy himself. The truly admirable thing about this movie is that in its smallness. It's not trying to be a blockbuster or a work of genre. It is not trying to win awards or make money. It is simply trying to entertain, and it does just that."},{"slug":"twisters-2024","title":"Twisters","director":"Lee Isaac Chung","year":2024,"half":4,"review":"Twister, a remake of the 80s disaster film, is pure popcorn entertainment. It's more about tornadoes in Oklahoma set in the 2020s - that just about tells you everything you need to know. Such a movie was never going to have a perfect script or soundtrack, but it may surprise you in having near perfect acting and visual effects. The acting kudos all go to supporting actor Glenn Powell, whose sheer star power carries this film whereas it threatens to stag stagnate. And in terms of visual effects, they've achieved quite a feat in capturing the grandeur of a cloud formation and (obviously).\n\nTornados, each about as realistic as imaginable. The plot, a meandering, light-on affair, is well garded in its stakes. The m is no need to save the world (thank goodness), like every other disaster movie that's ever existed. Instead, just check out our characters and some cool looking tornadoes.\n\nDon't worry, we'll make it mtimes entertaining to watch. This too is handled well- scenes of homelife and succeeded by sequences of genuine terror, which are then framed by dialogue, a then montage.\n\nThough no masterpiece, Twisters achieves what it set out to do."},{"slug":"the-ballad-of-buster-scruggs-2018","title":"The Ballad of Buster Scruggs","director":"Joel & Ethan Coen","year":2018,"half":4,"review":"This movie is presented as an anthology of six stories each set in the wild west. Though each story is unique, they are all tied together by the world and accompanying landscapes, characters and music, as well as a linking of themes and stylistic choices. And yet each plot truly is unique. A comedy driven, singing, rampaging Buster Scruggs begins the anthology, followed by an more subtly quirky, unlucky outlaw. Then we follow a darker story of a limbless man and his chaperone, a ironic, domestic love affair of a tragedy, an unusually resilient prospector and a five way monologue on life. Thus I laughed, I savored, I reflected. What a ride."},{"slug":"going-in-style-2017","title":"Going in Style","director":"Zach Braff","year":2017,"half":4,"review":"5/10 - Not Worth Watching\n\nGoing with Style is a comfort come comedy about three retirees robbing a bank. It is entirely predictable and yet entirely watchable. In this case, a surprising good production, cast and script is paired with a fairly quiet story to create a top-tier comfort film. It doesn't lean too heavily on crime, nor comedy, nor really even drama. But just enough of each makes for a unique category in its own right: the comfort film. By staying in this comfort zone, the most we can hope to gain as an audience is easy, modest entertainment. It don't have to think too hard, I don't have to feel too much - I can just sit back and enjoy the movie."},{"slug":"j-edgar-2011","title":"J. Edgar","director":"Clint Eastwood","year":2011,"half":4,"review":"While on many fronts this was shaping up to be a movie not worth watching, there was a small and subtle twist at the end which just tipped it over the edge. That and an actual interest in the subject matter, J. Edgar Hoover, founder and director of the FBI, infamous for his pioneering of a federal approach to criminal justice as well as fingerprint databases, and infamous for his minor blackmailing of each of the six presidents he worked under. The film goes for a vested narrative, with the elderly Hoover dictating his recollections of the humble beginnings of both himself and the being. Though interesting, there is no real driving force to the narrative. It doesn't quite help matters that as far as cinematography goes things were pretty weak. Most shots where fairly ugly, and the soundtrack followed much of the same.\n\nBut where this movie did shine was in its acting. De Caprio is characteristically outstanding, going deep to truly capture not just the character but the person behind that character as well. If not for a few structural weaknesses, both structural and superficial, this could have been much better. Instead you'll have to settle for what it is."},{"slug":"next-2007","title":"Next","director":"Lee Tamahori","year":2007,"half":4,"review":"Next is another trashy action flick with a decent enough idea, but mediocre execution. Cage stars as a Vegas magician who can see two minutes into the future, and only his future - as an idea, bucketloads of potential. Unfortunately, the film-makers couldn't quite settle on how to express this visually; then, they had to go ahead and add another caveat, that he can also see and a random woman at an unknown time in the future. And you can guess where that lead. Also there's a Russian nuke and the FBI think Cage. I mean Johnson can help them. So yeah. Ultimately entertaining, and at moments slimes, but you'd need less than two brain cells to actually appreciate it."},{"slug":"the-king-of-comedy-1982","title":"The King of Comedy","director":"Martin Scorsese","year":1982,"half":4,"review":"As a film, The King of Comedy is by all means well-made, well-acted and well-produced. But watching this movie was quite painful to say the least, purely due to that it the specific brand of awkwardness it inflicts. The kind where you can see from a mile away in scenes that it's not going to end well, and yet you want on in a transfixed kind of horror as it unfolds before your eyes. The experience. And yet there is something of a magic trick in the way you are drawn in, and continually engaged.\n\nThe plot follows a nobody who is completely psychotically obsessed with a comic, not just for their sake, but for the sake of breaking into the comedy industry. Parts of this more feel like a fever dream, and some of parts are. The reality of this film is only as grounded as the reality of the polo man character, making for a thought-provoking exploration. Even the final resolution upon further inspection seems not so resolved, or even based in reality. You can see where other movies borrowed similar ideas; The Informant! and The Secret Life of Walter Mitty spring to mind. In spite of all this undeniable depth, the actual act of watching such blatant and extreme self-deprecation was just too much in too many places. Such social sadism is shocking and thoughtful, but ultimately it's just not my cup of tea."},{"slug":"raiders-of-the-lost-ark-1981","title":"Raiders of the Lost Ark","director":"Steven Spielberg","year":1981,"half":4,"review":"This movie has not aged well. Though you can see some iconic and well thought art choices, ultimately the standard for this kind of movie has risen to high to take Indiana Jones seriously. Most prominently, the action sequences are almost laughably chunky; but, this is a symptom of a much larger problem - almost nothing onscreen is believable. From the plot to the characters to the very McGuffin of the story itself, all of it is completely unbelievable, both in the real world, and even in the supposedly mystical world this story is set in. Aside from all this, some of the shots, especially all those including the use of shadows, were sublime.\n\nSpielberg yes. Indiana Jones no."},{"slug":"passengers-2016","title":"Passengers","director":"Morten Tyldum","year":2016,"half":3,"review":"Passengers is flawed from the moment it begins, not because of any fault in its execution, but simply in the very basis of its existence. A man is woken up from cryosleep 90 years before arriving at his destination. A passable enough first half explores this premise. Then a fairly dismal second half follows the inevitable outcomes. Watching this movie is like watching someone throw a ball – once its in the air you know exactly where its going to land. Not a single twist or turn in the plot is present at all. The premise of a movie is supposed to invite suspense, speculation; all the amount of decent special effects (or its only redeeming feature) will ever make up for a lack of plot interest."},{"slug":"daddys-home-2015","title":"Daddy's Home","director":"Sean Anders","year":2015,"half":3,"review":"This Daddy's Home is a stereotypical American comedy at its most stereotypical, but which I mean its worst. The key underlying assumption of American comedy is fundamentally flawed - stupidity does not equal hilarity. It just equals stupidity.\n\nPart of this stupidity is that it's not even set in the real world, but some semi-surrealist one where a hand can perform an electric shock. And sure, watching a father and step-father one up each other is amusing, but it's not funny. At no point did I actually laugh, so this has failed as a film. Nice try Will Ferrell & Mark Wahlberg."},{"slug":"the-intern-2015","title":"The Intern","director":"Nancy Meyers","year":2015,"half":3,"review":"Quaint chic-flick. One funny moment. Mostly fluff."},{"slug":"super-8-2011","title":"Super 8","director":"J.J. Abrams","year":2011,"half":3,"review":"M-DNF\n\nSuper 8 This contrite sci-fi adventure carried far too many clichés to endure all the way to its conclusion. Misfit group of kids - tick. love of interest forbidden by parents history - tick. Tragic backstory of protagonist - tick. Strange happenings around a usually quiet town - tick. Military cover up because they let strange happenings loose in the first place - tick.\n\nDerivative is an understatement. This feels like an amateur director with professional backing trying his best to create a Spielberg movie."},{"slug":"true-grit-2010","title":"True Grit","director":"Joel & Ethan Coen","year":2010,"half":3,"review":"*True Grit* is a Coen Brothers western that starts and ends strongly, but whose middle sags with little of note. Small-town pacing is not the only issue; the protagonist’s dialogue is often barely intelligible, smothered by an accent so thick it borders on parody.\n\nThis is unfortunate, because what dialogue *is* decipherable is sharp and strong, and the film is occasionally buoyed by handsome framing and composition. Still, there is a fine line between a slow burn and simply being slow, and too often this film crosses it."},{"slug":"kung-fu-panda-4-2024","title":"Kung Fu Panda 4","director":"Mike Mitchell","year":2024,"half":2,"review":"Another mindless sequel. Give up already."}];
+
+  var POSTERS = "movie-posters/";
+  var SPRITE_COLS = 10;            // sprite.jpg: 10 columns of 32x48 posters, in MOVIES order
+  var BASE = 16;                   // .dot width before scaling
+  var RATIO = 1.5;                 // posters are 2:3, so a tile is t wide and t * 1.5 tall
+
+  var shelvesEl = document.getElementById("shelves");
+  var dialog = document.getElementById("detail");
+  var plot = document.getElementById("plot");
+  var tilesEl = document.getElementById("tiles");
+  var labelsEl = document.getElementById("labels");
+  var tip = document.getElementById("tip");
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var sortMode = "rating";
+  var order = [];   // films in the order the shelves show them, for prev / next
+
+  MOVIES.forEach(function (a, i) { a.i = i; });
+
+  /* ---------- stars ---------- */
+  var STAR = "M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z";
+  var uid = 0;
+
+  function stars(half) {
+    var id = "h" + (uid++);
+    var html = '<span class="stars" role="img" aria-label="' + (half / 2) + ' out of 5 stars">';
+    for (var i = 0; i < 5; i++) {
+      var fill = Math.max(0, Math.min(2, half - i * 2));
+      if (fill === 1) {
+        html += '<svg viewBox="0 0 24 24" aria-hidden="true"><defs><clipPath id="' + id + '"><rect width="12" height="24"/></clipPath></defs>' +
+                '<path class="off" d="' + STAR + '"/><path class="on" clip-path="url(#' + id + ')" d="' + STAR + '"/></svg>';
+      } else {
+        html += '<svg viewBox="0 0 24 24" aria-hidden="true"><path class="' + (fill ? "on" : "off") + '" d="' + STAR + '"/></svg>';
+      }
+    }
+    return html + "</span>";
+  }
+
+  function halfText(half) {
+    var whole = Math.floor(half / 2);
+    return (whole || half % 2 === 0 ? String(whole) : "") + (half % 2 ? "½" : "");
+  }
+
+  function starWords(half) {
+    return halfText(half) + (half === 2 ? " star" : " stars");
+  }
+
+  /* ---------- helpers ---------- */
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function reviewHtml(s) {
+    return esc(s).replace(/\*([^*]+)\*/g, "<em>$1</em>");
+  }
+
+  function posterHtml(a, eager) {
+    return '<span class="fallback" aria-hidden="true">' + esc(a.title) + '</span>' +
+           '<img src="' + POSTERS + a.slug + '.jpg" alt="' + esc(a.title) + ' poster" ' +
+           (eager ? "" : 'loading="lazy" ') + 'decoding="async" ' +
+           'onload="this.classList.add(\'ready\')" onerror="this.remove()">';
+  }
+
+  // "The Wachowskis" files under W; anything not starting with a letter files under #
+  function directorKey(name) {
+    return name.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/^the\s+/, "").trim();
+  }
+
+  function directorLetter(name) {
+    var c = directorKey(name).charAt(0).toUpperCase();
+    return c >= "A" && c <= "Z" ? c : "#";
+  }
+
+  function byDirector(a, b) {
+    return directorKey(a.director).localeCompare(directorKey(b.director)) || a.year - b.year || a.title.localeCompare(b.title);
+  }
+
+  function byRatingThenYear(a, b) {
+    return b.half - a.half || b.year - a.year || a.title.localeCompare(b.title);
+  }
+
+  /* ---------- shelves ---------- */
+  function groups() {
+    var map = {}, keys = [];
+    MOVIES.forEach(function (a) {
+      var k = sortMode === "rating" ? a.half
+            : sortMode === "director" ? directorLetter(a.director)
+            : a.year;
+      if (!map[k]) { map[k] = []; keys.push(k); }
+      map[k].push(a);
+    });
+    keys.sort(function (x, y) {
+      if (sortMode === "director") return x === "#" ? 1 : y === "#" ? -1 : (x < y ? -1 : 1);
+      return y - x;
+    });
+    return keys.map(function (k) {
+      var list = map[k].slice();
+      if (sortMode === "rating") list.sort(function (a, b) { return b.year - a.year || a.title.localeCompare(b.title); });
+      else if (sortMode === "director") list.sort(byDirector);
+      else list.sort(byRatingThenYear);
+      return { key: k, list: list };
+    });
+  }
+
+  function letterId(k) { return "d-" + (k === "#" ? "other" : k); }
+
+  function letterName(k) { return k === "#" ? "Directors starting with a number or symbol" : "Directors starting with " + k; }
+
+  function renderShelves() {
+    order = [];
+    var html = "";
+    groups().forEach(function (g) {
+      var head, name, id;
+      if (sortMode === "year") { name = String(g.key); head = "<h2>" + g.key + "</h2>"; id = "y-" + g.key; }
+      else if (sortMode === "director") { name = letterName(g.key); head = "<h2>" + esc(g.key) + "</h2>"; id = letterId(g.key); }
+      else { name = starWords(g.key); head = "<h2>" + stars(g.key) + "<span>" + name + "</span></h2>"; id = "r-" + g.key; }
+
+      html += '<section class="shelf" id="' + id + '" aria-label="' + esc(name) + '">' +
+              '<div class="shelf-head">' + head + '<span class="n">' + g.list.length + (g.list.length === 1 ? " film" : " films") + "</span></div>" +
+              '<div class="grid">';
+      g.list.forEach(function (a) {
+        var i = order.push(a) - 1;
+        var sub = sortMode === "rating"
+          ? '<span class="year-label">' + a.year + "</span>"
+          : sortMode === "year"
+            ? stars(a.half)
+            : stars(a.half) + '<span class="year-label">' + a.year + "</span>";
+        html += '<button class="card" type="button" data-i="' + i + '">' +
+                  '<div class="art">' + posterHtml(a) + "</div>" +
+                  '<span class="t">' + esc(a.title) + "</span>" +
+                  '<span class="a">' + esc(a.director) + "</span>" +
+                  '<span class="sub">' + sub + "</span>" +
+                "</button>";
+      });
+      html += "</div></section>";
+    });
+    shelvesEl.innerHTML = html;
+    bindHover(shelvesEl);
+  }
+
+  shelvesEl.addEventListener("click", function (e) {
+    var card = e.target.closest(".card");
+    if (card) openAt(+card.dataset.i);
+  });
+
+  /* ================================================================
+     Overview chart: one tiny poster per film.
+     Rating -> histogram (half-star bins), Year -> timeline,
+     Director -> one column per initial, A to Z.
+     Wide screens run left to right, narrow screens top to bottom.
+     ================================================================ */
+  var MODES = ["rating", "year", "director"];
+  var HALVES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  var minYear = Math.min.apply(null, MOVIES.map(function (a) { return a.year; }));
+  var maxYear = Math.max.apply(null, MOVIES.map(function (a) { return a.year; }));
+  var YEARS = [];
+  for (var yy = minYear; yy <= maxYear; yy++) YEARS.push(yy);
+  var LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").concat("#");
+
+  var dots = MOVIES.map(function (a) {
+    var d = document.createElement("div");
+    d.className = "dot";
+    var f = document.createElement("span");
+    f.className = "face";
+    f.style.backgroundPosition = -(a.i % SPRITE_COLS) * BASE + "px " + -Math.floor(a.i / SPRITE_COLS) * BASE * RATIO + "px";
+    d.appendChild(f);
+    tilesEl.appendChild(d);
+    return d;
+  });
+
+  var axisA = document.createElement("div");
+  var axisB = document.createElement("div");
+  axisA.className = axisB.className = "axis";
+  plot.insertBefore(axisA, labelsEl);
+  plot.insertBefore(axisB, labelsEl);
+
+  var layout = null;        // {pos: [{x, y, t}], ...}
+  var lastMode = null;
+
+  // Bins in axis order, each with its films stacked from the axis outwards
+  function bins(mode) {
+    var list;
+    if (mode === "rating") {
+      list = HALVES.map(function (h) { return { key: h, items: [] }; });
+      MOVIES.forEach(function (a) { list[a.half - 1].items.push(a); });
+      list.forEach(function (b) {
+        b.items.sort(function (a, c) { return a.year - c.year || a.title.localeCompare(c.title); });
+      });
+    } else if (mode === "director") {
+      list = LETTERS.map(function (c) { return { key: c, items: [] }; });
+      var at = {};
+      LETTERS.forEach(function (c, i) { at[c] = i; });
+      MOVIES.forEach(function (a) { list[at[directorLetter(a.director)]].items.push(a); });
+      list.forEach(function (b) { b.items.sort(byDirector); });
+    } else {
+      list = YEARS.map(function (y) { return { key: y, items: [] }; });
+      MOVIES.forEach(function (a) { list[a.year - minYear].items.push(a); });
+      list.forEach(function (b) {
+        b.items.sort(function (a, c) { return c.half - a.half || a.title.localeCompare(c.title); });
+      });
+    }
+    return list;
+  }
+
+  function computeLayout(mode) {
+    var W = plot.clientWidth;
+    var vertical = W < 600;
+    var isYear = mode === "year";
+    var hist = !isYear;                      // rating and director both draw as columns
+    var countEveryBin = mode === "rating";   // 10 counts is helpful, 27 or 50 would be noise
+    var B = bins(mode);
+    // on phones the chart runs top to bottom, best first: 5 stars down to a half,
+    // newest year down to oldest. A to Z already reads the right way.
+    if (vertical && mode !== "director") B = B.slice().reverse();
+    var N = B.length;
+    var maxCount = Math.max.apply(null, B.map(function (b) { return b.items.length; }));
+    var pos = new Array(MOVIES.length);
+    var labels = [];
+    var axes = [];
+    var t, th, g, H;
+
+    if (!vertical) {
+      var colGap = hist ? Math.max(4, Math.min(18, W / (N * 6))) : (W / N > 14 ? 2 : 1);
+      var topBand = 18, bottomBand = hist ? 30 : 26;
+      var budget = Math.max(210, Math.min(300, W * 0.24));
+      var colW = (W - colGap * (N - 1)) / N;
+      var perRow, rows, plotH;
+
+      for (t = 11; t >= 3; t--) {
+        g = t >= 8 ? 2 : 1;
+        th = t * RATIO;
+        perRow = Math.floor((colW + g) / (t + g));
+        if (perRow < 1) continue;
+        rows = Math.ceil(maxCount / perRow);
+        plotH = rows * (th + g) - g;
+        if (plotH <= budget) break;
+      }
+      if (t < 3) { t = 3; g = 1; th = t * RATIO; perRow = Math.max(1, Math.floor((colW + g) / (t + g))); rows = Math.ceil(maxCount / perRow); plotH = rows * (th + g) - g; }
+
+      var baseY = topBand + plotH;
+      H = baseY + bottomBand;
+
+      B.forEach(function (b, i) {
+        var x0 = i * (colW + colGap);
+        var blockW = perRow * (t + g) - g;
+        var start = x0 + (colW - blockW) / 2;
+        b.items.forEach(function (a, k) {
+          var c = k % perRow, r = Math.floor(k / perRow);
+          pos[a.i] = { x: start + c * (t + g), y: baseY - (r + 1) * (th + g) + g, t: t, d: x0 / W };
+        });
+        var stackRows = Math.ceil(b.items.length / perRow);
+        var cx = x0 + colW / 2;
+
+        if (hist) {
+          labels.push({ kind: "bin", mode: mode, key: b.key, x: cx, y: baseY + 9, cls: "center" });
+          if (countEveryBin && b.items.length) labels.push({ kind: "text", text: b.items.length, x: cx, y: baseY - stackRows * (th + g) - 13, cls: "center count" });
+          else if (!countEveryBin && b.items.length === maxCount) labels.push({ kind: "text", text: b.items.length, x: cx, y: baseY - stackRows * (th + g) - 13, cls: "center peak" });
+        } else {
+          if (b.key % 10 === 0 || i === 0 || i === N - 1) {
+            labels.push({ kind: "text", text: b.key, x: cx, y: baseY + 9, cls: "center" + (b.key % 10 === 0 ? "" : " edge") });
+          }
+          if (b.items.length === maxCount) labels.push({ kind: "text", text: b.items.length, x: cx, y: baseY - stackRows * (th + g) - 13, cls: "center peak" });
+        }
+      });
+
+      axes.push({ left: 0, top: baseY + 2, width: W, height: 1 });
+      axes.push({ left: 0, top: baseY + 2, width: 0, height: 1 });
+
+      // edge-year labels hide when they would collide with a decade label
+      labels = labels.filter(function (l) {
+        if (!/edge/.test(l.cls || "")) return true;
+        return !labels.some(function (o) { return o !== l && !/edge|peak/.test(o.cls || "") && o.y === l.y && Math.abs(o.x - l.x) < 34; });
+      });
+    } else {
+      var labelW = mode === "rating" ? 64 : mode === "director" ? 26 : 42;
+      var tail = countEveryBin ? 30 : 26;
+      var plotW = W - labelW - tail;
+      var rowGap = mode === "rating" ? 9 : mode === "director" ? 5 : 2;
+      // Each bin label is a tappable button, so a row has to be at least as tall
+      // as one or consecutive labels collide. Year labels are plain text on only
+      // a few rows, so they need no minimum.
+      var pitch = mode === "rating" ? 26 : mode === "director" ? 20 : 0;
+      var budgetV = mode === "rating" ? 460 : mode === "director" ? 580 : 620;
+      var cols, R, rowH, gap;
+
+      function fit(tile) {
+        g = tile >= 8 ? 2 : 1;
+        th = tile * RATIO;
+        cols = Math.floor((plotW + g) / (tile + g));
+        R = Math.ceil(maxCount / cols);
+        rowH = R * (th + g) - g;
+        gap = Math.max(rowGap, pitch - rowH);
+        H = N * rowH + (N - 1) * gap + 4;
+      }
+
+      for (t = 11; t >= 3; t--) {
+        fit(t);
+        if (H <= budgetV) break;
+      }
+      if (t < 3) { t = 3; fit(3); }
+      rowGap = gap;
+
+      var axisX = labelW;
+      B.forEach(function (b, i) {
+        var y0 = 2 + i * (rowH + rowGap);
+        b.items.forEach(function (a, k) {
+          var c = Math.floor(k / R), r = k % R;
+          pos[a.i] = { x: axisX + 4 + c * (t + g), y: y0 + r * (th + g), t: t, d: y0 / H };
+        });
+        // keep the first and last labels from hanging off the ends of the axis
+        var cy = Math.min(Math.max(y0 + rowH / 2, 9), H - 9);
+        var used = Math.ceil(b.items.length / R);
+        if (hist) {
+          labels.push({ kind: "bin", mode: mode, key: b.key, x: axisX - 8, y: cy, cls: "right" });
+          if (countEveryBin && b.items.length) labels.push({ kind: "text", text: b.items.length, x: axisX + 4 + used * (t + g) + 5, y: cy, cls: "left count" });
+          else if (!countEveryBin && b.items.length === maxCount) labels.push({ kind: "text", text: b.items.length, x: axisX + 4 + used * (t + g) + 5, y: cy, cls: "left peak" });
+        } else {
+          if (b.key % 10 === 0 || i === 0 || i === N - 1) labels.push({ kind: "text", text: b.key, x: axisX - 8, y: cy, cls: "right" + (b.key % 10 === 0 ? "" : " edge") });
+          if (b.items.length === maxCount) labels.push({ kind: "text", text: b.items.length, x: axisX + 4 + used * (t + g) + 5, y: cy, cls: "left peak" });
+        }
+      });
+
+      labels = labels.filter(function (l) {
+        if (!/edge/.test(l.cls || "")) return true;
+        return !labels.some(function (o) { return o !== l && !/edge|peak|count/.test(o.cls || "") && o.x === l.x && Math.abs(o.y - l.y) < 16; });
+      });
+
+      axes.push({ left: axisX, top: 0, width: 1, height: H });
+      axes.push({ left: axisX, top: 0, width: 1, height: 0 });
+    }
+
+    return { pos: pos, labels: labels, axes: axes, H: Math.ceil(H), W: W, vertical: vertical, hist: hist, t: t };
+  }
+
+  var BIN_STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + STAR + '"/></svg>';
+
+  // shift a horizontal layout down so its baseline sits at the bottom of a taller box
+  function dropTo(L, H) {
+    var dy = H - L.H;
+    if (dy <= 0) return L;
+    L.pos.forEach(function (p) { p.y += dy; });
+    L.labels.forEach(function (l) { l.y += dy; });
+    L.axes.forEach(function (a) { a.top += dy; });
+    L.H = H;
+    return L;
+  }
+
+  function drawChart(animate) {
+    var L = computeLayout(sortMode);
+    // on wide screens every view shares one height, so switching never moves the page
+    if (!L.vertical) {
+      dropTo(L, Math.max.apply(null, MODES.map(function (m) { return m === sortMode ? L.H : computeLayout(m).H; })));
+    }
+    var modeChanged = lastMode !== null && lastMode !== sortMode;
+    layout = L;
+
+    plot.classList.toggle("instant", !animate || reduced);
+    plot.style.height = L.H + "px";
+
+    L.pos.forEach(function (p, i) {
+      var d = dots[i];
+      d.style.transitionDelay = animate && modeChanged && !reduced ? Math.round(p.d * 260) + "ms" : "0ms";
+      d.style.transform = "translate(" + p.x.toFixed(2) + "px," + p.y.toFixed(2) + "px) scale(" + (p.t / BASE) + ")";
+    });
+
+    [axisA, axisB].forEach(function (el, i) {
+      var a = L.axes[i];
+      el.style.left = a.left + "px"; el.style.top = a.top + "px";
+      el.style.width = a.width + "px"; el.style.height = a.height + "px";
+    });
+
+    // labels are rebuilt (they are cheap) and fade in after a mode change
+    labelsEl.innerHTML = "";
+    L.labels.forEach(function (l) {
+      var el;
+      if (l.kind === "bin") {
+        el = document.createElement("button");
+        el.type = "button";
+        el.className = "lab " + l.cls;
+        var missing;
+        if (l.mode === "director") {
+          el.textContent = l.key;
+          el.dataset.target = letterId(l.key);
+          missing = "No films under " + l.key;
+          el.setAttribute("aria-label", "Jump to " + letterName(l.key).toLowerCase());
+        } else {
+          el.innerHTML = "<span>" + halfText(l.key) + "</span>" + BIN_STAR;
+          el.dataset.target = "r-" + l.key;
+          missing = "No films at " + starWords(l.key);
+          el.setAttribute("aria-label", "Jump to " + starWords(l.key));
+        }
+        if (!document.getElementById(el.dataset.target)) { el.disabled = true; el.setAttribute("aria-label", missing); }
+      } else {
+        el = document.createElement("span");
+        el.className = "lab " + l.cls;
+        el.textContent = l.text;
+        el.setAttribute("aria-hidden", "true");
+      }
+      el.style.left = l.x + "px";
+      el.style.top = l.y + "px";
+      labelsEl.appendChild(el);
+    });
+    if (modeChanged && animate && !reduced) {
+      labelsEl.classList.remove("fade");
+      void labelsEl.offsetWidth;
+      labelsEl.classList.add("fade");
+    }
+    bindHover(labelsEl);
+
+    if (!animate || reduced) {
+      requestAnimationFrame(function () { plot.classList.remove("instant"); });
+    }
+    lastMode = sortMode;
+  }
+
+  labelsEl.addEventListener("click", function (e) {
+    var b = e.target.closest("button.lab");
+    if (!b || b.disabled) return;
+    var target = document.getElementById(b.dataset.target);
+    if (target) target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+  });
+
+  function chartSummary() {
+    if (sortMode === "director") {
+      var letters = {};
+      MOVIES.forEach(function (a) { var c = directorLetter(a.director); letters[c] = (letters[c] || 0) + 1; });
+      var top = Object.keys(letters).sort(function (x, y) { return letters[y] - letters[x]; })[0];
+      return "Chart of " + MOVIES.length + " films by the first letter of the director, A to Z. " +
+             top + " has the most, with " + letters[top] + " films.";
+    }
+    if (sortMode === "rating") {
+      var parts = HALVES.slice().reverse().map(function (h) {
+        var n = MOVIES.filter(function (a) { return a.half === h; }).length;
+        return n ? starWords(h) + ": " + n : null;
+      }).filter(Boolean);
+      return "Histogram of " + MOVIES.length + " films by rating. " + parts.join(", ") + ".";
+    }
+    var counts = {};
+    MOVIES.forEach(function (a) { counts[a.year] = (counts[a.year] || 0) + 1; });
+    var peak = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; })[0];
+    return "Timeline of " + MOVIES.length + " films released from " + minYear + " to " + maxYear +
+           ". The busiest year is " + peak + " with " + counts[peak] + " films.";
+  }
+
+  /* ---------- chart hover / tap ---------- */
+  var hot = -1;
+  var touchSelected = false;
+
+  function nearest(clientX, clientY) {
+    if (!layout) return -1;
+    var r = plot.getBoundingClientRect();
+    var px = clientX - r.left, py = clientY - r.top;
+    var best = -1, bestD = Infinity;
+    var reach = Math.max(12, layout.t * 2.2);
+    for (var i = 0; i < layout.pos.length; i++) {
+      var p = layout.pos[i];
+      var cx = p.x + p.t / 2, cy = p.y + p.t * RATIO / 2;
+      // the tile is taller than it is wide, so the vertical gap is measured in tile widths
+      var dx = px - cx, dy = (py - cy) / RATIO;
+      var dd = dx * dx + dy * dy;
+      if (dd < bestD) { bestD = dd; best = i; }
+    }
+    return bestD <= reach * reach ? best : -1;
+  }
+
+  function setHot(i, clientX, clientY, touch) {
+    if (hot === i && !touch) { placeTip(clientX, clientY); return; }
+    if (hot > -1) dots[hot].classList.remove("hot");
+    hot = i;
+    if (i < 0) {
+      plot.classList.remove("hovering");
+      tip.classList.remove("on", "touch");
+      touchSelected = false;
+      return;
+    }
+    dots[i].classList.add("hot");
+    plot.classList.add("hovering");
+
+    var a = MOVIES[i];
+    document.getElementById("tipCover").style.backgroundImage = 'url("' + POSTERS + a.slug + '.jpg")';
+    document.getElementById("tipTitle").textContent = a.title;
+    document.getElementById("tipDirector").textContent = a.director;
+    document.getElementById("tipMeta").innerHTML = stars(a.half) + "<span>· " + a.year + "</span>";
+    tip.classList.toggle("touch", !!touch);
+    tip.classList.add("on");
+    touchSelected = !!touch;
+    placeTip(clientX, clientY, touch);
+  }
+
+  function placeTip(clientX, clientY, touch) {
+    var tw = tip.offsetWidth, th = tip.offsetHeight;
+    var vw = document.documentElement.clientWidth, vh = window.innerHeight;
+    var x, y;
+    if (touch && hot > -1) {
+      // anchor above the chosen poster so the finger does not cover the card
+      var r = plot.getBoundingClientRect(), p = layout.pos[hot];
+      clientX = r.left + p.x + p.t / 2;
+      clientY = r.top + p.y;
+      x = clientX - tw / 2;
+      y = clientY - th - 14;
+      if (y < 70) y = clientY + p.t * RATIO + 16;
+    } else {
+      x = clientX + 16;
+      y = clientY - th - 12;
+      if (x + tw > vw - 12) x = clientX - tw - 16;
+      if (y < 8) y = clientY + 18;
+    }
+    x = Math.max(12, Math.min(x, vw - tw - 12));
+    y = Math.max(8, Math.min(y, vh - th - 8));
+    tip.style.transform = "";
+    tip.style.left = x + "px";
+    tip.style.top = y + "px";
+  }
+
+  plot.addEventListener("pointermove", function (e) {
+    if (e.pointerType !== "mouse") return;
+    setHot(nearest(e.clientX, e.clientY), e.clientX, e.clientY, false);
+  });
+
+  plot.addEventListener("pointerleave", function (e) {
+    if (e.pointerType === "mouse") setHot(-1);
+  });
+
+  plot.addEventListener("click", function (e) {
+    if (e.target.closest("button.lab")) return;
+    var i = nearest(e.clientX, e.clientY);
+    var touchLike = !window.matchMedia("(hover: hover)").matches;
+    if (i < 0) { setHot(-1); return; }
+    if (touchLike) {
+      // first tap previews, tapping the preview (or the same poster again) opens it
+      if (touchSelected && hot === i) { openFilm(MOVIES[i]); setHot(-1); }
+      else setHot(i, e.clientX, e.clientY, true);
+    } else {
+      openFilm(MOVIES[i]);
+    }
+  });
+
+  tip.addEventListener("click", function () {
+    if (touchSelected && hot > -1) { var a = MOVIES[hot]; setHot(-1); openFilm(a); }
+  });
+
+  document.addEventListener("pointerdown", function (e) {
+    if (touchSelected && !plot.contains(e.target) && !tip.contains(e.target)) setHot(-1);
+  });
+
+  window.addEventListener("scroll", function () {
+    if (hot > -1 && !touchSelected) setHot(-1);
+    else if (touchSelected) placeTip(0, 0, true);
+    toolbar.classList.toggle("stuck", toolbar.getBoundingClientRect().top <= 0 && window.scrollY > 10);
+  }, { passive: true });
+
+  var toolbar = document.getElementById("toolbar");
+
+  /* ---------- sort switch ---------- */
+  function applySort(mode, animate) {
+    sortMode = mode;
+    document.querySelectorAll(".switch button").forEach(function (b) {
+      b.setAttribute("aria-pressed", b.dataset.sort === mode ? "true" : "false");
+    });
+    document.getElementById("vizTitle").textContent =
+      mode === "rating" ? "Every film, by rating" : mode === "year" ? "Every film, by release year" : "Every film, by director";
+    setHot(-1);
+    renderShelves();
+    drawChart(animate);
+    document.getElementById("vizSummary").textContent = chartSummary();
+  }
+
+  document.querySelectorAll(".switch button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      if (btn.dataset.sort === sortMode) return;
+      try { localStorage.setItem("movieSort", btn.dataset.sort); } catch (err) {}
+      applySort(btn.dataset.sort, true);
+    });
+  });
+
+  /* ---------- detail ---------- */
+  var current = -1;
+
+  function openFilm(a) {
+    var at = order.indexOf(a);
+    if (at > -1) openAt(at);
+  }
+
+  function openAt(i) {
+    current = (i + order.length) % order.length;
+    var a = order[current];
+
+    document.getElementById("dCover").innerHTML = posterHtml(a, true);
+    document.getElementById("dTitle").textContent = a.title;
+    document.getElementById("dDirector").textContent = a.director;
+    document.getElementById("dFacts").innerHTML =
+      "<span>" + a.year + "</span>" + stars(a.half) + "<span>" + starWords(a.half) + "</span>";
+
+    var review = document.getElementById("dReview");
+    review.innerHTML = a.review ? reviewHtml(a.review) : "No review written yet.";
+    review.classList.toggle("empty", !a.review);
+
+    document.getElementById("dPos").textContent = (current + 1) + " / " + order.length;
+    dialog.querySelector(".info").scrollTop = 0;
+    dialog.querySelector(".detail").scrollTop = 0;
+
+    if (!dialog.open) {
+      dialog.showModal();
+      document.documentElement.classList.add("modal-open");
+    }
+    history.replaceState(null, "", "#" + a.slug);
+
+    // warm the neighbours so paging feels instant
+    [current + 1, current - 1].forEach(function (j) {
+      new Image().src = POSTERS + order[(j + order.length) % order.length].slug + ".jpg";
+    });
+  }
+
+  dialog.addEventListener("close", function () {
+    document.documentElement.classList.remove("modal-open");
+    tScale = 1;
+    history.replaceState(null, "", location.pathname + location.search);
+    var card = shelvesEl.querySelector('.card[data-i="' + current + '"]');
+    if (card) card.focus({ preventScroll: true });
+  });
+
+  document.getElementById("dClose").addEventListener("click", function () { dialog.close(); });
+  document.getElementById("dPrev").addEventListener("click", function () { openAt(current - 1); });
+  document.getElementById("dNext").addEventListener("click", function () { openAt(current + 1); });
+
+  // click on the backdrop closes
+  dialog.addEventListener("click", function (e) { if (e.target === dialog) dialog.close(); });
+
+  document.addEventListener("keydown", function (e) {
+    if (!dialog.open) { if (e.key === "Escape") setHot(-1); return; }
+    if (e.key === "ArrowRight") { e.preventDefault(); openAt(current + 1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); openAt(current - 1); }
+  });
+
+  // swipe between films on phones
+  var sx = 0, sy = 0, tracking = false;
+  dialog.addEventListener("touchstart", function (e) {
+    if (e.touches.length !== 1) { tracking = false; return; }
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; tracking = true;
+  }, { passive: true });
+  dialog.addEventListener("touchend", function (e) {
+    if (!tracking) return;
+    tracking = false;
+    var t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy) * 1.6) openAt(current + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  /* ---------- custom cursor (desktop pointers only) ---------- */
+  var fine = window.matchMedia("(pointer: fine)").matches;
+  var tScale = 1;
+
+  function bindHover(root) {
+    if (!fine || reduced) return;
+    root.querySelectorAll("a, button").forEach(function (el) {
+      el.addEventListener("mouseenter", function () { tScale = 0.001; });
+      el.addEventListener("mouseleave", function () { tScale = 1; });
+    });
+  }
+
+  if (fine && !reduced) {
+    var cursor = document.querySelector(".cursor");
+    var big = cursor.querySelector(".ball.big");
+    var small = cursor.querySelector(".ball.small");
+    var mx = -100, my = -100, bx = -100, by = -100, scale = 1;
+
+    document.addEventListener("mousemove", function (e) { mx = e.clientX; my = e.clientY; });
+    bindHover(document.querySelector(".switch"));
+
+    (function loop() {
+      bx += (mx - bx) * 0.14;
+      by += (my - by) * 0.14;
+      scale += (tScale - scale) * 0.2;
+      big.style.transform = "translate(" + (bx - 25) + "px," + (by - 25) + "px) scale(" + scale + ")";
+      small.style.transform = "translate(" + (mx - 5) + "px," + (my - 5) + "px)";
+      requestAnimationFrame(loop);
+    })();
+  } else {
+    var c = document.querySelector(".cursor");
+    if (c) c.style.display = "none";
+  }
+
+  /* ---------- start ---------- */
+  var startMode = "rating";
+  try {
+    var saved = localStorage.getItem("movieSort");
+    if (MODES.indexOf(saved) > -1) startMode = saved;
+  } catch (err) {}
+
+  applySort(startMode, false);
+
+  // re-flow the chart when its width changes (rotation, window resize), without animating
+  var lastW = plot.clientWidth, resizeRaf = 0;
+  new ResizeObserver(function () {
+    var w = plot.clientWidth;
+    if (w === lastW) return;
+    lastW = w;
+    cancelAnimationFrame(resizeRaf);
+    resizeRaf = requestAnimationFrame(function () { setHot(-1); drawChart(false); });
+  }).observe(plot);
+
+  // links like /movies#inception-2010 open straight to that film
+  function openFromHash() {
+    var slug = decodeURIComponent((location.hash || "").slice(1));
+    if (!slug) return;
+    var at = order.findIndex(function (a) { return a.slug === slug; });
+    if (at > -1) openAt(at);
+  }
+
+  openFromHash();
+  window.addEventListener("hashchange", openFromHash);
+})();
+</script>
+
+</body>
+</html>

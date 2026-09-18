@@ -847,18 +847,40 @@
            'onload="this.classList.add(\'ready\')" onerror="this.remove()">';
   }
 
-  // "The Strugatskys" files under S; anything not starting with a letter files under #
   function authorKey(name) {
     return name.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/^the\s+/, "").trim();
   }
 
+  // Authors file by surname, the way a shelf does: Brandon Sanderson under S.
+  // A particle belongs to the surname, so Ursula K. Le Guin is under L, not G.
+  var PARTICLES = /^(de|del|della|di|da|dos|du|la|le|van|von|der|den|ten|ter|bin|ibn|st)\.?$/;
+  // and a family-name-first author is named here, since the rule cannot tell
+  var SURNAME_FIRST = { "liu cixin": "Liu" };
+
+  function surnameOf(name) {
+    var named = SURNAME_FIRST[authorKey(name)];
+    if (named) return named;
+    // "Arkady & Boris Strugatsky" is two people sharing one surname at the end
+    var parts = name.split(/\s+/).filter(function (p) { return p && p !== "&"; });
+    if (parts.length < 2) return parts[0] || name;
+    var i = parts.length - 1;
+    while (i > 1 && PARTICLES.test(authorKey(parts[i - 1]))) i--;
+    return parts.slice(i).join(" ");
+  }
+
+  // sort on the surname first, then the whole name, so two Johns keep a stable order
+  function authorSort(name) {
+    return authorKey(surnameOf(name)) + " " + authorKey(name);
+  }
+
+  // anything not starting with a letter files under #
   function authorLetter(name) {
-    var c = authorKey(name).charAt(0).toUpperCase();
+    var c = authorKey(surnameOf(name)).charAt(0).toUpperCase();
     return c >= "A" && c <= "Z" ? c : "#";
   }
 
   function byAuthor(a, b) {
-    return authorKey(a.author).localeCompare(authorKey(b.author)) || a.year - b.year || a.title.localeCompare(b.title);
+    return authorSort(a.author).localeCompare(authorSort(b.author)) || a.year - b.year || a.title.localeCompare(b.title);
   }
 
   function byRatingThenYear(a, b) {
@@ -897,7 +919,7 @@
 
   function letterId(k) { return "a-" + (k === "#" ? "other" : k); }
 
-  function letterName(k) { return k === "#" ? "Authors starting with a number or symbol" : "Authors starting with " + k; }
+  function letterName(k) { return k === "#" ? "Authors whose surname starts with a number or symbol" : "Authors whose surname starts with " + k; }
 
   function decadeId(d) { return "y-" + d; }
 
@@ -1278,7 +1300,7 @@
       var letters = {};
       NOVELS.forEach(function (a) { var c = authorLetter(a.author); letters[c] = (letters[c] || 0) + 1; });
       var top = Object.keys(letters).sort(function (x, y) { return letters[y] - letters[x]; })[0];
-      return "Chart of " + NOVELS.length + " novels by the first letter of the author, A to Z. " +
+      return "Chart of " + NOVELS.length + " novels by the first letter of the author's surname, A to Z. " +
              top + " has the most, with " + letters[top] + " novels.";
     }
     if (sortMode === "rating") {

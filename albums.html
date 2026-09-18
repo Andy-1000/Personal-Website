@@ -495,6 +495,9 @@
   .detail {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
+    /* the row has to be allowed to shrink, or a long review makes .info taller
+       than the dialog and the prev / next arrows fall outside it */
+    grid-template-rows: minmax(0, 1fr);
     max-height: calc(100dvh - 32px);
   }
 
@@ -665,6 +668,8 @@
     dialog { width: calc(100vw - 20px); max-height: calc(100dvh - 20px); border-radius: 14px; }
     .detail {
       grid-template-columns: minmax(0, 1fr);
+      /* on phones the whole card scrolls as one, so the rows size to content */
+      grid-template-rows: auto;
       max-height: calc(100dvh - 20px);
       overflow-y: auto;
       overscroll-behavior: contain;

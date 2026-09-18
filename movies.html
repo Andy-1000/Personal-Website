@@ -978,7 +978,10 @@
     return list;
   }
 
-  function computeLayout(mode) {
+  // fillTo: an exact plot height to aim at, used on wide screens so a sparse
+  // view grows its posters into the height the tallest view already reserves,
+  // instead of leaving a band of white above the bars.
+  function computeLayout(mode, fillTo) {
     var W = plot.clientWidth;
     var vertical = W < 600;
     var isYear = mode === "year";
@@ -993,16 +996,21 @@
     var pos = new Array(MOVIES.length);
     var labels = [];
     var axes = [];
+    var bands = 0;
     var t, th, g, H;
 
     if (!vertical) {
       var colGap = hist ? Math.max(4, Math.min(18, W / (N * 6))) : (W / N > 14 ? 2 : 1);
       var topBand = 18, bottomBand = hist ? 30 : 26;
-      var budget = Math.max(210, Math.min(300, W * 0.24));
+      bands = topBand + bottomBand;
+      var budget = fillTo != null ? fillTo : Math.max(210, Math.min(300, W * 0.24));
+      // 16 keeps a tile at the sprite's own 32x48 on a 2x screen, so filling the
+      // space never costs sharpness
+      var cap = fillTo != null ? 16 : 11;
       var colW = (W - colGap * (N - 1)) / N;
       var perRow, rows, plotH;
 
-      for (t = 11; t >= 3; t--) {
+      for (t = cap; t >= 3; t--) {
         g = t >= 8 ? 2 : 1;
         th = t * RATIO;
         perRow = Math.floor((colW + g) / (t + g));
@@ -1105,7 +1113,7 @@
       axes.push({ left: axisX, top: 0, width: 1, height: 0 });
     }
 
-    return { pos: pos, labels: labels, axes: axes, H: Math.ceil(H), W: W, vertical: vertical, hist: hist, t: t };
+    return { pos: pos, labels: labels, axes: axes, H: Math.ceil(H), W: W, vertical: vertical, hist: hist, t: t, bands: bands };
   }
 
   var BIN_STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + STAR + '"/></svg>';
@@ -1125,7 +1133,15 @@
     var L = computeLayout(sortMode);
     // on wide screens every view shares one height, so switching never moves the page
     if (!L.vertical) {
-      dropTo(L, Math.max.apply(null, MODES.map(function (m) { return m === sortMode ? L.H : computeLayout(m).H; })));
+      var tallest = Math.max.apply(null, MODES.map(function (m) {
+        return m === sortMode ? L.H : computeLayout(m).H;
+      }));
+      if (tallest > L.H) {
+        // this view is shorter than the shared height, so grow it into the gap
+        var filled = computeLayout(sortMode, tallest - L.bands);
+        if (filled.H <= tallest) L = filled;
+      }
+      dropTo(L, tallest);
     }
     var modeChanged = lastMode !== null && lastMode !== sortMode;
     layout = L;

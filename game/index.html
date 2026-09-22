@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Andy: The Game</title>
+<!--
+  The game itself runs on Railway, which needs a host of its own: GitHub Pages
+  serves this domain and cannot hand a subpath to another server. So this page
+  exists only to make the short, typeable andysansness.com/game go somewhere.
+
+  The QR codes point straight at game.andysansness.com, so a scan never lands
+  here and never pays for the hop.
+-->
+<link rel="canonical" href="https://game.andysansness.com/">
+<meta http-equiv="refresh" content="0; url=https://game.andysansness.com/">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;900&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #004d99;
+    --navy: #003366;
+    --sky: #cce6ff;
+    --paper: #fdfbf6;
+    --gold: #e8a921;
+  }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: var(--sky);
+    color: var(--navy);
+    font-family: "Montserrat", "Segoe UI", system-ui, sans-serif;
+    text-align: center;
+  }
+  .card {
+    background: var(--paper);
+    border: 3px solid var(--navy);
+    border-radius: 18px;
+    padding: 36px 32px;
+    max-width: 420px;
+    box-shadow: 8px 8px 0 var(--navy);
+  }
+  h1 {
+    font-family: "Merriweather", Georgia, serif;
+    font-weight: 900;
+    font-size: clamp(2.2rem, 9vw, 3rem);
+    line-height: 1;
+    margin: 0;
+    color: var(--blue);
+  }
+  .sub {
+    display: block;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 10px;
+  }
+  p { font-size: 0.95rem; line-height: 1.5; }
+  a.btn {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 14px 34px;
+    border-radius: 999px;
+    background: var(--blue);
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 5px 0 var(--navy);
+  }
+  a.home { display: inline-block; margin-top: 18px; color: var(--blue); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Andy<span class="sub">The Game</span></h1>
+    <p>Taking you to the game&hellip;</p>
+    <p><a class="btn" href="https://game.andysansness.com/">Play</a></p>
+    <a class="home" href="/">Back to andysansness.com</a>
+  </div>
+  <script>
+    // Belt and braces: the meta refresh above covers browsers that ignore
+    // this, and the button covers anything that ignores both.
+    location.replace('https://game.andysansness.com/');
+  </script>
+</body>
+</html>

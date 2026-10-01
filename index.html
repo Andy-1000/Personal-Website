@@ -1,80 +1,1156 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Andy Sansness</title>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js'></script>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Andy Sansness</title>
+<meta name="description" content="Andy Sansness, business and data analyst.">
+<meta name="theme-color" content="#020a14">
 <link rel="icon" type="image/x-icon" href="favicon.png">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link href='style.css' rel='stylesheet'>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<script>document.documentElement.className += " js";</script>
+<style>
+  :root {
+    --night: #020a14;
+    --deep: #04162b;
+    --blue: #004d99;
+    --sky: #cce6ff;
+    --ice: #e9f3ff;
+    --gold: #e8a921;
+    --line: rgba(204, 230, 255, 0.16);
+    --muted: rgba(204, 230, 255, 0.55);
+    --name-size: min(15vw, 24vh, 210px);
+  }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Croissant+One&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  * { box-sizing: border-box; }
 
+  html, body { margin: 0; padding: 0; }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    background: var(--night);
+  }
+
+  body {
+    min-height: 100vh;
+    color: var(--ice);
+    font-family: "Open Sans", sans-serif;
+    line-height: 1.5;
+    background: radial-gradient(ellipse 75% 55% at 50% 40%, #0c2d52 0%, rgba(12, 45, 82, 0) 70%), var(--night);
+    background-attachment: fixed;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { color: #fff; background: var(--blue); }
+
+  /* ---------- the particle field ---------- */
+  .field {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* a vignette and a little film grain over the field */
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  body::before {
+    background: radial-gradient(ellipse 90% 80% at 50% 45%, rgba(2, 10, 20, 0) 55%, rgba(2, 10, 20, 0.65) 100%);
+  }
+
+  body::after {
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- page ---------- */
+  .stage {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .top {
+    display: flex;
+    justify-content: flex-end;
+    padding: calc(26px + env(safe-area-inset-top)) calc(36px + env(safe-area-inset-right)) 0 calc(36px + env(safe-area-inset-left));
+  }
+
+  .top nav { display: flex; gap: 6px; }
+
+  .top a {
+    position: relative;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--muted);
+    transition: color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .top a::after {
+    content: "";
+    position: absolute;
+    left: 12px;
+    right: calc(12px + 0.22em);
+    bottom: 3px;
+    height: 1px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .top a:hover,
+  .top a:focus-visible { color: var(--ice); }
+
+  .top a:hover::after,
+  .top a:focus-visible::after { transform: scaleX(1); }
+
+  .top a:focus-visible { outline: 1px solid var(--sky); outline-offset: 2px; border-radius: 4px; }
+
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px 16px;
+    touch-action: pinch-zoom;
+  }
+
+  .name {
+    margin: 0;
+    font-family: "Merriweather", serif;
+    font-weight: 900;
+    font-size: var(--name-size);
+    line-height: 0.94;
+    text-transform: uppercase;
+    color: var(--ice);
+    text-shadow: 0 0 40px rgba(43, 111, 214, 0.45);
+  }
+
+  .name .w { display: block; }
+
+  /* with scripts on, the particles draw the name; the text stays for readers
+     and search, and comes back on its own if the field never starts */
+  .js .name {
+    color: transparent;
+    text-shadow: none;
+    animation: reveal 0.8s ease 2.5s forwards;
+  }
+
+  .js.field-on .name { animation: none; }
+
+  .js.field-off .name {
+    animation: none;
+    color: var(--ice);
+    text-shadow: 0 0 40px rgba(43, 111, 214, 0.45);
+  }
+
+  @keyframes reveal {
+    to { color: var(--ice); text-shadow: 0 0 40px rgba(43, 111, 214, 0.45); }
+  }
+
+  .role {
+    margin: 1.5em 0 0;
+    padding-left: 0.34em;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--sky);
+  }
+
+  .social {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0 0;
+  }
+
+  .social a {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: rgba(2, 10, 20, 0.35);
+    color: var(--ice);
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .social a:hover,
+  .social a:focus-visible {
+    background: var(--sky);
+    border-color: var(--sky);
+    color: var(--deep);
+    transform: translateY(-2px);
+  }
+
+  .social a:focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; }
+
+  .social svg { width: 18px; height: 18px; }
+
+  .hint {
+    margin: 0;
+    padding: 0 16px calc(26px + env(safe-area-inset-bottom));
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--muted);
+    opacity: 0;
+    transition: opacity 1.2s ease;
+  }
+
+  .field-on .hint { opacity: 0.8; transition-delay: 3s; }
+
+  .field-on .hint.gone { opacity: 0; transition-delay: 0s; }
+
+  .hint .touch { display: none; }
+
+  /* ---------- cursor: the old blue ball, glowing now ---------- */
+  .cursor { display: none; }
+
+  .custom-cursor,
+  .custom-cursor * { cursor: none !important; }
+
+  .custom-cursor .cursor { display: block; }
+
+  .cursor span {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 60;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    will-change: transform;
+  }
+
+  .cursor.in span { opacity: 1; }
+
+  .cursor .dot {
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0 -4px;
+    background: var(--ice);
+    box-shadow: 0 0 12px 2px rgba(204, 230, 255, 0.6);
+  }
+
+  .cursor .ring {
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 1px solid rgba(204, 230, 255, 0.45);
+    background: rgba(204, 230, 255, 0.08);
+  }
+
+  /* ---------- phones ---------- */
+  @media (hover: none) {
+    .hint .mouse { display: none; }
+    .hint .touch { display: inline; }
+  }
+
+  @media (max-width: 760px) {
+    :root { --name-size: min(16.4vw, 21vh); }
+
+    .top { justify-content: center; padding-left: 8px; padding-right: 8px; }
+
+    .top nav { gap: 0; }
+
+    .top a { padding: 8px 9px; font-size: 11px; letter-spacing: 0.16em; }
+
+    .top a::after { left: 9px; right: calc(9px + 0.16em); }
+
+    .role { font-size: 11.5px; letter-spacing: 0.26em; padding-left: 0.26em; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .js .name { animation-duration: 0s; }
+    .top a, .top a::after, .social a, .hint { transition: none; }
+  }
+</style>
 </head>
 <body>
 
-<div class="cursor">
-  <div class="ball big">
-    <svg height="50" width="50">
-      <circle cx="25" cy="25" r="20" stroke-width="0" style='fill: #cce6ff; opacity: 70%;'></circle>
-    </svg>
-  </div>
-  
-  <div class="ball small">
-    <svg height="10" width="10">
-      <circle cx="5" cy="5" r="4" stroke-width="0" style='fill: #004d99;'></circle>
-    </svg>
-  </div>
+<canvas class="field" id="field" aria-hidden="true"></canvas>
+
+<div class="cursor" id="cursor" aria-hidden="true"><span class="ring"></span><span class="dot"></span></div>
+
+<div class="stage">
+  <header class="top">
+    <nav aria-label="Reviews">
+      <a href="/movies">Movies</a>
+      <a href="/albums">Albums</a>
+      <a href="/novels">Novels</a>
+      <a href="/books">Books</a>
+    </nav>
+  </header>
+
+  <main class="hero">
+    <h1 class="name" id="name"><span class="w">Andy</span> <span class="w">Sansness</span></h1>
+    <p class="role">Business &amp; Data Analyst</p>
+    <p class="social">
+      <a href="https://www.linkedin.com/in/andy-sansness-33583a333/" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13Zm1.78 13.02H3.56V9h3.56v11.45ZM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0h.01Z"/></svg>
+      </a>
+      <a href="mailto:andy@andysansness.com" aria-label="Email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.8 6.6 8.2 6.3 8.2-6.3"/></svg>
+      </a>
+    </p>
+  </main>
+
+  <p class="hint" id="hint" aria-hidden="true">
+    <span class="mouse">Move through the name &middot; Click to scatter</span>
+    <span class="touch">Drag through the name &middot; Tap to scatter</span>
+  </p>
 </div>
 
-<div class="row">
-  <div class="column side">
-  <p></p>
-  </div>
-  
-  <div class="column middle">
-  <div class='edge'>
+<script>
+(function () {
+  "use strict";
 
-<br><br><br><br><br><br><br><br>
-<h1 style='text-align: center;'>Andy Sansness</h1>
-<p style='text-align: center; font-size: 120%;'>Business & Data Analyst</p>
+  var root = document.documentElement;
+  var canvas = document.getElementById("field");
+  var nameEl = document.getElementById("name");
+  var hint = document.getElementById("hint");
+  var cursor = document.getElementById("cursor");
+  var ring = cursor.querySelector(".ring");
+  var dot = cursor.querySelector(".dot");
 
-<p style="text-align: center; margin: 10px 0;">
-  <!-- LinkedIn -->
-  <a class="link" href="https://www.linkedin.com/in/andy-sansness-33583a333/" target="_blank" style="margin: 0 10px;  text-decoration: none;">
-    <i class="fab fa-linkedin" ></i>
-  </a>
-  <!-- Email -->
-  <a href="mailto:andy@andysansness.com" style="margin: 0 10px;">
-    <i class="fas fa-envelope" style="color: #000000;" onmouseover="this.style.color='#004d99'" 
-       onmouseout="this.style.color='#000000'"></i>
-  </a>
-</p>
-<br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  </div>  
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
 
+  var NAME_DENSITY = 0.17;  // particles per square px of letter, so every screen looks alike
+  var DUST_DENSITY = 0.007; // free-floating dust, per square px of screen
+  var DEPTH = 40;           // how thick the name is, front to back, in px
+  var FOCAL = 900;          // perspective: distance from the eye to the page, in px
+  var CELL = 36;            // flow field grid spacing, in px
+  var FLOW_SCALE = 1 / 300; // flow field feature size
+  var STIR_R = fine ? 140 : 110;
 
-  <div class="column side">
-  <p></p>
-  </div>
-</div>
-</div>
-  
+  var gl;
+  try {
+    gl = canvas.getContext("webgl", { alpha: false, antialias: false, depth: false, stencil: false, powerPreference: "high-performance" });
+  } catch (e) { gl = null; }
+  if (!gl) {
+    root.classList.add("field-off");
+    return;
+  }
 
+  /* ---------- shaders ---------- */
 
-<script src="index.js"></script>
+  var BG_VS = [
+    "attribute vec2 a_pos;",
+    "void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }"
+  ].join("\n");
+
+  // a deep navy glow behind the name, dithered so it never bands
+  var BG_FS = [
+    "precision mediump float;",
+    "uniform vec2 u_res;",
+    "uniform vec2 u_glow;",
+    "void main() {",
+    "  vec2 p = vec2(gl_FragCoord.x, u_res.y - gl_FragCoord.y);",
+    "  vec2 d = (p - u_glow) / u_res.y;",
+    "  float r = length(d * vec2(0.62, 1.0));",
+    "  vec3 night = vec3(0.008, 0.039, 0.078);",
+    "  vec3 navy = vec3(0.05, 0.18, 0.33);",
+    "  vec3 c = mix(navy, night, smoothstep(0.0, 0.9, r));",
+    "  float n = fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453);",
+    "  gl_FragColor = vec4(c + (n - 0.5) / 255.0, 1.0);",
+    "}"
+  ].join("\n");
+
+  var PT_VS = [
+    "attribute vec4 a_state;",   // x, y, z in page px, then heat 0..1
+    "attribute vec4 a_look;",    // size, tint, spark, brightness
+    "uniform vec2 u_view;",
+    "uniform float u_scroll;",
+    "uniform vec3 u_pivot;",
+    "uniform vec2 u_rot;",
+    "uniform float u_focal;",
+    "uniform float u_dpr;",
+    "uniform float u_sweep;",
+    "uniform float u_fade;",
+    "uniform float u_time;",
+    "varying vec3 v_color;",
+    "void main() {",
+    "  vec3 p = a_state.xyz - u_pivot;",
+    "  float cy = cos(u_rot.x), sy = sin(u_rot.x);",
+    "  p = vec3(cy * p.x + sy * p.z, p.y, -sy * p.x + cy * p.z);",
+    "  float cx = cos(u_rot.y), sx = sin(u_rot.y);",
+    "  p = vec3(p.x, cx * p.y - sx * p.z, sx * p.y + cx * p.z);",
+    "  float persp = u_focal / max(u_focal - p.z, 1.0);",
+    "  vec2 s = u_pivot.xy + p.xy * persp;",
+    "  s.y -= u_scroll;",
+    "  gl_Position = vec4(s.x / u_view.x * 2.0 - 1.0, 1.0 - s.y / u_view.y * 2.0, 0.0, 1.0);",
+    "  float heat = a_state.w;",
+    "  gl_PointSize = a_look.x * persp * u_dpr * (1.0 + heat * 0.5);",
+    "  vec3 deep = vec3(0.14, 0.40, 0.95);",
+    "  vec3 teal = vec3(0.12, 0.80, 1.0);",
+    "  vec3 violet = vec3(0.45, 0.36, 1.0);",
+    "  vec3 sky = vec3(0.78, 0.89, 1.0);",
+    "  vec3 gold = vec3(1.0, 0.55, 0.12);",
+    // slow waves of colour roll through the field
+    "  float w1 = 0.5 + 0.5 * sin(a_state.x * 0.0042 + a_state.y * 0.0023 + u_time * 0.45);",
+    "  float w2 = 0.5 + 0.5 * sin(a_state.x * -0.0031 + a_state.y * 0.0051 - u_time * 0.31);",
+    "  vec3 base = mix(mix(deep, teal, w1 * 0.7), violet, w2 * w2 * 0.45);",
+    "  vec3 c = mix(base, sky, a_look.y);",
+    "  c = mix(c, gold, max(a_look.z, heat));",
+    "  float band = 1.0 - smoothstep(0.0, 70.0, abs(a_state.x + a_state.y * 0.45 - u_sweep));",
+    "  c += band * vec3(0.5, 0.6, 0.7);",
+    "  v_color = c * a_look.w * u_fade * (1.0 + heat * 0.5);",
+    "}"
+  ].join("\n");
+
+  // a soft round glow per particle, added onto whatever is underneath
+  var PT_FS = [
+    "precision mediump float;",
+    "varying vec3 v_color;",
+    "void main() {",
+    "  vec2 d = gl_PointCoord - 0.5;",
+    "  float r = dot(d, d) * 4.0;",
+    "  if (r > 1.0) discard;",
+    "  float a = exp(-r * 3.5) - 0.03;",
+    "  gl_FragColor = vec4(v_color * a, 1.0);",
+    "}"
+  ].join("\n");
+
+  // bloom: the particles are drawn again into a small buffer, blurred, and
+  // added back over the top, so the dense parts of the name give off light
+  var FX_VS = [
+    "attribute vec2 a_pos;",
+    "varying vec2 v_uv;",
+    "void main() { v_uv = a_pos * 0.5 + 0.5; gl_Position = vec4(a_pos, 0.0, 1.0); }"
+  ].join("\n");
+
+  var BLUR_FS = [
+    "precision mediump float;",
+    "uniform sampler2D u_tex;",
+    "uniform vec2 u_dir;",
+    "varying vec2 v_uv;",
+    "void main() {",
+    "  vec3 c = texture2D(u_tex, v_uv).rgb * 0.227027;",
+    "  c += texture2D(u_tex, v_uv + u_dir * 1.3846154).rgb * 0.3162162;",
+    "  c += texture2D(u_tex, v_uv - u_dir * 1.3846154).rgb * 0.3162162;",
+    "  c += texture2D(u_tex, v_uv + u_dir * 3.2307692).rgb * 0.0702703;",
+    "  c += texture2D(u_tex, v_uv - u_dir * 3.2307692).rgb * 0.0702703;",
+    "  gl_FragColor = vec4(c, 1.0);",
+    "}"
+  ].join("\n");
+
+  var GLOW_FS = [
+    "precision mediump float;",
+    "uniform sampler2D u_tex;",
+    "uniform float u_strength;",
+    "varying vec2 v_uv;",
+    "void main() { gl_FragColor = vec4(texture2D(u_tex, v_uv).rgb * u_strength, 1.0); }"
+  ].join("\n");
+
+  function shader(type, src) {
+    var s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
+    return s;
+  }
+
+  function program(vs, fs) {
+    var p = gl.createProgram();
+    gl.attachShader(p, shader(gl.VERTEX_SHADER, vs));
+    gl.attachShader(p, shader(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    var info = { p: p, u: {}, a: {} };
+    var i, n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
+    for (i = 0; i < n; i++) {
+      var u = gl.getActiveUniform(p, i).name;
+      info.u[u] = gl.getUniformLocation(p, u);
+    }
+    n = gl.getProgramParameter(p, gl.ACTIVE_ATTRIBUTES);
+    for (i = 0; i < n; i++) {
+      var a = gl.getActiveAttrib(p, i).name;
+      info.a[a] = gl.getAttribLocation(p, a);
+    }
+    return info;
+  }
+
+  var bgProg, ptProg, blurProg, glowProg;
+  try {
+    bgProg = program(BG_VS, BG_FS);
+    ptProg = program(PT_VS, PT_FS);
+    blurProg = program(FX_VS, BLUR_FS);
+    glowProg = program(FX_VS, GLOW_FS);
+  } catch (e) {
+    console.warn("home field:", e.message);
+    root.classList.add("field-off");
+    return;
+  }
+
+  var triBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, triBuf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  var stateBuf = gl.createBuffer();
+  var lookBuf = gl.createBuffer();
+
+  // two quarter-size buffers to ping-pong the blur between
+  var BLOOM_DIV = 4;
+  var bloom = [0, 1].map(function () {
+    return { tex: gl.createTexture(), fb: gl.createFramebuffer(), w: 0, h: 0 };
+  });
+
+  function sizeBloom() {
+    var w = Math.max(1, Math.ceil(canvas.width / BLOOM_DIV)), h = Math.max(1, Math.ceil(canvas.height / BLOOM_DIV));
+    bloom.forEach(function (b) {
+      b.w = w;
+      b.h = h;
+      gl.bindTexture(gl.TEXTURE_2D, b.tex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, b.fb);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, b.tex, 0);
+    });
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  }
+
+  /* ---------- noise and the flow field ---------- */
+
+  // smooth 3D value noise; the flow is its curl, so it swirls and never piles up
+  var PERM = new Uint8Array(512);
+  (function () {
+    var p = [], i;
+    for (i = 0; i < 256; i++) p[i] = i;
+    for (i = 255; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1)), t = p[i];
+      p[i] = p[j];
+      p[j] = t;
+    }
+    for (i = 0; i < 512; i++) PERM[i] = p[i & 255];
+  })();
+
+  function hash(x, y, z) {
+    return PERM[PERM[PERM[x & 255] + (y & 255)] + (z & 255)];
+  }
+
+  function noise(x, y, z) {
+    var xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z);
+    var xf = x - xi, yf = y - yi, zf = z - zi;
+    var u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf), w = zf * zf * (3 - 2 * zf);
+    var a = hash(xi, yi, zi), b = hash(xi + 1, yi, zi), c = hash(xi, yi + 1, zi), d = hash(xi + 1, yi + 1, zi);
+    var e = hash(xi, yi, zi + 1), f = hash(xi + 1, yi, zi + 1), g = hash(xi, yi + 1, zi + 1), h = hash(xi + 1, yi + 1, zi + 1);
+    var x1 = a + (b - a) * u, x2 = c + (d - c) * u, x3 = e + (f - e) * u, x4 = g + (h - g) * u;
+    var y1 = x1 + (x2 - x1) * v, y2 = x3 + (x4 - x3) * v;
+    return (y1 + (y2 - y1) * w) / 255;
+  }
+
+  var gw = 0, gh = 0, psi, flowX, flowY;
+
+  function sizeField() {
+    gw = Math.ceil(W / CELL) + 3;
+    gh = Math.ceil(H / CELL) + 3;
+    psi = new Float32Array(gw * gh);
+    flowX = new Float32Array(gw * gh);
+    flowY = new Float32Array(gw * gh);
+  }
+
+  function updateField(t) {
+    var i, j, k;
+    for (j = 0; j < gh; j++) {
+      for (i = 0; i < gw; i++) {
+        var x = (i - 1) * CELL * FLOW_SCALE, y = (j - 1) * CELL * FLOW_SCALE;
+        psi[j * gw + i] = noise(x, y, t * 0.12) + 0.5 * noise(x * 2.1 + 31, y * 2.1 + 17, t * 0.2);
+      }
+    }
+    var norm = 1 / (2 * CELL * FLOW_SCALE);
+    for (j = 0; j < gh; j++) {
+      for (i = 0; i < gw; i++) {
+        k = j * gw + i;
+        var l = psi[j * gw + Math.max(0, i - 1)], r = psi[j * gw + Math.min(gw - 1, i + 1)];
+        var u = psi[Math.max(0, j - 1) * gw + i], d = psi[Math.min(gh - 1, j + 1) * gw + i];
+        flowX[k] = (d - u) * norm;
+        flowY[k] = -(r - l) * norm;
+      }
+    }
+  }
+
+  /* ---------- particles ---------- */
+
+  var W = 0, H = 0, DPR = 1;
+  var N = 0, active = 0;
+  var px, py, pz, vx, vy, vz, tx, ty, tz, hz, heat, kk, wake, bound, state, look;
+  var glyphs = { x: 0, y: 0, w: 1, h: 1 };
+  var pivot = { x: 0, y: 0 };
+  var clock = 0;
+  var cam = { yaw: 0, pitch: 0 };
+  var ptr = { x: 0, y: 0, vx: 0, vy: 0, in: false, down: false, overUi: false };
+  var lastType = "mouse";
+  var stirred = 0;
+  var ringState = { x: 0, y: 0, size: 40 };
+
+  // grain shrinks the name's particles with its type size, so small screens
+  // get finer specks (and more of them) rather than coarse ones
+  function alloc(nb, na, grain) {
+    var n = nb + na;
+    N = n;
+    active = n;
+    px = new Float32Array(n); py = new Float32Array(n); pz = new Float32Array(n);
+    vx = new Float32Array(n); vy = new Float32Array(n); vz = new Float32Array(n);
+    tx = new Float32Array(n); ty = new Float32Array(n); tz = new Float32Array(n);
+    hz = new Float32Array(n); heat = new Float32Array(n); kk = new Float32Array(n); wake = new Float32Array(n);
+    bound = new Uint8Array(n);
+    state = new Float32Array(n * 4);
+    look = new Float32Array(n * 4);
+
+    // bound and free particles are mixed evenly through the arrays, so any
+    // leading slice of them is a fair sample if we ever have to draw fewer
+    for (var i = 0; i < n; i++) {
+      var b = Math.random() < nb / n;
+      bound[i] = b ? 1 : 0;
+      kk[i] = 16 + Math.random() * 16;
+      hz[i] = b ? 0 : -900 + Math.random() * 1150;
+      look[i * 4] = b ? (2.4 + Math.random() * 2.6) * grain : 1.6 + Math.random() * 3.2;
+      look[i * 4 + 1] = Math.pow(Math.random(), 1.6);
+      look[i * 4 + 2] = Math.random() < 0.025 ? 1 : 0;
+      look[i * 4 + 3] = b ? 0.55 + Math.random() * 0.25 : 0.25 + Math.random() * 0.3;
+    }
+    gl.bindBuffer(gl.ARRAY_BUFFER, stateBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, state.byteLength, gl.DYNAMIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, lookBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, look, gl.STATIC_DRAW);
+  }
+
+  // draw the name into a mask exactly where the page set it, and keep every
+  // pixel inside the letters; returns how many there are
+  var traced = null;
+
+  function trace() {
+    var cs = getComputedStyle(nameEl);
+    var size = parseFloat(cs.fontSize);
+    var rects = [].map.call(nameEl.querySelectorAll(".w"), function (w) {
+      var range = document.createRange();
+      range.selectNodeContents(w);
+      var b = range.getBoundingClientRect();
+      return { x: b.left, y: b.top + window.scrollY, w: b.width, h: b.height, text: w.textContent.toUpperCase() };
+    });
+    var x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    rects.forEach(function (r) {
+      x0 = Math.min(x0, r.x); y0 = Math.min(y0, r.y);
+      x1 = Math.max(x1, r.x + r.w); y1 = Math.max(y1, r.y + r.h);
+    });
+    x0 = Math.floor(x0) - 2;
+    y0 = Math.floor(y0) - 2;
+    var mw = Math.ceil(x1 - x0) + 4, mh = Math.ceil(y1 - y0) + 4;
+
+    var mask = document.createElement("canvas");
+    mask.width = mw;
+    mask.height = mh;
+    var m = mask.getContext("2d", { willReadFrequently: true });
+    m.font = cs.fontWeight + " " + size + "px " + cs.fontFamily;
+    m.textBaseline = "alphabetic";
+    m.fillStyle = "#000";
+    rects.forEach(function (r) {
+      var mt = m.measureText(r.text);
+      var ascent = mt.fontBoundingBoxAscent || r.h * 0.78;
+      m.setTransform(r.w / mt.width, 0, 0, 1, r.x - x0, 0);
+      m.fillText(r.text, 0, r.y - y0 + ascent);
+    });
+    var data = m.getImageData(0, 0, mw, mh).data;
+
+    var spots = [], gx0 = Infinity, gy0 = Infinity, gx1 = -Infinity, gy1 = -Infinity;
+    for (var y = 0; y < mh; y++) {
+      for (var x = 0; x < mw; x++) {
+        if (data[(y * mw + x) * 4 + 3] > 127) {
+          spots.push(x, y);
+          if (x < gx0) gx0 = x;
+          if (x > gx1) gx1 = x;
+          if (y < gy0) gy0 = y;
+          if (y > gy1) gy1 = y;
+        }
+      }
+    }
+    if (!spots.length) return 0;
+
+    traced = { spots: spots, x0: x0, y0: y0, count: spots.length / 2 };
+    glyphs = { x: x0 + gx0, y: y0 + gy0, w: gx1 - gx0 + 1, h: gy1 - gy0 + 1 };
+    pivot.x = glyphs.x + glyphs.w / 2;
+    pivot.y = glyphs.y + glyphs.h / 2;
+    return traced.count;
+  }
+
+  // hand each particle in the name a random spot inside the letters
+  function aim() {
+    var t = traced;
+    for (var i = 0; i < N; i++) {
+      if (!bound[i]) continue;
+      var s = Math.floor(Math.random() * t.count) * 2;
+      tx[i] = t.x0 + t.spots[s] + Math.random();
+      ty[i] = t.y0 + t.spots[s + 1] + Math.random();
+      tz[i] = (Math.random() - 0.5) * DEPTH;
+    }
+  }
+
+  // everything starts scattered through deep space, then the name pulls
+  // itself together from left to right
+  function scatter() {
+    var reach = Math.max(W, H) * 1.3;
+    for (var i = 0; i < N; i++) {
+      if (bound[i]) {
+        var a = Math.random() * Math.PI * 2, r = reach * (0.35 + Math.random() * 0.65);
+        px[i] = pivot.x + Math.cos(a) * r;
+        py[i] = pivot.y + Math.sin(a) * r * 0.7;
+        pz[i] = -2200 + Math.random() * 2650;
+        wake[i] = 0.25 + (tx[i] - glyphs.x) / glyphs.w * 1.3 + Math.random() * 0.5;
+      } else {
+        px[i] = Math.random() * W;
+        py[i] = window.scrollY + Math.random() * H;
+        pz[i] = hz[i];
+        wake[i] = 0;
+      }
+      vx[i] = vy[i] = vz[i] = 0;
+      heat[i] = 0;
+      if (reduce && bound[i]) {
+        px[i] = tx[i];
+        py[i] = ty[i];
+        pz[i] = tz[i];
+        wake[i] = 0;
+      }
+    }
+  }
+
+  function resize() {
+    DPR = Math.min(2, window.devicePixelRatio || 1);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = Math.round(W * DPR);
+    canvas.height = Math.round(H * DPR);
+    canvas.style.height = H + "px";
+    sizeField();
+    sizeBloom();
+  }
+
+  /* ---------- simulation ---------- */
+
+  function step(dt) {
+    clock += dt;
+    if (!reduce) updateField(clock);
+
+    var sy = window.scrollY;
+    var flowOn = reduce ? 0 : 1;
+    var cx = pivot.x, cyp = pivot.y;
+
+    // the pointer pushes particles aside, and drags them along as it moves
+    var stir = ptr.in || ptr.down;
+    var mx = ptr.x, my = ptr.y + sy;
+    var mvx = ptr.vx, mvy = ptr.vy;
+    var R = STIR_R, R2 = R * R;
+    var pv = Math.sqrt(mvx * mvx + mvy * mvy);
+    var push = 4200 + Math.min(pv, 3000) * 1.5;
+    var decay = Math.exp(-dt * 1.8);
+    var left = -60, right = W + 60, top = sy - 60, bottom = sy + H + 60;
+
+    for (var i = 0; i < active; i++) {
+      var x = px[i], y = py[i], z = pz[i];
+      var ux = vx[i], uy = vy[i], uz = vz[i];
+      var ax, ay, az, damp;
+
+      // the flow at this spot, bilinear from the grid
+      var fx = 0, fy = 0;
+      if (flowOn) {
+        var gx = x / CELL + 1, gy = (y - sy) / CELL + 1;
+        if (gx < 0) gx = 0; else if (gx > gw - 1.001) gx = gw - 1.001;
+        if (gy < 0) gy = 0; else if (gy > gh - 1.001) gy = gh - 1.001;
+        var ix = gx | 0, iy = gy | 0, qx = gx - ix, qy = gy - iy, k0 = iy * gw + ix;
+        fx = (flowX[k0] * (1 - qx) + flowX[k0 + 1] * qx) * (1 - qy) + (flowX[k0 + gw] * (1 - qx) + flowX[k0 + gw + 1] * qx) * qy;
+        fy = (flowY[k0] * (1 - qx) + flowY[k0 + 1] * qx) * (1 - qy) + (flowY[k0 + gw] * (1 - qx) + flowY[k0 + gw + 1] * qx) * qy;
+      }
+
+      if (bound[i] && clock >= wake[i]) {
+        // springs back to its place in the letters: firmly while the name
+        // first gathers, then softly, so a wake through it heals slowly
+        var ramp = clock - wake[i];
+        var k = kk[i] * (ramp < 0.9 ? (ramp / 0.9) * (ramp / 0.9) : 1) * (ramp < 3 ? 2.2 : 1);
+        ax = (tx[i] - x) * k + fx * 60;
+        ay = (ty[i] - y) * k + fy * 60;
+        az = (tz[i] - z) * k;
+        damp = 1.7 * Math.sqrt(k);
+      } else {
+        // dust just rides the flow
+        ax = (fx * 46 - ux) * 1.4;
+        ay = (fy * 46 - uy) * 1.4;
+        az = (hz[i] - z) * 0.6;
+        damp = 0.6;
+      }
+
+      if (stir) {
+        // compare against where the particle appears, not where it is
+        var ps = FOCAL / (FOCAL - z);
+        var dx = cx + (x - cx) * ps - mx, dy = cyp + (y - cyp) * ps - my;
+        var d2 = dx * dx + dy * dy;
+        if (d2 < R2) {
+          var d = Math.sqrt(d2) + 0.001, f = 1 - d / R;
+          f *= f;
+          // which side of the pointer's path this particle is on; the two
+          // sides spin opposite ways, like the wake behind an oar
+          var side = (dx * mvy - dy * mvx) / d;
+          ax += (dx / d * push + mvx * 7 - dy / d * side * 3) * f;
+          ay += (dy / d * push + mvy * 7 + dx / d * side * 3) * f;
+          az += side * 1.2 * f;
+        }
+      }
+
+      ux += (ax - ux * damp) * dt;
+      uy += (ay - uy * damp) * dt;
+      uz += (az - uz * damp) * dt;
+      x += ux * dt;
+      y += uy * dt;
+      z += uz * dt;
+      if (z > FOCAL - 60) { z = FOCAL - 60; uz = 0; }
+
+      // dust wraps round the screen, allowing for perspective so the far-off
+      // specks do not pop in and out mid-screen
+      if (!bound[i]) {
+        var pf = (FOCAL - z) / FOCAL;
+        var l = cx + (left - cx) * pf, r = cx + (right - cx) * pf;
+        var t = cyp + (top - cyp) * pf, b = cyp + (bottom - cyp) * pf;
+        if (x < l) x = r - (l - x); else if (x > r) x = l + (x - r);
+        if (y < t) y = b - (t - y); else if (y > b) y = t + (y - b);
+      }
+
+      // fast particles run hot, then cool back down to blue
+      var sp = (ux * ux + uy * uy + uz * uz) / 300000;
+      var h = heat[i] * decay;
+      if (sp > h) h = sp > 1 ? 1 : sp;
+      heat[i] = h;
+
+      px[i] = x; py[i] = y; pz[i] = z;
+      vx[i] = ux; vy[i] = uy; vz[i] = uz;
+      var o = i * 4;
+      state[o] = x; state[o + 1] = y; state[o + 2] = z; state[o + 3] = h;
+    }
+
+    // the pointer's speed dies away once it stops moving
+    ptr.vx *= Math.exp(-dt * 8);
+    ptr.vy *= Math.exp(-dt * 8);
+
+    // the camera leans toward the pointer, or sways on its own
+    var yaw = 0, pitch = 0;
+    if (reduce) {
+      yaw = pitch = 0;
+    } else if (ptr.in && fine) {
+      yaw = (ptr.x / W - 0.5) * 0.36;
+      pitch = -(ptr.y / H - 0.5) * 0.24;
+    } else {
+      yaw = Math.sin(clock * 0.21) * 0.14;
+      pitch = Math.sin(clock * 0.15) * 0.07;
+    }
+    var ce = 1 - Math.exp(-dt * 2.5);
+    cam.yaw += (yaw - cam.yaw) * ce;
+    cam.pitch += (pitch - cam.pitch) * ce;
+  }
+
+  /* ---------- drawing ---------- */
+
+  function fullscreen(prog) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, triBuf);
+    gl.enableVertexAttribArray(prog.a.a_pos);
+    gl.vertexAttribPointer(prog.a.a_pos, 2, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.disableVertexAttribArray(prog.a.a_pos);
+  }
+
+  function points(dpr) {
+    gl.useProgram(ptProg.p);
+    gl.uniform1f(ptProg.u.u_dpr, dpr);
+    gl.bindBuffer(gl.ARRAY_BUFFER, stateBuf);
+    gl.enableVertexAttribArray(ptProg.a.a_state);
+    gl.vertexAttribPointer(ptProg.a.a_state, 4, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, lookBuf);
+    gl.enableVertexAttribArray(ptProg.a.a_look);
+    gl.vertexAttribPointer(ptProg.a.a_look, 4, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.POINTS, 0, active);
+    gl.disableVertexAttribArray(ptProg.a.a_state);
+    gl.disableVertexAttribArray(ptProg.a.a_look);
+  }
+
+  function draw() {
+    var sy = window.scrollY;
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, stateBuf);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, state.subarray(0, active * 4));
+
+    // every eight seconds a band of light runs across the name
+    var sweep = -1e5;
+    if (!reduce && clock > 3) {
+      var ph = ((clock - 3) % 8) / 1.8;
+      if (ph < 1) sweep = glyphs.x - 300 + ph * (glyphs.w + glyphs.h * 0.45 + 600) + glyphs.y * 0.45;
+    }
+
+    gl.useProgram(ptProg.p);
+    gl.uniform2f(ptProg.u.u_view, W, H);
+    gl.uniform1f(ptProg.u.u_scroll, sy);
+    gl.uniform3f(ptProg.u.u_pivot, pivot.x, pivot.y, 0);
+    gl.uniform2f(ptProg.u.u_rot, cam.yaw, cam.pitch);
+    gl.uniform1f(ptProg.u.u_focal, FOCAL);
+    gl.uniform1f(ptProg.u.u_sweep, sweep);
+    gl.uniform1f(ptProg.u.u_fade, Math.min(1, clock / 1.2));
+    gl.uniform1f(ptProg.u.u_time, clock);
+
+    // the glow: the particles go into the small buffer, a little larger so
+    // even the specks feed it, and get blurred twice each way
+    var a = bloom[0], b = bloom[1];
+    gl.bindFramebuffer(gl.FRAMEBUFFER, a.fb);
+    gl.viewport(0, 0, a.w, a.h);
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE);
+    points(DPR / BLOOM_DIV * 1.6);
+    gl.disable(gl.BLEND);
+
+    gl.useProgram(blurProg.p);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.uniform1i(blurProg.u.u_tex, 0);
+    for (var pass = 1; pass <= 2; pass++) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, b.fb);
+      gl.bindTexture(gl.TEXTURE_2D, a.tex);
+      gl.uniform2f(blurProg.u.u_dir, pass / a.w, 0);
+      fullscreen(blurProg);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, a.fb);
+      gl.bindTexture(gl.TEXTURE_2D, b.tex);
+      gl.uniform2f(blurProg.u.u_dir, 0, pass / a.h);
+      fullscreen(blurProg);
+    }
+
+    // the screen: background, the sharp particles, then the glow over them
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.useProgram(bgProg.p);
+    gl.uniform2f(bgProg.u.u_res, canvas.width, canvas.height);
+    gl.uniform2f(bgProg.u.u_glow, pivot.x * DPR, (pivot.y - sy) * DPR);
+    fullscreen(bgProg);
+
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE);
+    points(DPR);
+
+    gl.useProgram(glowProg.p);
+    gl.bindTexture(gl.TEXTURE_2D, a.tex);
+    gl.uniform1i(glowProg.u.u_tex, 0);
+    gl.uniform1f(glowProg.u.u_strength, 0.9);
+    fullscreen(glowProg);
+    gl.disable(gl.BLEND);
+  }
+
+  /* ---------- the cursor ---------- */
+
+  function moveCursor(dt) {
+    var r = ringState, k = 1 - Math.exp(-dt * 16);
+    r.x += (ptr.x - r.x) * k;
+    r.y += (ptr.y - r.y) * k;
+    r.size += ((ptr.overUi ? 0 : 40) - r.size) * (1 - Math.exp(-dt * 14));
+    var s = Math.max(0, r.size);
+    ring.style.width = ring.style.height = s + "px";
+    ring.style.margin = -s / 2 + "px 0 0 " + -s / 2 + "px";
+    ring.style.transform = "translate3d(" + r.x + "px," + r.y + "px,0)";
+    dot.style.transform = "translate3d(" + ptr.x + "px," + ptr.y + "px,0)";
+  }
+
+  /* ---------- input ---------- */
+
+  // a shockwave: everything near the point is flung outward, some of it
+  // toward the viewer, and glows hot until it settles
+  function burst(x, y) {
+    if (reduce) return;
+    var cx = pivot.x, cyp = pivot.y, R = 420;
+    for (var i = 0; i < active; i++) {
+      var ps = FOCAL / (FOCAL - pz[i]);
+      var dx = cx + (px[i] - cx) * ps - x, dy = cyp + (py[i] - cyp) * ps - y;
+      var d = Math.sqrt(dx * dx + dy * dy) + 0.001;
+      if (d > R) continue;
+      var f = 1 - d / R;
+      var hot = f;
+      f = f * Math.sqrt(f) * 2400;
+      vx[i] += dx / d * f;
+      vy[i] += dy / d * f;
+      vz[i] += (Math.random() - 0.35) * f * 0.9;
+      if (hot > heat[i]) heat[i] = hot;
+    }
+  }
+
+  function overUi(target) {
+    return !!(target && target.closest && target.closest("a, button"));
+  }
+
+  function noteStir(dist) {
+    stirred += dist;
+    if (stirred > 600) hint.classList.add("gone");
+  }
+
+  function bindInput() {
+    var last = 0;
+    window.addEventListener("pointermove", function (e) {
+      if (e.pointerType !== "mouse" && !ptr.down) return;
+      var now = performance.now();
+      var dt = Math.max(8, now - (last || now - 16)) / 1000;
+      last = now;
+      var dx = e.clientX - ptr.x, dy = e.clientY - ptr.y;
+      if (ptr.in || ptr.down) {
+        ptr.vx += (dx / dt - ptr.vx) * 0.5;
+        ptr.vy += (dy / dt - ptr.vy) * 0.5;
+        noteStir(Math.sqrt(dx * dx + dy * dy));
+      }
+      ptr.x = e.clientX;
+      ptr.y = e.clientY;
+      ptr.overUi = overUi(e.target);
+      if (e.pointerType === "mouse") {
+        ptr.in = true;
+        cursor.classList.add("in");
+      }
+    }, { passive: true });
+
+    document.documentElement.addEventListener("mouseleave", function () {
+      ptr.in = false;
+      cursor.classList.remove("in");
+    });
+
+    var downAt = 0, downX = 0, downY = 0;
+    window.addEventListener("pointerdown", function (e) {
+      lastType = e.pointerType || "mouse";
+      if (lastType === "mouse" || overUi(e.target)) return;
+      ptr.down = true;
+      ptr.x = downX = e.clientX;
+      ptr.y = downY = e.clientY;
+      ptr.vx = ptr.vy = 0;
+      downAt = performance.now();
+    }, { passive: true });
+
+    window.addEventListener("pointerup", function (e) {
+      if (!ptr.down) return;
+      ptr.down = false;
+      var moved = Math.abs(e.clientX - downX) + Math.abs(e.clientY - downY);
+      if (moved < 12 && performance.now() - downAt < 400) {
+        burst(e.clientX, e.clientY + window.scrollY);
+        noteStir(300);
+      }
+    }, { passive: true });
+
+    window.addEventListener("pointercancel", function () { ptr.down = false; }, { passive: true });
+
+    window.addEventListener("click", function (e) {
+      if (lastType !== "mouse" || overUi(e.target)) return;
+      burst(e.clientX, e.clientY + window.scrollY);
+      noteStir(300);
+    });
+
+    var resizeT;
+    window.addEventListener("resize", function () {
+      clearTimeout(resizeT);
+      resizeT = setTimeout(function () {
+        resize();
+        if (trace()) aim();
+      }, 150);
+    });
+  }
+
+  /* ---------- go ---------- */
+
+  // if the machine cannot keep up, quietly draw fewer particles
+  var slow = 0;
+  function adapt(dt) {
+    if (dt > 0.026) slow++; else slow = Math.max(0, slow - 2);
+    if (slow > 90 && active > 9000) {
+      active = Math.floor(active * 0.8);
+      slow = 0;
+    }
+  }
+
+  var lastFrame = 0;
+  function frame(now) {
+    var dt = lastFrame ? Math.min(0.05, (now - lastFrame) / 1000) : 1 / 60;
+    lastFrame = now;
+    step(dt);
+    draw();
+    if (fine) moveCursor(dt);
+    if (clock > 4) adapt(dt);
+    requestAnimationFrame(frame);
+  }
+
+  function start() {
+    try {
+      resize();
+      var letters = trace();
+      if (!letters) throw new Error("could not trace the name");
+      var grain = Math.max(0.5, Math.min(1, parseFloat(getComputedStyle(nameEl).fontSize) / 180));
+      alloc(Math.round(Math.max(2500, Math.min(40000, letters * NAME_DENSITY / (grain * grain)))),
+            Math.round(Math.max(1500, Math.min(16000, W * H * DUST_DENSITY))), grain);
+      aim();
+      scatter();
+      if (!reduce) updateField(0);
+    } catch (e) {
+      console.warn("home field:", e.message);
+      root.classList.add("field-off");
+      return;
+    }
+    root.classList.add("field-on");
+    if (fine) root.classList.add("custom-cursor");
+    bindInput();
+    requestAnimationFrame(frame);
+  }
+
+  canvas.addEventListener("webglcontextlost", function (e) {
+    e.preventDefault();
+    root.classList.remove("field-on");
+    root.classList.add("field-off");
+  });
+
+  // the name is traced in its real typeface, so wait for that (briefly)
+  var font = document.fonts ? document.fonts.load("900 100px Merriweather") : Promise.resolve();
+  var timeout = new Promise(function (resolve) { setTimeout(resolve, 2000); });
+  Promise.race([font, timeout]).then(start, start);
+
+  // a handle for poking at the field from the console
+  window.__field = {
+    step: step,
+    draw: draw,
+    burst: burst,
+    ptr: ptr,
+    get active() { return active; },
+    get N() { return N; },
+    get glyphs() { return glyphs; },
+    get clock() { return clock; }
+  };
+})();
+</script>
+
 </body>
 </html>

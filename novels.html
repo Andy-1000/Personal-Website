@@ -73,6 +73,163 @@
     margin: 0;
   }
 
+  /* ---------- the reviews dropdown (the same one as on the home page) ---------- */
+  header.page { position: relative; z-index: 25; }
+
+  .reviews {
+    position: absolute;
+    top: calc(1.1rem + env(safe-area-inset-top));
+    right: calc(var(--gutter) + env(safe-area-inset-right));
+    text-align: left;
+  }
+
+  .reviews-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px 9px 14px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: transparent;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .reviews-toggle .chev {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .reviews-toggle:hover,
+  .reviews.open .reviews-toggle {
+    color: var(--navy);
+    border-color: var(--sky);
+    background: #fff;
+  }
+
+  .reviews.open .reviews-toggle .chev { transform: rotate(180deg); }
+
+  .reviews-toggle:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+
+  .menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 220px;
+    margin: 0;
+    padding: 8px;
+    list-style: none;
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.96);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 2px rgba(0, 25, 51, 0.12), 0 18px 44px rgba(0, 25, 51, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px) scale(0.98);
+    transform-origin: top right;
+    transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0.25s;
+  }
+
+  /* bridges the gap under the button, so the pointer can cross it */
+  .menu::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -12px;
+    height: 12px;
+  }
+
+  .reviews.open .menu {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .menu a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 11px 14px;
+    border-radius: 10px;
+    font-family: "Merriweather", serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--navy);
+    text-decoration: none;
+    transition: background 0.2s ease, color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .menu a svg {
+    width: 16px;
+    height: 16px;
+    color: var(--gold);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .menu a:hover,
+  .menu a:focus-visible {
+    background: var(--sky-soft);
+    color: var(--blue);
+    outline: none;
+  }
+
+  .menu a:hover svg,
+  .menu a:focus-visible svg {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* the page you are on gets a dot instead of an arrow */
+  .menu a[aria-current="page"] { color: var(--blue); }
+
+  .menu a[aria-current="page"]::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    margin-right: 4px;
+    border-radius: 50%;
+    background: var(--blue);
+  }
+
+  .menu a[aria-current="page"] svg { display: none; }
+
+  @media (max-width: 640px) {
+    .reviews {
+      position: relative;
+      top: auto;
+      right: auto;
+      display: inline-block;
+      margin: -0.6rem 0 0.4rem;
+    }
+
+    .menu {
+      right: auto;
+      left: 50%;
+      margin-left: -110px;
+      transform-origin: top center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reviews-toggle, .reviews-toggle .chev, .menu, .reviews.open .menu, .menu a, .menu a svg { transition: none; }
+  }
+
   /* ---------- sort switch ---------- */
   .toolbar {
     position: sticky;
@@ -716,6 +873,18 @@
 </div>
 
 <header class="page">
+  <nav class="reviews" id="reviews" aria-label="Site">
+    <button class="reviews-toggle" id="reviewsToggle" type="button" aria-expanded="false" aria-controls="reviewsMenu">
+      Reviews
+      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+    <ul class="menu" id="reviewsMenu">
+      <li><a href="/movies">Movies <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a></li>
+      <li><a href="/albums">Albums <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a></li>
+      <li><a href="/novels" aria-current="page">Novels <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a></li>
+      <li><a href="/books">Books <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a></li>
+    </ul>
+  </nav>
   <h1>Novels</h1>
 </header>
 
@@ -1546,6 +1715,7 @@
 
     document.addEventListener("mousemove", function (e) { mx = e.clientX; my = e.clientY; });
     bindHover(document.querySelector(".switch"));
+    bindHover(document.getElementById("reviews"));
 
     (function loop() {
       bx += (mx - bx) * 0.14;
@@ -1589,6 +1759,69 @@
 
   openFromHash();
   window.addEventListener("hashchange", openFromHash);
+})();
+</script>
+
+<script>
+// the Reviews dropdown: a mouse opens it by hovering, anything can open it
+// with a click or tap, and Escape, a click elsewhere or tabbing away close it
+(function () {
+  "use strict";
+
+  var nav = document.getElementById("reviews");
+  var toggle = document.getElementById("reviewsToggle");
+  var links = [].slice.call(nav.querySelectorAll(".menu a"));
+  var mouse = matchMedia("(hover: hover) and (pointer: fine)");
+  var byHover = false, closeT;
+
+  function isOpen() { return nav.classList.contains("open"); }
+
+  function set(open, how) {
+    clearTimeout(closeT);
+    byHover = open && how === "hover";
+    nav.classList.toggle("open", open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  toggle.addEventListener("click", function () {
+    // hovering already opened it, so a click pins it open rather than shutting it
+    if (byHover) {
+      byHover = false;
+      return;
+    }
+    set(!isOpen(), "click");
+  });
+
+  nav.addEventListener("pointerenter", function (e) {
+    if (e.pointerType === "mouse" && mouse.matches && !isOpen()) set(true, "hover");
+  });
+
+  nav.addEventListener("pointerleave", function (e) {
+    if (e.pointerType === "mouse" && byHover) closeT = setTimeout(function () { set(false); }, 220);
+  });
+
+  document.addEventListener("pointerdown", function (e) {
+    if (isOpen() && !nav.contains(e.target)) set(false);
+  });
+
+  nav.addEventListener("keydown", function (e) {
+    var at = links.indexOf(document.activeElement);
+    if (e.key === "Escape" && isOpen()) {
+      set(false);
+      toggle.focus();
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (!isOpen()) set(true, "key");
+      links[Math.min(links.length - 1, at + 1)].focus();
+    } else if (e.key === "ArrowUp" && isOpen()) {
+      e.preventDefault();
+      if (at <= 0) toggle.focus(); else links[at - 1].focus();
+    }
+  });
+
+  nav.addEventListener("focusout", function (e) {
+    if (!nav.contains(e.relatedTarget)) set(false);
+  });
 })();
 </script>
 

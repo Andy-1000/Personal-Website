@@ -144,7 +144,7 @@ def main(src, lt_path):
     named = ['Linda F', 'Mary F', 'Jennifer F',
              'Woodrow M', 'Shirley F', 'Jaime F', 'Farrah F', 'Hillary F', 'Katrina F', 'Isis F', 'Alexa F',
              'Hazel F', 'Violet F', 'Stella F', 'Eleanor F', 'Leo M',
-             'Debra F', 'Carol F', 'Tammy F', 'Rhonda F', 'Carole F', 'Myrtle F',
+             'Debra F', 'Carol F', 'Tammy F', 'Rhonda F', 'Vicki F', 'Myrtle F',
              'Mildred F', 'Gary M', 'Jason M', 'Brittany F', 'Madison F', 'Liam M']
     story_series = {k: series(*k.split()) for k in named}
 

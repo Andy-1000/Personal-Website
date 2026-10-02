@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;0,900;1,400;1,900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="preload" as="fetch" href="name-data/core.json?v=6bee3398f7" crossorigin>
+<link rel="preload" as="fetch" href="name-data/core.json?v=457f84ad2e" crossorigin>
 <style>
   :root {
     --bg: #050f1f;
@@ -686,7 +686,7 @@
       <div class="card">
         <p class="big">Others look gone for good.</p>
         <p>In 1955, <b data-t="debraPeak"></b> girls were named <b class="coral">Debra</b>. In <b data-t="last"></b>, <b data-t="debraLast"></b> were.</p>
-        <p>Carole and Myrtle, each once given to thousands of girls a year, now fall below five babies a year, the point at which the records stop listing a name at all.</p>
+        <p>Vicki went to <b data-t="vickiPeak"></b> girls in 1954. In <b data-t="last"></b> it fell below five, the point at which the records stop listing a name at all.</p>
       </div>
     </section>
 
@@ -794,7 +794,7 @@
 (() => {
   'use strict';
 
-  const V = '6bee3398f7';
+  const V = '457f84ad2e';
   const NS = 'http://www.w3.org/2000/svg';
   const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (s, r = document) => r.querySelector(s);
@@ -982,6 +982,7 @@
       hazelLast: fmt(hz[NY - 1]),
       debraPeak: fmt(deb[yi(1955)]),
       debraLast: fmt(deb[NY - 1]),
+      vickiPeak: fmt(series('Vicki F')[yi(1954)]),
       ageMildred: analyze(series('Mildred F'), 'F').medAge,
       ageLiam: analyze(series('Liam M'), 'M').medAge,
     };
@@ -1188,7 +1189,7 @@
       reveal(a);
     },
     gone() {
-      const g = fieldSet(['Carol F', 'Tammy F', 'Rhonda F', 'Carole F', 'Myrtle F', 'Debra F'], 'coral', 'peak');
+      const g = fieldSet(['Carol F', 'Tammy F', 'Rhonda F', 'Vicki F', 'Myrtle F', 'Debra F'], 'coral', 'peak');
       const d = series('Debra F');
       const [x, y] = ptOf('Debra F', F1);
       const a = el('g', { class: 'fade-in' }, g);
@@ -1226,11 +1227,16 @@
         txt(a, l.x - 10, l.y + 4, l.n, `ann ${color} halo`, 'end');
       });
     } else {
-      // peaks sit at different heights; nudge any two that are too close side by side
-      labels.sort((p, q) => p.x - q.x);
-      labels.forEach((l, i) => {
-        const prev = labels[i - 1];
-        if (prev && Math.abs(prev.x - l.x) < 52 && Math.abs(prev.y - l.y) < 16) l.y = prev.y - 16;
+      // peaks sit at different heights; lift a label until it clears every one already placed
+      const placed = [];
+      labels.sort((p, q) => p.y - q.y || p.x - q.x).forEach(l => {
+        const w = l.n.length * 7.5;
+        let hit;
+        do {
+          hit = placed.find(o => Math.abs(o.x - l.x) < (o.w + w) / 2 + 4 && Math.abs(o.y - l.y) < 15);
+          if (hit) l.y = hit.y - 15;
+        } while (hit);
+        placed.push({ x: l.x, y: l.y, w });
         txt(a, l.x, l.y, l.n, `ann ${color} halo`, 'middle');
       });
     }

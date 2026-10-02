@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Is Your Name Dying? | Andy Sansness</title>
+<meta name="description" content="Names are born, they peak and most of them fade. The life story of every common American name since 1880, and where yours is in its own.">
+<meta property="og:title" content="Is your name dying?">
+<meta property="og:description" content="The life story of every common American name since 1880, and where yours is in its own.">
+<meta property="og:type" content="article">
+<meta name="theme-color" content="#050f1f">
+<link rel="icon" type="image/png" href="thumbs_up_.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;0,900;1,400;1,900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="fetch" href="name-data/core.json?v=6bee3398f7" crossorigin>
+<style>
+  :root {
+    --bg: #050f1f;
+    --bg-2: #081a33;
+    --panel: #0a1e3a;
+    --ink: #eef4fb;
+    --soft: #b9c8db;
+    --muted: #7d91ab;
+    --hair: rgba(159, 207, 255, 0.14);
+    --sky: #9fcfff;
+    --gold: #f5b83d;
+    --mint: #5fe0b0;
+    --coral: #ff7466;
+    --card: rgba(7, 21, 41, 0.86);
+    --gutter: 16px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Open Sans", sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { color: var(--bg); background: var(--gold); }
+
+  a { color: var(--sky); }
+
+  button { font: inherit; color: inherit; }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .home {
+    position: absolute;
+    z-index: 20;
+    top: calc(18px + env(safe-area-inset-top));
+    left: calc(var(--gutter) + env(safe-area-inset-left));
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--soft);
+    text-decoration: none;
+    padding: 8px 2px;
+  }
+
+  .home:hover, .home:focus-visible { color: var(--gold); }
+
+  /* ---------- the story: a sticky stage with steps scrolling over it ---------- */
+  .story { position: relative; }
+
+  .stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    background:
+      radial-gradient(120% 80% at 70% 40%, #0b2040 0%, rgba(5, 15, 31, 0) 60%),
+      var(--bg);
+  }
+
+  #field {
+    position: absolute;
+    transform-origin: 0 0;
+    transition: transform 1.3s cubic-bezier(0.65, 0, 0.25, 1), opacity 0.8s ease;
+    will-change: transform, opacity;
+  }
+
+  #viz {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .stage .vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(60% 55% at 50% 48%, rgba(5, 15, 31, 0.78) 0%, rgba(5, 15, 31, 0.35) 55%, rgba(5, 15, 31, 0) 80%);
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+
+  .stage[data-active="hero"] .vignette { opacity: 1; }
+
+  @media (max-width: 720px) {
+    .stage .vignette {
+      background: radial-gradient(95% 50% at 50% 48%, rgba(5, 15, 31, 0.9) 0%, rgba(5, 15, 31, 0.6) 55%, rgba(5, 15, 31, 0.1) 85%);
+    }
+  }
+
+  .layer { opacity: 0; transition: opacity 0.6s ease; pointer-events: none; }
+  .layer.on { opacity: 1; }
+  .layer.on.live { pointer-events: auto; }
+
+  .tick text, .lbl { font: 600 11.5px "Open Sans", sans-serif; fill: var(--muted); }
+  .tick line, .grid { stroke: var(--hair); stroke-width: 1; }
+  .axis-title { font: 600 11px "Open Sans", sans-serif; letter-spacing: 0.16em; text-transform: uppercase; fill: var(--muted); }
+
+  .halo { paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
+  .halo-soft { paint-order: stroke; stroke: rgba(5, 15, 31, 0.7); stroke-width: 3px; stroke-linejoin: round; }
+
+  .hi-path { fill: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  .hi-path.gold { stroke: var(--gold); filter: drop-shadow(0 0 6px rgba(245, 184, 61, 0.55)); }
+  .hi-path.pale { stroke: #ffffff; filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.4)); }
+  .hi-path.mint { stroke: var(--mint); filter: drop-shadow(0 0 6px rgba(95, 224, 176, 0.5)); }
+  .hi-path.coral { stroke: var(--coral); filter: drop-shadow(0 0 6px rgba(255, 116, 102, 0.5)); }
+  .hi-path.draw { transition: stroke-dashoffset 1.6s cubic-bezier(0.5, 0, 0.2, 1); }
+  .hi-path.dim { stroke-width: 1.6; stroke-opacity: 0.5; filter: none; }
+
+  .ann { font: 700 13px "Open Sans", sans-serif; }
+  .ann.gold { fill: var(--gold); }
+  .ann.pale { fill: #fff; }
+  .ann.mint { fill: var(--mint); }
+  .ann.coral { fill: var(--coral); }
+  .ann-sub { font: 400 12px "Open Sans", sans-serif; fill: var(--soft); }
+  .ann-name { font: 700 15px "Merriweather", serif; }
+
+  .fade-in { opacity: 0; transition: opacity 0.6s ease 0.9s; }
+  .layer.on .fade-in, #gHi .fade-in.on { opacity: 1; }
+
+  .dot { fill: var(--sky); fill-opacity: 0.6; transition: opacity 0.5s ease; cursor: pointer; }
+  .dot.open { fill: none; stroke: var(--sky); stroke-opacity: 0.7; stroke-width: 1.2; }
+  .dot:hover, .dot.on { fill: var(--gold); fill-opacity: 1; stroke: var(--gold); }
+  #gFade .dot { opacity: 0; }
+  #gFade.on .dot { opacity: 1; }
+
+  .seg { stroke: var(--bg); stroke-width: 1; }
+  .seg-name { font: 700 13px "Open Sans", sans-serif; fill: var(--bg); pointer-events: none; }
+  .big-year { font: 900 64px "Merriweather", serif; fill: var(--ink); }
+  .bar-label { font: 700 15px "Merriweather", serif; fill: var(--ink); }
+  .bar-count { font: 600 13px "Open Sans", sans-serif; fill: var(--soft); }
+
+  .mini-name { font: 700 16px "Merriweather", serif; fill: var(--ink); }
+  .mini-ev { font: 400 12px "Open Sans", sans-serif; fill: var(--soft); }
+  .mini-n { font: 700 11.5px "Open Sans", sans-serif; fill: var(--gold); }
+
+  .ridge { fill: #0a1e3a; stroke: var(--sky); stroke-width: 1.4; }
+  .ridge.mint { stroke: var(--mint); }
+  .ridge-name { font: 700 13.5px "Merriweather", serif; fill: var(--ink); }
+  .ridge-med { font: 700 12px "Open Sans", sans-serif; fill: var(--gold); }
+
+  .tip {
+    position: absolute;
+    z-index: 5;
+    left: 0;
+    top: 0;
+    max-width: 240px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--hair);
+    background: rgba(5, 15, 31, 0.94);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--soft);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .tip.on { opacity: 1; }
+  .tip b { color: var(--ink); font-family: "Merriweather", serif; font-size: 15px; }
+  .tip i { color: var(--gold); font-style: normal; }
+
+  .steps {
+    position: relative;
+    z-index: 2;
+    margin-top: -100vh;
+    margin-top: -100svh;
+    pointer-events: none;
+  }
+
+  .step {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding: 0 var(--gutter);
+  }
+
+  .step + .step { margin-top: 18vh; }
+
+  .card {
+    pointer-events: auto;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 22px 24px;
+    border: 1px solid var(--hair);
+    border-radius: 18px;
+    background: var(--card);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  }
+
+  .card p { margin: 0 0 0.75em; color: var(--soft); }
+  .card p:last-child { margin-bottom: 0; }
+  .card b { color: var(--ink); }
+  .card .big {
+    font-family: "Merriweather", serif;
+    font-size: 1.3rem;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .card .hint { font-size: 14px; color: var(--muted); }
+  .card em { font-style: italic; color: var(--ink); }
+
+  b.gold, .gold-t { color: var(--gold) !important; }
+  b.mint { color: var(--mint) !important; }
+  b.coral { color: var(--coral) !important; }
+  b.pale { color: #fff !important; }
+
+  .touch { display: none; }
+  @media (hover: none) { .desk { display: none; } .touch { display: inline; } }
+
+  /* the scrub step holds its card while the years go by */
+  .step.scrub { min-height: 300vh; align-items: flex-start; }
+  .step.scrub .card { position: sticky; top: 14vh; margin-top: 14vh; }
+
+  /* hero */
+  .step.hero { justify-content: center; text-align: center; }
+  .hero-inner { pointer-events: auto; max-width: 760px; padding: 0 4px; }
+  .kicker {
+    margin: 0 0 18px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .hero h1 {
+    margin: 0;
+    font-family: "Merriweather", serif;
+    font-weight: 900;
+    font-size: clamp(2.9rem, 10vw, 6.4rem);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    text-shadow: 0 4px 40px rgba(5, 15, 31, 0.9);
+  }
+  .hero h1 em { font-style: italic; color: var(--gold); }
+  .dek {
+    max-width: 560px;
+    margin: 24px auto 0;
+    font-family: "Merriweather", serif;
+    font-size: clamp(1.02rem, 2.6vw, 1.22rem);
+    line-height: 1.6;
+    color: var(--soft);
+    text-shadow: 0 2px 20px rgba(5, 15, 31, 0.95);
+  }
+  .byline { margin-top: 18px; font-size: 13px; color: var(--muted); }
+  .cue {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-top: 44px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--muted);
+    animation: bob 2.2s ease-in-out infinite;
+  }
+  .cue svg { width: 20px; height: 20px; }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(7px); } }
+
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+    padding: 12px 20px;
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--bg);
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 4px 4px 0 rgba(245, 184, 61, 0.25);
+  }
+  .cta:hover, .cta:focus-visible { background: #ffd37a; }
+  .cta svg { width: 18px; height: 18px; }
+
+  @media (min-width: 960px) {
+    .step { padding: 0 0 0 clamp(32px, 4vw, 64px); }
+    .step:not(.hero) .card { margin: 0; max-width: min(400px, 30vw); }
+  }
+
+  @media (max-width: 959px) {
+    .step:not(.hero) { align-items: flex-end; padding-bottom: calc(2.5vh + env(safe-area-inset-bottom)); }
+    .card { max-width: 560px; }
+    .step.scrub { align-items: flex-end; }
+    .step.scrub .card { top: auto; bottom: calc(2.5vh + env(safe-area-inset-bottom)); margin-top: 0; }
+  }
+
+  /* ---------- the explorer ---------- */
+  .explore {
+    position: relative;
+    z-index: 3;
+    padding: 14vh var(--gutter) 10vh;
+    background: linear-gradient(180deg, rgba(5, 15, 31, 0) 0, var(--bg) 12vh);
+  }
+
+  .wrap { max-width: 1000px; margin: 0 auto; }
+
+  .explore > .wrap > h2 {
+    margin: 0;
+    font-family: "Merriweather", serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    line-height: 1.1;
+  }
+
+  .lede { max-width: 620px; margin: 14px 0 26px; color: var(--soft); }
+
+  .search { position: relative; display: flex; gap: 10px; }
+
+  #q {
+    flex: 1;
+    min-width: 0;
+    padding: 15px 20px;
+    border: 1px solid var(--hair);
+    border-radius: 14px;
+    background: var(--panel);
+    color: var(--ink);
+    font: 700 clamp(1.25rem, 4vw, 1.75rem) "Merriweather", serif;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  #q::placeholder { color: #5d7391; font-weight: 400; }
+  #q:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245, 184, 61, 0.22); }
+
+  .btn {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 18px;
+    border: 1px solid var(--hair);
+    border-radius: 14px;
+    background: var(--panel);
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .btn:hover, .btn:focus-visible { border-color: var(--gold); color: var(--gold); outline: none; }
+  .btn svg { width: 18px; height: 18px; }
+
+  .sugg {
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    border: 1px solid var(--hair);
+    border-radius: 14px;
+    background: rgba(8, 26, 51, 0.98);
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.45);
+  }
+  .sugg[hidden] { display: none; }
+  .sugg li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .sugg li[aria-selected="true"], .sugg li:hover { background: rgba(159, 207, 255, 0.1); }
+  .sugg .sn { font: 700 17px "Merriweather", serif; }
+  .sugg .sm { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .sugg .empty { cursor: default; color: var(--muted); font-size: 14px; }
+
+  .chips { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 14px; font-size: 13px; color: var(--muted); }
+  .chips button {
+    padding: 5px 12px;
+    border: 1px solid var(--hair);
+    border-radius: 999px;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--soft);
+    cursor: pointer;
+  }
+  .chips button:hover, .chips button:focus-visible { border-color: var(--gold); color: var(--gold); outline: none; }
+
+  .result { margin-top: 44px; }
+  .result[hidden] { display: none; }
+
+  .r-head { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 20px; }
+  .r-head .label {
+    width: 100%;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  #rName {
+    margin: 0;
+    font-family: "Merriweather", serif;
+    font-weight: 900;
+    font-size: clamp(2.6rem, 9vw, 4.6rem);
+    line-height: 1;
+    overflow-wrap: anywhere;
+  }
+
+  .verdict {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding: 7px 14px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .verdict::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
+  .verdict.bad { color: var(--coral); background: rgba(255, 116, 102, 0.1); }
+  .verdict.warn { color: var(--gold); background: rgba(245, 184, 61, 0.1); }
+  .verdict.calm { color: var(--sky); background: rgba(159, 207, 255, 0.08); }
+  .verdict.good { color: var(--mint); background: rgba(95, 224, 176, 0.1); }
+
+  .sexes { display: flex; gap: 6px; margin-bottom: 8px; }
+  .sexes[hidden] { display: none; }
+  .sexes button {
+    padding: 6px 12px;
+    border: 1px solid var(--hair);
+    border-radius: 999px;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--soft);
+    cursor: pointer;
+  }
+  .sexes button[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+
+  .diag {
+    max-width: 720px;
+    margin: 16px 0 0;
+    font-family: "Merriweather", serif;
+    font-size: clamp(1.05rem, 2.6vw, 1.3rem);
+    line-height: 1.55;
+    color: var(--soft);
+  }
+  .diag b { color: var(--ink); }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 26px;
+  }
+  .tile { padding: 14px 16px; border: 1px solid var(--hair); border-radius: 14px; background: var(--bg-2); }
+  .tile .k { font-size: 11px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .tile .v { margin-top: 2px; font: 900 clamp(1.35rem, 3.6vw, 1.8rem) "Merriweather", serif; line-height: 1.25; }
+  .tile .s { margin-top: 2px; font-size: 13px; color: var(--soft); }
+  .tile .up { color: var(--mint); }
+  .tile .down { color: var(--coral); }
+
+  .panel { margin-top: 18px; padding: 18px 18px 14px; border: 1px solid var(--hair); border-radius: 18px; background: var(--bg-2); }
+  .panel-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .panel h4 { margin: 0; font: 700 1.05rem "Merriweather", serif; }
+  .note { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+
+  .switch { display: inline-flex; padding: 3px; border: 1px solid var(--hair); border-radius: 999px; }
+  .switch button {
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .switch button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+  .chart { position: relative; width: 100%; }
+  .chart svg { position: relative; display: block; width: 100%; overflow: visible; }
+  .chart canvas { position: absolute; left: 0; top: 0; }
+
+  .twins { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 12px; }
+  .twin {
+    padding: 12px 12px 8px;
+    border: 1px solid var(--hair);
+    border-radius: 12px;
+    background: var(--panel);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+  .twin:hover, .twin:focus-visible { border-color: var(--gold); outline: none; }
+  .twin .tn { font: 700 16px "Merriweather", serif; }
+  .twin .tm { font-size: 12px; color: var(--muted); }
+  .twin svg { display: block; width: 100%; height: 40px; margin-top: 6px; }
+
+  .share-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 22px; }
+  .share-row .btn { padding: 11px 18px; }
+  .share-row span { font-size: 13px; color: var(--mint); }
+
+  .xtip {
+    position: fixed;
+    z-index: 30;
+    left: 0;
+    top: 0;
+    padding: 8px 11px;
+    border: 1px solid var(--hair);
+    border-radius: 10px;
+    background: rgba(5, 15, 31, 0.96);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--soft);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+  }
+  .xtip.on { opacity: 1; }
+  .xtip b { color: var(--ink); }
+
+  .method {
+    padding: 8vh var(--gutter) calc(8vh + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--hair);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .method h2 { margin: 0 0 10px; font: 700 1.1rem "Merriweather", serif; color: var(--soft); }
+  .method p { max-width: 760px; margin: 0 0 0.9em; }
+
+  .loading {
+    position: absolute;
+    left: 50%;
+    bottom: 12vh;
+    transform: translateX(-50%);
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 720px) {
+    body { font-size: 16px; }
+    .card { padding: 15px 16px; font-size: 15px; line-height: 1.55; }
+    .card .big { font-size: 1.08rem; }
+    .card p { margin-bottom: 0.6em; }
+    .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .twins { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .panel { padding: 14px 12px 10px; }
+    .search { flex-wrap: wrap; }
+    .search .btn { padding: 11px 16px; }
+    .big-year { font-size: 44px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<a class="home" href="/">Andy Sansness</a>
+
+<div class="story" id="story">
+  <div class="stage" id="stage" data-active="hero">
+    <canvas id="field" aria-hidden="true"></canvas>
+    <div class="vignette"></div>
+    <svg id="viz" role="img" aria-label="Every common American baby name since 1880, drawn as a thread rising and falling with its popularity"></svg>
+    <div class="tip" id="tip"></div>
+    <p class="loading" id="loading">Loading 145 years of names…</p>
+  </div>
+
+  <div class="steps">
+    <section class="step hero" data-step="hero">
+      <div class="hero-inner">
+        <p class="kicker">American baby names, 1880–<span data-t="last">2024</span></p>
+        <h1>Is your name <em>dying?</em></h1>
+        <p class="dek">Names are born, they climb, and most of them fade away. This is the life story of every common American name since 1880, and a way to find out where yours is in its own.</p>
+        <p class="byline">By Andy Sansness</p>
+        <div class="cue" aria-hidden="true">Scroll
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+    </section>
+
+    <section class="step" data-step="field">
+      <div class="card">
+        <p class="big">Each of these threads is a name.</p>
+        <p>A thread climbs as more babies get the name and sinks as fewer do. These are the <b data-t="nField"></b> names that, in at least one year, went to 1 in 3,000 American babies of their sex or more.</p>
+        <p class="hint">Higher means more popular, on a log scale. <span class="desk">Hover over any thread to see its name, and click to look it up.</span><span class="touch">Tap any thread to see its name.</span></p>
+      </div>
+    </section>
+
+    <section class="step" data-step="linda">
+      <div class="card">
+        <p class="big">Few names have ever burned as bright as <b class="gold">Linda</b>.</p>
+        <p>In 1947 it did something no name had done since records began: it knocked Mary off the top spot. <b data-t="linda47"></b> girls were named Linda that year, 1 in every <b data-t="lindaOneIn"></b>.</p>
+        <p>In <b data-t="last"></b>, <b data-t="lindaLast"></b> were.</p>
+      </div>
+    </section>
+
+    <section class="step" data-step="halflife">
+      <div class="card">
+        <p class="big">Call it a name’s <em>half-life</em>.</p>
+        <p>It’s the time a name takes to go from its peak to half as popular. <b class="pale">Mary</b> took <b data-t="maryHL"></b> years. <b class="gold">Linda</b> took <b data-t="lindaHL"></b>.</p>
+      </div>
+    </section>
+
+    <section class="step" data-step="fade">
+      <div class="card">
+        <p class="big">Linda was a sign of things to come.</p>
+        <p>Each dot is a name that was once given to at least 1 in 1,000 babies, placed at the year it peaked and how long it then took to lose half its popularity.</p>
+        <p>Names that peaked between 1890 and 1919 held on for a median of <b data-t="fadeEarly"></b> years. Since 1950, the typical name has halved in <b data-t="fadeLate"></b>.</p>
+      </div>
+    </section>
+
+    <section class="step scrub" data-step="spread">
+      <div class="card">
+        <p class="big">Parents are spreading out, too.</p>
+        <p>Each bar is half of all the girls or boys born in a year, sliced up by name. Keep scrolling to move through time.</p>
+        <p>In 1950, half of all boys got one of just <b data-t="halfM1950"></b> names. By <b data-t="last"></b> it took <b data-t="halfMLast"></b>. For girls it went from <b data-t="halfF1950"></b> to <b data-t="halfFLast"></b>.</p>
+      </div>
+    </section>
+
+    <section class="step" data-step="moments">
+      <div class="card">
+        <p class="big">Sometimes the world picks the name.</p>
+        <p>A president, a TV star or a hurricane can make a name overnight, or kill one.</p>
+        <p>Hillary lost more than half its babies the year after the 1992 election. Alexa, the name Amazon gave its voice assistant in 2014, has lost <b data-t="alexaDrop"></b> of its babies since 2015.</p>
+      </div>
+    </section>
+
+    <section class="step" data-step="back">
+      <div class="card">
+        <p class="big">But a name that dies can come back.</p>
+        <p><b class="mint">Hazel</b> went to 1 in 100 girls in 1897. By <b data-t="hazelMinYear"></b>, just <b data-t="hazelMin"></b> babies got it. In <b data-t="last"></b>, <b data-t="hazelLast"></b> did.</p>
+        <p>Revivals tend to skip about a century: far enough back that a name sounds fresh rather than old.</p>
+      </div>
+    </section>
+
+    <section class="step" data-step="gone">
+      <div class="card">
+        <p class="big">Others look gone for good.</p>
+        <p>In 1955, <b data-t="debraPeak"></b> girls were named <b class="coral">Debra</b>. In <b data-t="last"></b>, <b data-t="debraLast"></b> were.</p>
+        <p>Carole and Myrtle, each once given to thousands of girls a year, now fall below five babies a year, the point at which the records stop listing a name at all.</p>
+      </div>
+    </section>
+
+    <section class="step" data-step="ages">
+      <div class="card">
+        <p class="big">So a name works like a birth certificate.</p>
+        <p>These are the Americans alive today with each name, by age. The typical living Mildred is <b data-t="ageMildred"></b>. The typical Liam is <b data-t="ageLiam"></b>.</p>
+        <p>And Hazel is both.</p>
+      </div>
+    </section>
+
+    <section class="step" data-step="you">
+      <div class="card">
+        <p class="big">So, is <em>your</em> name dying?</p>
+        <p>Every name given to at least five babies in a year is in here: <b data-t="nNames"></b> of them.</p>
+        <a class="cta" id="cta" href="#explore">Look up your name
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+        </a>
+      </div>
+    </section>
+  </div>
+</div>
+
+<section class="explore" id="explore" aria-labelledby="exploreTitle">
+  <div class="wrap">
+    <p class="kicker">Your turn</p>
+    <h2 id="exploreTitle">Look up a name</h2>
+    <p class="lede">Any first name given to at least five American babies in a single year since 1880.</p>
+
+    <div class="search">
+      <input id="q" type="text" placeholder="Type a first name" autocomplete="off" autocapitalize="words" spellcheck="false"
+             role="combobox" aria-expanded="false" aria-controls="sugg" aria-autocomplete="list" aria-label="First name">
+      <button class="btn" id="random" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+        Surprise me
+      </button>
+      <ul class="sugg" id="sugg" role="listbox" hidden></ul>
+    </div>
+    <div class="chips" id="chips">Try
+      <button type="button">Linda</button>
+      <button type="button">Hazel</button>
+      <button type="button">Alexa</button>
+      <button type="button">Debra</button>
+      <button type="button">Jordan</button>
+      <button type="button">Liam</button>
+    </div>
+
+    <article class="result" id="result" hidden aria-live="polite">
+      <header class="r-head">
+        <span class="label">Diagnosis</span>
+        <h3 id="rName"></h3>
+        <span class="verdict" id="rVerdict"></span>
+        <div class="sexes" id="rSexes" role="group" aria-label="Show the name for"></div>
+      </header>
+      <p class="diag" id="rDiag"></p>
+
+      <div class="tiles" id="tiles"></div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h4>Its life so far</h4>
+          <div class="switch" role="group" aria-label="Chart view">
+            <button type="button" data-view="count" aria-pressed="true">Babies a year</button>
+            <button type="button" data-view="field" aria-pressed="false">Among all names</button>
+          </div>
+        </div>
+        <div class="chart" id="lifeChart"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h4 id="agesTitle">Alive today, by age</h4></div>
+        <div class="chart" id="ageChart"></div>
+        <p class="note">Faint bars are everyone born with the name; solid bars are the estimated number still alive.</p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h4>Lifeline twins</h4></div>
+        <p class="note">Common names whose rise and fall most closely match this one.</p>
+        <div class="twins" id="twins"></div>
+      </div>
+
+      <div class="share-row">
+        <button class="btn" id="share" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg>
+          Copy a link to this name
+        </button>
+        <span id="shareMsg" role="status"></span>
+      </div>
+    </article>
+  </div>
+</section>
+
+<footer class="method">
+  <div class="wrap">
+    <h2>How this was made</h2>
+    <p>Names come from the Social Security Administration’s <a href="https://www.ssa.gov/oact/babynames/limits.html">national baby names data</a>, built from applications for Social Security cards, for every year from 1880 to <span data-t="last">2024</span>. To protect privacy, a name only appears in a year if at least five babies of one sex got it, so rare names are undercounted. Popularity means a name’s share of all the listed babies of its sex born that year. The records are thin before about 1915, because fewer people born then ever applied for a card, which is why the floor of the chart drops around then.</p>
+    <p>A name’s peak is the year its share was highest, and its half-life is the number of years from that peak until its share first fell below half. A name counts as dying, fading, steady or rising by comparing its average share in the last three years with the same three years a decade earlier.</p>
+    <p>The number still alive is an estimate. Each birth year is weighted by the chance that someone born then is alive in <span data-t="ref">2026</span>, using the SSA’s cohort life tables (Actuarial Study 120, interpolated between decades). People born before 1937 only appear because they lived long enough to apply for a card, so their odds start from that point. Migration isn’t counted. The approach follows FiveThirtyEight’s <a href="https://fivethirtyeight.com/features/how-to-tell-someones-age-when-all-you-know-is-her-name/">How to Tell Someone’s Age When All You Know Is Her Name</a>.</p>
+  </div>
+</footer>
+
+<div class="xtip" id="xtip" role="status" aria-live="off"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  const V = '6bee3398f7';
+  const NS = 'http://www.w3.org/2000/svg';
+  const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const fmt = n => Math.round(n).toLocaleString('en-US');
+  const plural = n => /(s|x|z|ch|sh)$/i.test(n) ? n + 'es' : n + 's';
+  const kids = (n, sx) => (sx === 'F' ? 'girl' : 'boy') + (Math.round(n) === 1 ? '' : 's');
+  const median = a => { const s = [...a].sort((x, y) => x - y); const m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+
+  function el(tag, attrs, parent) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+
+  function txt(parent, x, y, s, cls, anchor) {
+    const t = el('text', { x, y, class: cls || '' }, parent);
+    if (anchor) t.setAttribute('text-anchor', anchor);
+    t.textContent = s;
+    return t;
+  }
+
+  // "1 in 18", "1 in 210", "1 in 1,300"
+  function oneIn(share) {
+    const v = 1 / share;
+    if (v < 100) return fmt(v);
+    const p = Math.pow(10, Math.floor(Math.log10(v)) - 1);
+    return fmt(Math.round(v / p) * p);
+  }
+
+  function short(n) {
+    if (n >= 1e6) return (n / 1e6).toFixed(n >= 1e7 ? 0 : 2).replace(/\.?0+$/, '') + 'M';
+    if (n >= 1e4) return Math.round(n / 1e3) + 'k';
+    return fmt(n);
+  }
+
+  function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+
+  // a tween that still lands on its last frame where requestAnimationFrame stalls
+  function tween(ms, fn) {
+    if (REDUCE || ms <= 0) { fn(1); return; }
+    const t0 = performance.now();
+    let done = false;
+    const step = now => {
+      if (done) return;
+      const p = clamp((now - t0) / ms, 0, 1);
+      fn(p);
+      if (p < 1) requestAnimationFrame(step); else done = true;
+    };
+    requestAnimationFrame(step);
+    setTimeout(() => { if (!done) { done = true; fn(1); } }, ms + 300);
+  }
+
+  // ---------- data ----------
+  let C, F0, F1, NY, REF;
+  const TOT = {}, SURV = {};
+  let FN = [], FS = '', FL = null, NT = 0, FPEAK = null;
+
+  function decodeField() {
+    const f = C.field;
+    FN = f.names.split(',');
+    FS = f.sex;
+    NT = FN.length;
+    const bin = atob(f.data);
+    FL = new Float32Array(NT * NY);
+    FPEAK = new Int16Array(NT);
+    const span = f.hi - f.lo;
+    for (let t = 0; t < NT; t++) {
+      let q = 0, best = -1, bi = 0;
+      // the values come packed into 255 steps; nudging each thread by its own
+      // fraction of a step stops them all lining up into horizontal bands
+      const dither = (((t * 2654435761) >>> 0) / 4294967296 - 0.5) / 254 * span;
+      for (let i = 0; i < NY; i++) {
+        q = (q + bin.charCodeAt(t * NY + i)) & 255;
+        FL[t * NY + i] = q ? f.lo + (q - 1) / 254 * span + dither : NaN;
+        if (q > best) { best = q; bi = i; }
+      }
+      FPEAK[t] = bi;
+    }
+  }
+
+  const series = k => C.story.series[k];
+
+  // everything the page says about one name and sex
+  function analyze(c, sx) {
+    const tot = TOT[sx], sv = SURV[sx];
+    const sh = new Float64Array(NY);
+    let pk = 0, pkN = 0, total = 0, firstI = -1, lastI = -1;
+    for (let i = 0; i < NY; i++) {
+      sh[i] = c[i] / tot[i];
+      if (sh[i] > sh[pk]) pk = i;
+      if (c[i] > c[pkN]) pkN = i;
+      total += c[i];
+      if (c[i]) { if (firstI < 0) firstI = i; lastI = i; }
+    }
+    const mean = (a, b) => { let s = 0; for (let i = a; i <= b; i++) s += sh[i]; return s / (b - a + 1); };
+    const now = mean(NY - 3, NY - 1), then = mean(NY - 13, NY - 11);
+    const trend = then > 0 ? now / then : (now > 0 ? Infinity : 1);
+    let half = -1;
+    for (let i = pk + 1; i < NY; i++) if (sh[i] < sh[pk] / 2) { half = i; break; }
+
+    let alive = 0;
+    const al = new Float64Array(NY);
+    for (let i = 0; i < NY; i++) { al[i] = c[i] * sv[i]; alive += al[i]; }
+    let medAge = null;
+    if (alive >= 1) {
+      let acc = 0;
+      for (let i = NY - 1; i >= 0; i--) { acc += al[i]; if (acc >= alive / 2) { medAge = REF - (F0 + i); break; } }
+    }
+
+    // died and came back: an old high, a deep trough, then a real recovery
+    let back = null;
+    const cut = NY - 50;
+    if (cut > 0) {
+      let e = 0;
+      for (let i = 1; i < cut; i++) if (sh[i] > sh[e]) e = i;
+      if (sh[e] > 0) {
+        let m = e;
+        for (let i = e + 1; i < NY - 15; i++) if (sh[i] < sh[m]) m = i;
+        if (sh[m] < 0.15 * sh[e] && now > 4 * Math.max(sh[m], 1e-9) && now > 0.2 * sh[e] && trend > 0.95) back = { early: e, low: m };
+      }
+    }
+    return { c, sx, sh, pk, pkN, total, firstI, lastI, now, then, trend, half, alive, al, medAge, back };
+  }
+
+  const VERDICTS = {
+    critical: ['On life support', 'bad'],
+    gone: ['Vanished', 'bad'],
+    dying: ['Dying', 'bad'],
+    fading: ['Fading', 'warn'],
+    steady: ['Holding steady', 'calm'],
+    rising: ['Rising', 'good'],
+    boom: ['Booming', 'good'],
+    peak: ['At its peak', 'good'],
+    back: ['Back from the dead', 'good'],
+    rare: ['Too rare to call', 'calm'],
+  };
+
+  function verdict(a) {
+    const last = a.c[NY - 1];
+    if (a.total < 150 && a.c[a.pkN] < 25) return 'rare';
+    if (!last) return 'gone';
+    if (a.sh[NY - 1] / a.sh[a.pk] < 0.02 && a.trend < 1.1) return 'critical';
+    if (a.back) return 'back';
+    if (a.pk >= NY - 3 && a.trend >= 1.05) return 'peak';
+    if (a.trend >= 2) return 'boom';
+    if (a.trend >= 1.15) return 'rising';
+    if (a.trend > 0.87) return 'steady';
+    if (a.trend >= 0.5) return 'fading';
+    return 'dying';
+  }
+
+  function fillTokens() {
+    const yi = y => y - F0;
+    const lin = series('Linda F'), mary = series('Mary F');
+    const L = analyze(lin, 'F'), M = analyze(mary, 'F');
+    const fade = C.story.fade;
+    const early = fade.filter(d => !d[4] && d[2] >= 1890 && d[2] <= 1919).map(d => d[3]);
+    const late = fade.filter(d => !d[4] && d[2] >= 1950).map(d => d[3]);
+    const hz = series('Hazel F');
+    let hmin = yi(1925);
+    for (let i = yi(1925); i <= yi(1999); i++) if (hz[i] < hz[hmin]) hmin = i;
+    const deb = series('Debra F'), alexa = series('Alexa F');
+    const T = {
+      last: F1,
+      ref: REF,
+      nField: fmt(NT),
+      nNames: fmt(C.count.names),
+      linda47: fmt(lin[yi(1947)]),
+      lindaOneIn: oneIn(lin[yi(1947)] / TOT.F[yi(1947)]),
+      lindaLast: fmt(lin[NY - 1]),
+      maryHL: M.half - M.pk,
+      lindaHL: L.half - L.pk,
+      fadeEarly: Math.round(median(early)),
+      fadeLate: Math.round(median(late)) + ' years',
+      halfM1950: C.story.half.M[yi(1950)].k,
+      halfMLast: fmt(C.story.half.M[NY - 1].k),
+      halfF1950: C.story.half.F[yi(1950)].k,
+      halfFLast: fmt(C.story.half.F[NY - 1].k),
+      alexaDrop: Math.round((1 - alexa[NY - 1] / alexa[yi(2015)]) * 100) + '%',
+      hazelMinYear: F0 + hmin,
+      hazelMin: fmt(hz[hmin]),
+      hazelLast: fmt(hz[NY - 1]),
+      debraPeak: fmt(deb[yi(1955)]),
+      debraLast: fmt(deb[NY - 1]),
+      ageMildred: analyze(series('Mildred F'), 'F').medAge,
+      ageLiam: analyze(series('Liam M'), 'M').medAge,
+    };
+    for (const n of $$('[data-t]')) if (T[n.dataset.t] != null) n.textContent = T[n.dataset.t];
+  }
+
+  // ---------- the stage ----------
+  const stage = $('#stage'), cv = $('#field'), svg = $('#viz'), tip = $('#tip');
+  const off = document.createElement('canvas');
+  let W, H, P, wide, dpr, heroT = '';
+  const YMAX = -0.95, YMIN = -5.8;
+  const X = y => P.x + (y - F0) / (F1 - F0) * P.w;
+  const Yl = l => P.y + (YMAX - l) / (YMAX - YMIN) * P.h;
+  let cur = null;
+  const G = {};
+
+  function layout() {
+    // a hidden tab can report zero; draw for a small phone until it's visible
+    W = Math.max(320, stage.clientWidth);
+    H = Math.max(480, stage.clientHeight);
+    wide = W >= 960;
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    if (wide) {
+      const left = Math.min(480, Math.round(W * 0.34)) + 40;
+      P = { x: left + 64, y: 92, w: W - left - 64 - 56, h: H - 92 - 70 };
+    } else {
+      P = { x: 18, y: 56, w: W - 18 - 18, h: Math.round(H * 0.58) - 56 - 28 };
+    }
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    Object.assign(cv.style, { left: P.x + 'px', top: P.y + 'px', width: P.w + 'px', height: P.h + 'px' });
+    cv.width = off.width = Math.round(P.w * dpr);
+    cv.height = off.height = Math.round(P.h * dpr);
+    heroT = `translate(${-P.x}px, ${-P.y}px) scale(${W / P.w}, ${H / P.h})`;
+  }
+
+  // every thread, added up with 'lighter' so busy stretches glow; threads
+  // brighten as they climb, so the crowd at the five-baby floor stays a mist
+  function paintField(ctx, w, h, k, lw) {
+    ctx.clearRect(0, 0, w, h);
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.lineWidth = Math.max(lw, 1.15 / (ctx.getTransform().a || 1));
+    ctx.lineJoin = 'round';
+    const grad = ctx.createLinearGradient(0, 0, 0, h);
+    const at = l => clamp((YMAX - l) / (YMAX - YMIN), 0, 1);
+    for (const [l, rgb, a] of [[-1, '214,234,255', 0.2], [-2, '160,206,255', 0.15], [-3, '120,176,255', 0.1], [-4, '96,146,250', 0.05], [-5, '80,120,235', 0.022], [YMIN, '70,105,220', 0.012]]) {
+      grad.addColorStop(at(l), `rgba(${rgb}, ${(a * k).toFixed(4)})`);
+    }
+    ctx.strokeStyle = grad;
+    const sx = w / (F1 - F0), sy = h / (YMAX - YMIN);
+    for (let t = 0; t < NT; t++) {
+      ctx.beginPath();
+      let pen = false;
+      for (let i = 0; i < NY; i++) {
+        const l = FL[t * NY + i];
+        if (l !== l) { pen = false; continue; }
+        const x = i * sx, y = (YMAX - l) * sy;
+        if (pen) ctx.lineTo(x, y); else { ctx.moveTo(x, y); pen = true; }
+      }
+      ctx.stroke();
+    }
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  function renderField() {
+    const o = off.getContext('2d');
+    o.setTransform(dpr, 0, 0, dpr, 0, 0);
+    paintField(o, P.w, P.h, wide ? 1 : clamp(Math.sqrt(P.w * P.h / 630000), 0.35, 1), 1);
+  }
+
+  function blit(p) {
+    const ctx = cv.getContext('2d');
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    const w = Math.round(cv.width * p);
+    if (w > 0) ctx.drawImage(off, 0, 0, w, cv.height, 0, 0, w, cv.height);
+    if (p > 0 && p < 1) {
+      const g = ctx.createLinearGradient(w - 40 * dpr, 0, w, 0);
+      g.addColorStop(0, 'rgba(245, 184, 61, 0)');
+      g.addColorStop(1, 'rgba(245, 184, 61, 0.5)');
+      ctx.fillStyle = g;
+      ctx.fillRect(w - 40 * dpr, 0, 40 * dpr, cv.height);
+    }
+  }
+
+  function axes() {
+    const g = G.axes;
+    g.textContent = '';
+    for (let l = -1; l >= -5; l--) {
+      const y = Yl(l);
+      el('line', { x1: P.x, x2: P.x + P.w, y1: y, y2: y, class: 'grid' }, g);
+      yLabel(g, y, '1 in ' + fmt(Math.pow(10, -l)));
+    }
+    xTicks(g);
+    txt(g, P.x, P.y - 18, wide ? 'Share of babies of each sex given the name' : 'Share of babies given the name', 'axis-title');
+  }
+
+  function yLabel(g, y, s) {
+    if (wide) return txt(g, P.x - 8, y + 4, s, 'lbl', 'end');
+    return txt(g, P.x + 2, y - 5, s, 'lbl halo-soft', 'start');
+  }
+
+  function xTicks(g) {
+    const every = wide ? 20 : 40;
+    for (let y = Math.ceil(F0 / every) * every; y <= F1; y += every) {
+      const x = X(y);
+      const t = el('g', { class: 'tick' }, g);
+      el('line', { x1: x, x2: x, y1: P.y + P.h, y2: P.y + P.h + 6 }, t);
+      txt(t, x, P.y + P.h + 22, y, '', 'middle');
+    }
+  }
+
+  function seriesPath(c, sx) {
+    let d = '', pen = false;
+    for (let i = 0; i < NY; i++) {
+      if (!c[i]) { pen = false; continue; }
+      d += (pen ? 'L' : 'M') + X(F0 + i).toFixed(1) + ',' + Yl(Math.log10(c[i] / TOT[sx][i])).toFixed(1);
+      pen = true;
+    }
+    return d;
+  }
+
+  function threadPath(t) {
+    let d = '', pen = false;
+    for (let i = 0; i < NY; i++) {
+      const l = FL[t * NY + i];
+      if (l !== l) { pen = false; continue; }
+      d += (pen ? 'L' : 'M') + X(F0 + i).toFixed(1) + ',' + Yl(l).toFixed(1);
+      pen = true;
+    }
+    return d;
+  }
+
+  function drawPath(g, d, color, animate) {
+    const p = el('path', { d, class: 'hi-path ' + color }, g);
+    if (animate && !REDUCE) {
+      const len = p.getTotalLength();
+      p.style.strokeDasharray = len;
+      p.style.strokeDashoffset = len;
+      p.getBoundingClientRect();
+      p.classList.add('draw');
+      p.style.strokeDashoffset = 0;
+    }
+    return p;
+  }
+
+  const ptOf = (k, y) => { const [n, sx] = k.split(' '); const c = series(k); const i = y - F0; return [X(y), Yl(Math.log10(c[i] / TOT[sx][i]))]; };
+
+  // push labels apart vertically so none overlap
+  function stackLabels(items, gap) {
+    items.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < items.length; i++) if (items[i].y - items[i - 1].y < gap) items[i].y = items[i - 1].y + gap;
+    const over = items.length ? items[items.length - 1].y - (P.y + P.h - 4) : 0;
+    if (over > 0) items.forEach(it => it.y -= over);
+    return items;
+  }
+
+  // ---------- highlights for the field steps ----------
+  const HIGHLIGHTS = {
+    linda() {
+      const g = newHi();
+      const c = series('Linda F');
+      drawPath(g, seriesPath(c, 'F'), 'gold', true);
+      const [px, py] = ptOf('Linda F', 1947);
+      const a = el('g', { class: 'fade-in' }, g);
+      el('circle', { cx: px, cy: py, r: 5, fill: 'var(--gold)' }, a);
+      const left = px > P.x + P.w * 0.6;
+      txt(a, px + (left ? -12 : 12), py - 12, '1947', 'ann gold halo', left ? 'end' : 'start');
+      txt(a, px + (left ? -12 : 12), py + 6, fmt(c[1947 - F0]) + ' Lindas', 'ann-sub halo', left ? 'end' : 'start');
+      const [ex, ey] = ptOf('Linda F', F1);
+      el('circle', { cx: ex, cy: ey, r: 4.5, fill: 'var(--gold)' }, a);
+      txt(a, ex - 2, ey + 22, F1 + ': ' + fmt(c[NY - 1]), 'ann gold halo', 'end');
+      reveal(a);
+    },
+    halflife() {
+      const g = newHi();
+      for (const [k, color] of [['Mary F', 'pale'], ['Linda F', 'gold']]) {
+        const [n, sx] = k.split(' ');
+        const a = analyze(series(k), sx);
+        drawPath(g, seriesPath(a.c, sx), color, true);
+        const lvl = Yl(Math.log10(a.sh[a.pk] / 2));
+        const x0 = X(F0 + a.pk), x1 = X(F0 + a.half);
+        const b = el('g', { class: 'fade-in' }, g);
+        el('path', { d: `M${x0},${lvl - 6}V${lvl + 6}M${x0},${lvl}H${x1}M${x1},${lvl - 6}V${lvl + 6}`, class: 'hi-path ' + color, 'stroke-width': 2, 'stroke-dasharray': '4 4' }, b);
+        const [px, py] = [x0, Yl(Math.log10(a.sh[a.pk]))];
+        el('circle', { cx: px, cy: py, r: 4.5, fill: color === 'gold' ? 'var(--gold)' : '#fff' }, b);
+        const label = n + ': ' + (a.half - a.pk) + ' years';
+        if (x1 - x0 > 140) txt(b, (x0 + x1) / 2, lvl + 24, label, 'ann halo ' + color, 'middle');
+        else txt(b, x1 + 10, lvl + 18, label, 'ann halo ' + color, 'start');
+        reveal(b);
+      }
+    },
+    back() {
+      const g = fieldSet(['Violet F', 'Stella F', 'Eleanor F', 'Leo M', 'Hazel F'], 'mint', 'end');
+      const hz = analyze(series('Hazel F'), 'F');
+      let lo = 1925 - F0;
+      for (let i = 1925 - F0; i <= 1999 - F0; i++) if (hz.c[i] < hz.c[lo]) lo = i;
+      const [x, y] = ptOf('Hazel F', F0 + lo);
+      const a = el('g', { class: 'fade-in' }, g);
+      el('circle', { cx: x, cy: y, r: 4.5, fill: 'var(--mint)' }, a);
+      txt(a, x, y + 24, `${F0 + lo}: ${fmt(hz.c[lo])} Hazels`, 'ann mint halo', 'middle');
+      const [ex, ey] = ptOf('Hazel F', 1897);
+      el('circle', { cx: ex, cy: ey, r: 4.5, fill: 'var(--mint)' }, a);
+      txt(a, ex + 10, ey - 12, '1897: 1 in 100', 'ann mint halo', 'start');
+      reveal(a);
+    },
+    gone() {
+      const g = fieldSet(['Carol F', 'Tammy F', 'Rhonda F', 'Carole F', 'Myrtle F', 'Debra F'], 'coral', 'peak');
+      const d = series('Debra F');
+      const [x, y] = ptOf('Debra F', F1);
+      const a = el('g', { class: 'fade-in' }, g);
+      txt(a, x - 2, y - 14, `${F1}: ${fmt(d[NY - 1])} Debras`, 'ann coral halo', 'end');
+      reveal(a);
+    },
+  };
+
+  // a set of names drawn over the field; the last one leads, the rest support
+  function fieldSet(keys, color, where) {
+    const g = newHi();
+    const labels = [];
+    keys.forEach((k, idx) => {
+      const [n, sx] = k.split(' ');
+      const a = analyze(series(k), sx);
+      const lead = idx === keys.length - 1;
+      drawPath(g, seriesPath(a.c, sx), color + (lead ? '' : ' dim'), true);
+      if (where === 'end') {
+        const [ex, ey] = ptOf(k, F1);
+        labels.push({ n, x: ex, y: ey, ey });
+      } else {
+        const [px, py] = ptOf(k, F0 + a.pk);
+        labels.push({ n, x: px, y: py - 12, ey: py });
+        const li = a.lastI;
+        const [lx, ly] = ptOf(k, F0 + li);
+        const d = el('g', { class: 'fade-in' }, g);
+        el('circle', { cx: lx, cy: ly, r: 3.5, fill: 'var(--coral)' }, d);
+        reveal(d);
+      }
+    });
+    const a = el('g', { class: 'fade-in' }, g);
+    if (where === 'end') {
+      stackLabels(labels, 17).forEach(l => {
+        el('circle', { cx: l.x, cy: l.ey, r: 3.5, fill: `var(--${color})` }, a);
+        txt(a, l.x - 10, l.y + 4, l.n, `ann ${color} halo`, 'end');
+      });
+    } else {
+      // peaks sit at different heights; nudge any two that are too close side by side
+      labels.sort((p, q) => p.x - q.x);
+      labels.forEach((l, i) => {
+        const prev = labels[i - 1];
+        if (prev && Math.abs(prev.x - l.x) < 52 && Math.abs(prev.y - l.y) < 16) l.y = prev.y - 16;
+        txt(a, l.x, l.y, l.n, `ann ${color} halo`, 'middle');
+      });
+    }
+    reveal(a);
+    return g;
+  }
+
+  function newHi() {
+    for (const old of [...G.hi.children]) {
+      if (old.dataset.leaving) continue;
+      old.dataset.leaving = '1';
+      old.style.transition = 'opacity .35s';
+      old.style.opacity = 0;
+      setTimeout(() => old.remove(), 400);
+    }
+    const g = el('g', {}, null);
+    G.hi.appendChild(g);
+    return g;
+  }
+
+  function clearHi() { newHi(); }
+
+  function reveal(g) { g.getBoundingClientRect(); g.classList.add('on'); }
+
+  // ---------- scene: how fast names fade ----------
+  function buildFade() {
+    const g = G.fade;
+    g.textContent = '';
+    const data = C.story.fade;
+    const ymax = 70;
+    const Yf = v => P.y + P.h - Math.min(v, ymax) / ymax * P.h;
+    for (let v = 0; v <= ymax; v += 10) {
+      el('line', { x1: P.x, x2: P.x + P.w, y1: Yf(v), y2: Yf(v), class: 'grid' }, g);
+      if (v && (v % 20 === 0 || v === ymax)) yLabel(g, Yf(v), v + ' yrs');
+    }
+    xTicks(g);
+    txt(g, P.x, P.y - 18, wide ? 'Years from its peak until a name was half as popular' : 'Years until half as popular', 'axis-title');
+    txt(g, P.x + P.w, P.y + P.h + 40, 'Year the name peaked', 'axis-title', 'end');
+    const r = wide ? 3.3 : 2.5;
+    const jit = (s, k) => { let h = 0; for (const ch of s) h = (h * 31 + ch.charCodeAt(0)) | 0; return ((h >> k) & 255) / 255 - 0.5; };
+    const dots = el('g', {}, g);
+    data.forEach(d => {
+      const [n, sx, py, hl, cens] = d;
+      const c = el('circle', {
+        cx: X(py + jit(n + sx, 0) * 0.8), cy: Yf(hl + jit(n + sx, 8) * 0.8), r,
+        class: 'dot' + (cens ? ' open' : ''),
+      }, dots);
+      c.style.transitionDelay = REDUCE ? '0s' : ((py - F0) / (F1 - F0) * 0.9).toFixed(2) + 's';
+      c.dataset.tip = `<b>${n}</b> ${sx === 'F' ? 'girls' : 'boys'}<br>Peaked in ${py}, ` + (cens ? `still above half ${hl} years on` : `half as popular ${hl} years later`);
+      c.dataset.name = n; c.dataset.sex = sx;
+    });
+    // running median
+    let d = '';
+    for (let y = F0 + 12; y <= F1 - 17; y++) {
+      const v = data.filter(e => !e[4] && Math.abs(e[2] - y) <= 7).map(e => e[3]);
+      if (v.length < 5) continue;
+      d += (d ? 'L' : 'M') + X(y).toFixed(1) + ',' + Yf(median(v)).toFixed(1);
+    }
+    el('path', { d, class: 'hi-path gold', 'stroke-width': 3 }, g);
+    const lab = el('g', {}, g);
+    txt(lab, X(1905), Yf(median(data.filter(e => !e[4] && e[2] >= 1890 && e[2] <= 1919).map(e => e[3]))) - 16, 'Median', 'ann gold halo', 'start');
+    const ky = P.y + 6;
+    el('circle', { cx: P.x + P.w - 150, cy: ky, r, class: 'dot open' }, lab).style.opacity = 1;
+    txt(lab, P.x + P.w - 140, ky + 4, 'Not yet halved', 'ann-sub', 'start');
+  }
+
+  // ---------- scene: half of all babies ----------
+  let halfState = null;
+  function buildHalf() {
+    const g = G.half;
+    g.textContent = '';
+    const short = P.h < 520;
+    const bh = clamp(P.h * 0.1, 30, 64);
+    const rows = { F: P.y + (short ? 82 : P.h * 0.22), M: 0 };
+    rows.M = rows.F + bh + (short ? 40 : 64);
+    const yearT = txt(g, P.x, P.y + (short ? 30 : 34), '', 'big-year');
+    const pools = {};
+    const maxK = { F: 0, M: 0 };
+    for (const sx of 'FM') C.story.half[sx].forEach(h => { maxK[sx] = Math.max(maxK[sx], h.k); });
+    for (const sx of 'FM') {
+      const y = rows[sx];
+      txt(g, P.x, y - 10, sx === 'F' ? 'Half of all girls' : 'Half of all boys', 'bar-label');
+      const cnt = txt(g, P.x + P.w, y - 10, '', 'bar-count', 'end');
+      const segs = el('g', {}, g);
+      const rects = [], names = [];
+      for (let i = 0; i < maxK[sx]; i++) rects.push(el('rect', { x: P.x, y, height: bh, width: 0, class: 'seg' }, segs));
+      for (let i = 0; i < 6; i++) names.push(txt(segs, 0, y + bh / 2 + 5, '', 'seg-name', 'middle'));
+      pools[sx] = { rects, names, cnt };
+    }
+    // how many names it takes, over time
+    const top = rows.M + bh + (short ? 46 : 70), bot = P.y + P.h - 6;
+    const kmax = Math.max(maxK.F, maxK.M);
+    const Yk = k => bot - k / kmax * (bot - top);
+    txt(g, P.x, top - (short ? 14 : 22), 'Names needed to cover half of all babies', 'axis-title');
+    for (const v of [0, 100, 200, 300].filter(v => v <= kmax + 20 && !(short && v > kmax))) {
+      el('line', { x1: P.x, x2: P.x + P.w, y1: Yk(v), y2: Yk(v), class: 'grid' }, g);
+      if (v) yLabel(g, Yk(v), v + ' names');
+    }
+    xTicks(g);
+    const lines = {};
+    for (const sx of 'FM') {
+      const d = C.story.half[sx].map((h, i) => (i ? 'L' : 'M') + X(F0 + i).toFixed(1) + ',' + Yk(h.k).toFixed(1)).join('');
+      el('path', { d, fill: 'none', stroke: sx === 'F' ? '#fff' : 'var(--sky)', 'stroke-width': 2, 'stroke-opacity': 0.9 }, g);
+      const last = C.story.half[sx][NY - 1].k;
+      txt(g, X(F1) - 4, Yk(last) - 8, sx === 'F' ? 'Girls' : 'Boys', 'ann-sub halo', 'end');
+      lines[sx] = el('circle', { r: 5, fill: 'var(--gold)', cx: P.x, cy: Yk(0) }, g);
+    }
+    halfState = { pools, yearT, Yk, lines, year: null };
+  }
+
+  function setHalfYear(y) {
+    if (!halfState || halfState.year === y) return;
+    halfState.year = y;
+    const i = y - F0;
+    halfState.yearT.textContent = y;
+    for (const sx of 'FM') {
+      const h = C.story.half[sx][i], pool = halfState.pools[sx];
+      const sum = h.shares.reduce((a, b) => a + b, 0);
+      let x = P.x;
+      pool.rects.forEach((r, j) => {
+        if (j < h.k) {
+          const w = h.shares[j] / sum * P.w;
+          r.setAttribute('x', x.toFixed(2));
+          r.setAttribute('width', Math.max(0, w).toFixed(2));
+          r.setAttribute('fill', j === 0 ? 'var(--gold)' : (j % 2 ? 'rgba(159,207,255,.62)' : 'rgba(159,207,255,.82)'));
+          if (j < 6) {
+            const t = pool.names[j];
+            const fits = w > h.names[j].length * 8 + 10;
+            t.textContent = fits ? h.names[j] : '';
+            t.setAttribute('x', (x + w / 2).toFixed(1));
+          }
+          x += w;
+        } else {
+          r.setAttribute('width', 0);
+        }
+      });
+      pool.cnt.textContent = h.k + (h.k === 1 ? ' name' : ' names');
+      halfState.lines[sx].setAttribute('cx', X(y));
+      halfState.lines[sx].setAttribute('cy', halfState.Yk(h.k));
+    }
+  }
+
+  // ---------- scene: moments that made or killed a name ----------
+  const MOMENTS = [
+    ['Woodrow M', 1912, 'Wilson elected'],
+    ['Shirley F', 1934, 'Shirley Temple’s big year'],
+    ['Jaime F', 1976, 'The Bionic Woman'],
+    ['Farrah F', 1976, 'Charlie’s Angels'],
+    ['Hillary F', 1992, 'Clinton campaign'],
+    ['Katrina F', 2005, 'Hurricane Katrina'],
+    ['Isis F', 2014, 'ISIS in the news'],
+    ['Alexa F', 2014, 'Amazon’s Alexa'],
+  ];
+
+  function buildMoments() {
+    const g = G.moments;
+    g.textContent = '';
+    const cols = P.w >= 720 ? 4 : 2, rows = MOMENTS.length / cols;
+    const cw = P.w / cols, ch = P.h / rows;
+    MOMENTS.forEach(([k, ev, label], idx) => {
+      const [n, sx] = k.split(' ');
+      const c = series(k);
+      const x0 = P.x + (idx % cols) * cw, y0 = P.y + Math.floor(idx / cols) * ch;
+      const a = Math.max(F0, ev - 12), b = Math.min(F1, ev + 12);
+      let mx = 1;
+      for (let y = a; y <= b; y++) mx = Math.max(mx, c[y - F0]);
+      const tight = ch < 130;
+      const pad = tight ? 8 : 12, top = y0 + (tight ? 50 : 52), bot = y0 + ch - (tight ? 10 : 22);
+      const xs = y => x0 + pad + (y - a) / (b - a) * (cw - pad * 2);
+      const ys = v => bot - v / mx * (bot - top);
+      const cell = el('g', {}, g);
+      el('rect', { x: x0 + 4, y: y0 + 4, width: cw - 8, height: ch - 8, rx: 12, fill: 'rgba(10,30,58,.55)', stroke: 'var(--hair)' }, cell);
+      txt(cell, x0 + pad + 2, y0 + (tight ? 20 : 26), n, 'mini-name').style.fontSize = tight ? '14px' : '';
+      txt(cell, x0 + pad + 2, y0 + (tight ? 34 : 43), label + ', ' + ev, 'mini-ev').style.fontSize = tight ? '10.5px' : '';
+      el('line', { x1: xs(ev), x2: xs(ev), y1: top - 4, y2: bot, stroke: 'var(--soft)', 'stroke-opacity': 0.5, 'stroke-dasharray': '3 3' }, cell);
+      let d = '', area = '';
+      for (let y = a; y <= b; y++) {
+        const p = xs(y).toFixed(1) + ',' + ys(c[y - F0]).toFixed(1);
+        d += (y === a ? 'M' : 'L') + p;
+      }
+      area = d + `L${xs(b).toFixed(1)},${bot}L${xs(a).toFixed(1)},${bot}Z`;
+      el('path', { d: area, fill: 'rgba(245,184,61,.14)' }, cell);
+      el('path', { d, class: 'hi-path gold', 'stroke-width': 2.2 }, cell);
+      el('line', { x1: x0 + pad, x2: x0 + cw - pad, y1: bot, y2: bot, class: 'grid' }, cell);
+      let pk = a;
+      for (let y = a; y <= b; y++) if (c[y - F0] > c[pk - F0]) pk = y;
+      el('circle', { cx: xs(pk), cy: ys(c[pk - F0]), r: 3.5, fill: 'var(--gold)' }, cell);
+      const right = xs(pk) > x0 + cw * 0.62;
+      txt(cell, xs(pk) + (right ? -7 : 7), ys(c[pk - F0]) + 4, fmt(c[pk - F0]), 'mini-n halo', right ? 'end' : 'start');
+      if (!tight) {
+        txt(cell, x0 + pad, bot + 15, a, 'lbl');
+        txt(cell, x0 + cw - pad, bot + 15, b, 'lbl', 'end');
+      }
+    });
+  }
+
+  // ---------- scene: alive today, by age ----------
+  const RIDGES = ['Mildred F', 'Linda F', 'Gary M', 'Tammy F', 'Jennifer F', 'Jason M', 'Brittany F', 'Madison F', 'Liam M', 'Hazel F'];
+
+  function buildAges() {
+    const g = G.ages;
+    g.textContent = '';
+    const labW = wide ? 84 : 70;
+    const x0 = P.x + labW, x1 = P.x + P.w;
+    const AMAX = 100;
+    const xa = a => x0 + a / AMAX * (x1 - x0);
+    const items = RIDGES.map(k => { const [n, sx] = k.split(' '); return { k, n, sx, a: analyze(series(k), sx) }; });
+    const hazel = items.pop();
+    items.sort((p, q) => q.a.medAge - p.a.medAge);
+    items.push(hazel);
+    const rowH = (P.h - 40) / (items.length - 1 + 1.7);
+    const amp = rowH * 1.7;
+    for (let a = 0; a <= AMAX; a += 20) {
+      el('line', { x1: xa(a), x2: xa(a), y1: P.y, y2: P.y + P.h - 24, class: 'grid' }, g);
+      txt(g, xa(a), P.y + P.h - 4, a, 'lbl', 'middle');
+    }
+    txt(g, x1, P.y - 18, 'Age today', 'axis-title', 'end');
+    txt(g, P.x, P.y - 18, 'Living people with the name', 'axis-title');
+    const meds = { top: [] };
+    items.forEach((it, r) => {
+      const base = P.y + amp + r * rowH;
+      let mx = 0;
+      const pts = [];
+      for (let a = 0; a <= AMAX; a++) {
+        const i = REF - a - F0;
+        const v = i >= 0 && i < NY ? it.a.al[i] : 0;
+        pts.push(v);
+        mx = Math.max(mx, v);
+      }
+      let d = `M${xa(0)},${base}`;
+      pts.forEach((v, a) => { d += `L${xa(a).toFixed(1)},${(base - v / mx * amp).toFixed(1)}`; });
+      d += `L${xa(AMAX)},${base}Z`;
+      const row = el('g', {}, g);
+      el('path', { d, class: 'ridge' + (it.n === 'Hazel' ? ' mint' : '') }, row);
+      txt(row, x0 - 10, base - 2, it.n, 'ridge-name', 'end');
+      // Hazel gets a median for each of its two waves
+      const ms = it.n === 'Hazel' ? [[0, 45], [45, AMAX]].map(([lo, hi]) => {
+        let tot = 0, acc = 0;
+        for (let a = lo; a < hi; a++) tot += pts[a];
+        for (let a = lo; a < hi; a++) { acc += pts[a]; if (acc >= tot / 2) return a; }
+        return lo;
+      }) : [it.a.medAge];
+      for (const m of ms) {
+        const top = base - pts[m] / mx * amp;
+        el('line', { x1: xa(m), x2: xa(m), y1: base, y2: top, stroke: 'var(--gold)', 'stroke-width': 2 }, row);
+        meds.top.push([xa(m) + 5, top + 12, m]);
+      }
+    });
+    // labels last, so no ridge in front can cover them
+    meds.top.forEach(([x, y, m]) => txt(g, x, y, m, 'ridge-med halo', 'start'));
+  }
+
+  // ---------- steps ----------
+  const STEPS = {
+    hero: { field: 'hero', dim: 1 },
+    field: { field: 'plot', dim: 1, axes: true, hover: true },
+    linda: { field: 'plot', dim: 0.3, axes: true, hi: 'linda' },
+    halflife: { field: 'plot', dim: 0.3, axes: true, hi: 'halflife' },
+    fade: { field: 'plot', dim: 0.05, scene: 'fade' },
+    spread: { field: 'plot', dim: 0, scene: 'half' },
+    moments: { field: 'plot', dim: 0, scene: 'moments' },
+    back: { field: 'plot', dim: 0.3, axes: true, hi: 'back' },
+    gone: { field: 'plot', dim: 0.3, axes: true, hi: 'gone' },
+    ages: { field: 'plot', dim: 0, scene: 'ages' },
+    you: { field: 'plot', dim: 0.75, axes: true, hover: true },
+  };
+
+  function apply(id, force) {
+    if (!STEPS[id] || (id === cur && !force)) return;
+    const s = STEPS[id];
+    cur = id;
+    stage.dataset.active = id;
+    cv.style.transform = s.field === 'hero' ? heroT : 'none';
+    cv.style.opacity = s.dim;
+    G.axes.classList.toggle('on', !!s.axes);
+    for (const k of ['fade', 'half', 'moments', 'ages']) {
+      G[k].classList.toggle('on', s.scene === k);
+      G[k].classList.toggle('live', s.scene === k);
+    }
+    hideTip();
+    if (s.hi) HIGHLIGHTS[s.hi](); else clearHi();
+    if (s.scene === 'half') scrub();
+  }
+
+  function build() {
+    svg.textContent = '';
+    G.axes = el('g', { class: 'layer' }, svg);
+    G.fade = el('g', { class: 'layer', id: 'gFade' }, svg);
+    G.half = el('g', { class: 'layer' }, svg);
+    G.moments = el('g', { class: 'layer' }, svg);
+    G.ages = el('g', { class: 'layer' }, svg);
+    G.hi = el('g', { id: 'gHi' }, svg);
+    G.hover = el('g', {}, svg);
+    axes();
+    buildFade();
+    buildHalf();
+    buildMoments();
+    buildAges();
+  }
+
+  function scrub() {
+    const s = $('.step.scrub');
+    if (!s || cur !== 'spread') return;
+    const r = s.getBoundingClientRect();
+    const p = clamp((innerHeight * 0.55 - r.top) / (r.height - innerHeight * 0.6), 0, 1);
+    setHalfYear(Math.round(F0 + clamp((p - 0.06) / 0.86, 0, 1) * (F1 - F0)));
+  }
+
+  // ---------- hovering the stage ----------
+  function showTip(html, x, y) {
+    tip.innerHTML = html;
+    tip.classList.add('on');
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    let left = x + 14, top = y - th - 12;
+    if (left + tw > W - 8) left = x - tw - 14;
+    if (top < 8) top = y + 16;
+    tip.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+  }
+
+  function hideTip() {
+    tip.classList.remove('on');
+    if (G.hover) G.hover.textContent = '';
+    hoverT = -1;
+  }
+
+  let hoverT = -1;
+  function nearestThread(mx, my) {
+    if (mx < P.x || mx > P.x + P.w || my < P.y - 10 || my > P.y + P.h + 10) return -1;
+    const f = (mx - P.x) / P.w * (F1 - F0);
+    const i0 = Math.floor(f), i1 = Math.min(NY - 1, i0 + 1), g = f - i0;
+    let best = -1, bd = 12;
+    for (let t = 0; t < NT; t++) {
+      const a = FL[t * NY + i0], b = FL[t * NY + i1];
+      if (a !== a && b !== b) continue;
+      const l = a !== a ? b : b !== b ? a : a + (b - a) * g;
+      const dd = Math.abs(Yl(l) - my);
+      if (dd < bd) { bd = dd; best = t; }
+    }
+    return best;
+  }
+
+  function onStagePointer(e) {
+    const s = STEPS[cur];
+    if (!s || !s.hover) return;
+    const r = svg.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    const t = nearestThread(mx, my);
+    if (t < 0) { hideTip(); return; }
+    if (t !== hoverT) {
+      hoverT = t;
+      G.hover.textContent = '';
+      el('path', { d: threadPath(t), class: 'hi-path gold' }, G.hover);
+    }
+    const pk = FPEAK[t];
+    const peakShare = Math.pow(10, FL[t * NY + pk]);
+    showTip(`<b>${FN[t]}</b> ${FS[t] === 'F' ? 'girls' : 'boys'}<br>Peaked in ${F0 + pk} at about 1 in ${oneIn(peakShare)}<br><i>Click to look it up</i>`, mx, my);
+  }
+
+  function initStage() {
+    layout();
+    renderField();
+    build();
+    apply('hero', true);
+    $('#loading').remove();
+
+    // draw the field in, left to right
+    tween(REDUCE ? 0 : 2600, p => blit(1 - Math.pow(1 - p, 3)));
+
+    // whichever step straddles the middle of the screen is the active one
+    const steps = $$('.step');
+    const detect = () => {
+      const mid = innerHeight / 2;
+      for (const s of steps) {
+        const r = s.getBoundingClientRect();
+        if (r.top <= mid && r.bottom >= mid) { apply(s.dataset.step); break; }
+      }
+      scrub();
+    };
+    addEventListener('scroll', detect, { passive: true });
+    detect();
+    svg.addEventListener('pointermove', onStagePointer);
+    svg.addEventListener('pointerdown', onStagePointer);
+    svg.addEventListener('pointerleave', () => { if (STEPS[cur] && STEPS[cur].hover) hideTip(); });
+    svg.addEventListener('click', e => {
+      const s = STEPS[cur];
+      if (s && s.hover && hoverT >= 0 && e.pointerType !== 'touch') {
+        Explorer.show(FN[hoverT], FS[hoverT], true);
+      }
+      const dot = e.target.closest && e.target.closest('.dot');
+      if (dot) Explorer.show(dot.dataset.name, dot.dataset.sex, true);
+    });
+    G.fade.addEventListener('pointerover', e => {
+      const dot = e.target.closest('.dot');
+      if (!dot) return;
+      const r = svg.getBoundingClientRect();
+      showTip(dot.dataset.tip + '<br><i>Click to look it up</i>', e.clientX - r.left, e.clientY - r.top);
+    });
+    G.fade.addEventListener('pointerout', e => { if (e.target.closest('.dot')) tip.classList.remove('on'); });
+
+    let lastW = innerWidth;
+    addEventListener('resize', debounce(() => {
+      // phones fire resize as the address bar slides; only redraw for real changes
+      if (innerWidth === lastW && Math.abs(stage.clientHeight - H) < 120) return;
+      lastW = innerWidth;
+      layout();
+      renderField();
+      blit(1);
+      build();
+      if (halfState) halfState.year = null;
+      apply(cur, true);
+    }, 180));
+  }
+
+  // ---------- the explorer ----------
+  const Explorer = (() => {
+    const q = $('#q'), sugg = $('#sugg'), result = $('#result'), xtip = $('#xtip');
+    const shards = {};
+    let rec = null, recs = [], view = 'count', active = -1, items = [];
+
+    function loadShard(letter) {
+      if (!shards[letter]) {
+        shards[letter] = fetch(`name-data/${letter}.txt?v=${V}`).then(r => {
+          if (!r.ok) throw new Error(r.status);
+          return r.text();
+        }).then(text => {
+          const byName = new Map(), order = [];
+          for (const line of text.split('\n')) {
+            if (!line) continue;
+            const [name, sx, start, cs] = line.split('|');
+            const c = new Float64Array(NY);
+            const s0 = +start - F0;
+            const parts = cs.split(',');
+            let total = 0;
+            for (let j = 0; j < parts.length; j++) { const v = parts[j] ? parseInt(parts[j], 36) : 0; c[s0 + j] = v; total += v; }
+            const key = name.toLowerCase();
+            if (!byName.has(key)) { byName.set(key, []); order.push(key); }
+            byName.get(key).push({ name, sx, c, total });
+          }
+          return { byName, order };
+        });
+      }
+      return shards[letter];
+    }
+
+    function closeSugg() { sugg.hidden = true; q.setAttribute('aria-expanded', 'false'); active = -1; }
+
+    function renderSugg(list, msg) {
+      sugg.textContent = '';
+      items = list;
+      if (!list.length) {
+        const li = document.createElement('li');
+        li.className = 'empty';
+        li.textContent = msg;
+        sugg.appendChild(li);
+      }
+      list.forEach((entries, i) => {
+        const li = document.createElement('li');
+        li.setAttribute('role', 'option');
+        li.id = 'opt' + i;
+        li.setAttribute('aria-selected', i === active ? 'true' : 'false');
+        const tot = entries.reduce((a, e) => a + e.total, 0);
+        const split = entries.map(e => `${short(e.total)} ${e.sx === 'F' ? 'girls' : 'boys'}`).join(' · ');
+        li.innerHTML = `<span class="sn"></span><span class="sm">${split}</span>`;
+        li.firstChild.textContent = entries[0].name;
+        li.title = fmt(tot) + ' babies since 1880';
+        li.addEventListener('mousedown', ev => { ev.preventDefault(); pick(entries); });
+        sugg.appendChild(li);
+      });
+      sugg.hidden = false;
+      q.setAttribute('aria-expanded', 'true');
+    }
+
+    let seq = 0;
+    async function onInput() {
+      const v = q.value.trim().replace(/[^a-z]/gi, '');
+      if (!v) { closeSugg(); return; }
+      const my = ++seq;
+      let sh;
+      try { sh = await loadShard(v[0].toLowerCase()); } catch (e) { renderSugg([], 'Couldn’t load the names. Try again in a moment.'); return; }
+      if (my !== seq) return;
+      const pre = v.toLowerCase();
+      const out = [];
+      if (sh.byName.has(pre)) out.push(sh.byName.get(pre));
+      for (const k of sh.order) {
+        if (out.length >= 8) break;
+        if (k !== pre && k.startsWith(pre)) out.push(sh.byName.get(k));
+      }
+      active = out.length ? 0 : -1;
+      renderSugg(out, `No name spelled “${v}” went to five or more babies in any year since 1880.`);
+    }
+
+    function pick(entries) {
+      closeSugg();
+      q.value = entries[0].name;
+      setRecs(entries, null);
+    }
+
+    async function show(name, sx, scroll, quiet) {
+      if (!name) return;
+      const v = name.replace(/[^a-z]/gi, '');
+      if (!v) return;
+      q.value = v[0].toUpperCase() + v.slice(1).toLowerCase();
+      if (scroll) $('#explore').scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth' });
+      let sh;
+      try { sh = await loadShard(v[0].toLowerCase()); } catch (e) { return; }
+      const entries = sh.byName.get(v.toLowerCase());
+      if (!entries) { q.focus(); onInput(); return; }
+      q.value = entries[0].name;
+      setRecs(entries, sx, quiet);
+    }
+
+    function setRecs(entries, sx, quiet) {
+      recs = [...entries].sort((a, b) => b.total - a.total);
+      rec = recs.find(r => r.sx === sx) || recs[0];
+      render(quiet);
+    }
+
+    function render(quiet) {
+      const a = analyze(rec.c, rec.sx);
+      const vd = verdict(a);
+      const [label, cls] = VERDICTS[vd];
+      result.hidden = false;
+      $('#rName').textContent = rec.name;
+      const vEl = $('#rVerdict');
+      vEl.textContent = label;
+      vEl.className = 'verdict ' + cls;
+
+      const sexes = $('#rSexes');
+      sexes.textContent = '';
+      sexes.hidden = recs.length < 2;
+      if (recs.length > 1) {
+        const all = recs.reduce((s, r) => s + r.total, 0);
+        for (const r of recs) {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = `${r.sx === 'F' ? 'Girls' : 'Boys'} · ${Math.round(r.total / all * 100) || '<1'}%`;
+          b.setAttribute('aria-pressed', r === rec ? 'true' : 'false');
+          b.addEventListener('click', () => { rec = r; render(); });
+          sexes.appendChild(b);
+        }
+      }
+
+      $('#rDiag').innerHTML = diagnose(a, vd);
+      tiles(a);
+      $('#agesTitle').textContent = `${plural(rec.name)} alive today, by age`;
+      drawLife(a);
+      drawAges(a);
+      drawTwins(a);
+      if (!quiet) history.replaceState(null, '', '#' + encodeURIComponent(rec.name) + (recs.length > 1 ? '-' + rec.sx : ''));
+      $('#shareMsg').textContent = '';
+    }
+
+    function diagnose(a, vd) {
+      const n = `<b>${rec.name}</b>`, sx = rec.sx;
+      const last = a.c[NY - 1], ten = a.c[NY - 11];
+      const pkY = F0 + a.pkN, pkN = a.c[a.pkN];
+      const girls = sx === 'F' ? 'girls' : 'boys';
+      switch (vd) {
+        case 'rare': return `Only ${fmt(a.total)} ${kids(a.total, sx)} have ever been recorded with this name, which is too few to tell where it’s heading.`;
+        case 'gone': return `No year since ${F0 + a.lastI} has had even five ${girls} named ${n}, the point at which the records stop listing a name. At its height, in ${pkY}, there were ${fmt(pkN)}.`;
+        case 'critical': return `${n} is hanging on by a thread. ${fmt(last)} ${kids(last, sx)} got it in ${F1}, down from ${fmt(pkN)} in ${pkY}.`;
+        case 'dying': return `${n} is dying. ${fmt(last)} ${kids(last, sx)} got it in ${F1}, down from ${fmt(ten)} in ${F1 - 10}${a.pk < NY - 11 ? `, and it peaked back in ${F0 + a.pk}` : ''}.`;
+        case 'fading': return `${n} is fading. ${fmt(last)} ${kids(last, sx)} got it in ${F1}, down from ${fmt(ten)} in ${F1 - 10}.`;
+        case 'steady': return `${n} is holding steady at about 1 in ${oneIn(a.now)} ${girls}, much where it was a decade ago. ${fmt(last)} got it in ${F1}.`;
+        case 'rising': return `${n} is on the way up: ${fmt(last)} ${kids(last, sx)} in ${F1}, up from ${fmt(ten)} in ${F1 - 10}.`;
+        case 'boom': return `${n} is booming. Its share of ${girls} has more than doubled in a decade, to ${fmt(last)} babies in ${F1}.`;
+        case 'peak': return `${n} has never been more popular than it is right now: ${fmt(last)} ${kids(last, sx)} in ${F1}, or 1 in ${oneIn(a.sh[NY - 1])}.`;
+        case 'back': return `${n} went out of fashion and came back. It was 1 in ${oneIn(a.sh[a.back.early])} ${girls} in ${F0 + a.back.early}, sank to 1 in ${oneIn(a.sh[a.back.low])} by ${F0 + a.back.low}, and in ${F1}, ${fmt(last)} got it.`;
+      }
+      return '';
+    }
+
+    function tiles(a) {
+      const last = a.c[NY - 1], ten = a.c[NY - 11];
+      const ch = ten > 0 ? last / ten - 1 : null;
+      const arrow = ch == null ? '' : ch >= 0 ? `<span class="up">▲ ${Math.round(ch * 100)}%</span>` : `<span class="down">▼ ${Math.round(-ch * 100)}%</span>`;
+      const t = [
+        ['Most popular', F0 + a.pk, `${fmt(a.c[a.pk])} ${kids(a.c[a.pk], rec.sx)}, 1 in ${oneIn(a.sh[a.pk])}`],
+        [`In ${F1}`, last ? fmt(last) : 'Under 5', last ? (ch == null ? 'none a decade earlier' : `${arrow} on ${F1 - 10}`) : 'too few to be listed'],
+        ['Half-life', a.half > 0 ? `${a.half - a.pk} ${a.half - a.pk === 1 ? 'yr' : 'yrs'}` : 'Not yet', a.half > 0 ? `half as popular by ${F0 + a.half}` : 'still above half its peak'],
+        ['Ever given', fmt(a.total), `since ${F0 + a.firstI}`],
+        ['Alive today', a.alive >= 1 ? '~' + short(Math.round(a.alive / (a.alive > 1000 ? 100 : 1)) * (a.alive > 1000 ? 100 : 1)) : 'Few', 'estimated'],
+        ['Typical age', a.medAge != null && a.alive >= 20 ? a.medAge : '—', 'median of those alive'],
+      ];
+      $('#tiles').innerHTML = t.map(([k, v, s]) => `<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div class="s">${s}</div></div>`).join('');
+    }
+
+    // ----- shared chart bits -----
+    function xt(html, ev) {
+      xtip.innerHTML = html;
+      xtip.classList.add('on');
+      const tw = xtip.offsetWidth, th = xtip.offsetHeight;
+      let x = ev.clientX + 14, y = ev.clientY - th - 12;
+      if (x + tw > innerWidth - 8) x = ev.clientX - tw - 14;
+      if (y < 8) y = ev.clientY + 18;
+      xtip.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+    }
+    const xtOff = () => xtip.classList.remove('on');
+
+    function niceMax(v) {
+      const p = Math.pow(10, Math.floor(Math.log10(Math.max(v, 1))));
+      for (const m of [1, 2, 2.5, 5, 10]) if (m * p >= v) return m * p;
+      return 10 * p;
+    }
+
+    // four gridlines when they land on round numbers, otherwise five
+    function divisions(top) {
+      const step = top / 4, p = Math.pow(10, Math.floor(Math.log10(step)));
+      return [1, 2, 2.5, 5].includes(Math.round(step / p * 100) / 100) && step >= 1 ? 4 : 5;
+    }
+
+    function drawLife(a) {
+      const box = $('#lifeChart');
+      box.textContent = '';
+      const w = Math.max(280, box.clientWidth), h = w < 560 ? 240 : 300;
+      const m = { l: w < 560 ? 44 : 56, r: 14, t: 22, b: 28 };
+      const iw = w - m.l - m.r, ih = h - m.t - m.b;
+      const s = el('svg', { viewBox: `0 0 ${w} ${h}`, height: h }, box);
+      const xs = i => m.l + i / (NY - 1) * iw;
+      for (let y = Math.ceil(F0 / 20) * 20; y <= F1; y += w < 560 ? 40 : 20) {
+        const g = el('g', { class: 'tick' }, s);
+        el('line', { x1: xs(y - F0), x2: xs(y - F0), y1: m.t + ih, y2: m.t + ih + 5 }, g);
+        txt(g, xs(y - F0), h - 6, y, '', 'middle');
+      }
+      let ys, pathD = '';
+      if (view === 'field') {
+        const c = document.createElement('canvas');
+        c.width = Math.round(iw * dpr); c.height = Math.round(ih * dpr);
+        Object.assign(c.style, { left: m.l + 'px', top: m.t + 'px', width: iw + 'px', height: ih + 'px' });
+        box.insertBefore(c, s);
+        const ctx = c.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        paintField(ctx, iw, ih, clamp(Math.sqrt(iw * ih / 630000) * 0.8, 0.3, 1), 1);
+        ys = l => m.t + (YMAX - l) / (YMAX - YMIN) * ih;
+        for (let l = -1; l >= -5; l--) {
+          el('line', { x1: m.l, x2: m.l + iw, y1: ys(l), y2: ys(l), class: 'grid' }, s);
+          txt(s, m.l - 6, ys(l) + 4, '1 in ' + short(Math.pow(10, -l)), 'lbl', 'end');
+        }
+        let pen = false;
+        for (let i = 0; i < NY; i++) {
+          if (!a.c[i]) { pen = false; continue; }
+          pathD += (pen ? 'L' : 'M') + xs(i).toFixed(1) + ',' + ys(Math.log10(a.sh[i])).toFixed(1);
+          pen = true;
+        }
+        el('path', { d: pathD, class: 'hi-path gold' }, s);
+      } else {
+        const top = niceMax(a.c[a.pkN] * 1.08);
+        ys = v => m.t + ih - v / top * ih;
+        const nd = divisions(top);
+        for (let k = 0; k <= nd; k++) {
+          const v = top * k / nd;
+          el('line', { x1: m.l, x2: m.l + iw, y1: ys(v), y2: ys(v), class: 'grid' }, s);
+          txt(s, m.l - 6, ys(v) + 4, short(v), 'lbl', 'end');
+        }
+        const defs = el('defs', {}, s);
+        const gr = el('linearGradient', { id: 'lifeFill', x1: 0, x2: 0, y1: 0, y2: 1 }, defs);
+        el('stop', { offset: 0, 'stop-color': '#f5b83d', 'stop-opacity': 0.42 }, gr);
+        el('stop', { offset: 1, 'stop-color': '#f5b83d', 'stop-opacity': 0 }, gr);
+        for (let i = 0; i < NY; i++) pathD += (i ? 'L' : 'M') + xs(i).toFixed(1) + ',' + ys(a.c[i]).toFixed(1);
+        el('path', { d: pathD + `L${xs(NY - 1)},${ys(0)}L${xs(0)},${ys(0)}Z`, fill: 'url(#lifeFill)' }, s);
+        el('path', { d: pathD, class: 'hi-path gold', 'stroke-width': 2.2 }, s);
+        const pkX = xs(a.pkN), pkY = ys(a.c[a.pkN]);
+        el('circle', { cx: pkX, cy: pkY, r: 4.5, fill: 'var(--gold)' }, s);
+        const right = pkX > m.l + iw * 0.7;
+        txt(s, pkX + (right ? -9 : 9), pkY + 2, `${F0 + a.pkN}: ${fmt(a.c[a.pkN])}`, 'ann gold halo', right ? 'end' : 'start');
+        if (a.half > 0) {
+          const hx = xs(a.half), hy = ys(a.c[a.half]);
+          el('circle', { cx: hx, cy: hy, r: 4, fill: 'var(--bg)', stroke: 'var(--gold)', 'stroke-width': 2 }, s);
+          const flip = hx > m.l + iw * 0.8;
+          if (Math.abs(hx - pkX) > 60 || Math.abs(hy - pkY) > 26) txt(s, hx + (flip ? -8 : 8), hy - 8, 'half as popular', 'ann-sub halo', flip ? 'end' : 'start');
+        }
+      }
+      // hover readout
+      const guide = el('line', { y1: m.t, y2: m.t + ih, stroke: 'var(--soft)', 'stroke-opacity': 0, 'stroke-width': 1 }, s);
+      const dot = el('circle', { r: 4, fill: 'var(--ink)', opacity: 0 }, s);
+      const hit = el('rect', { x: m.l, y: m.t, width: iw, height: ih, fill: 'transparent' }, s);
+      const move = ev => {
+        const r = s.getBoundingClientRect();
+        const i = clamp(Math.round((ev.clientX - r.left - m.l) / iw * (NY - 1)), 0, NY - 1);
+        const x = xs(i);
+        guide.setAttribute('x1', x); guide.setAttribute('x2', x); guide.setAttribute('stroke-opacity', 0.5);
+        const y = view === 'field' ? (a.c[i] ? ys(Math.log10(a.sh[i])) : null) : ys(a.c[i]);
+        if (y != null) { dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('opacity', 1); } else dot.setAttribute('opacity', 0);
+        xt(`<b>${F0 + i}</b><br>${a.c[i] ? `${fmt(a.c[i])} ${kids(a.c[i], rec.sx)}, 1 in ${oneIn(a.sh[i])}` : 'Fewer than five'}`, ev);
+      };
+      hit.addEventListener('pointermove', move);
+      hit.addEventListener('pointerdown', move);
+      hit.addEventListener('pointerleave', () => { guide.setAttribute('stroke-opacity', 0); dot.setAttribute('opacity', 0); xtOff(); });
+    }
+
+    function drawAges(a) {
+      const box = $('#ageChart');
+      box.textContent = '';
+      const w = Math.max(280, box.clientWidth), h = w < 560 ? 200 : 240;
+      const m = { l: w < 560 ? 44 : 56, r: 14, t: 18, b: 30 };
+      const iw = w - m.l - m.r, ih = h - m.t - m.b;
+      const AMAX = 105;
+      const s = el('svg', { viewBox: `0 0 ${w} ${h}`, height: h }, box);
+      const bw = iw / (AMAX + 1);
+      const xa = age => m.l + age * bw;
+      let top = 1;
+      for (let age = 0; age <= AMAX; age++) { const i = REF - age - F0; if (i >= 0 && i < NY) top = Math.max(top, a.c[i]); }
+      top = niceMax(top);
+      const ys = v => m.t + ih - v / top * ih;
+      const nd = divisions(top);
+      for (let k = 0; k <= nd; k++) {
+        const v = top * k / nd;
+        el('line', { x1: m.l, x2: m.l + iw, y1: ys(v), y2: ys(v), class: 'grid' }, s);
+        txt(s, m.l - 6, ys(v) + 4, short(v), 'lbl', 'end');
+      }
+      for (let age = 0; age <= 100; age += 20) txt(s, xa(age) + bw / 2, h - 8, age, 'lbl', 'middle');
+      if (w >= 560) txt(s, m.l + iw + 4, h - 8, 'age', 'lbl', 'start');
+      for (let age = 0; age <= AMAX; age++) {
+        const i = REF - age - F0;
+        if (i < 0 || i >= NY || !a.c[i]) continue;
+        el('rect', { x: xa(age) + 0.5, y: ys(a.c[i]), width: Math.max(0.5, bw - 1), height: ys(0) - ys(a.c[i]), fill: 'rgba(159,207,255,.16)' }, s);
+        el('rect', { x: xa(age) + 0.5, y: ys(a.al[i]), width: Math.max(0.5, bw - 1), height: ys(0) - ys(a.al[i]), fill: 'rgba(159,207,255,.85)' }, s);
+      }
+      if (a.medAge != null && a.alive >= 20) {
+        const x = xa(a.medAge) + bw / 2;
+        el('line', { x1: x, x2: x, y1: m.t, y2: m.t + ih, stroke: 'var(--gold)', 'stroke-width': 2, 'stroke-dasharray': '4 3' }, s);
+        const right = x > m.l + iw * 0.72;
+        txt(s, x + (right ? -8 : 8), m.t + 12, `Median age ${a.medAge}`, 'ann gold halo', right ? 'end' : 'start');
+      }
+      const hit = el('rect', { x: m.l, y: m.t, width: iw, height: ih, fill: 'transparent' }, s);
+      const move = ev => {
+        const r = s.getBoundingClientRect();
+        const age = clamp(Math.floor((ev.clientX - r.left - m.l) / bw), 0, AMAX);
+        const i = REF - age - F0;
+        if (i < 0 || i >= NY) { xt(`<b>Age ${age}</b><br>Born before ${F0}`, ev); return; }
+        xt(`<b>Age ${age}</b> (born ${F0 + i})<br>${fmt(a.c[i])} born, about ${fmt(a.al[i])} alive`, ev);
+      };
+      hit.addEventListener('pointermove', move);
+      hit.addEventListener('pointerdown', move);
+      hit.addEventListener('pointerleave', xtOff);
+    }
+
+    // names in the field whose curve, scaled to its own peak, is closest
+    let NORM = null;
+    function drawTwins(a) {
+      const box = $('#twins');
+      box.textContent = '';
+      if (!NORM) {
+        NORM = new Float32Array(NT * NY);
+        for (let t = 0; t < NT; t++) {
+          const pk = FL[t * NY + FPEAK[t]];
+          for (let i = 0; i < NY; i++) { const l = FL[t * NY + i]; NORM[t * NY + i] = l === l ? Math.pow(10, l - pk) : 0; }
+        }
+      }
+      const target = new Float32Array(NY);
+      const pk = a.sh[a.pk] || 1;
+      for (let i = 0; i < NY; i++) target[i] = a.sh[i] / pk;
+      const best = [];
+      for (let t = 0; t < NT; t++) {
+        if (FN[t] === rec.name) continue;
+        let d = 0;
+        for (let i = 0; i < NY; i++) { const e = NORM[t * NY + i] - target[i]; d += e * e; }
+        best.push([d, t]);
+      }
+      best.sort((p, q) => p[0] - q[0]);
+      const seen = new Set();
+      const pickT = [];
+      for (const [, t] of best) { if (seen.has(FN[t])) continue; seen.add(FN[t]); pickT.push(t); if (pickT.length === 4) break; }
+      for (const t of pickT) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'twin';
+        b.innerHTML = `<div class="tn"></div><div class="tm">${FS[t] === 'F' ? 'girls' : 'boys'} · peaked ${F0 + FPEAK[t]}</div>`;
+        b.firstChild.textContent = FN[t];
+        const sv = el('svg', { viewBox: `0 0 100 40`, preserveAspectRatio: 'none' }, b);
+        let d1 = '', d2 = '';
+        for (let i = 0; i < NY; i++) {
+          const x = (i / (NY - 1) * 100).toFixed(2);
+          d1 += (i ? 'L' : 'M') + x + ',' + (38 - target[i] * 34).toFixed(2);
+          d2 += (i ? 'L' : 'M') + x + ',' + (38 - NORM[t * NY + i] * 34).toFixed(2);
+        }
+        el('path', { d: d1, fill: 'none', stroke: 'rgba(245,184,61,.55)', 'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke' }, sv);
+        el('path', { d: d2, fill: 'none', stroke: 'var(--sky)', 'stroke-width': 1.8, 'vector-effect': 'non-scaling-stroke' }, sv);
+        b.addEventListener('click', () => { show(FN[t], FS[t], false); $('#result').scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth', block: 'start' }); });
+        box.appendChild(b);
+      }
+    }
+
+    function init() {
+      q.addEventListener('input', onInput);
+      q.addEventListener('keydown', e => {
+        const open = !sugg.hidden && items.length;
+        if (e.key === 'ArrowDown' && open) { e.preventDefault(); active = (active + 1) % items.length; renderSugg(items); }
+        else if (e.key === 'ArrowUp' && open) { e.preventDefault(); active = (active - 1 + items.length) % items.length; renderSugg(items); }
+        else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (open && active >= 0) pick(items[active]);
+          else if (q.value.trim()) show(q.value.trim(), null, false);
+        } else if (e.key === 'Escape') closeSugg();
+        if (open && active >= 0) q.setAttribute('aria-activedescendant', 'opt' + active);
+      });
+      q.addEventListener('blur', () => setTimeout(closeSugg, 120));
+      $('#random').addEventListener('click', () => { const t = Math.floor(Math.random() * NT); show(FN[t], FS[t], false); });
+      $$('#chips button').forEach(b => b.addEventListener('click', () => show(b.textContent, null, false)));
+      $$('.switch button').forEach(b => b.addEventListener('click', () => {
+        view = b.dataset.view;
+        $$('.switch button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+        if (rec) drawLife(analyze(rec.c, rec.sx));
+      }));
+      $('#share').addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(location.href); $('#shareMsg').textContent = 'Link copied'; }
+        catch (e) { $('#shareMsg').textContent = location.href; }
+      });
+      addEventListener('resize', debounce(() => {
+        if (!rec || result.hidden) return;
+        const a = analyze(rec.c, rec.sx);
+        drawLife(a); drawAges(a);
+      }, 200));
+
+      const fromHash = scroll => {
+        const m = decodeURIComponent(location.hash.slice(1)).match(/^([A-Za-z]+)(?:-([FM]))?$/);
+        if (m && m[1] === 'explore') return false;
+        if (m) show(m[1], m[2] || null, scroll);
+        return !!m;
+      };
+      if (!fromHash(true)) show('Andy', 'M', false, true);
+      addEventListener('hashchange', () => fromHash(true));
+      $('#cta').addEventListener('click', e => {
+        e.preventDefault();
+        $('#explore').scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth' });
+        setTimeout(() => { q.focus({ preventScroll: true }); q.select(); }, REDUCE ? 0 : 700);
+      });
+    }
+
+    return { init, show };
+  })();
+
+  // ---------- go ----------
+  fetch(`name-data/core.json?v=${V}`).then(r => r.json()).then(data => {
+    C = data;
+    F0 = C.first; F1 = C.last; NY = F1 - F0 + 1; REF = C.ref;
+    TOT.F = C.totals.F; TOT.M = C.totals.M;
+    SURV.F = C.surv.F; SURV.M = C.surv.M;
+    decodeField();
+    fillTokens();
+    initStage();
+    Explorer.init();
+  }).catch(() => {
+    const l = $('#loading');
+    if (l) l.textContent = 'The names didn’t load. Try refreshing the page.';
+  });
+})();
+</script>
+</body>
+</html>

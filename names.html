@@ -67,26 +67,29 @@
     border: 0;
   }
 
+  /* the full wordmark on wide screens, just the icon on phones */
   .home {
     position: absolute;
     z-index: 20;
-    top: calc(18px + env(safe-area-inset-top));
+    top: calc(16px + env(safe-area-inset-top));
     left: calc(var(--gutter) + env(safe-area-inset-left));
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--soft);
-    text-decoration: none;
-    padding: 8px 2px;
+    display: block;
+    border-radius: 10px;
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
   }
 
-  .home:hover, .home:focus-visible { color: var(--gold); }
+  .home img { display: block; }
+  .home .full { width: auto; height: 36px; }
+  .home .icon { display: none; width: 36px; height: 36px; }
 
-  .home img { width: 20px; height: 20px; border-radius: 5px; }
+  .home:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45); }
+  .home:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+  @media (max-width: 640px) {
+    .home { border-radius: 9px; }
+    .home .full { display: none; }
+    .home .icon { display: block; }
+  }
 
   /* ---------- the story: a sticky stage with steps scrolling over it ---------- */
   .story { position: relative; }
@@ -610,7 +613,7 @@
 </head>
 <body>
 
-<a class="home" href="/"><img src="/favicon.svg" alt="" width="20" height="20">Andy Sansness</a>
+<a class="home" href="/" aria-label="Andy Sansness, home"><img class="full" src="/wordmark.svg" alt="" width="182" height="40"><img class="icon" src="/favicon.svg" alt="" width="36" height="36"></a>
 
 <div class="story" id="story">
   <div class="stage" id="stage" data-active="hero">

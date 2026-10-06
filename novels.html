@@ -215,38 +215,30 @@
     .reviews-toggle, .reviews-toggle .chev, .menu, .reviews.open .menu, .menu a, .menu a svg, .home { transition: none; }
   }
 
-  /* ---------- the name, top left, back to the home page ---------- */
+  /* ---------- the name, top left, back to the home page: the full
+     wordmark on wide screens, just the icon on phones ---------- */
   .home {
     position: absolute;
     top: calc(1.1rem + env(safe-area-inset-top));
     left: calc(var(--gutter) + env(safe-area-inset-left));
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 2px;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1.6;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    color: var(--navy);
-    text-decoration: none;
-    border-radius: 6px;
-    transition: color 0.2s ease;
+    display: block;
+    border-radius: 10px;
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.25s ease;
     -webkit-tap-highlight-color: transparent;
   }
 
-  .home img {
-    width: 22px;
-    height: 22px;
-    border-radius: 6px;
-    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
+  .home img { display: block; }
+  .home .full { width: auto; height: 38px; }
+  .home .icon { display: none; width: 38px; height: 38px; }
 
-  .home:hover { color: var(--blue); }
-  .home:hover img { transform: rotate(-8deg) scale(1.08); }
-  .home:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
+  .home:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 51, 102, 0.16); }
+  .home:focus-visible { outline: 3px solid var(--navy); outline-offset: 3px; }
+
+  @media (max-width: 640px) {
+    .home { border-radius: 9px; }
+    .home .full { display: none; }
+    .home .icon { display: block; }
+  }
 
   /* ---------- sort switch ---------- */
   .toolbar {
@@ -827,7 +819,6 @@
   /* ---------- phones ---------- */
   @media (max-width: 640px) {
     header.page { padding-top: calc(4.25rem + env(safe-area-inset-top)); }
-    .home { gap: 8px; letter-spacing: 0.16em; }
     .viz { padding: 0.9rem 0.9rem 0.8rem; border-radius: 14px; }
     .viz-head { margin-bottom: 0.75rem; }
     .viz-head h2 { font-size: 0.9rem; }
@@ -892,7 +883,7 @@
 </div>
 
 <header class="page">
-  <a class="home" href="/"><img src="/favicon.svg" alt="" width="22" height="22">Andy Sansness</a>
+  <a class="home" href="/" aria-label="Andy Sansness, home"><img class="full" src="/wordmark.svg" alt="" width="182" height="40"><img class="icon" src="/favicon.svg" alt="" width="36" height="36"></a>
   <nav class="reviews" id="reviews" aria-label="Site">
     <button class="reviews-toggle" id="reviewsToggle" type="button" aria-expanded="false" aria-controls="reviewsMenu">
       Reviews

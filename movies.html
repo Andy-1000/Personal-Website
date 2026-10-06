@@ -215,7 +215,7 @@
   }
 
   /* ---------- the name, top left, back to the home page: set like the
-     Reviews button, and just the icon on phones ---------- */
+     Reviews button, and just the initials on phones ---------- */
   .home {
     position: absolute;
     top: calc(1.1rem + env(safe-area-inset-top));
@@ -239,12 +239,11 @@
 
   .home:hover { color: var(--navy); border-color: var(--sky); background: #fff; }
   .home:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
-  .home .icon { display: none; width: 32px; height: 32px; border-radius: 8px; }
+  .home .short { display: none; }
 
   @media (max-width: 640px) {
-    .home { padding: 3px; border-radius: 11px; }
     .home .full { display: none; }
-    .home .icon { display: block; }
+    .home .short { display: inline; }
   }
 
   /* ---------- sort switch ---------- */
@@ -931,7 +930,7 @@
 </div>
 
 <header class="page">
-  <a class="home" href="/" aria-label="Andy Sansness, home"><span class="full">Andy Sansness</span><img class="icon" src="/favicon.svg" alt="" width="32" height="32"></a>
+  <a class="home" href="/" aria-label="Andy Sansness, home"><span class="full">Andy Sansness</span><span class="short">AS</span></a>
   <nav class="reviews" id="reviews" aria-label="Site">
     <button class="reviews-toggle" id="reviewsToggle" type="button" aria-expanded="false" aria-controls="reviewsMenu">
       Reviews

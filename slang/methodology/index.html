@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en-AU">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="light dark" />
+		<link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+		<!--7o0w84--><meta name="description" content="How the data behind Bussin' to Groovy were made: sources, methods and limitations."/><!----><title>Methodology: Bussin' to Groovy</title>
+		<style>@font-face{font-family:Fraunces Story;font-style:normal;font-display:swap;font-weight:100 900;src: url(../app/immutable/assets/fraunces-story.E4uNyhtU.woff2) format("woff2")}@font-face{font-family:"Source Serif Story";font-style:normal;font-display:swap;font-weight:200 900;src: url(../app/immutable/assets/source-serif-story._UMJu5Ui.woff2) format("woff2")}:root{--font-display: "Fraunces Story", "Iowan Old Style", Georgia, serif;--font-body: "Source Serif Story", Georgia, serif;--font-ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;--bg: #fbf8f2;--surface: #fffdf8;--ink: #1d1b18;--ink-soft: #57524a;--ink-muted: #6f695f;--rule: #e3dccd;--axis: #c9c1b0;--focus: #1a5fd0;--accent: #a93b1f;--gen-older: #a39d93;--gen-lost: #fe9074;--gen-greatest: #ec785b;--gen-silent: #d56448;--gen-boomers: #bf4f34;--gen-genx: #a93b1f;--gen-millennials: #932605;--gen-genz: #781800;--gen-genalpha: #5b1100;--measure: 36rem;--gutter: 16px;--step--1: clamp(.82rem, .8rem + .1vw, .9rem);--step-0: clamp(1.05rem, 1rem + .25vw, 1.2rem);--step-1: clamp(1.25rem, 1.1rem + .6vw, 1.6rem);--step-2: clamp(1.6rem, 1.3rem + 1.4vw, 2.4rem);--step-3: clamp(2.2rem, 1.6rem + 3vw, 4.2rem);--step-4: clamp(3rem, 2rem + 6vw, 7rem)}@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg: #15140f;--surface: #1d1b16;--ink: #f2ede3;--ink-soft: #b9b2a5;--ink-muted: #8f887b;--rule: #34302a;--axis: #4a453c;--focus: #8ab4ff;--accent: #ec785b;--gen-older: #6b665e;--gen-lost: #932605;--gen-greatest: #a93b1f;--gen-silent: #bf4f34;--gen-boomers: #d56448;--gen-genx: #ec785b;--gen-millennials: #fe9074;--gen-genz: #feb19e;--gen-genalpha: #fed0c4}}:root[data-theme=dark]{--bg: #15140f;--surface: #1d1b16;--ink: #f2ede3;--ink-soft: #b9b2a5;--ink-muted: #8f887b;--rule: #34302a;--axis: #4a453c;--focus: #8ab4ff;--accent: #ec785b;--gen-older: #6b665e;--gen-lost: #932605;--gen-greatest: #a93b1f;--gen-silent: #bf4f34;--gen-boomers: #d56448;--gen-genx: #ec785b;--gen-millennials: #fe9074;--gen-genz: #feb19e;--gen-genalpha: #fed0c4}:root{--edge-mix: 20%}.era{font-family:var(--font-display);font-optical-sizing:auto}.era-1920{font-weight:300;font-style:italic;font-variation-settings:"SOFT" 0,"WONK" 1;letter-spacing:.02em}.era-1940{font-weight:650;font-variation-settings:"SOFT" 30,"WONK" 0;text-transform:uppercase;letter-spacing:.06em}.era-1960{font-weight:850;font-variation-settings:"SOFT" 100,"WONK" 1}.era-1980{font-weight:900;font-variation-settings:"SOFT" 0,"WONK" 0;letter-spacing:-.02em}.era-2000{font-family:var(--font-ui);font-weight:600;text-transform:lowercase}*,*:before,*:after{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:var(--step-0);line-height:1.55;overflow-x:hidden}h1,h2,h3{font-family:var(--font-display);line-height:1.05;font-weight:700;margin:0 0 .5em}a{color:inherit;text-decoration-thickness:1px;text-underline-offset:.15em}:focus-visible{outline:3px solid var(--focus);outline-offset:3px;border-radius:2px}.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}.prose{max-width:var(--measure);margin-inline:auto;padding-inline:var(--gutter)}section.chapter{padding-block:4rem;content-visibility:auto;contain-intrinsic-size:auto 1600px}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;animation-delay:0ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+
+.doc.svelte-7o0w84{padding-block:3rem 5rem;max-width:42rem}.back.svelte-7o0w84{font-family:var(--font-ui);font-size:.9rem}.doc.svelte-7o0w84 h1{font-size:var(--step-3);font-weight:800;font-variation-settings:"SOFT" 50,"WONK" 1}.doc.svelte-7o0w84 h2{font-size:var(--step-2);margin-top:2.5rem}.doc.svelte-7o0w84 h3{font-size:var(--step-1);margin-top:1.75rem}.doc.svelte-7o0w84 li{margin-bottom:.5rem}.doc.svelte-7o0w84 code{font-size:.85em;background:var(--surface);border:1px solid var(--rule);border-radius:3px;padding:0 .25em;overflow-wrap:anywhere}
+</style>
+		<link href="../app/immutable/assets/theme.CRBilheI.css" rel="stylesheet" disabled media="(max-width: 0)">
+		<link href="../app/immutable/assets/3.DJSnHRYm.css" rel="stylesheet" disabled media="(max-width: 0)">
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents"><!--[--><!--[0--><!--[--><!--[--><main class="prose doc svelte-7o0w84"><p class="back svelte-7o0w84"><a href="../">← Back to the story</a></p>  <!----><h1>Methodology</h1>
+<p>How the data behind <em>Bussin&#39; to Groovy</em> were made, and what they can and
+can&#39;t tell you. Numbers are regenerated by <code>scripts/12_summary.py</code> into
+<code>data/processed/summary.md</code>.</p>
+<h2>1. Choosing the words</h2>
+<p>We started from about 300 candidate terms from the 1900s to 2025, chosen to
+span every generation, Britain and Australia as well as the US, and a range
+of source communities. Candidates came from our own knowledge and from
+Wikipedia&#39;s lists of slang by decade, used only as an index: no fact in the
+dataset comes from those lists.</p>
+<p>A candidate stays in the dataset only if it has a <strong>dated, sourced first
+attestation</strong> (section 2). The ones that don&#39;t are listed as gaps in the
+summary. Recent slang suffers most here, because dictionaries are slow to
+catch up.</p>
+<h2>2. First attestation: when a word was first written down</h2>
+<ul>
+<li><strong>Green&#39;s Dictionary of Slang</strong> (GDoS, Jonathon Green, free online since<ol start="2018">
+<li>is the primary source. For each term we chose the specific slang
+<em>sense</em> that matches our definition (<code>data/raw/sense_picks.csv</code>) and took
+the year of its earliest dated citation. Choosing the sense matters: &quot;cool&quot;
+meaning &quot;calm&quot; goes back to the 1700s, but &quot;cool&quot; meaning &quot;good&quot; dates from</li>
+</ol>
+<ol start="1898">
+<li></li>
+</ol>
+</li>
+<li><strong>Merriam-Webster&#39;s &quot;First Known Use&quot;</strong> is the cross-check, and the source
+when GDoS has no matching sense or its first citation is clearly too late
+(for example, GDoS&#39;s earliest &quot;bruh&quot; is from 2023). Merriam-Webster gives
+one date per entry, for its primary sense, so it&#39;s only used for words whose
+entry <em>is</em> the slang sense.</li>
+<li>For a handful of words neither dictionary dates in the right sense, we use
+a <strong>documented first use</strong> with its source: the 1990 documentary <em>Paris Is
+Burning</em> for the ballroom words &quot;read&quot;, &quot;realness&quot; and &quot;slay&quot;; a 1917 letter
+to Winston Churchill for &quot;OMG&quot;; a 1989 online newsletter for &quot;LOL&quot;; and Know
+Your Meme&#39;s timelines for &quot;OK boomer&quot; and &quot;fanum tax&quot;
+(<code>data/raw/manual_attestations.csv</code>).</li>
+<li>Where no source dates the <em>slang</em> sense, the word is dropped rather than
+dated by its ordinary sense (marked <code>DROP</code> in <code>sense_picks.csv</code>):
+Merriam-Webster&#39;s 1776 &quot;yas&quot; is a spelling of &quot;yes&quot;, and its 1977 &quot;NPC&quot; is
+the video-game character, not the insult.</li>
+</ul>
+<p>A first attestation is the earliest use a lexicographer has <em>found</em>. Spoken
+slang is almost always older than its first appearance in print, and
+dictionaries keep finding earlier examples (GDoS has added around 10,000
+antedatings since 2010). Treat every date as &quot;by at least&quot;.</p>
+<p>We store only dates, sense numbers, short usage labels and links. No
+definitions or quotations are copied from either dictionary; definitions and
+example sentences in the dataset are our own.</p>
+<h2>3. Frequency curves: how common a word was</h2>
+<h3>Books (Google Books Ngram Viewer, 2024 dataset, to 2022)</h3>
+<ul>
+<li>We use the <strong>English Fiction</strong> corpus, not all English books. Dialogue in
+novels is where slang reaches print, and fiction avoids some technical
+homonyms: in all English books &quot;groovy&quot; keeps climbing until 2014 (5-year
+average), much of it Groovy, a programming language, while in novels it
+peaks in 1970.</li>
+<li>Values are occurrences per million words, each year.</li>
+<li><strong>Spike filter.</strong> Single-year spikes from one unusual book or a scanning
+error are replaced by the local median (a Hampel filter: 7-year window,
+3 scaled median absolute deviations, upward outliers only). Many modern
+words show a blip around 1900: books misdated to 1899/1900 are a known
+Google Books metadata problem.</li>
+<li><strong>Smoothing.</strong> A 5-year centred mean. (We planned 3 years; the fiction
+sub-corpus is small enough that 3 left too much noise.)</li>
+<li><strong>Share of peak.</strong> Each curve is divided by its own maximum, so shapes can
+be compared between words of very different frequency.</li>
+<li><strong>Quality review.</strong> Every curve was inspected by eye
+(<code>data/raw/curve_review.csv</code>) and rated <em>clean</em>, <em>low</em> (too rare to be more
+than noisy) or <em>contaminated</em> (another sense or a proper noun dominates:
+&quot;far out&quot; at sea, the sausage called baloney, Yolo County). Contaminated
+curves are never shown. Some words use a documented stand-in phrase:
+&quot;really cool&quot; for cool, &quot;you guys&quot; for guys, &quot;okay&quot; for OK, the
+apostrophe-free spelling for possessives such as &quot;bees knees&quot; (the Ngram
+query parser can&#39;t handle apostrophes).</li>
+</ul>
+<h3>Online (Google Trends and Wiktionary)</h3>
+<ul>
+<li><strong>Google Trends</strong> has no public API (the official one is an
+application-gated alpha, and the community library pytrends was archived in
+April 2025). We captured monthly worldwide search interest, January 2004 to
+September 2026, one term at a time, by hand in a browser. We searched the
+bare word when it is distinctive (&quot;rizz&quot;) and &quot;⟨word⟩ meaning&quot; when the bare
+word has a common ordinary sense (&quot;slay meaning&quot;). Each series is on its own
+0–100 scale, so only <em>shapes</em> are comparable. Single-month surges (one news
+story or viral post) are damped with the same spike filter used for books,
+and curves are smoothed over 3 months. The capture (5 October 2026)
+is stored run-length encoded with a length, sum and position-weighted sum
+computed in the browser; the import step checks all three, so a copying
+error fails the build instead of entering the data.</li>
+<li><strong>Wiktionary pageviews</strong> (Wikimedia API, from July 2015) count people
+looking a word up. Only pages that are distinctively slang are used: the
+page for &quot;lit&quot; or &quot;salty&quot; mostly measures the ordinary word. Single-month
+bot spikes are filtered, and curves smoothed over 3 months.</li>
+<li><strong>Both measure looking a word up, not using it.</strong> A word stops being looked
+up once everyone knows it. That makes online curves good evidence for when
+a word reached outsiders, and poor evidence for how long it was used.</li>
+</ul>
+<p>Sources are never stitched together: they measure different things on
+different scales.</p>
+<h2>4. Lifecycle measures</h2>
+<p>For each curve (scaled so the peak is 1):</p>
+<ul>
+<li><strong>Peak:</strong> the year (or month) of the maximum.</li>
+<li><strong>Popularised:</strong> the first time the curve reaches 10% of its peak (25% for
+the monthly online series, whose noise floor for low-volume searches often
+sits near 10%), no earlier than the first attestation of the chosen sense.
+Only curves rated <em>clean</em> are used; low-count curves are too noisy to date
+anything, and a curve already above the threshold in the first year of its
+source&#39;s data can&#39;t date a word either (Wiktionary starts in July 2015,
+after &quot;cray&quot; took off). Where Wiktionary lookups do date a word, the date
+marks when outsiders started looking it up, which can trail its use. Words
+without a usable curve get an <em>estimated</em> year: first attestation plus the
+median lag seen in words with clean curves first recorded in the same era:
+about 72 years for words first recorded before 1900 (old attestations sit
+long before a word&#39;s heyday), 13 years for 1900–39, 6 for 1940–69, 7.5 for
+1970–89 and 5 from 1990, because dictionaries now record slang almost as
+soon as it spreads. Estimated years are shown as hollow dots. Three words
+whose only usable curve misdates them have
+a documented year instead (<code>data/raw/popularised_overrides.csv</code>, each with
+its source): &quot;OK&quot; (1840, the Van Buren campaign), &quot;cool&quot; (1947, cool jazz)
+and &quot;dude&quot; (1990, its Teenage Mutant Ninja Turtles revival).</li>
+<li><strong>Fall:</strong> the first time after the peak that the curve drops below 25% of
+peak and stays there for 3 years (6 months for monthly data).</li>
+<li><strong>Revived:</strong> after a fall, the curve climbs back above 50% of peak.</li>
+<li><strong>Status:</strong> <em>revived</em>, <em>dated</em> (fell, no revival), <em>alive</em> (never fell),
+<em>ironic</em> (only where a cited source says so) or <em>unknown</em> (no curve).</li>
+</ul>
+<h2>5. Generations</h2>
+<p>A word belongs to the generation aged about 15–24 in the year it was
+popularised (birth year ≈ popularised year − 19.5). Boundaries: Lost
+1883–1900 and Greatest 1901–1927 (Strauss &amp; Howe); Silent 1928–45, Boomers
+1946–64, Gen X 1965–80, Millennials 1981–96, Gen Z 1997–2012 (Pew); Gen Alpha
+2013–24. Generation labels are marketing constructs with fuzzy edges, and
+slang is used across ages; treat the colours as a rough guide.</p>
+<p>Under this rule no word can belong to Gen Alpha yet (its oldest members are
+13). Terms that cited sources describe as Gen Alpha slang and that were first
+attested in 2022 or later are labelled Gen Alpha as a stated exception
+(<code>data/raw/gen_alpha_sources.csv</code>).</p>
+<h2>6. Origins</h2>
+<p>Each term&#39;s source community comes from GDoS&#39;s usage labels and etymologies
+(&quot;orig. US black&quot;, &quot;orig. US milit.&quot;, &quot;US campus&quot;, &quot;orig. surfing&quot;) or, for a
+few terms, from named external sources. Each has a confidence level:</p>
+<ul>
+<li><strong>documented:</strong> the source says so explicitly;</li>
+<li><strong>likely:</strong> the source suggests it, with hedging (&quot;probably&quot;, &quot;supposedly&quot;);</li>
+<li><strong>unknown:</strong> no source says, or etymologies are disputed.</li>
+</ul>
+<p>We report what the sources document and no more. African American Vernacular
+English (AAVE) is a dialect with its own grammar, not slang; GDoS labels many
+words as originally Black American usage, and we describe them as words that
+crossed from AAVE into general use.</p>
+<h2>7. Is slang dying faster?</h2>
+<p>We measure, for words whose curve comes from books, how many years each stays
+above 25% of its peak after peaking, using a Kaplan–Meier estimator. Words
+that haven&#39;t fallen by 2022 are <em>censored</em> (they have lived at least that
+long), not dropped. Words are grouped by when they were popularised
+(1900–39, 1940–69, 1970–99); words peaking in 2020–22 are excluded because
+their peak isn&#39;t known yet.</p>
+<p>Known biases, all of which we report rather than correct:</p>
+<ul>
+<li><strong>Fiction got chattier.</strong> Informal words such as &quot;yeah&quot;, &quot;okay&quot; and &quot;gonna&quot;
+are several times more frequent in novels since the 1970s. That props up
+every colloquial word&#39;s recent frequency and delays its fall. We rerun the
+analysis after dividing each curve by an informality index (the mean of
+those three words, each scaled to its 1950–2022 average); both versions are
+published.</li>
+<li><strong>Survivorship.</strong> Old slang that died quickly mostly never reached print or
+dictionaries, so the oldest cohorts are made of hardy words.</li>
+<li><strong>Right-censoring.</strong> Recent words have had little time to fall.</li>
+<li><strong>Different instruments.</strong> Online lookups fall faster than usage does, so
+online lifespans are not comparable with book lifespans and are shown
+separately.</li>
+</ul>
+<h2>8. Other limitations</h2>
+<ul>
+<li>Book corpora skew formal, edited, Western and American.</li>
+<li>First attestations depend on what lexicographers have searched; some eras
+and communities are better searched than others.</li>
+<li>Polysemous words (lit, bad, sick, slay) have no clean frequency curve.</li>
+<li>Brand adoption is shown only where it is documented with a source; it is
+an illustration, not a measurement.</li>
+<li>The Google Trends capture is a snapshot (retrieved 5 October 2026); the
+same queries may return slightly different values later.</li>
+</ul>
+<h2>9. Reproducing</h2>
+<p><code>python scripts/run_all.py --offline</code> rebuilds everything from the committed
+raw data. Without <code>--offline</code> it refetches whatever is not in the local
+cache (<code>data/raw/_cache/</code>, not committed).</p>
+<!----></main><!--]--><!----><!--]--><!--]--> <!--[-1--><!--]--><!--]--></div>
+	</body>
+</html>

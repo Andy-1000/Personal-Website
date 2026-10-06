@@ -6,7 +6,9 @@
 <title>Movies | Andy Sansness</title>
 <meta name="description" content="Every film Andy has watched and rated, sortable by star rating, release year or director.">
 <meta name="theme-color" content="#ffffff">
-<link rel="icon" type="image/png" href="thumbs_up_.png">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
@@ -208,26 +210,42 @@
 
   .menu a[aria-current="page"] svg { display: none; }
 
-  @media (max-width: 640px) {
-    .reviews {
-      position: relative;
-      top: auto;
-      right: auto;
-      display: inline-block;
-      margin: -0.6rem 0 0.4rem;
-    }
-
-    .menu {
-      right: auto;
-      left: 50%;
-      margin-left: -110px;
-      transform-origin: top center;
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    .reviews-toggle, .reviews-toggle .chev, .menu, .reviews.open .menu, .menu a, .menu a svg { transition: none; }
+    .reviews-toggle, .reviews-toggle .chev, .menu, .reviews.open .menu, .menu a, .menu a svg, .home { transition: none; }
   }
+
+  /* ---------- the name, top left, back to the home page ---------- */
+  .home {
+    position: absolute;
+    top: calc(1.1rem + env(safe-area-inset-top));
+    left: calc(var(--gutter) + env(safe-area-inset-left));
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 2px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.6;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--navy);
+    text-decoration: none;
+    border-radius: 6px;
+    transition: color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .home img {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .home:hover { color: var(--blue); }
+  .home:hover img { transform: rotate(-8deg) scale(1.08); }
+  .home:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
 
   /* ---------- sort switch ---------- */
   .toolbar {
@@ -845,7 +863,8 @@
 
   /* ---------- phones ---------- */
   @media (max-width: 640px) {
-    header.page { padding-top: calc(1.5rem + env(safe-area-inset-top)); }
+    header.page { padding-top: calc(4.25rem + env(safe-area-inset-top)); }
+    .home { gap: 8px; letter-spacing: 0.16em; }
     .viz { padding: 0.9rem 0.9rem 0.8rem; border-radius: 14px; }
     .viz-head { margin-bottom: 0.75rem; }
     .viz-head h2 { font-size: 0.9rem; }
@@ -913,6 +932,7 @@
 </div>
 
 <header class="page">
+  <a class="home" href="/"><img src="/favicon.svg" alt="" width="22" height="22">Andy Sansness</a>
   <nav class="reviews" id="reviews" aria-label="Site">
     <button class="reviews-toggle" id="reviewsToggle" type="button" aria-expanded="false" aria-controls="reviewsMenu">
       Reviews
@@ -1711,7 +1731,7 @@
 
     document.addEventListener("mousemove", function (e) { mx = e.clientX; my = e.clientY; });
     bindHover(document.querySelector(".switch"));
-    bindHover(document.getElementById("reviews"));
+    bindHover(document.querySelector("header.page"));
 
     (function loop() {
       bx += (mx - bx) * 0.14;

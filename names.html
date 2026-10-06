@@ -9,7 +9,9 @@
 <meta property="og:description" content="The life story of every common American name since 1880, and where yours is in its own.">
 <meta property="og:type" content="article">
 <meta name="theme-color" content="#050f1f">
-<link rel="icon" type="image/png" href="thumbs_up_.png">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;0,900;1,400;1,900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
@@ -70,6 +72,9 @@
     z-index: 20;
     top: calc(18px + env(safe-area-inset-top));
     left: calc(var(--gutter) + env(safe-area-inset-left));
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.22em;
@@ -80,6 +85,8 @@
   }
 
   .home:hover, .home:focus-visible { color: var(--gold); }
+
+  .home img { width: 20px; height: 20px; border-radius: 5px; }
 
   /* ---------- the story: a sticky stage with steps scrolling over it ---------- */
   .story { position: relative; }
@@ -603,7 +610,7 @@
 </head>
 <body>
 
-<a class="home" href="/">Andy Sansness</a>
+<a class="home" href="/"><img src="/favicon.svg" alt="" width="20" height="20">Andy Sansness</a>
 
 <div class="story" id="story">
   <div class="stage" id="stage" data-active="hero">

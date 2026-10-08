@@ -252,17 +252,17 @@
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
   }
 
-  .card p { margin: 0 0 0.75em; color: var(--soft); }
-  .card p:last-child { margin-bottom: 0; }
-  .card b { color: var(--ink); }
-  .card .big {
+  :is(.card, .cap-body) p { margin: 0 0 0.75em; color: var(--soft); }
+  :is(.card, .cap-body) p:last-child { margin-bottom: 0; }
+  :is(.card, .cap-body) b { color: var(--ink); }
+  :is(.card, .cap-body) .big {
     font-family: "Merriweather", serif;
     font-size: 1.3rem;
     line-height: 1.4;
     color: var(--ink);
   }
-  .card .hint { font-size: 14px; color: var(--muted); }
-  .card em { font-style: italic; color: var(--ink); }
+  :is(.card, .cap-body) .hint { font-size: 14px; color: var(--muted); }
+  :is(.card, .cap-body) em { font-style: italic; color: var(--ink); }
 
   b.gold, .gold-t { color: var(--gold) !important; }
   b.mint { color: var(--mint) !important; }
@@ -344,11 +344,49 @@
     .step:not(.hero) .card { margin: 0; max-width: min(400px, 30vw); }
   }
 
+  /* ---------- phones and tablets: the words wait in a panel under the chart
+     and change in place, rather than scrolling across it; a bar of segments
+     fills as you scroll, so the scroll still visibly moves the story on ---------- */
+  .caption { display: none; }
+
   @media (max-width: 959px) {
-    .step:not(.hero) { align-items: flex-end; padding-bottom: calc(2.5vh + env(safe-area-inset-bottom)); }
-    .card { max-width: 560px; }
-    .step.scrub { align-items: flex-end; }
-    .step.scrub .card { top: auto; bottom: calc(2.5vh + env(safe-area-inset-bottom)); margin-top: 0; }
+    .step:not(.hero) { min-height: 90vh; min-height: 90svh; }
+    .step.scrub { min-height: 240vh; }
+    .step + .step { margin-top: 0; }
+
+    /* the cards stay in the page, in order, for screen readers */
+    .step:not(.hero) .card:not(:focus-within) {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      border: 0;
+    }
+
+    .caption {
+      display: block;
+      position: absolute;
+      z-index: 4;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 26px var(--gutter) calc(18px + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, rgba(5, 15, 31, 0) 0, rgba(5, 15, 31, 0.94) 22px, var(--bg) 40px);
+      transition: opacity 0.45s ease, transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .stage[data-active="hero"] .caption { opacity: 0; transform: translateY(18px); pointer-events: none; }
+
+    .cap-progress { display: flex; gap: 4px; max-width: 560px; margin: 0 auto 14px; }
+    .cap-progress span { flex: 1; height: 3px; border-radius: 2px; background: rgba(159, 207, 255, 0.16); overflow: hidden; }
+    .cap-progress i { display: block; height: 100%; background: var(--gold); transform: scaleX(0); transform-origin: 0 50%; }
+
+    .cap-body { max-width: 560px; margin: 0 auto; transition: opacity 0.32s ease, transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+    .cap-body.out { opacity: 0; transform: translateY(-6px); transition-duration: 0.16s; }
+    .cap-body.enter { opacity: 0; transform: translateY(10px); transition: none; }
   }
 
   /* ---------- the explorer ---------- */
@@ -605,8 +643,9 @@
   @media (max-width: 720px) {
     body { font-size: 16px; }
     .card { padding: 15px 16px; font-size: 15px; line-height: 1.55; }
-    .card .big { font-size: 1.08rem; }
-    .card p { margin-bottom: 0.6em; }
+    .cap-body { font-size: 15px; line-height: 1.55; }
+    :is(.card, .cap-body) .big { font-size: 1.08rem; }
+    :is(.card, .cap-body) p { margin-bottom: 0.6em; }
     .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .twins { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .panel { padding: 14px 12px 10px; }
@@ -630,6 +669,10 @@
     <div class="vignette"></div>
     <svg id="viz" role="img" aria-label="Every common American baby name since 1880, drawn as a thread rising and falling with its popularity"></svg>
     <div class="tip" id="tip"></div>
+    <div class="caption" id="caption" aria-hidden="true">
+      <div class="cap-progress" id="capProgress"></div>
+      <div class="cap-body" id="capBody"></div>
+    </div>
     <p class="loading" id="loading">Loading 145 years of names…</p>
   </div>
 
@@ -1028,13 +1071,57 @@
       const left = Math.min(480, Math.round(W * 0.34)) + 40;
       P = { x: left + 64, y: 92, w: W - left - 64 - 56, h: H - 92 - 70 };
     } else {
-      P = { x: 18, y: 56, w: W - 18 - 18, h: Math.round(H * 0.58) - 56 - 28 };
+      P = { x: 18, y: 56, w: W - 18 - 18, h: Math.max(200, H - sizeCaption() - 56 - 34) };
     }
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     Object.assign(cv.style, { left: P.x + 'px', top: P.y + 'px', width: P.w + 'px', height: P.h + 'px' });
     cv.width = off.width = Math.round(P.w * dpr);
     cv.height = off.height = Math.round(P.h * dpr);
     heroT = `translate(${-P.x}px, ${-P.y}px) scale(${W / P.w}, ${H / P.h})`;
+  }
+
+  // ---------- the docked caption (phones and tablets) ----------
+  const caption = $('#caption'), capBody = $('#capBody'), capProg = $('#capProgress');
+  const storySteps = $$('.step:not(.hero)');
+  const capFill = storySteps.map(() => {
+    const span = document.createElement('span');
+    const i = document.createElement('i');
+    span.appendChild(i);
+    capProg.appendChild(span);
+    return i;
+  });
+  let capId = null, capT = 0;
+
+  // hold the caption at the height of its longest step, so the chart above never jumps
+  function sizeCaption() {
+    const probe = document.createElement('div');
+    probe.className = 'cap-body';
+    probe.style.cssText = `position:absolute;visibility:hidden;width:${capBody.getBoundingClientRect().width}px`;
+    caption.appendChild(probe);
+    let mx = 0;
+    for (const s of storySteps) { probe.innerHTML = s.querySelector('.card').innerHTML; mx = Math.max(mx, probe.offsetHeight); }
+    probe.remove();
+    capBody.style.minHeight = mx + 'px';
+    return caption.offsetHeight;
+  }
+
+  function setCaption(id) {
+    if (id === 'hero' || id === capId) return;
+    const card = $(`.step[data-step="${id}"] .card`);
+    if (!card) return;
+    capId = id;
+    // a copy for the eye only; the card itself stays the real, focusable one
+    const html = card.innerHTML.replace(/\sid="[^"]*"/g, '').replace(/<a /g, '<a tabindex="-1" ');
+    const swap = () => {
+      capBody.innerHTML = html;
+      capBody.classList.remove('out');
+      capBody.classList.add('enter');
+      capBody.getBoundingClientRect();
+      capBody.classList.remove('enter');
+    };
+    clearTimeout(capT);
+    if (REDUCE || !capBody.firstChild) swap();
+    else { capBody.classList.add('out'); capT = setTimeout(swap, 160); }
   }
 
   // every thread, added up with 'lighter' so busy stretches glow; threads
@@ -1350,7 +1437,7 @@
     const kmax = Math.max(maxK.F, maxK.M);
     const Yk = k => bot - k / kmax * (bot - top);
     txt(g, P.x, top - (short ? 14 : 22), 'Names needed to cover half of all babies', 'axis-title');
-    for (const v of [0, 100, 200, 300].filter(v => v <= kmax + 20 && !(short && v > kmax))) {
+    for (const v of [0, 100, 200, 300].filter(v => v <= kmax)) {
       el('line', { x1: P.x, x2: P.x + P.w, y1: Yk(v), y2: Yk(v), class: 'grid' }, g);
       if (v) yLabel(g, Yk(v), v + ' names');
     }
@@ -1528,6 +1615,7 @@
     const s = STEPS[id];
     cur = id;
     stage.dataset.active = id;
+    setCaption(id);
     cv.style.transform = s.field === 'hero' ? heroT : 'none';
     cv.style.opacity = s.dim;
     G.axes.classList.toggle('on', !!s.axes);
@@ -1632,6 +1720,11 @@
         const r = s.getBoundingClientRect();
         if (r.top <= mid && r.bottom >= mid) { apply(s.dataset.step); break; }
       }
+      // each step's segment fills as you scroll through it
+      storySteps.forEach((s, i) => {
+        const r = s.getBoundingClientRect();
+        capFill[i].style.transform = `scaleX(${clamp((mid - r.top) / r.height, 0, 1).toFixed(3)})`;
+      });
       scrub();
     };
     addEventListener('scroll', detect, { passive: true });
@@ -1655,18 +1748,23 @@
     });
     G.fade.addEventListener('pointerout', e => { if (e.target.closest('.dot')) tip.classList.remove('on'); });
 
-    let lastW = innerWidth;
-    addEventListener('resize', debounce(() => {
-      // phones fire resize as the address bar slides; only redraw for real changes
-      if (innerWidth === lastW && Math.abs(stage.clientHeight - H) < 120) return;
-      lastW = innerWidth;
+    const relayout = () => {
       layout();
       renderField();
       blit(1);
       build();
       if (halfState) halfState.year = null;
       apply(cur, true);
+    };
+    let lastW = innerWidth;
+    addEventListener('resize', debounce(() => {
+      // phones fire resize as the address bar slides; only redraw for real changes
+      if (innerWidth === lastW && Math.abs(stage.clientHeight - H) < 120) return;
+      lastW = innerWidth;
+      relayout();
     }, 180));
+    // the caption is measured in the web fonts, so measure again once they land
+    if (!wide && document.fonts) document.fonts.ready.then(() => { const h = caption.offsetHeight; if (sizeCaption() !== h) relayout(); });
   }
 
   // ---------- the explorer ----------
@@ -2078,11 +2176,13 @@
       };
       if (!fromHash(true)) show('Andy', 'M', false, true);
       addEventListener('hashchange', () => fromHash(true));
-      $('#cta').addEventListener('click', e => {
+      const toExplore = e => {
         e.preventDefault();
         $('#explore').scrollIntoView({ behavior: REDUCE ? 'auto' : 'smooth' });
         setTimeout(() => { q.focus({ preventScroll: true }); q.select(); }, REDUCE ? 0 : 700);
-      });
+      };
+      $('#cta').addEventListener('click', toExplore);
+      $('#caption').addEventListener('click', e => { if (e.target.closest('.cta')) toExplore(e); });
     }
 
     return { init, show };

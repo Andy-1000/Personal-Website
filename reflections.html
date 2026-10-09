@@ -303,6 +303,8 @@
 
   /* ---- fields ---- */
   .field { margin-top: 1.9rem; }
+  .field:first-child { margin-top: 0; }
+  #photoLabel { margin-top: 1.9rem; }
 
   .field input, .field textarea {
     display: block;
@@ -323,8 +325,6 @@
   }
 
   .field textarea { min-height: 9.5rem; resize: vertical; }
-
-  .field input::placeholder, .field textarea::placeholder { color: rgba(18, 35, 59, 0.38); }
 
   .field input:focus, .field textarea:focus {
     outline: none;
@@ -425,18 +425,6 @@
     overflow-wrap: anywhere;
   }
 
-  .preview-flag {
-    margin: 1.4rem auto 0;
-    max-width: 360px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--navy);
-    background: var(--sky-soft);
-    border: 1.5px dashed rgba(0, 77, 153, 0.35);
-    border-radius: 12px;
-    padding: 0.6rem 0.9rem;
-    line-height: 1.5;
-  }
 
   .thanks .pill { margin-top: 1.8rem; }
 
@@ -501,6 +489,18 @@
 
 <main>
   <form class="compose" id="compose" novalidate>
+    <div class="field" id="nameField">
+      <label class="step-label" for="name">Your name</label>
+      <input id="name" name="name" type="text" maxlength="60" autocomplete="name" autocapitalize="words">
+      <div class="field-foot"><span class="field-err" id="nameErr"></span></div>
+    </div>
+
+    <div class="field" id="msgField">
+      <label class="step-label" for="message">Your message</label>
+      <textarea id="message" name="message" maxlength="1200"></textarea>
+      <div class="field-foot"><span class="field-err" id="msgErr"></span><span class="field-count" id="msgCount">0 / 1200</span></div>
+    </div>
+
     <span class="step-label" id="photoLabel">Your selfie</span>
     <figure class="polaroid" id="camFrame" data-mode="idle" aria-labelledby="photoLabel">
       <div class="lens">
@@ -537,18 +537,6 @@
     </div>
     <input type="file" id="fileInput" accept="image/*" capture="user" class="sr-only" tabindex="-1" aria-hidden="true">
 
-    <div class="field" id="nameField">
-      <label class="step-label" for="name">Your name</label>
-      <input id="name" name="name" type="text" maxlength="60" autocomplete="name" autocapitalize="words" placeholder="So Andy knows who to thank">
-      <div class="field-foot"><span class="field-err" id="nameErr"></span></div>
-    </div>
-
-    <div class="field" id="msgField">
-      <label class="step-label" for="message">Your message</label>
-      <textarea id="message" name="message" maxlength="1200" placeholder="Happy 21st, Andy! Remember when…"></textarea>
-      <div class="field-foot"><span class="field-err" id="msgErr"></span><span class="field-count" id="msgCount">0 / 1200</span></div>
-    </div>
-
     <!-- left empty by people, filled in by spam bots -->
     <div class="hp" aria-hidden="true">
       <label for="website">Website</label>
@@ -567,7 +555,6 @@
       <figcaption id="thanksCaption"></figcaption>
     </figure>
     <p class="note" id="thanksNote"></p>
-    <p class="preview-flag" id="previewFlag" hidden>Heads up: the guestbook isn't switched on yet, so this one was a practice run and wasn't saved.</p>
     <button class="pill solid" type="button" id="another">Leave another</button>
   </section>
 </main>
@@ -580,8 +567,8 @@
 
   /* ================= CONFIG ================= */
 
-  // Where reflections are sent. Left empty, the page runs in preview mode:
-  // everything works end to end, but nothing is saved.
+  // Where reflections are sent. Left empty, the page still runs end to end
+  // but nothing is saved.
   //
   // The endpoint receives a multipart/form-data POST with three fields:
   //   name     text, up to 60 characters
@@ -847,10 +834,6 @@
 
   function validate() {
     var first = null;
-    if (!photoBlob) {
-      $("photoErr").textContent = "Snap a selfie first.";
-      first = first || frame;
-    }
     if (!nameInput.value.trim()) {
       $("nameField").classList.add("bad");
       $("nameErr").textContent = "Add your name so Andy knows who it's from.";
@@ -860,6 +843,10 @@
       $("msgField").classList.add("bad");
       $("msgErr").textContent = "Write Andy a few words.";
       first = first || msgInput;
+    }
+    if (!photoBlob) {
+      $("photoErr").textContent = "Snap a selfie first.";
+      first = first || frame;
     }
     if (first) {
       first.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
@@ -904,7 +891,7 @@
     }
 
     sending.then(function () {
-      showThanks(name, message, !SUBMIT_URL);
+      showThanks(name, message);
     }).catch(function (err) {
       showToast((err && err.guestMessage) || "That didn't send. Check your connection and try again.");
     }).then(function () {
@@ -913,13 +900,12 @@
     });
   });
 
-  function showThanks(name, message, preview) {
+  function showThanks(name, message) {
     stopCamera();
     $("thanksTitle").textContent = "Thank you, " + name.split(/\s+/)[0] + "!";
     $("thanksShot").src = photoUrl;
     $("thanksCaption").textContent = name;
     $("thanksNote").textContent = message;
-    $("previewFlag").hidden = !preview;
     form.hidden = true;
     $("thanks").hidden = false;
     window.scrollTo({ top: 0, behavior: "auto" });

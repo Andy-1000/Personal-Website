@@ -467,6 +467,8 @@
   .pop-layer { position: fixed; inset: 0; z-index: 300; pointer-events: none; overflow: hidden; }
   .pop { position: absolute; top: 0; left: 0; will-change: transform, opacity; }
 
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
   .sr-only {
     position: absolute;
     width: 1px;
@@ -547,8 +549,14 @@
       <div class="field-foot"><span class="field-err" id="msgErr"></span><span class="field-count" id="msgCount">0 / 1200</span></div>
     </div>
 
+    <!-- left empty by people, filled in by spam bots -->
+    <div class="hp" aria-hidden="true">
+      <label for="website">Website</label>
+      <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+    </div>
+
     <button class="send-btn" type="submit" id="sendBtn">Send reflection</button>
-    <p class="fine">Your photo and message go to Andy only. They won't be posted anywhere public.</p>
+    <p class="fine">Your photo and message go to Andy and may pop up on the slideshow at the party. They won't be posted anywhere public.</p>
   </form>
 
   <section class="thanks" id="thanks" hidden aria-live="polite">
@@ -579,7 +587,10 @@
   //   name     text, up to 60 characters
   //   message  text, up to 1200 characters
   //   photo    image/jpeg file, 1080 x 1350
-  // and should answer with any 2xx status once it has stored them.
+  //   website  honeypot, empty unless a bot filled it in
+  // and should answer with any 2xx status once it has stored them, or an
+  // error status with {"error": "..."} worded for the guest to read.
+  // The server lives in its own repo: Andy-1000/reflections-api.
   var SUBMIT_URL = "";
 
   var PHOTO_W = 1080;
@@ -876,15 +887,26 @@
       fd.append("name", name);
       fd.append("message", message);
       fd.append("photo", photoBlob, "selfie.jpg");
-      sending = fetch(SUBMIT_URL, { method: "POST", body: fd }).then(function (r) {
-        if (!r.ok) throw new Error("HTTP " + r.status);
+      fd.append("website", $("website").value);
+      // party Wi-Fi can be slow, but don't leave a guest staring at "Sending…"
+      var ctl = window.AbortController ? new AbortController() : null;
+      var killer = ctl && setTimeout(function () { ctl.abort(); }, 45000);
+      sending = fetch(SUBMIT_URL, { method: "POST", body: fd, signal: ctl && ctl.signal }).then(function (r) {
+        clearTimeout(killer);
+        if (r.ok) return;
+        // the server words its refusals for guests; show them as they are
+        return r.json().catch(function () { return {}; }).then(function (body) {
+          var err = new Error("HTTP " + r.status);
+          err.guestMessage = body && body.error;
+          throw err;
+        });
       });
     }
 
     sending.then(function () {
       showThanks(name, message, !SUBMIT_URL);
-    }).catch(function () {
-      showToast("That didn't send. Check your connection and try again.");
+    }).catch(function (err) {
+      showToast((err && err.guestMessage) || "That didn't send. Check your connection and try again.");
     }).then(function () {
       sendBtn.disabled = false;
       sendBtn.textContent = "Send reflection";

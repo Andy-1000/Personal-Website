@@ -46,7 +46,9 @@
 
   body {
     margin: 0;
-    background: var(--paper);
+    background:
+      radial-gradient(900px 380px at 50% -140px, var(--sky-soft) 0%, transparent 72%) no-repeat,
+      var(--paper);
     color: var(--ink);
     font-family: var(--body);
     overflow-x: hidden;
@@ -61,23 +63,12 @@
   /* ================= HERO ================= */
   .hero {
     position: relative;
-    padding: calc(3.2rem + env(safe-area-inset-top)) 1.1rem 1.4rem;
+    padding: calc(2.8rem + env(safe-area-inset-top)) 1.1rem 1.6rem;
     text-align: center;
-    background:
-      radial-gradient(1100px 520px at 50% -10%, var(--sky-soft) 0%, transparent 64%),
-      var(--paper);
     overflow: hidden;
   }
 
   .hero-inner { position: relative; z-index: 2; max-width: 520px; margin: 0 auto; }
-
-  .invite-lead {
-    font-weight: 600;
-    font-size: clamp(0.98rem, 4vw, 1.15rem);
-    letter-spacing: 0.06em;
-    color: var(--navy);
-    margin: 0;
-  }
 
   .hero h1 {
     font-family: var(--display);
@@ -85,17 +76,9 @@
     font-size: clamp(2.9rem, 14vw, 4.6rem);
     line-height: 1.12;
     color: var(--blue);
-    margin: 0.35rem 0 0.7rem;
+    margin: 0;
     letter-spacing: 0.01em;
     text-shadow: 4px 4px 0 var(--gold-soft);
-  }
-
-  .hero .sub {
-    font-size: clamp(1rem, 4vw, 1.1rem);
-    line-height: 1.7;
-    color: #2b3540;
-    margin: 0 auto;
-    max-width: 400px;
   }
 
   .confetti-layer {
@@ -260,8 +243,6 @@
     min-height: 2.6rem;
     overflow-wrap: anywhere;
   }
-
-  .polaroid figcaption.empty { color: rgba(18, 35, 59, 0.32); }
 
   /* which bits of the lens show depends on the camera's state */
   .polaroid[data-mode="idle"] video,
@@ -512,9 +493,7 @@
 
 <header class="hero">
   <div class="hero-inner">
-    <p class="invite-lead">For Andy's 21st</p>
     <h1>Reflections</h1>
-    <p class="sub">Snap a selfie and leave Andy a few words. A memory, a wish, some advice, a roast. Andy will read every one.</p>
   </div>
 </header>
 
@@ -538,7 +517,7 @@
         <div class="lens-flash" id="lensFlash"></div>
         <p class="lens-msg" id="lensMsg" hidden></p>
       </div>
-      <figcaption id="frameCaption" class="empty">Your name here</figcaption>
+      <figcaption id="frameCaption"></figcaption>
     </figure>
     <p class="photo-err" id="photoErr" role="alert"></p>
 
@@ -828,13 +807,8 @@
 
   /* ================= FIELDS ================= */
 
-  var NAME_KEY = "reflections:name";
-  try { nameInput.value = localStorage.getItem(NAME_KEY) || ""; } catch (e) {}
-
   function syncCaption() {
-    var v = nameInput.value.trim();
-    caption.textContent = v || "Your name here";
-    caption.classList.toggle("empty", !v);
+    caption.textContent = nameInput.value.trim();
   }
 
   function syncCount() {
@@ -847,7 +821,6 @@
     syncCaption();
     $("nameField").classList.remove("bad");
     $("nameErr").textContent = "";
-    try { localStorage.setItem(NAME_KEY, nameInput.value.trim()); } catch (e) {}
   });
 
   msgInput.addEventListener("input", function () {
@@ -944,7 +917,9 @@
     if (photoUrl) { URL.revokeObjectURL(photoUrl); photoUrl = null; }
     shot.removeAttribute("src");
     $("thanksShot").removeAttribute("src");
+    nameInput.value = "";
     msgInput.value = "";
+    syncCaption();
     syncCount();
     say("");
     setMode("idle");

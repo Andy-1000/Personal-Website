@@ -1,10 +1,13 @@
 # ---------------------------------------------------------------
-# Private pages: keep the 21st invite, the puns page and all images
+# Private pages: keep the 21st invite, the reflections guestbook, the puns
+# page and all images
 # out of search entirely
 # ---------------------------------------------------------------
 User-agent: *
 Disallow: /21st.html
 Disallow: /21st
+Disallow: /reflections.html
+Disallow: /reflections
 Disallow: /portraits/
 Disallow: /puns.html
 Disallow: /puns

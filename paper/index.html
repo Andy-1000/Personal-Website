@@ -3,7 +3,8 @@
 <!-- Rhys, Rhys, Goosen (or maybe Josh). So you thought you might check out the code... or perhaps even cheat. Well, you must do so at your own peril... -->
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f3f3f1">
 <title>The Paper Game</title>
 <meta name="description" content="Make paper. Sell paper. Run for mayor. Fold the universe.">
 <link rel="icon" type="image/jpeg" href="paper.jpg">
@@ -12,84 +13,78 @@
 <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap" rel="stylesheet">
 <link href="paper.css" rel="stylesheet">
 </head>
-<body>
+<body data-tab="work">
 
-<header class="masthead">
-  <h1>The Paper Game</h1>
-  <p id="page-no" class="page-no hidden"></p>
+<header class="top">
+  <div class="top-row">
+    <h1>The Paper Game</h1>
+    <span id="page-no" class="page-no hidden"></span>
+  </div>
+  <dl id="resources" class="resources"></dl>
+  <button type="button" id="news" class="news" aria-live="polite"></button>
+  <ol id="news-more" class="news-more hidden"></ol>
 </header>
-
-<ol id="log" class="log" aria-live="polite"></ol>
 
 <main class="desk">
 
-  <section class="col col-left">
-    <div class="panel">
-      <h2>Resources</h2>
-      <dl id="resources" class="resources"></dl>
-    </div>
-    <div id="manual" class="manual"></div>
-
-  </section>
-
-  <section class="col col-mid">
-    <div class="level">
-      <p>You are on Level <span id="level"></span><span id="title" class="title"></span></p>
+  <section class="col" id="col-work">
+    <div class="panel" data-tab="work">
+      <p class="level-line">Level <span id="level"></span> <span id="title" class="title"></span></p>
       <button type="button" id="level-up" class="btn"></button>
     </div>
 
-    <div id="projects" class="panel hidden">
-      <h2>Projects</h2>
-      <div id="project"></div>
+    <div id="projects" class="panel hidden" data-tab="work">
+      <h2>Next project</h2>
+      <button type="button" id="project" class="btn"></button>
       <p id="sign" class="sign hidden"></p>
     </div>
 
-    <div id="art" class="panel hidden">
+    <div id="manual" class="panel manual" data-tab="work"></div>
+  </section>
+
+  <section class="col" id="col-world">
+    <div id="art" class="panel hidden" data-tab="art">
       <h2>Operation Bob Ross</h2>
       <div id="art-body"></div>
       <div id="progress" class="progress hidden"><div id="bar" class="bar"></div><span id="bar-text"></span></div>
+      <p id="art-count" class="small"></p>
     </div>
 
-    <div id="election" class="panel hidden">
+    <div id="election" class="panel hidden" data-tab="art">
       <h2 id="election-title"></h2>
-      <div class="chart" aria-hidden="true">
-        <span class="yaxis">Reputation</span>
-        <div id="bars" class="bars"></div>
-      </div>
+      <div class="chart" aria-hidden="true"><div id="bars" class="bars"></div></div>
       <button type="button" id="run" class="btn"></button>
     </div>
-    <div id="cranes" class="panel hidden">
-      <h2>Cranes</h2>
-      <p class="big"><span id="crane-count"></span> paper cranes</p>
-      <p id="crane-room" class="small"></p>
+
+    <div id="cranes" class="panel hidden" data-tab="sky">
+      <h2><span id="crane-count"></span> cranes</h2>
       <label class="slider">
-        <span>Fold more cranes</span>
-        <input type="range" id="alloc" min="0" max="100" step="5">
-        <span>Wish for paper</span>
+        <span>Fold</span>
+        <input type="range" id="alloc" min="0" max="100" step="5" aria-label="Cranes folding cranes or wishing for paper">
+        <span>Wish</span>
       </label>
       <p id="crane-rates" class="small"></p>
     </div>
 
-    <div id="sheet" class="panel hidden">
-      <h2>The Sheet</h2>
-      <p class="big">Folded <span id="folds"></span> times: <span id="thick"></span> thick</p>
+    <div id="sheet" class="panel hidden" data-tab="sky">
+      <h2>The Sheet: <span id="folds"></span> folds</h2>
+      <p id="thick" class="small"></p>
       <div class="ruler" aria-hidden="true"><div id="ruler-fill" class="ruler-fill"></div><div id="ruler-marks"></div></div>
-      <p id="next-mark" class="small"></p>
       <button type="button" id="fold" class="btn"></button>
-      <label id="autofold-row" class="check hidden"><input type="checkbox" id="autofold"> Let the cranes fold it whenever there's enough paper</label>
-      <div id="atlas-box" class="hidden">
-        <h3>The Atlas</h3>
+      <label id="autofold-row" class="check hidden"><input type="checkbox" id="autofold"> Fold automatically</label>
+      <details id="atlas-box" class="atlas-box hidden">
+        <summary>The Atlas</summary>
         <ul id="atlas" class="atlas"></ul>
-      </div>
+      </details>
     </div>
   </section>
 
-  <section class="col col-right">
-    <div id="employees" class="panel hidden">
-      <h2>Employees</h2>
+  <section class="col" id="col-staff">
+    <div id="employees" class="panel hidden" data-tab="staff">
+      <h2>Staff</h2>
       <div id="staff-list"></div>
     </div>
-    <div id="executives" class="panel hidden">
+    <div id="executives" class="panel hidden" data-tab="staff">
       <h2>Executives</h2>
       <div id="exec-list"></div>
     </div>
@@ -97,8 +92,14 @@
 
 </main>
 
+<nav id="tabs" class="tabs hidden" aria-label="Sections">
+  <button type="button" data-go="work">Work<i></i></button>
+  <button type="button" data-go="staff">Staff<i></i></button>
+  <button type="button" data-go="art">Art<i></i></button>
+  <button type="button" data-go="sky">Sky<i></i></button>
+</nav>
+
 <footer class="foot">
-  <span id="saved">Saves itself as you go</span> &middot;
   <button type="button" id="reset" class="linkish">Start over</button> &middot;
   <a href="/">andysansness.com</a>
 </footer>

@@ -44,9 +44,10 @@
   function show(node, on) { node.classList.toggle('hidden', !on); }
   function text(node, t) { t = String(t); if (node.textContent !== t) node.textContent = t; }
   function html(node, h) { if (node._h !== h) { node.innerHTML = h; node._h = h; } }
+  function attr(node, name, value) { if (node.getAttribute(name) !== value) node.setAttribute(name, value); }
   function able(node, ok) {
-    node.classList.toggle('cant', !ok);
-    node.setAttribute('aria-disabled', ok ? 'false' : 'true');
+    if (node.classList.contains('cant') === ok) node.classList.toggle('cant', !ok);
+    attr(node, 'aria-disabled', ok ? 'false' : 'true');
   }
 
   // Short numbers: 12,345 then 12.3K, 4.56M, 7.89B ... then 1.2e45
@@ -519,7 +520,7 @@
       text(r.pause, off ? '▶' : '❚❚');
       r.pause.classList.toggle('off', off);
       r.row.classList.toggle('resting', canPause && off);
-      r.pause.setAttribute('aria-label', off ? 'Put the ' + SHORT_NAMES[e.id].toLowerCase() + ' back to work' : 'Give the ' + SHORT_NAMES[e.id].toLowerCase() + ' a break');
+      attr(r.pause, 'aria-label', off ? 'Put the ' + SHORT_NAMES[e.id].toLowerCase() + ' back to work' : 'Give the ' + SHORT_NAMES[e.id].toLowerCase() + ' a break');
     });
     show($('employees'), any);
   }

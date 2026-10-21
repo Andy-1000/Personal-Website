@@ -21,14 +21,12 @@
     <span id="page-no" class="page-no hidden"></span>
   </div>
   <dl id="resources" class="resources"></dl>
-  <button type="button" id="news" class="news" aria-live="polite"></button>
-  <ol id="news-more" class="news-more hidden"></ol>
 </header>
 
 <main class="desk">
 
   <section class="col" id="col-work">
-    <div class="panel" data-tab="work">
+    <div id="level-box" class="panel" data-tab="work">
       <p class="level-line">Level <span id="level"></span> <span id="title" class="title"></span></p>
       <button type="button" id="level-up" class="btn"></button>
     </div>
@@ -123,6 +121,8 @@
     <div id="modal-buttons" class="modal-buttons"></div>
   </div>
 </div>
+
+<button type="button" id="toast" class="toast" role="status" aria-live="polite"></button>
 
 <div id="creases" class="creases" aria-hidden="true"></div>
 

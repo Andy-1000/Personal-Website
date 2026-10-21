@@ -252,12 +252,35 @@ h3 { font-size: 1.05rem; font-weight: normal; margin: 12px 0 4px; text-decoratio
 .slider { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
 .slider input { flex: 1; accent-color: var(--slate); min-width: 0; }
 
-.matter { list-style: none; margin: 0; padding: 0; }
-.matter li { margin: 6px 0; display: grid; grid-template-columns: 1fr auto; gap: 0 10px; }
-.matter li.gone { opacity: 0.5; }
-.m-left { font-size: 0.85rem; color: var(--muted); text-align: right; }
-.m-track { grid-column: 1 / -1; height: 5px; background: rgba(0,0,0,0.12); border-radius: 3px; overflow: hidden; }
-.m-fill { height: 100%; background: var(--slate); }
+.atlas { list-style: none; margin: 0; padding: 0; font-size: 0.92rem; }
+.atlas li { margin: 6px 0; color: var(--muted); }
+.atlas li strong { font-weight: normal; color: var(--ink); text-decoration: underline; }
+.atlas li.visited strong::after { content: " \2713"; text-decoration: none; display: inline-block; margin-left: 4px; }
+
+.draw-bar { display: block; height: 8px; margin: 8px auto 0; max-width: 320px; background: rgba(0,0,0,0.12); border-radius: 4px; overflow: hidden; }
+.draw-bar span { display: block; height: 100%; background: var(--slate); }
+
+/* Act IV: the page itself gets folded, a crease at a time */
+.creases { position: fixed; inset: 0; pointer-events: none; z-index: 40; display: none; }
+body:not([data-folds="0"]) .creases { display: block; }
+body[data-folds="1"] .creases { background: linear-gradient(90deg, transparent 49.8%, rgba(0,0,0,0.18) 50%, transparent 50.2%); }
+body[data-folds="2"] .creases { background: linear-gradient(90deg, transparent 49.8%, rgba(0,0,0,0.18) 50%, transparent 50.2%), linear-gradient(0deg, transparent 49.7%, rgba(0,0,0,0.18) 50%, transparent 50.3%); }
+body[data-folds="3"] .creases, body[data-folds="4"] .creases, body[data-folds="5"] .creases, body[data-folds="6"] .creases, body[data-folds="7"] .creases {
+  background:
+    linear-gradient(90deg, transparent 49.8%, rgba(0,0,0,0.18) 50%, transparent 50.2%),
+    linear-gradient(0deg, transparent 49.7%, rgba(0,0,0,0.18) 50%, transparent 50.3%),
+    linear-gradient(45deg, transparent 49.8%, rgba(0,0,0,0.14) 50%, transparent 50.2%),
+    linear-gradient(-45deg, transparent 49.8%, rgba(0,0,0,0.14) 50%, transparent 50.2%);
+}
+.desk, .log, .masthead { transition: transform 1.2s ease, filter 1.2s ease; transform-origin: 50% 0; }
+body[data-folds="1"] .desk { transform: scale(0.97); }
+body[data-folds="2"] .desk { transform: scale(0.94) rotate(-0.4deg); }
+body[data-folds="3"] .desk { transform: scale(0.91) rotate(0.5deg); }
+body[data-folds="4"] .desk { transform: scale(0.88) rotate(-0.6deg); }
+body[data-folds="5"] .desk { transform: scale(0.85) rotate(0.7deg); filter: grayscale(0.3); }
+body[data-folds="6"] .desk { transform: scale(0.82) rotate(-0.8deg); filter: grayscale(0.6); }
+body[data-folds="7"] .desk { transform: scale(0.79) rotate(1deg); filter: grayscale(0.9); }
+
 
 .ruler {
   position: relative;

@@ -61,15 +61,13 @@
     <div id="cranes" class="panel hidden">
       <h2>Cranes</h2>
       <p class="big"><span id="crane-count"></span> paper cranes</p>
+      <p id="crane-room" class="small"></p>
       <label class="slider">
         <span>Fold more cranes</span>
         <input type="range" id="alloc" min="0" max="100" step="5">
-        <span>Pulp into paper</span>
+        <span>Wish for paper</span>
       </label>
       <p id="crane-rates" class="small"></p>
-      <h3>Within reach</h3>
-      <ul id="matter" class="matter"></ul>
-      <p id="matter-gone" class="small hidden"></p>
     </div>
 
     <div id="sheet" class="panel hidden">
@@ -79,6 +77,10 @@
       <p id="next-mark" class="small"></p>
       <button type="button" id="fold" class="btn"></button>
       <label id="autofold-row" class="check hidden"><input type="checkbox" id="autofold"> Let the cranes fold it whenever there's enough paper</label>
+      <div id="atlas-box" class="hidden">
+        <h3>The Atlas</h3>
+        <ul id="atlas" class="atlas"></ul>
+      </div>
     </div>
   </section>
 
@@ -118,6 +120,8 @@
     <div id="modal-buttons" class="modal-buttons"></div>
   </div>
 </div>
+
+<div id="creases" class="creases" aria-hidden="true"></div>
 
 <script src="engine.js"></script>
 <script src="game.js"></script>

@@ -173,6 +173,7 @@
   $('level-up').addEventListener('click', function () { E.levelUp(S); render(); });
 
   function titleFor() {
+    if (S.done.behind) return 'somewhere behind the page';
     if (S.level >= 20) return 'Chairperson of Everything';
     if (S.level >= 19) return 'Chairperson of the Galaxy';
     if (S.level >= 17) return 'Chairperson of the Solar System';
@@ -209,8 +210,9 @@
       show(projectButton, false);
       show(sign, true);
       if (cur.blocked === 'level') html(sign, 'Upgrade to unlock<br>--more projects--');
-      else html(sign, 'Waiting for ' + cur.p.reqText + (cur.p.id === 'write' && S.mat.universe !== undefined ?
-        ' (' + (100 * (1 - S.mat.universe / E.REGION.universe.sheets)).toFixed(1) + '% done)' : ''));
+      else if (cur.p.id === 'pagefold1') html(sign, 'Your artists are drawing back the trees: ' +
+        fmt(S.drawing * S.stats.treesUsed) + ' of ' + fmt(S.stats.treesUsed) + '<span class="draw-bar"><span style="width:' + (100 * S.drawing).toFixed(1) + '%"></span></span>');
+      else html(sign, 'Waiting for ' + cur.p.reqText);
       return;
     }
     show(sign, false);
@@ -319,39 +321,19 @@
 
   $('alloc').addEventListener('input', function () { E.setAlloc(S, 100 - Number(this.value)); render(); });
 
-  var matterRows = {};
   function renderCranes() {
     show($('cranes'), S.cranes > 0);
     if (S.cranes <= 0) return;
     text($('crane-count'), fmt(S.cranes));
+    var room = E.craneRoom(S);
+    text($('crane-room'), S.cranes >= room * 0.999 ?
+      (S.sheet ? 'The sheet is full. Fold it again to make room for four times as many.' : 'There is no room for any more cranes yet.') :
+      'Room for ' + fmt(room) + (S.sheet ? ' on the sheet' : ''));
     var slider = $('alloc');
     if (document.activeElement !== slider) slider.value = 100 - S.alloc;
     var rr = E.craneRates(S);
-    text($('crane-rates'), S.alloc + '% folding cranes (' + rateText(rr.fold) + ') · ' +
-      (100 - S.alloc) + '% pulping (' + rateText(rr.pulp) + ' paper)');
-    var list = $('matter');
-    E.knownRegions(S).forEach(function (r) {
-      var row = matterRows[r.id];
-      if (!row) {
-        row = { li: el('li'), name: el('span', 'm-name', r.name), left: el('span', 'm-left'), track: el('div', 'm-track'), fill: el('div', 'm-fill') };
-        row.track.appendChild(row.fill);
-        row.li.appendChild(row.name); row.li.appendChild(row.left); row.li.appendChild(row.track);
-        list.appendChild(row.li);
-        matterRows[r.id] = row;
-      }
-      var left = S.mat[r.id];
-      if (left === undefined) {
-        text(row.left, 'in reach (see Projects)');
-        row.fill.style.width = '100%';
-      } else {
-        text(row.left, left <= 0 ? 'all paper' : r.trees ? fmt(left / 100) + ' trees left' : fmt(left) + ' sheets’ worth left');
-        row.fill.style.width = (100 * left / r.sheets) + '%';
-      }
-      show(row.li, left !== 0);
-    });
-    var gone = E.knownRegions(S).filter(function (r) { return S.mat[r.id] === 0; }).map(function (r) { return r.name.replace(/^The /, 'the '); });
-    show($('matter-gone'), gone.length > 0);
-    text($('matter-gone'), gone.length ? 'Already paper: ' + gone.join(', ') + '.' : '');
+    text($('crane-rates'), S.alloc + '% folding cranes (' + rateText(rr.fold) + ') \u00b7 ' +
+      (100 - S.alloc) + '% wishing (' + rateText(rr.wish) + ' paper)');
   }
 
   // ---------------------------------------------------------------------------
@@ -359,7 +341,7 @@
 
   var LANDMARKS = [
     { f: 27, t: 'Everest' }, { f: 42, t: 'Moon' }, { f: 51, t: 'Sun' }, { f: 69, t: 'Proxima' },
-    { f: 83, t: 'Milky Way' }, { f: 96, t: 'Laniakea' }, { f: 103, t: 'Everything' }
+    { f: 83, t: 'Milky Way' }, { f: 96, t: 'Laniakea' }, { f: 103, t: 'The edge' }
   ];
   var NEXT_SIGHTS = [
     { f: 7, t: 'the folklore limit' }, { f: 13, t: "Britney Gallivan's world record" }, { f: 14, t: 'your own height' },
@@ -367,7 +349,7 @@
     { f: 32, t: 'the International Space Station' }, { f: 42, t: 'the Moon' }, { f: 49, t: 'Mars' },
     { f: 51, t: 'the Sun' }, { f: 53, t: 'Jupiter' }, { f: 56, t: 'Neptune' }, { f: 58, t: 'Voyager 1' },
     { f: 62, t: 'the Oort Cloud' }, { f: 69, t: 'Proxima Centauri' }, { f: 83, t: 'the far side of the Milky Way' },
-    { f: 88, t: 'Andromeda' }, { f: 96, t: 'the Laniakea Supercluster' }, { f: 103, t: 'the edge of the observable universe' }
+    { f: 88, t: 'Andromeda' }, { f: 96, t: 'the Laniakea Supercluster' }, { f: 103, t: 'the edge of the observable universe (and the page)' }
   ];
   LANDMARKS.forEach(function (m, i) {
     var mark = el('span', 'mark' + (i % 2 ? ' low' : ''), m.t);
@@ -396,6 +378,26 @@
     }
     show($('autofold-row'), !!S.autofold);
     if (S.autofold) $('autofold').checked = !!S.autofoldOn;
+    renderAtlas();
+  }
+
+  var VISIT = { moon: 'visitmoon', mars: 'visitmars', sun: 'visitsun', jupiter: 'visitjupiter', voyager: 'visitvoyager',
+                proxima: 'pinhole', milkyway: 'visitmilkyway', andromeda: 'visitandromeda', laniakea: 'visitlaniakea', edge: 'margin' };
+  var atlasShown = -1;
+  function renderAtlas() {
+    var seen = E.placesSeen(S);
+    var key = seen.length * 100 + seen.filter(function (p) { return S.done[VISIT[p.id]]; }).length;
+    show($('atlas-box'), seen.length > 0);
+    if (key === atlasShown) return;
+    atlasShown = key;
+    var list = $('atlas');
+    list.innerHTML = '';
+    seen.slice().reverse().forEach(function (p) {
+      var li = el('li', S.done[VISIT[p.id]] ? 'visited' : '');
+      li.appendChild(el('strong', '', p.name));
+      li.appendChild(document.createTextNode(' (' + p.fold + ' folds) ' + p.seen + (S.done[VISIT[p.id]] ? ' Visited.' : '')));
+      list.appendChild(li);
+    });
   }
 
   // ---------------------------------------------------------------------------
@@ -539,7 +541,7 @@
 
   function startAgain(fresh) {
     S = fresh ? E.newState() : E.turnPage(S);
-    lastSample = null; rates = {}; shownTop = null; shownRace = null; matterRows = {}; $('matter').innerHTML = '';
+    lastSample = null; rates = {}; shownTop = null; shownRace = null; atlasShown = -1;
     save();
   }
 
@@ -547,7 +549,8 @@
     var won = ['mayor', 'premier', 'pm'].filter(function (k) { return S.won[k]; }).length;
     return '<p class="stats">You played for ' + duration(S.stats.time) + '. You made ' + fmt(S.stats.paperMade) +
       ' paper, folded the sheet ' + S.fold + ' times, folded ' + fmt(S.stats.cranesFolded + 1000) + ' cranes, painted ' +
-      fmt(S.stats.paintings) + ' pictures and won ' + won + ' elections.</p>';
+      fmt(S.stats.paintings) + ' pictures, won ' + won + ' elections' +
+      (S.drawing >= 1 ? ', and drew back ' + fmt(S.stats.treesUsed) + ' trees' : '') + '.</p>';
   }
 
   function shelf() {
@@ -567,22 +570,22 @@
          { label: 'I wish for more paper', go: function () { E.wish(S, 'paper'); } }]);
     } else if (S.pending === 'lastwish') {
       openModal('lastwish', 'The last crane',
-        '<p>You fold the universe in half, and in half again, and again, until it is a paper crane. It is the last crane there will ever be, and it is made of everything.</p>' +
-        '<p>A thousand cranes earns a wish. You have folded ' + fmt(S.stats.cranesFolded + 1000) + '. The last one is waiting.</p>',
+        '<p>On the seventh fold, the page becomes a paper crane: the last one, folded out of everything you ever made. The company, the paintings, Papertown, the elections, the library and the sky are all in there somewhere.</p>' +
+        '<p>A thousand cranes earns a wish. You have folded ' + fmt(S.stats.cranesFolded + 1000) + '. This one is waiting.</p>',
         [{ label: 'I wish for a happy ending', go: function () { E.wish(S, 'ending'); } },
          { label: 'I wish for more paper', go: function () { E.wish(S, 'more'); } }]);
     } else if (S.ended === 'ending') {
       openModal('ending', 'The End',
-        '<p>The last crane unfolds its wings, which is a strange thing for paper to do, and flies off the edge of everything.</p>' +
-        '<p>For a while there is nothing at all.</p>' +
-        '<p>Then, somewhere, a single sheet of paper drifts down onto a desk. It is a little crumpled. A kid finds it, smooths it out flat, and starts to draw.</p>' +
+        '<p>The crane hops off the desk, flaps once, which is a strange thing for paper to do, and flies out of the open window.</p>' +
+        '<p>The lamp clicks off.</p>' +
+        '<p>In the morning a kid finds a crumpled sheet of paper on the desk, with a great many very small trees drawn in one corner. They smooth it out flat, and start to draw.</p>' +
         stats() + shelf() + '<p>Thanks for playing.</p>',
         [{ label: 'Turn the page<br><span class="cost">Start again, with everything working twice as hard</span>', go: function () { startAgain(false); } },
          { label: 'Start from scratch', go: function () { startAgain(true); } }]);
     } else if (S.ended === 'more') {
       openModal('more', 'And there was more paper',
-        '<p>The crane nods, and unfolds, and keeps on unfolding. The universe opens out flat, because it was a sheet of paper all along.</p>' +
-        '<p>It is page ' + S.page + ' of something much longer. There is writing on the other side.</p>' + stats() + shelf(),
+        '<p>The crane nods, and unfolds, and keeps on unfolding, until it is a page again. Then a hand you can only just see turns it over.</p>' +
+        '<p>The other side is blank, and white, and waiting. This was only page ' + S.page + '.</p>' + stats() + shelf(),
         [{ label: 'Turn the page<br><span class="cost">Page ' + (S.page + 1) + ': everything works ' + fmt(Math.pow(2, S.creases + 1)) + ' times as hard</span>',
            go: function () { startAgain(false); } }]);
     } else if (modalFor) {
@@ -606,6 +609,8 @@
     renderExecs();
     renderLog();
     renderModal();
+    var pf = S.pageFolds || 0;
+    if (document.body.getAttribute('data-folds') !== String(pf)) document.body.setAttribute('data-folds', pf);
     var page = $('page-no');
     show(page, S.page > 1);
     if (S.page > 1) text(page, 'Page ' + S.page + ' · everything works ' + fmt(E.creaseMult(S)) + ' times as hard');

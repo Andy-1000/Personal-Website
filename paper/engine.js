@@ -17,7 +17,9 @@
     'million', 'billion', 'trillion', 'quadrillion', 'quintillion', 'sextillion',
     'septillion', 'octillion', 'nonillion', 'decillion', 'undecillion',
     'duodecillion', 'tredecillion', 'quattuordecillion', 'quindecillion',
-    'sexdecillion', 'septendecillion', 'octodecillion', 'novemdecillion', 'vigintillion'
+    'sexdecillion', 'septendecillion', 'octodecillion', 'novemdecillion', 'vigintillion',
+    'unvigintillion', 'duovigintillion', 'trevigintillion', 'quattuorvigintillion', 'quinvigintillion',
+    'sexvigintillion', 'septenvigintillion', 'octovigintillion', 'novemvigintillion', 'trigintillion'
   ];
 
   function fmt(n, round) {
@@ -191,11 +193,11 @@
     17: { need: { imagination: 2.5e7 }, cond: function (S) { return S.fold >= 51; }, condText: '51 folds (the Sun)',
           msg: "The sheet reaches the Sun. It hasn't caught fire, because you're very good at this." },
     18: { need: { reputation: 1e7 }, cond: function (S) { return S.fold >= 69; }, condText: '69 folds (Proxima Centauri)',
-          msg: "Proxima Centauri. Nice. Nobody's home, but there's plenty of matter." },
+          msg: "Proxima Centauri. Nice." },
     19: { need: { ink: 2e9 }, cond: function (S) { return S.fold >= 83; }, condText: '83 folds (across the Milky Way)',
           msg: "The sheet is wider than the Milky Way. From up here the whole galaxy looks like a crumpled piece of paper." },
-    20: { need: { paperwork: 5e8 }, cond: function (S) { return S.fold >= 103; }, condText: '103 folds (the edge of everything)',
-          msg: "The sheet is 107 billion light years thick, which is thicker than the observable universe is wide. There is nothing outside it any more. Only paper, and you." }
+    20: { need: { paperwork: 5e8 }, cond: function (S) { return S.fold >= 103; }, condText: '103 folds (the edge of the page)',
+          msg: "The sheet is thicker than the observable universe is wide. And then, all at once, it stops. You have reached the edge of the page." }
   };
   var MAX_LEVEL = 20;
 
@@ -327,62 +329,97 @@
       cost: { paper: 1000, imagination: 3e5 }, fx: function (S) { S.pending = 'firstwish'; } },
     { id: 'treatydraft', lv: 14, title: 'Draft the Paper Treaty', gain: 'One page. It says that everything is paper now. Everyone has to sign it',
       cost: { paperwork: 500000, knowledge: 2e5 } },
-    { id: 'treaty', lv: 14, title: 'Have every person on Earth sign the Paper Treaty', gain: 'One copy each. The world, and its forests, are yours',
+    { id: 'treaty', lv: 14, title: 'Have every person on Earth sign the Paper Treaty', gain: 'One copy each. After that, the whole world runs on paper',
       cost: { paper: 8e9 } },
 
-    // ---- Act III: A Thousand Cranes ----
+    // ---- Act III: The Paper Sky ----
     // Level 15: Chairperson of Earth
     { id: 'workforce1', lv: 15, title: 'Cranes join the workforce', gain: 'Every employee works 10 times as hard',
       cost: { paper: 1e11 }, fx: function (S) { S.m.work *= 10; } },
     { id: 'gallivan', lv: 15, title: "Read Britney Gallivan's paper on folding paper", gain: 'Unlocks The Sheet',
-      cost: { knowledge: 2e6 },
-      msg: "Fold a piece of paper in half 42 times and it would reach the Moon. Nobody has ever tried it with enough paper. You have enough paper." },
-    { id: 'wetfold', lv: 15, title: 'Master wet-folding', gain: 'Cranes pulp 10 times as fast',
-      cost: { paper: 1e12, imagination: 5e6 }, fx: function (S) { S.m.pulp *= 10; } },
+      cost: { knowledge: 2e6 }, fx: function (S) { S.sheet = true; },
+      msg: "Gallivan worked out that every fold needs about four times as much paper as the one before. Fold a sheet 42 times and it would reach the Moon. Nobody has ever had the paper to try. You have cranes." },
+    { id: 'wishhard', lv: 15, title: 'Teach the cranes to wish properly', gain: 'Cranes wish up 10 times as much paper',
+      cost: { paper: 1e12, imagination: 5e6 }, fx: function (S) { S.m.wish *= 10; },
+      msg: "It turns out you have to really mean it." },
     { id: 'autofold', lv: 15, title: 'Teach the cranes to fold the sheet', gain: 'The sheet folds itself whenever there is enough paper',
-      cost: { knowledge: 1e7 }, fx: function (S) { S.autofold = true; } },
+      cost: { knowledge: 2e6 }, fx: function (S) { S.autofold = true; } },
     // Level 16: the Moon
-    { id: 'pulpmoon', lv: 16, title: 'Pulp the Moon', gain: 'Sorry, Moon',
-      cost: { paperwork: 2e6 }, fx: function (S) { openRegion(S, 'moon'); } },
     { id: 'workforce2', lv: 16, title: 'Cranes join the workforce (again)', gain: 'Every employee works 10 times as hard, again',
-      cost: { paper: 1e20 }, fx: function (S) { S.m.work *= 10; } },
-    { id: 'flock', lv: 16, title: 'Teach the cranes to fly in formation', gain: 'Cranes fold new cranes twice as fast',
-      cost: { imagination: 3e7 }, fx: function (S) { S.m.flock *= 2; } },
-    { id: 'pulpearth', lv: 16, title: 'Pulp the Earth', gain: "Everyone has moved into the books. They say it's quite nice in there",
-      cost: { knowledge: 1e8, reputation: 5e5 }, fx: function (S) { openRegion(S, 'earth'); } },
+      cost: { paper: 1e37 }, fx: function (S) { S.m.work *= 10; } },
+    { id: 'visitmoon', lv: 16, title: 'Visit the Moon', gain: 'Fill in the forms, climb the sheet, and go inside the lantern',
+      cost: { paperwork: 2e6 }, fx: function (S) { S.m.flock *= 2; },
+      msg: "It's warm inside the lantern, and light enough to see by. The cranes can fold through the night now: twice as many new cranes." },
+    { id: 'smaller', lv: 16, title: 'Fold smaller cranes', gain: 'Twice as many cranes fit on the sheet',
+      cost: { imagination: 3e7 }, fx: function (S) { S.m.nest *= 2; },
+      msg: "The smallest paper crane anyone had ever folded was about the size of a grain of rice. Yours are smaller." },
+    { id: 'visitmars', lv: 16, title: 'Visit Mars', gain: "Bring back the rovers' drawings",
+      req: function (S) { return S.fold >= 49; }, reqText: 'the sheet to reach Mars (49 folds)',
+      cost: { knowledge: 2e7, reputation: 5e5 }, fx: function (S) { S.m.imag *= 3; },
+      msg: "The rovers have been drawing in crayon for years. Mostly rocks. They're very good rocks, and they triple everyone's imagination." },
     // Level 17: the Sun
-    { id: 'fireproof', lv: 17, title: 'Invent fireproof paper', gain: 'Unlocks pulping the Sun',
-      cost: { knowledge: 1e8, ink: 1e8 } },
-    { id: 'pulpsun', lv: 17, title: 'Pulp the Sun', gain: "It was mostly hydrogen. Now it's mostly paper",
-      cost: { imagination: 2e8 }, fx: function (S) { openRegion(S, 'sun'); } },
-    { id: 'solarsails', lv: 17, title: 'Fold the cranes solar sails', gain: 'Cranes pulp 10 times as fast',
-      cost: { paper: 1e26 }, fx: function (S) { S.m.pulp *= 10; } },
+    { id: 'visitsun', lv: 17, title: 'Visit the Sun', gain: "Don't blow it out",
+      cost: { knowledge: 5e7, ink: 1e8 }, fx: function (S) { S.m.wish *= 10; },
+      msg: "You don't blow it out. You sit by it for a while. Everything grows better in the warm: the cranes wish up 10 times as much paper." },
+    { id: 'visitjupiter', lv: 17, title: 'Visit Jupiter', gain: 'Somebody painted those stripes on',
+      req: function (S) { return S.fold >= 53; }, reqText: 'the sheet to reach Jupiter (53 folds)',
+      cost: { imagination: 2e8 }, fx: function (S) { S.m.ink *= 10; },
+      msg: "The stripes are ink. A lot of ink. Your squids are very interested, and make 10 times as much." },
+    { id: 'visitvoyager', lv: 17, title: 'Catch up with Voyager 1', gain: 'It has been carrying a message since 1977',
+      req: function (S) { return S.fold >= 58; }, reqText: 'the sheet to reach Voyager 1 (58 folds)',
+      cost: { paperwork: 1e8 }, fx: function (S) { S.m.job.journalist = (S.m.job.journalist || 1) * 10; },
+      msg: "The golden record says: hello from the children of planet Earth. You write back, on paper, and fold it into a crane. Everyone at home reads about it: journalists make 10 times as much reputation." },
     // Level 18: Proxima Centauri
     { id: 'workforce3', lv: 18, title: 'Cranes join the workforce (for good)', gain: 'Every employee works 10 times as hard, again again',
-      cost: { paper: 1e29 }, fx: function (S) { S.m.work *= 10; } },
-    { id: 'planes', lv: 18, title: 'Refold the cranes as paper planes', gain: 'Cranes fold new cranes twice as fast',
-      cost: { paperwork: 3e8 }, fx: function (S) { S.m.flock *= 2; } },
-    { id: 'lightspeed', lv: 18, title: 'Light-speed origami', gain: 'Cranes pulp 10 times as fast',
-      cost: { knowledge: 1e9, imagination: 1e9 }, fx: function (S) { S.m.pulp *= 10; } },
+      cost: { paper: 1e55 }, fx: function (S) { S.m.work *= 10; } },
+    { id: 'pinhole', lv: 18, title: 'Look through the pinhole', gain: 'There is a light on the other side',
+      cost: { knowledge: 2e8, imagination: 1e9 }, fx: function (S) { S.ke *= 10; },
+      msg: "On the other side there's a light: warm, yellow and very close, like a desk lamp. It's lovely to read by. Librarians get 10 times the knowledge from every book." },
+    { id: 'smaller2', lv: 18, title: 'Fold even smaller cranes', gain: 'Four times as many cranes fit on the sheet',
+      cost: { paperwork: 3e8 }, fx: function (S) { S.m.nest *= 4; },
+      msg: "You need a microscope to fold them now. The cranes don't seem to mind." },
     // Level 19: the Milky Way
-    { id: 'sgra', lv: 19, title: 'Pulp Sagittarius A*', gain: 'The black hole at the centre of the galaxy was very dense paper all along. Cranes pulp 10 times as fast',
-      cost: { paper: 1e36 }, fx: function (S) { S.m.pulp *= 10; } },
+    { id: 'visitmilkyway', lv: 19, title: 'Unfold a corner of the Milky Way', gain: 'Carefully',
+      cost: { paper: 1e64 }, fx: function (S) { S.m.flock *= 2; },
+      msg: "It's tissue paper, crumpled into a spiral, the way you'd make a flower at a children's party. You fold it back exactly as it was. The cranes copy the spiral, and fold new cranes twice as fast." },
     { id: 'babel', lv: 19, title: 'Print the Library of Babel', gain: 'Every book that could ever be written. One of them is this game. Librarians get 10 times the knowledge from every book',
       cost: { book: 2e8, ink: 5e8 }, fx: function (S) { S.ke *= 10; } },
-    { id: 'murmuration', lv: 19, title: 'Teach the cranes to murmurate', gain: 'Cranes fold new cranes twice as fast',
-      cost: { reputation: 1e8 }, fx: function (S) { S.m.flock *= 2; } },
+    { id: 'visitandromeda', lv: 19, title: 'Leave the Paper Treaty with Andromeda', gain: "It's coming this way anyway",
+      req: function (S) { return S.fold >= 88; }, reqText: 'the sheet to reach Andromeda (88 folds)',
+      cost: { reputation: 1e8 }, fx: function (S) { S.m.job.servant = (S.m.job.servant || 1) * 10; },
+      msg: "Andromeda signs. A sticky note on it says 'Back in 4.5 billion years.' Public servants, inspired, make 10 times as much paperwork." },
+    { id: 'visitlaniakea', lv: 19, title: 'Glue the Laniakea Supercluster back together', gain: 'Someone ran out of glue halfway',
+      req: function (S) { return S.fold >= 96; }, reqText: 'the sheet to reach Laniakea (96 folds)',
+      cost: { imagination: 5e9 }, fx: function (S) { S.m.nest *= 4; },
+      msg: "It's papier-mâché: a hundred thousand galaxies stuck together in long strings. You finish the job. There's room for four times as many cranes in the gaps." },
 
-    // ---- Act IV: The Last Page ----
-    // Level 20: the edge of everything
-    { id: 'everything', lv: 20, title: 'Pulp everything else', gain: 'All of it. Every star, every galaxy, every squid',
-      cost: { knowledge: 1e10 }, fx: function (S) { openRegion(S, 'universe'); } },
-    { id: 'write', lv: 20, title: 'Write down everything you know', gain: 'There is room now',
-      req: function (S) { return S.done.everything && S.mat.universe <= 0; }, reqText: 'the whole universe to be paper',
-      cost: { knowledge: 2e10, ink: 1e9 } },
-    { id: 'imagine', lv: 20, title: "Imagine everything you don't", gain: 'Somebody has to',
-      cost: { imagination: 5e9 } },
-    { id: 'lastcrane', lv: 20, title: 'Fold the last crane', gain: 'Out of everything',
-      cost: { paper: 1e55 }, fx: function (S) { S.r.paper = 0; S.pending = 'lastwish'; } }
+    // ---- Act IV: The Margin ----
+    // Level 20: the edge of the page
+    { id: 'margin', lv: 20, title: 'Step over the edge of the page', gain: 'Into the margin',
+      cost: { knowledge: 2e9 },
+      msg: "Past the edge of the observable universe the paper just stops, and there's a margin, wide and white and quiet. Someone has written in it, in pencil: \u201cRhys, Rhys, Goosen (or maybe Josh). So you thought you might check out the code... or perhaps even cheat. Well, you must do so at your own peril...\u201d You don't know who Rhys is. You feel warned anyway." },
+    { id: 'behind', lv: 20, title: 'Look behind the page', gain: 'Where the light is coming from',
+      cost: { imagination: 5e9 },
+      msg: "Behind the page there is a desk lamp, the edge of a desk, a rubber, a pencil, and a cup of tea that went cold hours ago. Somebody has been drawing all of this. The universe. The squid. You." },
+    { id: 'pencil', lv: 20, title: 'Sharpen the pencil', gain: "Pencils are made of trees too. You'd forgotten",
+      cost: { tree: 1 } },
+    { id: 'redraw', lv: 20, title: 'Draw back every tree you ever cut down', gain: 'Your artists know what to do. Happy little trees',
+      cost: { ink: 1e9 }, fx: function (S) { S.drawing = 0; } },
+    { id: 'pagefold1', lv: 20, title: 'Fold the page in half', gain: 'Fold away the paper company',
+      req: function (S) { return S.drawing >= 1; }, reqText: 'your artists to finish drawing the trees',
+      cost: { money: 1e24 }, fx: function (S) { S.pageFolds = 1; } },
+    { id: 'pagefold2', lv: 20, title: 'Fold the page again', gain: 'Fold away the paintings',
+      cost: { imagination: 2e9 }, fx: function (S) { S.pageFolds = 2; } },
+    { id: 'pagefold3', lv: 20, title: 'Fold the page again', gain: 'Fold away Papertown',
+      cost: { paperwork: 1e9 }, fx: function (S) { S.pageFolds = 3; } },
+    { id: 'pagefold4', lv: 20, title: 'Fold the page again', gain: 'Fold away the elections',
+      cost: { reputation: 1e9 }, fx: function (S) { S.pageFolds = 4; } },
+    { id: 'pagefold5', lv: 20, title: 'Fold the page again', gain: 'Fold away the library',
+      cost: { knowledge: 2e9 }, fx: function (S) { S.pageFolds = 5; } },
+    { id: 'pagefold6', lv: 20, title: 'Fold the page again', gain: 'Fold away the sky',
+      cost: { paper: 1e60 }, fx: function (S) { S.pageFolds = 6; } },
+    { id: 'pagefold7', lv: 20, title: 'Fold the page one last time', gain: 'Folklore says you can only fold paper seven times. This time, folklore is right',
+      cost: { ink: 1e9 }, fx: function (S) { S.pageFolds = 7; S.pending = 'lastwish'; } }
   ];
   var PROJ = {};
   PROJECTS.forEach(function (p) { PROJ[p.id] = p; });
@@ -431,25 +468,31 @@
   // ---------------------------------------------------------------------------
   // The Sheet, and everything it can reach
 
-  function foldCost(n) { return 20 * Math.pow(2, n); }   // the cost of fold number n
+  // Gallivan: each fold needs about four times the paper of the one before.
+  // The bigger sheet is also four times the room for cranes to live on.
+  function foldCost(n) { return 20 * Math.pow(4, n); }
   var MAX_FOLDS = 103; // as thick as the observable universe is wide; there's nowhere further to go
+  var NEST = 1e10;     // cranes that fit on a sheet that hasn't been folded yet
 
-  var REGIONS = [
-    { id: 'national', name: 'The national forests', sheets: 6.7e12, trees: true },
-    { id: 'world', name: "The world's forests", sheets: 3.04e14, trees: true },
-    { id: 'moon', name: 'The Moon', fold: 42, sheets: 1.47e25, gate: 'pulpmoon' },
-    { id: 'earth', name: 'The Earth', sheets: 1.19e27, gate: 'pulpearth' },
-    { id: 'mars', name: 'Mars', fold: 49, sheets: 1.28e26 },
-    { id: 'sun', name: 'The Sun', fold: 51, sheets: 3.98e32, gate: 'pulpsun' },
-    { id: 'jupiter', name: 'Jupiter', fold: 53, sheets: 3.8e29 },
-    { id: 'proxima', name: 'Proxima Centauri', fold: 69, sheets: 4.86e31 },
-    { id: 'milkyway', name: 'The Milky Way', fold: 83, sheets: 3e44 },
-    { id: 'andromeda', name: 'Andromeda', fold: 88, sheets: 3e44 },
-    { id: 'laniakea', name: 'The Laniakea Supercluster', fold: 96, sheets: 4e49 },
-    { id: 'universe', name: 'Everything else', fold: 103, sheets: 3e55, gate: 'everything' }
+  function craneRoom(S) { return NEST * S.m.nest * Math.pow(4, S.fold); }
+
+  // Everywhere the sheet reaches turns out to be paper already
+  var PLACES = [
+    { id: 'moon', name: 'The Moon', fold: 42, seen: "It's a paper lantern. Somebody has left it on." },
+    { id: 'mars', name: 'Mars', fold: 49, seen: "Red construction paper, faded where the Sun has been on it. There are crayon marks all over it." },
+    { id: 'sun', name: 'The Sun', fold: 51, seen: "A much bigger lantern, with a candle inside. A note is taped to it: DO NOT BLOW OUT." },
+    { id: 'jupiter', name: 'Jupiter', fold: 53, seen: "A lantern with stripes painted on. The Great Red Spot is where somebody put down a cup of tea." },
+    { id: 'voyager', name: 'Voyager 1', fold: 58, seen: "Still going, 49 years after it left. It has a golden record bolted to its side, with a message on it." },
+    { id: 'proxima', name: 'Proxima Centauri', fold: 69, seen: "It isn't a star. It's a pinhole in a sheet of black paper, with light shining through from the other side. They all are." },
+    { id: 'milkyway', name: 'The Milky Way', fold: 83, seen: "Tissue paper, crumpled into a spiral." },
+    { id: 'andromeda', name: 'Andromeda', fold: 88, seen: "Another tissue-paper spiral, with a sticky note on it." },
+    { id: 'laniakea', name: 'The Laniakea Supercluster', fold: 96, seen: "Papier-m\u00e2ch\u00e9, with gaps where the glue ran out." },
+    { id: 'edge', name: 'The edge of the page', fold: 103, seen: "The paper just stops." }
   ];
-  var REGION = {};
-  REGIONS.forEach(function (r) { REGION[r.id] = r; });
+
+  function placesSeen(S) {
+    return PLACES.filter(function (p) { return S.fold >= p.fold; });
+  }
 
   var FOLD_NOTES = {
     1: "You fold the sheet in half. It's twice as thick. This is going to escalate.",
@@ -461,42 +504,18 @@
     27: "The sheet is taller than Mount Everest.",
     30: "The sheet has reached space.",
     32: "The International Space Station has to swerve.",
-    42: "The sheet touches the Moon. Climb it.",
-    49: "The sheet reaches Mars.",
-    51: "The sheet reaches the Sun.",
-    53: "The sheet reaches Jupiter.",
     56: "The sheet is past Neptune. Pluto is, at last, not the smallest thing out here.",
-    58: "You overtake Voyager 1. It has been going since 1977. You've been going since you made your first piece of paper.",
-    62: "The sheet reaches the Oort Cloud, where comets go to think.",
-    69: "The sheet reaches Proxima Centauri, the nearest star.",
-    83: "The sheet is wider than the Milky Way.",
-    88: "The sheet reaches Andromeda.",
-    96: "The sheet is wider than the Laniakea Supercluster, the hundred thousand galaxies we call home.",
-    103: "The sheet is thicker than the observable universe is wide."
+    62: "The sheet reaches the Oort Cloud, where comets go to think."
   };
-
-  function openRegion(S, id) {
-    if (S.mat[id] === undefined) S.mat[id] = REGION[id].sheets;
-  }
-
-  function regionReachable(S, r) {
-    return r.fold === undefined || S.fold >= r.fold;
-  }
-
-  // Regions you can see on the list (reached, or opened already)
-  function knownRegions(S) {
-    return REGIONS.filter(function (r) { return S.mat[r.id] !== undefined || (r.fold !== undefined && S.fold >= r.fold); });
-  }
 
   function doFold(S) {
     var cost = foldCost(S.fold + 1);
     if (!S.sheet || S.fold >= MAX_FOLDS || S.r.paper < cost) return false;
     S.r.paper -= cost;
     S.fold++;
+    S.full = false;
     if (FOLD_NOTES[S.fold]) log(S, FOLD_NOTES[S.fold]);
-    REGIONS.forEach(function (r) {
-      if (r.fold === S.fold && !r.gate) openRegion(S, r.id);
-    });
+    PLACES.forEach(function (p) { if (p.fold === S.fold) log(S, 'The sheet reaches ' + p.name.replace(/^The /, 'the ') + '. ' + p.seen); });
     return true;
   }
 
@@ -519,13 +538,13 @@
       sellprice: 2, ke: 1, bookink: 2, bookpaper: 5,
       hireCount: 1, hrMax: false, innovating: false,
       prodUp: 0, prodCost: 1000,
-      m: { work: 1, ink: 1, tree: 1, mint: 1, imag: 1, recycle: 0, flock: 1, pulp: 1 },
+      m: { work: 1, ink: 1, tree: 1, mint: 1, imag: 1, recycle: 0, flock: 1, wish: 1, nest: 1, job: {} },
       art: { stage: 0, n: 0, p: 0, paper: 10000, ink: 5000, imagination: 10000, knowledge: 1000, rep: 3, money: 25000 },
-      cranes: 0, alloc: 50, mat: {},
+      cranes: 0, alloc: 50, full: false, drawing: null, pageFolds: 0,
       sheet: false, fold: 0, autofold: false, autofoldOn: true,
       pending: null, ended: false, hints: {},
       log: [],
-      stats: { time: 0, paperMade: 0, clicks: 0, paintings: 0, cranesFolded: 0 }
+      stats: { time: 0, paperMade: 0, clicks: 0, paintings: 0, cranesFolded: 0, treesUsed: 0 }
     };
     EMPLOYEES.forEach(function (e) { S.emp[e.id] = { n: 0, cost: e.cost, kcost: e.kcost }; });
     if (!prev) log(S, 'You have 50 trees and an idea.');
@@ -569,7 +588,7 @@
     if (what === 'paper') {
       x = Math.min(c, r.tree / 0.01);
       if (x <= 0) return;
-      r.paper += x; r.tree = Math.max(0, r.tree - 0.01 * x); made(S, x);
+      r.paper += x; r.tree = Math.max(0, r.tree - 0.01 * x); S.stats.treesUsed += 0.01 * x; made(S, x);
     } else if (what === 'sell') {
       x = Math.min(c, r.paper);
       if (x <= 0) return;
@@ -599,7 +618,6 @@
     if (L.need) pay(S, L.need);
     S.level++;
     if (L.msg) log(S, L.msg);
-    if (S.level === 15) openRegion(S, 'world');
     return true;
   }
 
@@ -610,7 +628,6 @@
     pay(S, p.cost);
     S.done[p.id] = true;
     if (p.fx) p.fx(S);
-    if (p.id === 'gallivan') S.sheet = true;
     if (p.msg) log(S, p.msg);
     return true;
   }
@@ -709,9 +726,8 @@
       if (!FIRST_WISHES[choice]) return false;
       S.pending = null;
       S.cranes = 1000;
-      openRegion(S, 'national');
       log(S, FIRST_WISHES[choice]);
-      log(S, 'The thousand cranes come alive. They fold more cranes, and they pulp the national forests into paper. Use the slider to decide how many do which.');
+      log(S, 'The thousand cranes come alive. Some fold more cranes; the rest wish, and every wish is for paper. Use the slider to decide how many do which.');
       return true;
     }
     if (S.pending === 'lastwish') {
@@ -790,6 +806,7 @@
     JOB_ORDER.forEach(function (id) {
       var n = S.paused[id] ? 0 : S.emp[id].n * m * dt;
       if (id === 'tree') n *= S.m.tree;
+      if (S.m.job[id]) n *= S.m.job[id];
       want[id] = n;
       if (id === 'paper' || !n) return;
       var use = jobUse(S, id);
@@ -798,7 +815,7 @@
 
     // paper makers first: they only need trees
     var x = Math.min(want.paper, r.tree / 0.01);
-    if (x > 0) { r.paper += x; r.tree -= 0.01 * x; made(S, x); }
+    if (x > 0) { r.paper += x; r.tree -= 0.01 * x; S.stats.treesUsed += 0.01 * x; made(S, x); }
 
     var keep = reserve(S), share = {};
     for (var k in demand) share[k] = demand[k] > 0 ? Math.min(1, Math.max(0, r[k] - (keep[k] || 0)) / demand[k]) : 1;
@@ -829,66 +846,44 @@
     return staffCount(S) * 1 * S.m.imag * workMult(S);
   }
 
-  // Cranes take matter from whatever's in reach and either fold it into more
-  // cranes or pulp it into paper. With nothing left in reach, the pulpers
-  // start unfolding cranes instead, so you can always afford the next fold.
-  var CRANE_FOLD = 0.05; // new cranes per crane per second
-  var CRANE_PULP = 1;    // sheets per crane per second
+  // Cranes either fold more cranes (a sheet each) or wish, and every wish is
+  // for paper. They live on the sheet, so there's only room for so many until
+  // you fold it again.
+  var CRANE_FOLD = 0.04; // new cranes per crane per second
+  var CRANE_WISH = 1;   // paper per crane per second
 
   function craneRates(S) {
     var a = S.alloc / 100, c = creaseMult(S);
+    var room = Math.max(0, craneRoom(S) - S.cranes);
     return {
-      fold: S.cranes * a * CRANE_FOLD * S.m.flock * c,
-      pulp: S.cranes * (1 - a) * CRANE_PULP * S.m.pulp * c
+      fold: Math.min(S.cranes * a * CRANE_FOLD * S.m.flock * c, room),
+      wish: S.cranes * (1 - a) * CRANE_WISH * S.m.wish * c
     };
-  }
-
-  function matterLeft(S) {
-    var total = 0;
-    for (var id in S.mat) total += S.mat[id];
-    return total;
-  }
-
-  function takeMatter(S, want) {
-    var got = 0;
-    for (var i = 0; i < REGIONS.length && want > got; i++) {
-      var id = REGIONS[i].id;
-      if (!S.mat[id]) continue;
-      var take = Math.min(want - got, S.mat[id]);
-      S.mat[id] -= take;
-      got += take;
-      if (S.mat[id] < 1 || S.mat[id] <= REGIONS[i].sheets * 1e-12) {
-        S.mat[id] = 0;
-        log(S, REGIONS[i].name + (REGIONS[i].trees ? ' are' : ' is') + ' all paper now.');
-      }
-    }
-    return got;
   }
 
   function cranes(S, dt) {
     if (S.cranes <= 0) return;
     var rate = craneRates(S);
-    var pulped = takeMatter(S, rate.pulp * dt);
-    var born = takeMatter(S, rate.fold * dt);
-    S.cranes += born; S.stats.cranesFolded += born;
-    var short = rate.pulp * dt - pulped;
-    if (short > 0 && matterLeft(S) <= 0) {
-      // Out of matter: unfold cranes, but only as far as you need paper for
-      // the next fold or project, and never the last thousand
-      var cur = currentProject(S);
-      var needed = Math.max(cur && !cur.blocked && cur.p.cost.paper || 0, S.sheet && S.fold < MAX_FOLDS ? foldCost(S.fold + 1) : 0) - S.r.paper;
-      var unfold = Math.min(short, Math.max(0, needed), S.cranes * (1 - S.alloc / 100) * CRANE_FOLD * dt);
-      if (S.cranes - unfold < 1000) unfold = Math.max(0, S.cranes - 1000);
-      if (unfold > 0) {
-        S.cranes -= unfold;
-        pulped += unfold;
-        if (!S.outOfMatter) {
-          S.outOfMatter = true;
-          log(S, 'There is nothing left in reach to pulp, so the cranes have started unfolding each other. Fold the sheet further to reach more.');
-        }
-      }
-    } else if (matterLeft(S) > 0) S.outOfMatter = false;
-    S.r.paper += pulped; made(S, pulped);
+    var wished = rate.wish * dt;
+    S.r.paper += wished; made(S, wished);
+    var born = Math.min(rate.fold * dt, S.r.paper, Math.max(0, craneRoom(S) - S.cranes));
+    if (born > 0) { S.r.paper -= born; S.cranes += born; S.stats.cranesFolded += born; }
+    if (!S.full && S.cranes >= craneRoom(S) * 0.999 && S.alloc > 0) {
+      S.full = true;
+      log(S, S.sheet ? 'There is no room left on the sheet for more cranes. Fold it again: a bigger sheet has room for four times as many.'
+                     : 'There is no room left for more cranes. They will need something much bigger to live on.');
+    }
+  }
+
+  // Act IV: the artists draw back the trees, then the page folds
+  function drawTime(S) { return Math.max(60, 600 / (1 + S.emp.artist.n / 50)); }
+
+  function drawing(S, dt) {
+    if (S.drawing === null || S.drawing === undefined || S.drawing >= 1) return;
+    var step = Math.min(dt / drawTime(S), 1 - S.drawing);
+    S.drawing += step;
+    S.r.tree += step * S.stats.treesUsed;
+    if (S.drawing >= 1) log(S, 'Every tree you ever turned into paper is back, in pencil: ' + fmt(S.stats.treesUsed) + " of them. They look happy. Bob Ross would be proud.");
   }
 
   var REGROW = 0.1; // trees a second, up to the 50 you started with, so you can never run out for good
@@ -908,6 +903,7 @@
       if (S.art.p >= 1) { S.art.p = 1; S.art.stage = 4; }
     }
     cranes(S, dt);
+    drawing(S, dt);
     if (S.autofold && S.autofoldOn) {
       for (var i = 0; i < 4 && doFold(S); i++);
     }
@@ -932,13 +928,13 @@
   var api = {
     SAVE_VERSION: SAVE_VERSION,
     RES: RES, EMPLOYEES: EMPLOYEES, EMP: EMP, EXECUTIVES: EXECUTIVES, LEVELS: LEVELS, MAX_LEVEL: MAX_LEVEL,
-    PROJECTS: PROJECTS, PROJ: PROJ, RACES: RACES, REGIONS: REGIONS, REGION: REGION,
+    PROJECTS: PROJECTS, PROJ: PROJ, RACES: RACES, PLACES: PLACES,
     fmt: fmt, fmtSmall: fmtSmall, thickness: thickness, costText: costText, amountText: amountText,
     canAfford: canAfford, levelReqText: levelReqText, canLevel: canLevel,
     currentProject: currentProject, currentRace: currentRace, rivalScore: rivalScore,
     MANUAL: MANUAL, manualShown: manualShown, employeeShown: employeeShown, staffCount: staffCount, productivity: productivity, workMult: workMult,
-    creaseMult: creaseMult, imaginationRate: imaginationRate, craneRates: craneRates, matterLeft: matterLeft,
-    foldCost: foldCost, MAX_FOLDS: MAX_FOLDS, knownRegions: knownRegions, regionReachable: regionReachable, paintTime: paintTime, artCost: artCost,
+    creaseMult: creaseMult, imaginationRate: imaginationRate, craneRates: craneRates, craneRoom: craneRoom, drawTime: drawTime,
+    foldCost: foldCost, MAX_FOLDS: MAX_FOLDS, placesSeen: placesSeen, paintTime: paintTime, artCost: artCost,
     newState: newState, restore: restore, log: log, reserve: reserve,
     click: click, levelUp: levelUp, buyProject: buyProject, hire: hire, improveProductivity: improveProductivity,
     setHireCount: setHireCount, artStep: artStep, runForOffice: runForOffice, setAlloc: setAlloc,

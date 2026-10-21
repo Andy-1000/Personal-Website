@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#cce6ff" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Cross Country</title>
+    <link rel="icon" href="/crossy/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Montserrat:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="/crossy/assets/index-BaecCWS0.js"></script>
+    <link rel="stylesheet" crossorigin href="/crossy/assets/index-Dc0pf2-T.css">
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="scene"></canvas>
+
+      <!-- Down the mine: the dark closing in round the edges of the lamplight.
+           Under the HUD, so the score is not in the dark with everything else. -->
+      <div id="cave" class="cave hidden"></div>
+
+      <!-- Heads-up display, visible during play only -->
+      <div id="hud" class="layer hidden">
+        <div id="score" class="score">0</div>
+        <div id="lives" class="lives hidden"></div>
+        <div id="perk" class="perk hidden"></div>
+        <div id="warning" class="warning hidden"></div>
+        <div id="banner" class="banner hidden"></div>
+        <div id="coach" class="coach hidden" aria-hidden="true">
+          <div class="coach-pad">
+            <span class="coach-arrow coach-up"></span>
+            <span class="coach-arrow coach-right"></span>
+            <span class="coach-arrow coach-down"></span>
+            <span class="coach-arrow coach-left"></span>
+            <span class="coach-trail"></span>
+            <span class="coach-dot"></span>
+          </div>
+          <p class="coach-text">Swipe to move</p>
+          <p id="coach-sub" class="coach-sub">Tap to hop forward</p>
+        </div>
+        <div id="voyage" class="voyage hidden">
+          <div class="voyage-track"><div id="voyage-fill" class="voyage-fill"></div></div>
+          <span class="voyage-boat"></span>
+          <span class="voyage-goal">&#9760;</span>
+        </div>
+        <div id="boss" class="boss hidden">
+          <span class="boss-name">Kraken</span>
+          <div class="boss-track"><div id="boss-fill" class="boss-fill"></div></div>
+        </div>
+        <div id="tip" class="tip hidden"></div>
+        <div id="items" class="items"></div>
+        <div id="popups" class="popups"></div>
+        <div class="hud-buttons">
+          <button id="btn-sound" class="hud-btn" type="button" aria-label="Sound off">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path class="icon-fill" d="M4 9h4l5-4v14l-5-4H4z" />
+              <path class="icon-on" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" />
+              <path class="icon-off" d="M16 9l5 6M21 9l-5 6" />
+            </svg>
+          </button>
+          <button id="btn-pause" class="hud-btn" type="button" aria-label="Pause">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect class="icon-fill" x="6" y="5" width="4" height="14" rx="1" />
+              <rect class="icon-fill" x="14" y="5" width="4" height="14" rx="1" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Paused: tap anywhere to count back in -->
+      <div id="screen-pause" class="layer screen pause hidden">
+        <div id="pause-panel" class="panel pause-panel">
+          <h2 class="over-headline">Paused</h2>
+          <button id="btn-resume" class="btn btn-primary" type="button">Resume</button>
+          <button id="btn-pause-sound" class="btn btn-secondary pause-sound" type="button">Sound: on</button>
+          <p class="hint">Tap anywhere to carry on</p>
+        </div>
+        <div id="pause-count" class="pause-count hidden"></div>
+      </div>
+
+      <!-- Going into a tunnel, or coming out of one into the daylight -->
+      <div id="fade" class="fade"></div>
+
+      <!-- Start screen -->
+      <div id="screen-start" class="layer screen">
+        <div class="panel">
+          <h1 class="title">Cross Country</h1>
+          <p class="tagline">Hop through a whole life. Try not to get flattened.</p>
+
+          <div class="identity">
+            <p id="start-best" class="greeting-best">No runs yet</p>
+          </div>
+
+          <button id="btn-play" class="btn btn-primary">Play</button>
+
+          <p class="hint">Tap to hop &middot; swipe to change lane</p>
+        </div>
+      </div>
+
+      <!-- Game over screen -->
+      <div id="screen-over" class="layer screen hidden">
+        <div class="panel">
+          <h2 id="over-headline" class="over-headline">Squashed</h2>
+          <div class="score-row">
+            <div class="score-box">
+              <span class="score-label">Score</span>
+              <span id="over-score" class="score-value">0</span>
+            </div>
+            <div class="score-box">
+              <span class="score-label">Best</span>
+              <span id="over-best" class="score-value">0</span>
+            </div>
+          </div>
+          <button id="btn-again" class="btn btn-primary">Play Again</button>
+        </div>
+      </div>
+
+      <!-- Rotate nag for landscape -->
+      <div id="rotate" class="layer rotate">
+        <div class="rotate-inner">
+          <div class="rotate-icon">&#128241;</div>
+          <p>Turn your phone upright</p>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

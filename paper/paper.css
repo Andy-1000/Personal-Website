@@ -249,15 +249,15 @@ h2 {
   grid-template-columns: minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 10px;
-  padding: 9px 0;
-  border-top: 1px solid var(--line);
+  padding: 0;
+  margin-bottom: 14px;
 }
-.emp:first-child { border-top: 0; padding-top: 0; }
 .emp-name { font-size: 1rem; }
 .emp-n { color: var(--muted); }
-.emp-cost { display: block; font-size: 0.78rem; color: var(--muted); }
+.emp-name, .emp-n { white-space: nowrap; }
+.emp-cost { display: block; font-size: 0.78rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .emp-does { display: none; }
-.emp.resting .emp-name { color: var(--muted); text-decoration: line-through; }
+.emp.resting .emp-info { opacity: 0.45; }
 .emp .hire { margin: 0; padding: 8px 14px; min-width: 76px; }
 
 .toggle {
@@ -274,8 +274,7 @@ h2 {
 }
 .toggle.off { border-color: var(--bad); color: var(--bad); }
 
-.exec { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid var(--line); }
-.exec:first-child { border-top: 0; padding-top: 0; }
+.exec { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0; margin-bottom: 12px; min-height: 32px; }
 .exec-name { min-width: 0; }
 .exec-ctl { display: flex; align-items: center; gap: 8px; text-align: right; flex: none; max-width: 60%; }
 .exec .small { margin: -4px 0 4px; }

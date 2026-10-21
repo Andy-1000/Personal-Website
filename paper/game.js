@@ -196,19 +196,20 @@
   // ---------------------------------------------------------------------------
   // Doing it yourself
 
+  var MANUAL_SHORT = { paper: 'Make paper', sell: 'Sell paper', ink: 'Steal ink', book: 'Make a book', knowledge: 'Read a book', tree: 'Plant a tree' };
   var manualButtons = {};
   E.MANUAL.forEach(function (a) {
     var b = el('button', 'btn manual-btn');
     b.type = 'button';
     b.id = 'manual-' + a.id;
-    b.innerHTML = '<span class="label">' + a.label + '</span><span class="cost"></span>';
+    b.innerHTML = '<span class="label"><span class="long">' + a.label + '</span><span class="short">' + MANUAL_SHORT[a.id] + '</span></span><span class="cost"></span>';
     mash(b, function () { E.click(S, a.id); });
     manualButtons[a.id] = b;
     $('manual').appendChild(b);
   });
 
   function manualCost(id) {
-    if (id === 'paper') return 'uses 1/100 of a tree';
+    if (id === 'paper') return '1/100 of a tree';
     if (id === 'sell') return '$' + S.sellprice + ' each';
     if (id === 'ink') return '$1 each';
     if (id === 'book') return S.bookpaper + ' paper · ' + S.bookink + ' ink';
@@ -227,16 +228,21 @@
   }
 
   function renderManual() {
-    var any = false;
+    var any = 0;
     E.MANUAL.forEach(function (a) {
       var b = manualButtons[a.id], on = E.manualShown(S, a);
       show(b, on);
       if (!on) return;
-      any = true;
+      any++;
       text(b.querySelector('.cost'), manualCost(a.id));
       able(b, manualPossible(a.id));
     });
-    show($('manual'), any);
+    show($('manual'), any > 0);
+    // a grid with no gaps: 1 button is full width, 4 make two pairs, and so on
+    var m = $('manual');
+    var cd = String(any === 1 ? 1 : any === 3 || any >= 5 ? 3 : 2), cm = String(any <= 3 ? any : any === 4 ? 2 : 3);
+    if (m.style.getPropertyValue('--cd') !== cd) m.style.setProperty('--cd', cd);
+    if (m.style.getPropertyValue('--cm') !== cm) m.style.setProperty('--cm', cm);
   }
 
   // ---------------------------------------------------------------------------
@@ -352,10 +358,12 @@
     bars = [];
     ['You'].concat(race.rivals).forEach(function (name, i) {
       var col = el('div', 'bar-col');
+      var track = el('div', 'bar-track');
       var val = el('span', 'bar-val');
       var bar = el('div', 'bar-fill');
       bar.style.background = i === 0 ? '#565c70' : RIVAL_COLOURS[i - 1];
-      col.appendChild(val); col.appendChild(bar); col.appendChild(el('span', 'bar-name', name));
+      track.appendChild(val); track.appendChild(bar);
+      col.appendChild(track); col.appendChild(el('span', 'bar-name', name));
       $('bars').appendChild(col);
       bars.push({ val: val, bar: bar });
     });
@@ -400,7 +408,7 @@
     show($('cranes'), S.cranes > 0);
     if (S.cranes <= 0) return;
     var full = S.cranes >= E.craneRoom(S) * 0.999;
-    text($('crane-count'), num(S.cranes) + (full ? ' (full)' : ''));
+    text($('crane-count'), num(S.cranes) + (full ? ', no room for more' : ''));
     var slider = $('alloc');
     if (document.activeElement !== slider) slider.value = 100 - S.alloc;
     var rr = E.craneRates(S);

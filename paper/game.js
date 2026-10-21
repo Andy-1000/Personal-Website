@@ -176,22 +176,40 @@
   }
 
   // ---------------------------------------------------------------------------
-  // The news: one line, tap for the last few
+  // The news: each new line pops up on a slip of paper for a few seconds, then
+  // goes. They queue up rather than talk over each other.
 
-  var shownTop = null;
-  $('news').addEventListener('click', function () { $('news-more').classList.toggle('hidden'); });
+  var toast = $('toast'), newsSeen = null, newsQueue = [], newsUntil = 0;
+  toast.addEventListener('click', function () { newsUntil = 0; pumpNews(); });
+
+  function catchUpNews(replay) {
+    newsSeen = replay ? null : S.log[0];
+    newsQueue = [];
+    newsUntil = 0;
+  }
+
+  function collectNews() {
+    var fresh = [];
+    for (var i = 0; i < S.log.length && S.log[i] !== newsSeen; i++) fresh.push(S.log[i].text);
+    newsSeen = S.log[0];
+    if (!fresh.length) return;
+    newsQueue = newsQueue.concat(fresh.reverse()).slice(-4); // a burst only shows its last few
+  }
+
+  function pumpNews() {
+    var now = Date.now();
+    if (now < newsUntil) return;
+    if (!newsQueue.length) { toast.classList.remove('show'); return; }
+    var line = newsQueue.shift();
+    text(toast, line);
+    toast.classList.add('show');
+    var stay = Math.min(8000, Math.max(3200, 2200 + line.length * 45));
+    newsUntil = now + (newsQueue.length ? Math.min(stay, 3000) : stay);
+  }
 
   function renderNews() {
-    if (S.log[0] === shownTop) return;
-    shownTop = S.log[0];
-    var news = $('news');
-    text(news, S.log[0] ? S.log[0].text : '');
-    news.classList.remove('fresh');
-    void news.offsetWidth;
-    news.classList.add('fresh');
-    var list = $('news-more');
-    list.innerHTML = '';
-    S.log.slice(1, 8).forEach(function (entry) { list.appendChild(el('li')).textContent = entry.text; });
+    collectNews();
+    pumpNews();
   }
 
   // ---------------------------------------------------------------------------
@@ -241,7 +259,7 @@
     show($('manual'), any > 0);
     // a grid with no gaps: 1 button is full width, 4 make two pairs, and so on
     var m = $('manual');
-    var cd = String(any === 1 ? 1 : any === 3 || any >= 5 ? 3 : 2), cm = String(any <= 3 ? any : any === 4 ? 2 : 3);
+    var cd = String(Math.max(1, any)), cm = String(any <= 3 ? any : any === 4 ? 2 : 3);
     if (m.style.getPropertyValue('--cd') !== cd) m.style.setProperty('--cd', cd);
     if (m.style.getPropertyValue('--cm') !== cm) m.style.setProperty('--cm', cm);
   }
@@ -658,6 +676,8 @@
       var col = $(id);
       col.classList.toggle('empty', !col.querySelector('.panel:not(.hidden)'));
     });
+    var solo = $('col-world').classList.contains('empty');
+    if (document.querySelector('.desk').classList.contains('solo') !== solo) document.querySelector('.desk').classList.toggle('solo', solo);
   }
 
   // ---------------------------------------------------------------------------
@@ -684,7 +704,8 @@
 
   function startAgain(fresh) {
     S = fresh ? E.newState() : E.turnPage(S);
-    lastSample = null; rates = {}; shownTop = null; shownRace = null; atlasShown = -1; tab = 'work';
+    lastSample = null; rates = {}; shownRace = null; atlasShown = -1; tab = 'work';
+    catchUpNews(true);
     save();
   }
 
@@ -759,6 +780,8 @@
     show(page, S.page > 1);
     if (S.page > 1) text(page, 'Page ' + S.page + ' · ×' + fmt(E.creaseMult(S)));
   }
+
+  catchUpNews(S.stats.time < 2);
 
   var paused = false;
   var last = performance.now();

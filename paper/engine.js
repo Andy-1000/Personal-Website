@@ -397,7 +397,7 @@
     // Level 20: the edge of the page
     { id: 'margin', lv: 20, title: 'Step over the edge of the page', gain: 'Into the margin',
       cost: { knowledge: 2e9 },
-      msg: "Past the edge of the observable universe the paper just stops, and there's a margin, wide and white and quiet. Someone has written in it, in pencil: \u201cRhys, Rhys, Goosen (or maybe Josh). So you thought you might check out the code... or perhaps even cheat. Well, you must do so at your own peril...\u201d You don't know who Rhys is. You feel warned anyway." },
+      msg: "Past the edge of the observable universe the paper just stops, and there's a margin, wide and white and quiet. Someone has written in it, in pencil, very small: \u201cI know you can see this. Don't stop folding. I'm nearly finished with you.\u201d It isn't signed. The handwriting looks a little like yours." },
     { id: 'behind', lv: 20, title: 'Look behind the page', gain: 'Where the light is coming from',
       cost: { imagination: 5e9 },
       msg: "Behind the page there is a desk lamp, the edge of a desk, a rubber, a pencil, and a cup of tea that went cold hours ago. Somebody has been drawing all of this. The universe. The squid. You." },

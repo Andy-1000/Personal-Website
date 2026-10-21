@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Rhys, Rhys, Goosen (or maybe Josh). So you thought you might check out the code... or perhaps even cheat. Well, you must do so at your own peril... -->
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Paper Game</title>
+<meta name="description" content="Make paper. Sell paper. Run for mayor. Fold the universe.">
+<link rel="icon" type="image/jpeg" href="paper.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap" rel="stylesheet">
+<link href="paper.css" rel="stylesheet">
+</head>
+<body>
+
+<header class="masthead">
+  <h1>The Paper Game</h1>
+  <p id="page-no" class="page-no hidden"></p>
+</header>
+
+<ol id="log" class="log" aria-live="polite"></ol>
+
+<main class="desk">
+
+  <section class="col col-left">
+    <div class="panel">
+      <h2>Resources</h2>
+      <dl id="resources" class="resources"></dl>
+    </div>
+    <div id="manual" class="manual"></div>
+
+  </section>
+
+  <section class="col col-mid">
+    <div class="level">
+      <p>You are on Level <span id="level"></span><span id="title" class="title"></span></p>
+      <button type="button" id="level-up" class="btn"></button>
+    </div>
+
+    <div id="projects" class="panel hidden">
+      <h2>Projects</h2>
+      <div id="project"></div>
+      <p id="sign" class="sign hidden"></p>
+    </div>
+
+    <div id="art" class="panel hidden">
+      <h2>Operation Bob Ross</h2>
+      <div id="art-body"></div>
+      <div id="progress" class="progress hidden"><div id="bar" class="bar"></div><span id="bar-text"></span></div>
+    </div>
+
+    <div id="election" class="panel hidden">
+      <h2 id="election-title"></h2>
+      <div class="chart" aria-hidden="true">
+        <span class="yaxis">Reputation</span>
+        <div id="bars" class="bars"></div>
+      </div>
+      <button type="button" id="run" class="btn"></button>
+    </div>
+    <div id="cranes" class="panel hidden">
+      <h2>Cranes</h2>
+      <p class="big"><span id="crane-count"></span> paper cranes</p>
+      <p id="crane-room" class="small"></p>
+      <label class="slider">
+        <span>Fold more cranes</span>
+        <input type="range" id="alloc" min="0" max="100" step="5">
+        <span>Wish for paper</span>
+      </label>
+      <p id="crane-rates" class="small"></p>
+    </div>
+
+    <div id="sheet" class="panel hidden">
+      <h2>The Sheet</h2>
+      <p class="big">Folded <span id="folds"></span> times: <span id="thick"></span> thick</p>
+      <div class="ruler" aria-hidden="true"><div id="ruler-fill" class="ruler-fill"></div><div id="ruler-marks"></div></div>
+      <p id="next-mark" class="small"></p>
+      <button type="button" id="fold" class="btn"></button>
+      <label id="autofold-row" class="check hidden"><input type="checkbox" id="autofold"> Let the cranes fold it whenever there's enough paper</label>
+      <div id="atlas-box" class="hidden">
+        <h3>The Atlas</h3>
+        <ul id="atlas" class="atlas"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="col col-right">
+    <div id="employees" class="panel hidden">
+      <h2>Employees</h2>
+      <div id="staff-list"></div>
+    </div>
+    <div id="executives" class="panel hidden">
+      <h2>Executives</h2>
+      <div id="exec-list"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <span id="saved">Saves itself as you go</span> &middot;
+  <button type="button" id="reset" class="linkish">Start over</button> &middot;
+  <a href="/">andysansness.com</a>
+</footer>
+
+<button type="button" id="paused" class="overlay hidden">
+  <img data-src="stile_photo.png" alt="" onerror="this.remove()">
+  <span class="overlay-text">Paused. Press space to carry on.</span>
+</button>
+
+<button type="button" id="rick" class="overlay hidden">
+  <img data-src="rick_photo.webp" alt="" onerror="this.remove()">
+  <span class="overlay-text">&#9835; Never gonna give you up, never gonna let you down &#9835;</span>
+</button>
+
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="sheet-of-paper">
+    <h2 id="modal-title"></h2>
+    <div id="modal-body"></div>
+    <div id="modal-buttons" class="modal-buttons"></div>
+  </div>
+</div>
+
+<div id="creases" class="creases" aria-hidden="true"></div>
+
+<script src="engine.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

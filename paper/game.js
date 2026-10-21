@@ -45,9 +45,20 @@
   function text(node, t) { t = String(t); if (node.textContent !== t) node.textContent = t; }
   function html(node, h) { if (node._h !== h) { node.innerHTML = h; node._h = h; } }
   function attr(node, name, value) { if (node.getAttribute(name) !== value) node.setAttribute(name, value); }
+  // Whether a button looks affordable. When money hovers right around a price
+  // it can be yes one moment and no the next; a button only changes once the
+  // new answer has held for a moment, so it doesn't flicker. (Straight after
+  // you press a button, that button changes at once.)
+  var pressed = null;
   function able(node, ok) {
-    if (node.classList.contains('cant') === ok) node.classList.toggle('cant', !ok);
-    attr(node, 'aria-disabled', ok ? 'false' : 'true');
+    var now = Date.now();
+    if (node._ok === undefined || node === pressed) node._ok = ok;
+    if (ok === node._ok) node._since = 0;
+    else if (!node._since) node._since = now;
+    else if (now - node._since >= 450) { node._ok = ok; node._since = 0; }
+    var shown = node._ok;
+    if (node.classList.contains('cant') === shown) node.classList.toggle('cant', !shown);
+    attr(node, 'aria-disabled', shown ? 'false' : 'true');
   }
 
   // Short numbers: 12,345 then 12.3K, 4.56M, 7.89B ... then 1.2e45
@@ -86,11 +97,12 @@
   function soon() {
     if (queued) return;
     queued = true;
-    requestAnimationFrame(function () { queued = false; render(); });
+    requestAnimationFrame(function () { queued = false; render(); pressed = null; });
   }
 
   // A quick squash on every tap, restarted each time so it never falls behind
   function bump(node) {
+    pressed = node;
     if (!node.animate) return;
     if (node._bump) node._bump.cancel();
     node._bump = node.animate([{ transform: 'scale(0.94)' }, { transform: 'scale(1)' }], { duration: 160, easing: 'ease-out' });
@@ -111,6 +123,7 @@
     });
     b.addEventListener('click', function (ev) { if (ev.detail === 0) { act(); bump(b); soon(); } }); // keyboard
     b.addEventListener('contextmenu', function (ev) { ev.preventDefault(); });
+    b.addEventListener('mousedown', function (ev) { if (ev.detail > 1) ev.preventDefault(); }); // no double-click selecting
   }
 
   // ---------------------------------------------------------------------------
@@ -783,15 +796,19 @@
 
   catchUpNews(S.stats.time < 2);
 
+  // The game moves in even tenth-of-a-second steps, however unevenly the
+  // timer fires, so a steady economy shows steady numbers. A backgrounded tab
+  // catches up when you come back, within reason.
+  var STEP = 0.1;
   var paused = false;
-  var last = performance.now();
+  var last = performance.now(), owed = 0;
   setInterval(function () {
     var now = performance.now();
-    var dt = Math.min((now - last) / 1000, 120); // a backgrounded tab catches up, within reason
+    owed = Math.min(owed + (now - last) / 1000, 120);
     last = now;
-    if (!paused) {
-      while (dt > 0) { var step = Math.min(dt, 0.5); E.tick(S, step); dt -= step; }
-    }
+    if (paused) owed = 0;
+    while (owed > 5) { E.tick(S, 0.5); owed -= 0.5; }
+    while (owed >= STEP - 1e-6) { E.tick(S, STEP); owed -= STEP; }
     sampleRates();
     render();
   }, 100);

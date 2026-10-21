@@ -29,7 +29,11 @@ body {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   overflow-x: hidden;
+  /* it's a game: fast clicking shouldn't highlight text anywhere */
+  user-select: none;
+  -webkit-user-select: none;
 }
+.sheet-of-paper { user-select: text; -webkit-user-select: text; }
 
 /* a pseudo-element, because iOS ignores background-attachment: fixed */
 body::before {
@@ -123,6 +127,7 @@ h2 {
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   touch-action: manipulation;
+  transition: opacity 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 .btn:first-child, h2 + .btn { margin-top: 0; }
 .btn .label { display: block; }

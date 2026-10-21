@@ -100,12 +100,16 @@
     requestAnimationFrame(function () { queued = false; render(); pressed = null; });
   }
 
-  // A quick squash on every tap, restarted each time so it never falls behind
+  // A quick press on every tap, restarted each time so it never falls behind.
+  // It moves the button with top rather than transform or opacity: those run on
+  // Chrome's compositor, which pulls the text below onto its own layer and turns
+  // it grey on Windows for as long as the animation runs.
   function bump(node) {
     pressed = node;
     if (!node.animate) return;
     if (node._bump) node._bump.cancel();
-    node._bump = node.animate([{ transform: 'scale(0.94)' }, { transform: 'scale(1)' }], { duration: 160, easing: 'ease-out' });
+    var shadow = getComputedStyle(node).boxShadow;
+    node._bump = node.animate([{ top: '2px', boxShadow: 'none' }, { top: '0px', boxShadow: shadow }], { duration: 160, easing: 'ease-out' });
   }
 
   function button(cls, onClick) {

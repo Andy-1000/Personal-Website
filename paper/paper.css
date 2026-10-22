@@ -357,9 +357,31 @@ body[data-folds="7"] .desk { transform: scale(0.79) rotate(1deg); filter: graysc
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
 
-/* ---------------------------------------------------------------- question marks and what they say (phones) */
+/* ---------------------------------------------------------------- question marks and what they say */
 
-.help { display: none; }
+.help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  margin-left: 6px;
+  padding: 0;
+  vertical-align: 2px;
+  font: inherit;
+  font-size: 0.62rem;
+  line-height: 1;
+  color: var(--muted);
+  background: none;
+  border: 1.2px solid var(--muted);
+  border-radius: 50%;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.help::after { content: ""; position: absolute; inset: -12px; } /* a bigger target than it looks */
+.help[aria-expanded="true"] { color: var(--ink); border-color: var(--ink); }
+@media (hover: hover) { .help:hover { color: var(--ink); border-color: var(--ink); } }
 .tip {
   display: none;
   position: fixed;
@@ -483,28 +505,6 @@ body[data-folds="7"] .desk { transform: scale(0.79) rotate(1deg); filter: graysc
   .emp .hire { padding: 8px 12px; min-width: 66px; }
   #employees { margin-bottom: 40px; }
   .exec-note { display: none; }
-  .help {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: 16px;
-    height: 16px;
-    margin-left: 6px;
-    padding: 0;
-    vertical-align: 2px;
-    font: inherit;
-    font-size: 0.62rem;
-    line-height: 1;
-    color: var(--muted);
-    background: none;
-    border: 1.2px solid var(--muted);
-    border-radius: 50%;
-    cursor: pointer;
-    touch-action: manipulation;
-  }
-  .help::after { content: ""; position: absolute; inset: -12px; } /* a bigger target than it looks */
-  .help[aria-expanded="true"] { color: var(--ink); border-color: var(--ink); }
   .mark { display: none; }
   .ruler { margin: 10px 0 14px; }
   .bar-track { height: 100px; }

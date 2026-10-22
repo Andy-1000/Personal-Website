@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Games | Andy Sansness</title>
+<meta name="description" content="Games by Andy Sansness, built for the fun of it and made to play right here in the browser.">
+<meta name="theme-color" content="#020a14">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/hubs.css?v=1">
+</head>
+<body>
+
+<header class="bar">
+  <a class="home" href="/" aria-label="Andy Sansness, home"><span class="full">Andy Sansness</span><span class="short">AS</span></a>
+  <nav class="sections" aria-label="Sections">
+    <a href="/stories">Data stories</a>
+    <a href="/games" aria-current="page">Games</a>
+    <a href="/reviews">Reviews</a>
+  </nav>
+</header>
+
+<main class="hub">
+  <header class="hub-head">
+    <h1>Games</h1>
+    <p class="lede">Games I’ve built for the fun of it, made to play right here in the browser. There’s always another one on the way.</p>
+  </header>
+
+  <!-- newest first. To add a game: copy an <li>, point it at the game, take its
+       snapshot with `node snapshots/capture.mjs <slug>`, then add it to the
+       Games menu and door on the home page too -->
+  <ul class="tiles">
+    <li>
+      <a class="tile" href="/paper/">
+        <span class="shot"><img src="/snapshots/paper.jpg" alt="" width="800" height="500" decoding="async"></span>
+        <span class="meta">
+          <span class="kicker">An idle game that gets out of hand</span>
+          <span class="title">The Paper Game</span>
+          <span class="dek">Make paper. Sell paper. Run for mayor. Fold the universe.</span>
+          <span class="go">Play <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+        </span>
+      </a>
+    </li>
+    <li>
+      <a class="tile" href="/crossy/">
+        <span class="shot"><img src="/snapshots/crossy.jpg" alt="" width="800" height="500" decoding="async"></span>
+        <span class="meta">
+          <span class="kicker">Open world crossy road</span>
+          <span class="title">Cross Country</span>
+          <span class="dek">Hop across roads and rivers for as long as you last. Turn back past the start and you’ll find the Deep Freeze.</span>
+          <span class="go">Play <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+        </span>
+      </a>
+    </li>
+  </ul>
+</main>
+
+</body>
+</html>

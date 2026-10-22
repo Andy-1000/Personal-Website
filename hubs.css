@@ -1,0 +1,224 @@
+/* The hub pages: /stories, /games and /reviews. One list of tiles each,
+   newest first, in the same night sky as the home page. */
+
+:root {
+  --night: #020a14;
+  --deep: #04162b;
+  --blue: #004d99;
+  --sky: #cce6ff;
+  --ice: #e9f3ff;
+  --gold: #e8a921;
+  --line: rgba(204, 230, 255, 0.16);
+  --muted: rgba(204, 230, 255, 0.62);
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--night);
+}
+
+body {
+  min-height: 100vh;
+  color: var(--ice);
+  font-family: "Open Sans", sans-serif;
+  line-height: 1.5;
+  background: radial-gradient(ellipse 80% 640px at 50% 0, #0c2d52 0%, rgba(12, 45, 82, 0) 70%), var(--night);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { color: #fff; background: var(--blue); }
+
+/* ---------- the bar: home on the left, the three sections on the right ---------- */
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: calc(16px + env(safe-area-inset-top)) calc(36px + env(safe-area-inset-right)) 0 calc(36px + env(safe-area-inset-left));
+}
+
+.bar a {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bar a:hover { color: var(--ice); border-color: var(--line); background: rgba(2, 10, 20, 0.35); }
+.bar a:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+.bar a[aria-current="page"] { color: var(--ice); border-color: var(--line); }
+
+.home .short { display: none; }
+
+.sections { display: flex; gap: 2px; }
+
+/* ---------- the hub ---------- */
+.hub {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 64px 16px calc(96px + env(safe-area-inset-bottom));
+}
+
+.hub-head {
+  max-width: 640px;
+  margin: 0 auto 44px;
+  text-align: center;
+}
+
+.hub-head h1 {
+  margin: 0;
+  font-family: "Merriweather", serif;
+  font-weight: 900;
+  font-size: clamp(34px, 6vw, 56px);
+  line-height: 1.1;
+}
+
+.lede {
+  margin: 14px 0 0;
+  font-size: 17px;
+  color: rgba(233, 243, 255, 0.78);
+}
+
+/* the tiles wrap into rows, and a part-filled last row sits in the middle,
+   so the grid looks right at any count */
+.tiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tiles > li { display: flex; flex: 0 1 360px; min-width: 0; }
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(4, 22, 43, 0.62);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  color: var(--ice);
+  text-decoration: none;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.25s ease, box-shadow 0.35s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tile:hover,
+.tile:focus-visible {
+  transform: translateY(-4px);
+  border-color: rgba(204, 230, 255, 0.4);
+  box-shadow: 0 26px 60px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(204, 230, 255, 0.08), 0 0 48px rgba(43, 111, 214, 0.25);
+  outline: none;
+}
+
+.tile:focus-visible { border-color: var(--sky); }
+
+.shot {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--deep);
+  border-bottom: 1px solid var(--line);
+}
+
+.shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.tile:hover .shot img,
+.tile:focus-visible .shot img { transform: scale(1.04); }
+
+.meta {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 20px 22px 22px;
+}
+
+.kicker {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.title {
+  margin: 8px 0 8px;
+  font-family: "Merriweather", serif;
+  font-weight: 900;
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+.dek {
+  margin: 0 0 18px;
+  font-size: 14.5px;
+  color: rgba(233, 243, 255, 0.75);
+}
+
+.go {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--sky);
+  transition: color 0.2s ease;
+}
+
+.go svg { width: 16px; height: 16px; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+.tile:hover .go,
+.tile:focus-visible .go { color: var(--gold); }
+
+.tile:hover .go svg,
+.tile:focus-visible .go svg { transform: translateX(4px); }
+
+/* ---------- phones ---------- */
+@media (max-width: 640px) {
+  .bar { padding-left: calc(10px + env(safe-area-inset-left)); padding-right: calc(10px + env(safe-area-inset-right)); }
+  .bar a { padding: 9px 9px; font-size: 11px; letter-spacing: 0.14em; }
+  .home .full { display: none; }
+  .home .short { display: inline; }
+  .sections { gap: 0; }
+  .hub { padding-top: 44px; }
+  .hub-head { margin-bottom: 30px; }
+  .lede { font-size: 16px; }
+  .tiles { gap: 20px; }
+  .meta { padding: 18px 18px 20px; }
+  .title { font-size: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar a, .tile, .shot img, .go, .go svg { transition: none; }
+}

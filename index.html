@@ -99,10 +99,20 @@
     padding: calc(26px + env(safe-area-inset-top)) calc(36px + env(safe-area-inset-right)) 0 calc(36px + env(safe-area-inset-left));
   }
 
-  /* ---------- the reviews dropdown ---------- */
-  .reviews { position: relative; }
+  /* ---------- the site menus: Data stories, Games, Reviews ---------- */
+  .site-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
 
-  .reviews-toggle {
+  .drop { position: relative; }
+
+  .drop-toggle {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -121,35 +131,35 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  .reviews-toggle .chev {
+  .drop-toggle .chev {
     width: 14px;
     height: 14px;
     transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  .reviews-toggle:hover,
-  .reviews.open .reviews-toggle {
+  .drop-toggle:hover,
+  .drop.open .drop-toggle {
     color: var(--ice);
     border-color: var(--line);
     background: rgba(2, 10, 20, 0.35);
   }
 
-  .reviews.open .reviews-toggle .chev { transform: rotate(180deg); }
+  .drop.open .drop-toggle .chev { transform: rotate(180deg); }
 
-  .reviews-toggle:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+  .drop-toggle:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
 
   .menu {
     position: absolute;
     top: calc(100% + 10px);
     right: 0;
     z-index: 10;
-    min-width: 220px;
+    width: max-content;
+    max-width: calc(100vw - 32px);
     margin: 0;
-    padding: 8px;
-    list-style: none;
+    padding: 10px;
     border: 1px solid rgba(204, 230, 255, 0.16);
-    border-radius: 16px;
-    background: rgba(4, 22, 43, 0.78);
+    border-radius: 18px;
+    background: rgba(4, 22, 43, 0.86);
     -webkit-backdrop-filter: blur(16px) saturate(1.3);
     backdrop-filter: blur(16px) saturate(1.3);
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
@@ -170,49 +180,112 @@
     height: 12px;
   }
 
-  .reviews.open .menu {
+  .drop.open .menu {
     opacity: 1;
     visibility: visible;
     transform: none;
     transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  .menu a {
+  /* stories and games show as cards side by side, reviews as two columns of rows */
+  .menu-items {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 184px;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .menu-rows .menu-items {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, 256px);
+  }
+
+  .menu-items a {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 11px 14px;
-    border-radius: 10px;
-    font-family: "Merriweather", serif;
-    font-weight: 900;
-    font-size: 16px;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    padding: 8px;
+    border-radius: 12px;
     color: var(--ice);
     text-decoration: none;
-    transition: background 0.2s ease, color 0.2s ease;
+    transition: background 0.2s ease;
     -webkit-tap-highlight-color: transparent;
   }
 
-  .menu a svg {
-    width: 16px;
-    height: 16px;
-    color: var(--gold);
-    opacity: 0;
-    transform: translateX(-6px);
-    transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
+  .menu-rows .menu-items a { flex-direction: row; align-items: center; gap: 14px; }
 
-  .menu a:hover,
-  .menu a:focus-visible {
+  .menu-items a:hover,
+  .menu-items a:focus-visible {
     background: rgba(0, 77, 153, 0.38);
     outline: none;
   }
 
-  .menu a:hover svg,
-  .menu a:focus-visible svg {
-    opacity: 1;
-    transform: none;
+  .m-shot {
+    display: block;
+    flex: none;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--deep);
   }
+
+  .menu-rows .m-shot { width: 72px; }
+
+  .m-shot img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+
+  .m-text { display: flex; flex-direction: column; padding: 0 4px 2px; }
+
+  .menu-rows .m-text { padding: 0; }
+
+  .m-title {
+    font-family: "Merriweather", serif;
+    font-weight: 900;
+    font-size: 15px;
+    line-height: 1.3;
+  }
+
+  .m-sub { font-size: 12.5px; line-height: 1.4; color: var(--muted); }
+
+  .menu-all {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 8px 0 0;
+    padding: 12px 10px 4px;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--sky);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .menu-all svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .menu-all:hover,
+  .menu-all:focus-visible { color: var(--gold); outline: none; }
+
+  .menu-all:hover svg,
+  .menu-all:focus-visible svg { transform: translateX(4px); }
 
   .hero {
     display: flex;
@@ -299,7 +372,7 @@
 
   .social svg { width: 18px; height: 18px; }
 
-  /* ---------- the cue down to the data stories ---------- */
+  /* ---------- the cue down to the doors ---------- */
   .more {
     position: absolute;
     left: 50%;
@@ -330,8 +403,8 @@
     50% { transform: translateY(4px); }
   }
 
-  /* ---------- the data stories ---------- */
-  .work {
+  /* ---------- the three doors: Data stories, Games, Reviews ---------- */
+  .doors {
     position: relative;
     z-index: 2;
     max-width: 1180px;
@@ -340,48 +413,36 @@
     scroll-margin-top: 0;
   }
 
-  .work-head { margin: 0 0 36px; text-align: center; }
-
-  .eyebrow {
-    margin: 0 0 10px;
-    padding-left: 0.3em;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gold);
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
   }
 
-  .work h2 {
-    margin: 0;
-    font-family: "Merriweather", serif;
-    font-weight: 900;
-    font-size: clamp(28px, 5vw, 44px);
-    line-height: 1.1;
-    color: var(--ice);
-  }
-
-  /* the tiles wrap into rows, and a part-filled last row sits in the middle,
-     so the grid looks right at any count */
-  .tiles {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+  .door-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 28px;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .tiles > li { display: flex; flex: 0 1 360px; min-width: 0; }
+  .door-list > li { display: flex; min-width: 0; }
 
-  .tile {
+  .door {
     display: flex;
     flex-direction: column;
     width: 100%;
     overflow: hidden;
     border: 1px solid var(--line);
-    border-radius: 18px;
+    border-radius: 22px;
     background: rgba(4, 22, 43, 0.62);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
@@ -392,63 +453,79 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  .tile:hover,
-  .tile:focus-visible {
+  .door:hover,
+  .door:focus-visible {
     transform: translateY(-4px);
     border-color: rgba(204, 230, 255, 0.4);
     box-shadow: 0 26px 60px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(204, 230, 255, 0.08), 0 0 48px rgba(43, 111, 214, 0.25);
     outline: none;
   }
 
-  .tile:focus-visible { border-color: var(--sky); }
+  .door:focus-visible { border-color: var(--sky); }
 
-  .shot {
+  /* the newest three, fanned like cards: c3 in front, c1 and c2 behind */
+  .stack {
     position: relative;
     display: block;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
-    background: var(--deep);
+    background: radial-gradient(ellipse 80% 70% at 50% 60%, #0c2d52 0%, var(--deep) 75%);
     border-bottom: 1px solid var(--line);
   }
 
-  .shot img {
+  .stack img {
+    position: absolute;
     display: block;
-    width: 100%;
-    height: 100%;
+    width: 58%;
+    height: auto;
+    aspect-ratio: 16 / 10;
     object-fit: cover;
-    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+    object-position: top;
+    border: 1px solid rgba(204, 230, 255, 0.25);
+    border-radius: 10px;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
   }
 
-  .tile:hover .shot img,
-  .tile:focus-visible .shot img { transform: scale(1.04); }
+  .stack .c1 { left: 6%; top: 16%; transform: rotate(-6deg); }
+  .stack .c2 { right: 6%; top: 10%; transform: rotate(5deg); }
 
-  .meta {
+  .stack .c3 {
+    left: 19%;
+    bottom: 9%;
+    width: 62%;
+    border-color: rgba(204, 230, 255, 0.35);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+  }
+
+  /* with only two to show, they lean corner to corner */
+  .stack.pair .c1 { left: 7%; top: 12%; width: 60%; transform: rotate(-5deg); }
+  .stack.pair .c3 { left: auto; right: 7%; bottom: 11%; width: 60%; transform: rotate(3deg); }
+
+  .door:hover .c1, .door:focus-visible .c1 { transform: rotate(-9deg) translateX(-10px); }
+  .door:hover .c2, .door:focus-visible .c2 { transform: rotate(8deg) translateX(10px); }
+  .door:hover .c3, .door:focus-visible .c3 { transform: translateY(-6px); }
+  .door:hover .pair .c1, .door:focus-visible .pair .c1 { transform: rotate(-8deg) translate(-8px, -4px); }
+  .door:hover .pair .c3, .door:focus-visible .pair .c3 { transform: rotate(5deg) translate(8px, 4px); }
+
+  .door-meta {
     display: flex;
     flex: 1;
     flex-direction: column;
-    padding: 20px 22px 22px;
+    padding: 24px 26px 26px;
   }
 
-  .kicker {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  .title {
-    margin: 8px 0 8px;
+  .door-title {
     font-family: "Merriweather", serif;
     font-weight: 900;
-    font-size: 22px;
-    line-height: 1.25;
+    font-size: 28px;
+    line-height: 1.2;
   }
 
-  .dek {
-    margin: 0 0 18px;
-    font-size: 14.5px;
-    color: rgba(233, 243, 255, 0.72);
+  .door-dek {
+    margin: 8px 0 20px;
+    font-size: 15px;
+    color: rgba(233, 243, 255, 0.75);
   }
 
   .go {
@@ -466,15 +543,70 @@
 
   .go svg { width: 16px; height: 16px; transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1); }
 
-  .tile:hover .go,
-  .tile:focus-visible .go { color: var(--gold); }
+  .door:hover .go,
+  .door:focus-visible .go { color: var(--gold); }
 
-  .tile:hover .go svg,
-  .tile:focus-visible .go svg { transform: translateX(4px); }
+  .door:hover .go svg,
+  .door:focus-visible .go svg { transform: translateX(4px); }
 
-  /* tiles rise into place as they scroll into view */
-  .js .tiles.watch > li { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
-  .js .tiles.watch > li.in { opacity: 1; transform: none; }
+  /* what's new lately, as a row of pills under the doors */
+  .recent {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 12px 14px;
+    margin: 44px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .recent-label {
+    margin-right: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .recent a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 16px 0 8px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(4, 22, 43, 0.62);
+    font-size: 14px;
+    color: var(--ice);
+    text-decoration: none;
+    transition: border-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .recent a:hover,
+  .recent a:focus-visible { border-color: rgba(204, 230, 255, 0.45); outline: none; }
+
+  .recent a:focus-visible { border-color: var(--sky); }
+
+  .tag {
+    flex: none;
+    white-space: nowrap;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--night);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* the doors rise into place as they scroll into view */
+  .js .door-list.watch > li { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .js .door-list.watch > li.in { opacity: 1; transform: none; }
 
   /* ---------- cursor: the old blue ball, glowing now ---------- */
   .cursor { display: none; }
@@ -520,20 +652,40 @@
 
     .top { justify-content: center; padding-left: 8px; padding-right: 8px; }
 
+    /* the three menus share the width of the screen, so each opens centred under all three */
+    .site { position: relative; }
+    .drop { position: static; }
+
+    .drop-toggle { gap: 5px; padding: 9px 8px 9px 10px; font-size: 11px; letter-spacing: 0.14em; }
+    .drop-toggle .chev { width: 12px; height: 12px; }
+
     .menu {
       right: auto;
       left: 50%;
-      margin-left: -110px;
+      width: min(380px, calc(100vw - 16px));
+      max-width: none;
+      transform: translate(-50%, -6px) scale(0.98);
       transform-origin: top center;
     }
 
+    .drop.open .menu { transform: translate(-50%, 0); }
+
+    .menu-items,
+    .menu-rows .menu-items { grid-auto-flow: row; grid-template-columns: minmax(0, 1fr); gap: 2px; }
+
+    .menu-items a { flex-direction: row; align-items: center; gap: 12px; }
+    .m-shot, .menu-rows .m-shot { width: 76px; }
+    .m-text { padding: 0; }
+
     .role { font-size: 11.5px; letter-spacing: 0.26em; padding-left: 0.26em; }
 
-    .work { padding-top: 56px; }
-    .work-head { margin-bottom: 28px; }
-    .tiles { gap: 20px; }
-    .meta { padding: 18px 18px 20px; }
-    .title { font-size: 20px; }
+    .doors { padding-top: 56px; }
+    .door-list { gap: 20px; }
+    .stack { aspect-ratio: 16 / 11; }
+    .door-meta { padding: 20px 20px 22px; }
+    .door-title { font-size: 24px; }
+    .recent { flex-direction: column; align-items: flex-start; gap: 10px; margin-top: 32px; }
+    .recent a { padding-top: 8px; padding-bottom: 8px; border-radius: 22px; line-height: 1.35; }
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -542,9 +694,9 @@
 
   @media (prefers-reduced-motion: reduce) {
     .js .name { animation-duration: 0s; }
-    .reviews-toggle, .reviews-toggle .chev, .menu, .reviews.open .menu, .menu a, .menu a svg, .social a { transition: none; }
+    .drop-toggle, .drop-toggle .chev, .menu, .drop.open .menu, .menu-items a, .menu-all, .menu-all svg, .social a { transition: none; }
     .more svg { animation: none; }
-    .tile, .shot img, .go, .go svg, .js .tiles.watch > li { transition: none; }
+    .door, .stack img, .go, .go svg, .recent a, .js .door-list.watch > li { transition: none; }
   }
 </style>
 </head>
@@ -556,16 +708,52 @@
 
 <div class="stage">
   <header class="top">
-    <nav class="reviews" id="reviews" aria-label="Site">
-      <button class="reviews-toggle" id="reviewsToggle" type="button" aria-expanded="false" aria-controls="reviewsMenu">
-        Reviews
-        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-      </button>
-      <ul class="menu" id="reviewsMenu">
-        <li><a href="/movies">Movies <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a></li>
-        <li><a href="/albums">Albums <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a></li>
-        <li><a href="/novels">Novels <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a></li>
-        <li><a href="/books">Books <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a></li>
+    <!-- each menu shows the newest three (all four reviews), newest first, and
+         ends with a link to that section's hub page -->
+    <nav class="site" id="site" aria-label="Site">
+      <ul class="site-list">
+        <li class="drop">
+          <button class="drop-toggle" type="button" aria-expanded="false" aria-controls="menuStories">
+            Data stories
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="menu" id="menuStories">
+            <ul class="menu-items">
+              <li><a href="/shakespeare/"><span class="m-shot"><img src="snapshots/shakespeare.jpg" alt="" width="800" height="500" decoding="async"></span><span class="m-text"><span class="m-title">Did Shakespeare Really Invent That?</span><span class="m-sub">Words first recorded in Shakespeare</span></span></a></li>
+              <li><a href="/slang/"><span class="m-shot"><img src="snapshots/slang.jpg" alt="" width="800" height="500" decoding="async"></span><span class="m-text"><span class="m-title">Bussin' to Groovy</span><span class="m-sub">Slang across a century</span></span></a></li>
+              <li><a href="/names"><span class="m-shot"><img src="snapshots/names.jpg" alt="" width="800" height="500" decoding="async"></span><span class="m-text"><span class="m-title">Is Your Name Dying?</span><span class="m-sub">American baby names since 1880</span></span></a></li>
+            </ul>
+            <a class="menu-all" href="/stories">All data stories <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </li>
+        <li class="drop">
+          <button class="drop-toggle" type="button" aria-expanded="false" aria-controls="menuGames">
+            Games
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="menu" id="menuGames">
+            <ul class="menu-items">
+              <li><a href="/paper/"><span class="m-shot"><img src="snapshots/paper.jpg" alt="" width="800" height="500" decoding="async"></span><span class="m-text"><span class="m-title">The Paper Game</span><span class="m-sub">An idle game that gets out of hand</span></span></a></li>
+              <li><a href="/crossy/"><span class="m-shot"><img src="snapshots/crossy.jpg" alt="" width="800" height="500" decoding="async"></span><span class="m-text"><span class="m-title">Cross Country</span><span class="m-sub">Open world crossy road</span></span></a></li>
+            </ul>
+            <a class="menu-all" href="/games">All games <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </li>
+        <li class="drop">
+          <button class="drop-toggle" type="button" aria-expanded="false" aria-controls="menuReviews">
+            Reviews
+            <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div class="menu menu-rows" id="menuReviews">
+            <ul class="menu-items">
+              <li><a href="/movies"><span class="m-shot"><img src="snapshots/movies.jpg" alt="" width="800" height="500" decoding="async"></span><span class="m-text"><span class="m-title">Movies</span><span class="m-sub">Watched and rated</span></span></a></li>
+              <li><a href="/albums"><span class="m-shot"><img src="snapshots/albums.jpg" alt="" width="800" height="500" decoding="async"></span><span class="m-text"><span class="m-title">Albums</span><span class="m-sub">Listened to and rated</span></span></a></li>
+              <li><a href="/novels"><span class="m-shot"><img src="snapshots/novels.jpg" alt="" width="800" height="500" decoding="async"></span><span class="m-text"><span class="m-title">Novels</span><span class="m-sub">Read and rated</span></span></a></li>
+              <li><a href="/books"><span class="m-shot"><img src="snapshots/books.jpg" alt="" width="800" height="500" decoding="async"></span><span class="m-text"><span class="m-title">Books</span><span class="m-sub">Non-fiction, read and rated</span></span></a></li>
+            </ul>
+            <a class="menu-all" href="/reviews">All reviews <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </li>
       </ul>
     </nav>
   </header>
@@ -583,125 +771,148 @@
     </p>
   </main>
 
-  <a class="more" href="#work">Data stories <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
+  <a class="more" href="#explore">Explore <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></a>
 
 </div>
 
-<section class="work" id="work" aria-labelledby="workTitle">
-  <header class="work-head">
-    <p class="eyebrow">Projects</p>
-    <h2 id="workTitle">Data stories</h2>
-  </header>
+<section class="doors" id="explore" aria-labelledby="exploreTitle">
+  <h2 class="visually-hidden" id="exploreTitle">Explore</h2>
 
-  <!-- newest first. To add a project: copy an <li>, point it at the page, and
-       take its snapshot with `node snapshots/capture.mjs <slug>` -->
-  <ul class="tiles" id="tiles">
+  <!-- each door fans out that section's newest three snapshots, newest as c3 in
+       front; with only two, give the stack the class "pair" and use c1 and c3 -->
+  <ul class="door-list" id="doors">
     <li>
-      <a class="tile" href="/shakespeare/">
-        <span class="shot"><img src="snapshots/shakespeare.jpg" alt="" width="800" height="500" loading="lazy" decoding="async"></span>
-        <span class="meta">
-          <span class="kicker">Words first recorded in Shakespeare</span>
-          <span class="title">Did Shakespeare Really Invent That?</span>
-          <span class="dek">He’s credited with hundreds of everyday words. Then the dictionary started reading everyone else.</span>
-          <span class="go">Explore <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+      <a class="door" href="/stories">
+        <span class="stack" aria-hidden="true">
+          <img class="c1" src="snapshots/names.jpg" alt="" width="800" height="500" loading="lazy" decoding="async">
+          <img class="c2" src="snapshots/slang.jpg" alt="" width="800" height="500" loading="lazy" decoding="async">
+          <img class="c3" src="snapshots/shakespeare.jpg" alt="" width="800" height="500" loading="lazy" decoding="async">
+        </span>
+        <span class="door-meta">
+          <span class="door-title">Data stories</span>
+          <span class="door-dek">When a question won’t leave me alone, I go looking for the data. These are the answers, told as stories you scroll through.</span>
+          <span class="go">Read the stories <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
         </span>
       </a>
     </li>
     <li>
-      <a class="tile" href="/slang/">
-        <span class="shot"><img src="snapshots/slang.jpg" alt="" width="800" height="500" loading="lazy" decoding="async"></span>
-        <span class="meta">
-          <span class="kicker">Slang across a century</span>
-          <span class="title">Bussin' to Groovy</span>
-          <span class="dek">How slang is born, spreads, peaks and dies, across a century of generations. And how old your own vocabulary is.</span>
-          <span class="go">Explore <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+      <a class="door" href="/games">
+        <span class="stack pair" aria-hidden="true">
+          <img class="c1" src="snapshots/crossy.jpg" alt="" width="800" height="500" loading="lazy" decoding="async">
+          <img class="c3" src="snapshots/paper.jpg" alt="" width="800" height="500" loading="lazy" decoding="async">
+        </span>
+        <span class="door-meta">
+          <span class="door-title">Games</span>
+          <span class="door-dek">Games I’ve built for the fun of it, made to play right here in the browser. There’s always another one on the way.</span>
+          <span class="go">Play the games <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
         </span>
       </a>
     </li>
     <li>
-      <a class="tile" href="/names">
-        <span class="shot"><img src="snapshots/names.jpg" alt="" width="800" height="500" loading="lazy" decoding="async"></span>
-        <span class="meta">
-          <span class="kicker">American baby names since 1880</span>
-          <span class="title">Is Your Name Dying?</span>
-          <span class="dek">Names are born, they peak and most of them fade. The life story of every common American name, and where yours is in its own.</span>
-          <span class="go">Explore <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+      <a class="door" href="/reviews">
+        <span class="stack" aria-hidden="true">
+          <img class="c1" src="snapshots/albums.jpg" alt="" width="800" height="500" loading="lazy" decoding="async">
+          <img class="c2" src="snapshots/novels.jpg" alt="" width="800" height="500" loading="lazy" decoding="async">
+          <img class="c3" src="snapshots/movies.jpg" alt="" width="800" height="500" loading="lazy" decoding="async">
+        </span>
+        <span class="door-meta">
+          <span class="door-title">Reviews</span>
+          <span class="door-dek">Everything I’ve watched, listened to and read, rated honestly and sortable any way you like.</span>
+          <span class="go">Browse the reviews <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
         </span>
       </a>
     </li>
   </ul>
+
+  <!-- the latest three things to go up, newest first -->
+  <ul class="recent" aria-label="Recently">
+    <li class="recent-label" aria-hidden="true">Recently</li>
+    <li><a href="/paper/"><span class="tag">New game</span>The Paper Game</a></li>
+    <li><a href="/crossy/"><span class="tag">New game</span>Cross Country</a></li>
+    <li><a href="/shakespeare/"><span class="tag">New story</span>Did Shakespeare Really Invent That?</a></li>
+  </ul>
 </section>
 
 <script>
-// the Reviews dropdown: a mouse opens it by hovering, anything can open it
-// with a click or tap, and Escape, a click elsewhere or tabbing away close it
+// the three site menus: a mouse opens one by hovering, anything can open one
+// with a click or tap, and Escape, a click elsewhere or tabbing away close it.
+// Only one is ever open.
 (function () {
   "use strict";
 
-  var nav = document.getElementById("reviews");
-  var toggle = document.getElementById("reviewsToggle");
-  var links = [].slice.call(nav.querySelectorAll(".menu a"));
+  var nav = document.getElementById("site");
   var mouse = matchMedia("(hover: hover) and (pointer: fine)");
-  var byHover = false, closeT;
+  var drops = [].map.call(nav.querySelectorAll(".drop"), function (li) {
+    return { li: li, toggle: li.querySelector(".drop-toggle"), links: [].slice.call(li.querySelectorAll(".menu a")) };
+  });
+  // byHover: it closes again when the pointer leaves; hovered: the pointer opened it
+  var open = null, byHover = false, hovered = false, closeT;
 
-  function isOpen() { return nav.classList.contains("open"); }
-
-  function set(open, how) {
+  function set(d, how) {
     clearTimeout(closeT);
-    byHover = open && how === "hover";
-    nav.classList.toggle("open", open);
-    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    open = d;
+    byHover = !!d && how === "hover";
+    hovered = !!d && (how === "hover" || how === "hover-pinned");
+    drops.forEach(function (x) {
+      x.li.classList.toggle("open", x === d);
+      x.toggle.setAttribute("aria-expanded", x === d ? "true" : "false");
+    });
   }
 
-  toggle.addEventListener("click", function () {
-    // hovering already opened it, so a click pins it open rather than shutting it
-    if (byHover) {
-      byHover = false;
-      return;
-    }
-    set(!isOpen(), "click");
-  });
+  drops.forEach(function (d) {
+    d.toggle.addEventListener("click", function () {
+      // hovering already opened it, so a click pins it open rather than shutting it
+      if (open === d && hovered) {
+        byHover = hovered = false;
+        return;
+      }
+      set(open === d ? null : d, "click");
+    });
 
-  nav.addEventListener("pointerenter", function (e) {
-    if (e.pointerType === "mouse" && mouse.matches && !isOpen()) set(true, "hover");
-  });
+    d.li.addEventListener("pointerenter", function (e) {
+      if (e.pointerType !== "mouse" || !mouse.matches) return;
+      if (open === d) clearTimeout(closeT);
+      // a pinned menu moves across with the pointer and stays pinned
+      else set(d, open && !byHover ? "hover-pinned" : "hover");
+    });
 
-  nav.addEventListener("pointerleave", function (e) {
-    if (e.pointerType === "mouse" && byHover) closeT = setTimeout(function () { set(false); }, 220);
+    d.li.addEventListener("pointerleave", function (e) {
+      if (e.pointerType === "mouse" && open === d && byHover) closeT = setTimeout(function () { set(null); }, 220);
+    });
+
+    d.li.addEventListener("keydown", function (e) {
+      var at = d.links.indexOf(document.activeElement);
+      if (e.key === "Escape" && open === d) {
+        set(null);
+        d.toggle.focus();
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (open !== d) set(d, "key");
+        d.links[Math.min(d.links.length - 1, at + 1)].focus();
+      } else if (e.key === "ArrowUp" && open === d) {
+        e.preventDefault();
+        if (at <= 0) d.toggle.focus(); else d.links[at - 1].focus();
+      }
+    });
+
+    d.li.addEventListener("focusout", function (e) {
+      if (open === d && !d.li.contains(e.relatedTarget)) set(null);
+    });
   });
 
   document.addEventListener("pointerdown", function (e) {
-    if (isOpen() && !nav.contains(e.target)) set(false);
-  });
-
-  nav.addEventListener("keydown", function (e) {
-    var at = links.indexOf(document.activeElement);
-    if (e.key === "Escape" && isOpen()) {
-      set(false);
-      toggle.focus();
-    } else if (e.key === "ArrowDown") {
-      e.preventDefault();
-      if (!isOpen()) set(true, "key");
-      links[Math.min(links.length - 1, at + 1)].focus();
-    } else if (e.key === "ArrowUp" && isOpen()) {
-      e.preventDefault();
-      if (at <= 0) toggle.focus(); else links[at - 1].focus();
-    }
-  });
-
-  nav.addEventListener("focusout", function (e) {
-    if (!nav.contains(e.relatedTarget)) set(false);
+    if (open && !nav.contains(e.target)) set(null);
   });
 })();
 </script>
 
 <script>
-// the data story tiles rise in as they come into view; without the
+// the doors rise in as they come into view; without the
 // observer, or with reduced motion, they are simply there
 (function () {
   "use strict";
 
-  var list = document.getElementById("tiles");
+  var list = document.getElementById("doors");
   if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
   var items = [].slice.call(list.children);

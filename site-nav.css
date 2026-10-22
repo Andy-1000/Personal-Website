@@ -1,0 +1,269 @@
+/* The site menus (Data stories, Games, Reviews), the same on every page with a
+   nav bar. site-nav.js builds them. On a white page the nav also takes the
+   class "light" so the buttons read on white; the open menus are dark on
+   every page. */
+
+.site,
+.site * { box-sizing: border-box; }
+
+.site {
+  position: relative;
+  font-family: "Open Sans", sans-serif;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.site-list {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.drop { position: relative; }
+
+.drop-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(204, 230, 255, 0.6);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.drop-toggle .short { display: none; }
+
+.drop-toggle .chev {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.drop.here .drop-toggle { color: #e9f3ff; }
+
+.drop-toggle:hover,
+.drop.open .drop-toggle {
+  color: #e9f3ff;
+  border-color: rgba(204, 230, 255, 0.16);
+  background: rgba(2, 10, 20, 0.35);
+}
+
+.drop.open .drop-toggle .chev { transform: rotate(180deg); }
+
+.drop-toggle:focus-visible { outline: 2px solid #cce6ff; outline-offset: 2px; }
+
+/* the buttons on a white page */
+.site.light .drop-toggle { color: #6b7a8b; }
+.site.light .drop.here .drop-toggle { color: #003366; }
+
+.site.light .drop-toggle:hover,
+.site.light .drop.open .drop-toggle {
+  color: #003366;
+  border-color: #cce6ff;
+  background: #fff;
+}
+
+.site.light .drop-toggle:focus-visible { outline: 3px solid #003366; }
+
+/* ---------- the menus ---------- */
+.menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 30;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  margin: 0;
+  padding: 10px;
+  border: 1px solid rgba(204, 230, 255, 0.16);
+  border-radius: 18px;
+  background: rgba(4, 22, 43, 0.92);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  color: #e9f3ff;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(0.98);
+  transform-origin: top right;
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0.25s;
+}
+
+/* bridges the gap under the button, so the pointer can cross it */
+.menu::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12px;
+  height: 12px;
+}
+
+.drop.open .menu {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* stories and games show as cards side by side, reviews as two columns of rows */
+.menu-items {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 184px;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu-rows .menu-items {
+  grid-auto-flow: row;
+  grid-template-columns: repeat(2, 256px);
+}
+
+.menu-items a {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  padding: 8px;
+  border-radius: 12px;
+  color: #e9f3ff;
+  text-decoration: none;
+  transition: background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.menu-rows .menu-items a { flex-direction: row; align-items: center; gap: 14px; }
+
+.menu-items a:hover,
+.menu-items a:focus-visible {
+  background: rgba(0, 77, 153, 0.38);
+  outline: none;
+}
+
+.m-shot {
+  display: block;
+  flex: none;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border: 1px solid rgba(204, 230, 255, 0.16);
+  border-radius: 8px;
+  background: #04162b;
+}
+
+.menu-rows .m-shot { width: 72px; }
+
+.m-shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: top;
+}
+
+.m-text { display: flex; flex-direction: column; padding: 0 4px 2px; }
+
+.menu-rows .m-text { padding: 0; }
+
+.m-title {
+  font-family: "Merriweather", serif;
+  font-weight: 900;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+/* the page you're on gets a gold dot */
+.menu-items a[aria-current="page"] .m-title::after {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: #e8a921;
+  vertical-align: middle;
+}
+
+.m-sub { font-size: 12.5px; line-height: 1.4; color: rgba(204, 230, 255, 0.62); }
+
+.menu-all {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 8px 0 0;
+  padding: 12px 10px 4px;
+  border-top: 1px solid rgba(204, 230, 255, 0.16);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #cce6ff;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.menu-all svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.menu-all:hover,
+.menu-all:focus-visible,
+.menu-all[aria-current="page"] { color: #e8a921; outline: none; }
+
+.menu-all:hover svg,
+.menu-all:focus-visible svg { transform: translateX(4px); }
+
+/* ---------- phones: smaller buttons, and the open menu spans the screen
+   (site-nav.js centres it, wherever the nav sits) ---------- */
+@media (max-width: 760px) {
+  .drop { position: static; }
+
+  .drop-toggle { gap: 5px; padding: 9px 8px 9px 10px; font-size: 11px; letter-spacing: 0.14em; }
+  .drop-toggle .chev { width: 12px; height: 12px; }
+
+  .menu {
+    right: auto;
+    left: 0;
+    width: calc(100vw - 16px);
+    max-width: 420px;
+    transform-origin: top center;
+  }
+
+  .menu-items,
+  .menu-rows .menu-items { grid-auto-flow: row; grid-template-columns: minmax(0, 1fr); gap: 2px; }
+
+  .menu-items a { flex-direction: row; align-items: center; gap: 12px; }
+  .m-shot, .menu-rows .m-shot { width: 76px; }
+  .m-text { padding: 0; }
+}
+
+@media (max-width: 480px) {
+  .drop-toggle .full { display: none; }
+  .drop-toggle .short { display: inline; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drop-toggle, .drop-toggle .chev, .menu, .drop.open .menu, .menu-items a, .menu-all, .menu-all svg { transition: none; }
+}

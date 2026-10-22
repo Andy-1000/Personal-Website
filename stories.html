@@ -12,28 +12,32 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site-nav.css?v=1">
 <link rel="stylesheet" href="/hubs.css?v=1">
 </head>
 <body>
 
 <header class="bar">
   <a class="home" href="/" aria-label="Andy Sansness, home"><span class="full">Andy Sansness</span><span class="short">AS</span></a>
-  <nav class="sections" aria-label="Sections">
-    <a href="/stories" aria-current="page">Data stories</a>
-    <a href="/games">Games</a>
-    <a href="/reviews">Reviews</a>
+  <nav class="site" id="site" aria-label="Site">
+    <ul class="site-list">
+      <li class="drop"><a class="drop-toggle" href="/stories">Data stories</a></li>
+      <li class="drop"><a class="drop-toggle" href="/games">Games</a></li>
+      <li class="drop"><a class="drop-toggle" href="/reviews">Reviews</a></li>
+    </ul>
   </nav>
+  <script src="/site-nav.js?v=1"></script>
 </header>
 
 <main class="hub">
   <header class="hub-head">
     <h1>Data stories</h1>
-    <p class="lede">When a question won’t leave me alone, I go looking for the data. These are the answers, told as stories you scroll through.</p>
+    <p class="lede">When a question won’t leave me alone, I go looking for the data.<br>These are the answers, told as stories you scroll through.</p>
   </header>
 
   <!-- newest first. To add a story: copy an <li>, point it at the page, take its
        snapshot with `node snapshots/capture.mjs <slug>`, then add it to the
-       Data stories menu and door on the home page too -->
+       menu in /site-nav.js and to its door on the home page too -->
   <ul class="tiles">
     <li>
       <a class="tile" href="/shakespeare/">

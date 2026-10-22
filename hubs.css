@@ -33,8 +33,10 @@ body {
 
 ::selection { color: #fff; background: var(--blue); }
 
-/* ---------- the bar: home on the left, the three sections on the right ---------- */
+/* ---------- the bar: home on the left, the site menus (site-nav.css) on the right ---------- */
 .bar {
+  position: relative;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -42,7 +44,7 @@ body {
   padding: calc(16px + env(safe-area-inset-top)) calc(36px + env(safe-area-inset-right)) 0 calc(36px + env(safe-area-inset-left));
 }
 
-.bar a {
+.bar .home {
   display: inline-flex;
   align-items: center;
   padding: 9px 14px;
@@ -60,13 +62,11 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-.bar a:hover { color: var(--ice); border-color: var(--line); background: rgba(2, 10, 20, 0.35); }
-.bar a:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
-.bar a[aria-current="page"] { color: var(--ice); border-color: var(--line); }
+.bar .home:hover { color: var(--ice); border-color: var(--line); background: rgba(2, 10, 20, 0.35); }
+.bar .home:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
 
 .home .short { display: none; }
 
-.sections { display: flex; gap: 2px; }
 
 /* ---------- the hub ---------- */
 .hub {
@@ -76,7 +76,7 @@ body {
 }
 
 .hub-head {
-  max-width: 640px;
+  max-width: 720px;
   margin: 0 auto 44px;
   text-align: center;
 }
@@ -207,10 +207,9 @@ body {
 /* ---------- phones ---------- */
 @media (max-width: 640px) {
   .bar { padding-left: calc(10px + env(safe-area-inset-left)); padding-right: calc(10px + env(safe-area-inset-right)); }
-  .bar a { padding: 9px 9px; font-size: 11px; letter-spacing: 0.14em; }
+  .bar .home { padding: 9px 9px; font-size: 11px; letter-spacing: 0.14em; }
   .home .full { display: none; }
   .home .short { display: inline; }
-  .sections { gap: 0; }
   .hub { padding-top: 44px; }
   .hub-head { margin-bottom: 30px; }
   .lede { font-size: 16px; }
@@ -220,5 +219,5 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bar a, .tile, .shot img, .go, .go svg { transition: none; }
+  .bar .home, .tile, .shot img, .go, .go svg { transition: none; }
 }

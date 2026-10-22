@@ -204,6 +204,8 @@ h2 {
 .big { font-size: 1.25rem; margin: 0 0 8px; }
 .slider { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
 .slider input { flex: 1; min-width: 0; height: 28px; accent-color: var(--slate); }
+.crane-line { margin: 6px 0 0; font-size: 0.9rem; }
+.crane-line + .crane-line { margin-top: 2px; }
 
 .ruler { position: relative; height: 12px; margin: 26px 0 30px; border: 2px solid var(--ink); border-radius: 8px; background: rgba(255,255,255,0.5); }
 .ruler-fill { height: 100%; width: 0; background: var(--slate); border-radius: 6px; transition: width 0.3s; }

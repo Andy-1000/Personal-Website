@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap" rel="stylesheet">
-<link href="paper.css?v=11" rel="stylesheet">
+<link href="paper.css?v=12" rel="stylesheet">
 </head>
 <body data-tab="work">
 
@@ -55,14 +55,15 @@
     </div>
 
     <div id="cranes" class="panel hidden" data-tab="sky">
-      <h2>Cranes</h2>
-      <p class="big"><span id="crane-count"></span></p>
+      <h2 id="cranes-title">Cranes</h2>
+      <p class="big"><span id="crane-count"></span> cranes</p>
       <label class="slider">
         <span>Fold</span>
         <input type="range" id="alloc" min="0" max="100" step="5" aria-label="Cranes folding cranes or wishing for paper">
         <span>Wish</span>
       </label>
-      <p id="crane-rates" class="small"></p>
+      <p id="crane-wish" class="crane-line"></p>
+      <p id="crane-fold" class="crane-line"></p>
     </div>
 
     <div id="sheet" class="panel hidden" data-tab="sky">
@@ -126,7 +127,7 @@
 
 <div id="creases" class="creases" aria-hidden="true"></div>
 
-<script src="engine.js?v=11"></script>
-<script src="game.js?v=11"></script>
+<script src="engine.js?v=12"></script>
+<script src="game.js?v=12"></script>
 </body>
 </html>

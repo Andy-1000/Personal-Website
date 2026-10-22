@@ -498,16 +498,22 @@
 
   $('alloc').addEventListener('input', function () { E.setAlloc(S, 100 - Number(this.value)); soon(); });
 
+  $('cranes-title').appendChild(helper('Cranes work on their own, so pausing staff doesn\'t stop them. ' +
+    'Wishing cranes make paper. Folding cranes use paper to fold more cranes, until there\'s no room left. The slider sets the split.'));
+
   function renderCranes() {
     show($('cranes'), S.cranes > 0);
     if (S.cranes <= 0) return;
     var full = S.cranes >= E.craneRoom(S) * 0.999;
-    text($('crane-count'), num(S.cranes) + (full ? ', no room for more' : ''));
+    text($('crane-count'), num(S.cranes));
     var slider = $('alloc');
     if (document.activeElement !== slider) slider.value = 100 - S.alloc;
-    var rr = E.craneRates(S);
-    text($('crane-rates'), full && S.sheet ? 'No room for more. Fold the sheet to make some.' :
-      rateText(rr.fold) + ' cranes · ' + rateText(rr.wish) + ' paper');
+    var rr = E.craneRates(S), folding = S.cranes * S.alloc / 100, wishing = S.cranes - folding;
+    function each(x, unit) { return '+' + (x < 10 ? x.toFixed(1) : num(x)) + ' ' + unit + '/s'; }
+    text($('crane-wish'), !wishing ? 'None wishing: no paper from cranes' : num(wishing) + ' wishing: ' + each(rr.wish, 'paper'));
+    text($('crane-fold'), !folding ? 'None folding: the flock isn\'t growing' :
+      full ? num(folding) + ' folding, but there\'s no room for more' + (S.sheet ? ': fold the sheet' : '') :
+      num(folding) + ' folding: ' + each(rr.fold, 'cranes') + ', using ' + each(rr.fold, 'paper').slice(1));
   }
 
   // ---------------------------------------------------------------------------

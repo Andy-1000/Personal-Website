@@ -241,8 +241,8 @@
   }
 
   // ---------------------------------------------------------------------------
-  // Little question marks (phones only): a tap opens what hovering shows on a
-  // laptop, and a tap anywhere else closes it
+  // Little question marks: a tap or click opens a short note on what something
+  // does, and a tap anywhere else closes it
 
   var tip = el('div', 'tip'), tipFor = null;
   tip.setAttribute('role', 'tooltip');

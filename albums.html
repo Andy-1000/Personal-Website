@@ -111,9 +111,10 @@
   .home:focus-visible { outline: 3px solid var(--navy); outline-offset: 2px; }
   .home .short { display: none; }
 
+  /* on phones the name, then the menus under it, both centred above the title */
   @media (max-width: 640px) {
-    .home .full { display: none; }
-    .home .short { display: inline; }
+    header.page > .home { position: static; font-size: 11px; letter-spacing: 0.2em; }
+    header.page > .site { position: relative; top: auto; right: auto; margin: 2px 0 1.25rem; }
   }
 
   /* ---------- sort switch ---------- */
@@ -691,7 +692,7 @@
 
   /* ---------- phones ---------- */
   @media (max-width: 640px) {
-    header.page { padding-top: calc(4.25rem + env(safe-area-inset-top)); }
+    header.page { padding-top: calc(0.75rem + env(safe-area-inset-top)); } /* the name and menus now sit in the flow, above the title */
     .viz { padding: 0.9rem 0.9rem 0.8rem; border-radius: 14px; }
     .viz-head { margin-bottom: 0.75rem; }
     .viz-head h2 { font-size: 0.9rem; }

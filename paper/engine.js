@@ -536,7 +536,7 @@
       won: {},
       salary: 0,
       sellprice: 2, ke: 1, bookink: 2, bookpaper: 5,
-      hireCount: 1, hrMax: false, innovating: false,
+      hireCount: 1, hrMax: false, innovating: false, cooOff: false,
       prodUp: 0, prodCost: 1000,
       m: { work: 1, ink: 1, tree: 1, mint: 1, imag: 1, recycle: 0, flock: 1, wish: 1, nest: 1, job: {} },
       art: { stage: 0, n: 0, p: 0, paper: 10000, ink: 5000, imagination: 10000, knowledge: 1000, rep: 3, money: 25000 },
@@ -772,15 +772,18 @@
   }
 
   // The COO's sticky notes: what the current project needs is kept back, except
-  // anything that's needed to make something else the project needs
-  function reserve(S) {
+  // anything that's needed to make something else the project needs. `why`, if
+  // given, is filled in with what each kept thing is being saved for.
+  function reserve(S, why) {
     var keep = {};
-    if (!S.done.coo) return keep;
-    var cur = currentProject(S), cost = {};
-    function add(c) { for (var k in c) cost[k] = Math.max(cost[k] || 0, c[k]); }
-    if (cur && !cur.blocked) add(cur.p.cost);
-    else if (LEVELS[S.level + 1] && LEVELS[S.level + 1].need) add(LEVELS[S.level + 1].need);
-    if (S.done.bobross) add(artCost(S) || {});
+    if (!S.done.coo || S.cooOff) return keep;
+    var cur = currentProject(S), cost = {}, whyAll = {};
+    function add(c, what) {
+      for (var k in c) if (!(c[k] <= (cost[k] || 0))) { cost[k] = c[k]; whyAll[k] = what; }
+    }
+    if (cur && !cur.blocked) add(cur.p.cost, 'the next project');
+    else if (LEVELS[S.level + 1] && LEVELS[S.level + 1].need) add(LEVELS[S.level + 1].need, 'Level ' + (S.level + 1));
+    if (S.done.bobross) add(artCost(S) || {}, 'the next painting');
     var makes = { book: 'book', knowledge: 'knowledge', money: 'money', ink: 'ink', tree: 'tree',
                   servant: 'paperwork', journalist: 'reputation', mint: 'money' };
     // everything upstream of what's still missing has to keep flowing
@@ -794,8 +797,20 @@
         for (var u in use) if (!upstream[u]) { upstream[u] = true; todo.push(u); }
       }
     }
-    for (k in cost) if (!upstream[k]) keep[k] = cost[k];
+    for (k in cost) if (!upstream[k]) { keep[k] = cost[k]; if (why) why[k] = whyAll[k]; }
     return keep;
+  }
+
+  // Staff with nothing to do because the COO is keeping back what they'd use:
+  // { book: { res: 'paper', what: 'the next project' }, ... }
+  function onHold(S) {
+    var why = {}, keep = reserve(S, why), out = {};
+    JOB_ORDER.forEach(function (id) {
+      if (id === 'paper' || !S.emp[id].n || S.paused[id]) return;
+      var use = jobUse(S, id);
+      for (var k in use) if (keep[k] && S.r[k] < keep[k]) { out[id] = { res: k, what: why[k] }; return; }
+    });
+    return out;
   }
 
   // When there isn't enough of something to go round, everyone who needs it
@@ -935,7 +950,7 @@
     MANUAL: MANUAL, manualShown: manualShown, employeeShown: employeeShown, staffCount: staffCount, productivity: productivity, workMult: workMult,
     creaseMult: creaseMult, imaginationRate: imaginationRate, craneRates: craneRates, craneRoom: craneRoom, drawTime: drawTime,
     foldCost: foldCost, MAX_FOLDS: MAX_FOLDS, placesSeen: placesSeen, paintTime: paintTime, artCost: artCost,
-    newState: newState, restore: restore, log: log, reserve: reserve,
+    newState: newState, restore: restore, log: log, reserve: reserve, onHold: onHold,
     click: click, levelUp: levelUp, buyProject: buyProject, hire: hire, improveProductivity: improveProductivity,
     setHireCount: setHireCount, artStep: artStep, runForOffice: runForOffice, setAlloc: setAlloc,
     fold: doFold, wish: wish, turnPage: turnPage, demise: demise, tick: tick

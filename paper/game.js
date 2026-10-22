@@ -592,17 +592,28 @@
     var info = el('div', 'emp-info', '<span class="emp-name">' + SHORT_NAMES[e.id] + '</span> <span class="emp-n"></span>' +
       '<span class="emp-cost"></span><span class="emp-does">' + e.does + '</span>');
     info.insertBefore(helper(e.name + '. ' + e.does + '.'), info.querySelector('.emp-cost'));
+    info.appendChild(el('span', 'emp-wait hidden'));
     var pause = el('button', 'toggle');
     pause.type = 'button';
     pause.addEventListener('click', function () { S.paused[e.id] = !S.paused[e.id]; bump(pause); soon(); });
     var hire = button('hire', function () { E.hire(S, e.id); });
     row.appendChild(info); row.appendChild(pause); row.appendChild(hire);
     $('staff-list').appendChild(row);
-    empRows[e.id] = { row: row, n: info.querySelector('.emp-n'), cost: info.querySelector('.emp-cost'), hire: hire, pause: pause };
+    empRows[e.id] = { row: row, n: info.querySelector('.emp-n'), cost: info.querySelector('.emp-cost'), wait: info.querySelector('.emp-wait'), hire: hire, pause: pause };
   });
 
+  // Text that only changes once the new version has held for a moment, so a
+  // line that comes and goes with the numbers doesn't blink
+  function steadyText(node, t, ms) {
+    var now = Date.now();
+    if (node._want !== t) { node._want = t; node._at = now; }
+    if (node._shown === undefined || now - node._at >= ms) node._shown = node._want;
+    text(node, node._shown);
+    show(node, node._shown !== '');
+  }
+
   function renderEmployees() {
-    var any = false;
+    var any = false, held = E.onHold(S);
     var many = S.done.hr && S.hrMax ? 'Hire max' : S.done.hiring && S.hireCount > 1 ? 'Hire ' + S.hireCount : 'Hire';
     E.EMPLOYEES.forEach(function (e) {
       var r = empRows[e.id], st = S.emp[e.id];
@@ -613,6 +624,8 @@
       text(r.n, st.n ? '×' + num(st.n) : '');
       text(r.hire, many);
       text(r.cost, '$' + num(st.cost, 'ceil') + ' · ' + num(st.kcost, 'ceil') + ' knowledge');
+      var h = held[e.id];
+      steadyText(r.wait, h ? 'On hold: COO is saving ' + E.RES[h.res].many + ' for ' + h.what : '', 800);
       able(r.hire, S.r.money >= st.cost && S.r.knowledge >= st.kcost);
       var canPause = S.done.ceo && !e.noPause && st.n > 0;
       flag(r.pause, 'invisible', !canPause);
@@ -677,6 +690,11 @@
     ex.innovation.note = el('p', 'small exec-note');
     ex.innovation.row.after(ex.innovation.note);
 
+    var cooSw = row('cooOn', 'Let the COO save for what\'s next', 'When ticked, your COO stops staff using up what your next project, level or painting needs, so you can afford it sooner. Untick to let staff use everything.');
+    var cooBox = el('input'); cooBox.type = 'checkbox'; cooBox.setAttribute('aria-label', 'Let the COO save for what\'s next');
+    cooBox.addEventListener('change', function () { S.cooOff = !this.checked; soon(); });
+    cooSw.appendChild(cooBox);
+
     row('coo', 'Keeping back', 'Your COO holds this back so staff don\'t use up what you need for your next level, project or painting.').appendChild(el('span', 'v'));
   })();
 
@@ -687,6 +705,7 @@
       if (S.done[id]) any = true;
     });
     show(ex.innovation.note, !!S.done.innovation);
+    show(ex.cooOn.row, !!S.done.coo);
     show($('executives'), any);
     if (!any) return;
     if (S.done.staff) text(ex.staff.ctl.querySelector('.v'), num(E.staffCount(S)));
@@ -704,8 +723,9 @@
         'Stops all work; everyone daydreams up imagination instead');
     }
     if (S.done.coo) {
+      ex.cooOn.ctl.querySelector('input').checked = !S.cooOff;
       var keep = E.reserve(S);
-      text(ex.coo.ctl.querySelector('.v'), Object.keys(keep).length ? cost(keep) : 'nothing');
+      text(ex.coo.ctl.querySelector('.v'), S.cooOff ? 'nothing (switched off)' : Object.keys(keep).length ? cost(keep) : 'nothing');
     }
   }
 

@@ -41,7 +41,11 @@
     if (html !== undefined) n.innerHTML = html;
     return n;
   }
-  function show(node, on) { node.classList.toggle('hidden', !on); }
+  // Sets a class on or off, touching the page only when it actually changes.
+  // (classList.toggle with anything but true or false flips the class instead,
+  // which made rows blink on every redraw.)
+  function flag(node, cls, on) { on = !!on; if (node.classList.contains(cls) !== on) node.classList.toggle(cls, on); }
+  function show(node, on) { flag(node, 'hidden', !on); }
   function text(node, t) { t = String(t); if (node.textContent !== t) node.textContent = t; }
   function html(node, h) { if (node._h !== h) { node.innerHTML = h; node._h = h; } }
   function attr(node, name, value) { if (node.getAttribute(name) !== value) node.setAttribute(name, value); }
@@ -57,7 +61,7 @@
     else if (!node._since) node._since = now;
     else if (now - node._since >= 450) { node._ok = ok; node._since = 0; }
     var shown = node._ok;
-    if (node.classList.contains('cant') === shown) node.classList.toggle('cant', !shown);
+    flag(node, 'cant', !shown);
     attr(node, 'aria-disabled', shown ? 'false' : 'true');
   }
 
@@ -188,7 +192,7 @@
       text(row.val, (row.dollars ? '$' : '') + num(v, row.k === 'tree' ? 'ceil' : undefined));
       var r = rates[row.k] || 0;
       text(row.rate, Math.abs(r) >= 0.05 && Math.abs(r) >= v * 1e-6 ? rateText(r) : '');
-      row.rate.classList.toggle('down', r < 0);
+      flag(row.rate, 'down', r < 0);
     });
   }
 
@@ -216,10 +220,10 @@
   function pumpNews() {
     var now = Date.now();
     if (now < newsUntil) return;
-    if (!newsQueue.length) { toast.classList.remove('show'); return; }
+    if (!newsQueue.length) { flag(toast, 'show', false); return; }
     var line = newsQueue.shift();
     text(toast, line);
-    toast.classList.add('show');
+    flag(toast, 'show', true);
     var stay = Math.min(8000, Math.max(3200, 2200 + line.length * 45));
     newsUntil = now + (newsQueue.length ? Math.min(stay, 3000) : stay);
   }
@@ -315,7 +319,7 @@
     if (next <= E.MAX_LEVEL) {
       html(levelUp, 'Upgrade to Level ' + next + '<span class="cost">' + levelNeeds(next) + '</span>');
       able(levelUp, E.canLevel(S));
-      levelUp.classList.toggle('ready', E.canLevel(S));
+      flag(levelUp, 'ready', E.canLevel(S));
     }
   }
 
@@ -342,7 +346,7 @@
     var p = cur.p;
     html(projectButton, '<span class="label">' + p.title + '</span><span class="gain">' + p.gain + '</span><span class="cost">' + cost(p.cost) + '</span>');
     able(projectButton, E.canAfford(S, p.cost));
-    projectButton.classList.toggle('ready', E.canAfford(S, p.cost));
+    flag(projectButton, 'ready', E.canAfford(S, p.cost));
   }
 
   // ---------------------------------------------------------------------------
@@ -550,11 +554,11 @@
       text(r.cost, '$' + num(st.cost, 'ceil') + ' · ' + num(st.kcost, 'ceil') + ' knowledge');
       able(r.hire, S.r.money >= st.cost && S.r.knowledge >= st.kcost);
       var canPause = S.done.ceo && !e.noPause && st.n > 0;
-      r.pause.classList.toggle('invisible', !canPause);
+      flag(r.pause, 'invisible', !canPause);
       var off = !!S.paused[e.id];
       text(r.pause, off ? '▶' : '❚❚');
-      r.pause.classList.toggle('off', off);
-      r.row.classList.toggle('resting', canPause && off);
+      flag(r.pause, 'off', off);
+      flag(r.row, 'resting', canPause && off);
       attr(r.pause, 'aria-label', off ? 'Put the ' + SHORT_NAMES[e.id].toLowerCase() + ' back to work' : 'Give the ' + SHORT_NAMES[e.id].toLowerCase() + ' a break');
     });
     show($('employees'), any);
@@ -683,18 +687,18 @@
       var id = b.getAttribute('data-go'), on = TAB_SHOWN[id]();
       show(b, on);
       if (on) count++;
-      b.classList.toggle('on', id === tab);
-      b.classList.toggle('dot', on && id !== tab && TAB_DOT[id]());
+      flag(b, 'on', id === tab);
+      flag(b, 'dot', on && id !== tab && TAB_DOT[id]());
     });
     show($('tabs'), count > 1);
-    document.body.classList.toggle('has-tabs', count > 1);
+    flag(document.body, 'has-tabs', count > 1);
     // on wide screens, a column with nothing in it gets out of the way
     ['col-work', 'col-world', 'col-staff'].forEach(function (id) {
       var col = $(id);
-      col.classList.toggle('empty', !col.querySelector('.panel:not(.hidden)'));
+      flag(col, 'empty', !col.querySelector('.panel:not(.hidden)'));
     });
     var solo = $('col-world').classList.contains('empty');
-    if (document.querySelector('.desk').classList.contains('solo') !== solo) document.querySelector('.desk').classList.toggle('solo', solo);
+    flag(document.querySelector('.desk'), 'solo', solo);
   }
 
   // ---------------------------------------------------------------------------

@@ -228,10 +228,64 @@
     newsUntil = now + (newsQueue.length ? Math.min(stay, 3000) : stay);
   }
 
+  // A popup for something you just did: it goes ahead of the queue
+  function say(line) {
+    newsQueue.unshift(line);
+    newsUntil = 0;
+    pumpNews();
+  }
+
   function renderNews() {
     collectNews();
     pumpNews();
   }
+
+  // ---------------------------------------------------------------------------
+  // Little question marks (phones only): a tap opens what hovering shows on a
+  // laptop, and a tap anywhere else closes it
+
+  var tip = el('div', 'tip'), tipFor = null;
+  tip.setAttribute('role', 'tooltip');
+  document.body.appendChild(tip);
+
+  function closeTip() {
+    if (!tipFor) return;
+    flag(tip, 'show', false);
+    attr(tipFor, 'aria-expanded', 'false');
+    tipFor = null;
+  }
+
+  function openTip(q, words) {
+    closeTip();
+    tip.textContent = words;
+    flag(tip, 'show', true);
+    var r = q.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    var bottom = window.innerHeight - ($('tabs').classList.contains('hidden') ? 0 : $('tabs').offsetHeight);
+    var top = r.bottom + 8 + h <= bottom - 8 ? r.bottom + 8 : r.top - 8 - h;
+    var left = Math.min(Math.max(12, r.left + r.width / 2 - w / 2), window.innerWidth - w - 12);
+    tip.style.top = Math.round(top) + 'px';
+    tip.style.left = Math.round(left) + 'px';
+    attr(q, 'aria-expanded', 'true');
+    tipFor = q;
+  }
+
+  function helper(words) {
+    var q = el('button', 'help', '?');
+    q.type = 'button';
+    q.setAttribute('aria-label', 'What is this?');
+    q.setAttribute('aria-expanded', 'false');
+    q.addEventListener('click', function (ev) {
+      ev.stopPropagation();
+      if (tipFor === q) closeTip(); else openTip(q, typeof words === 'function' ? words() : words);
+    });
+    return q;
+  }
+
+  document.addEventListener('pointerdown', function (ev) {
+    if (tipFor && ev.target !== tipFor && ev.target !== tip) closeTip();
+  }, true);
+  window.addEventListener('scroll', closeTip, { passive: true });
+  window.addEventListener('resize', closeTip);
 
   // ---------------------------------------------------------------------------
   // Doing it yourself
@@ -531,6 +585,7 @@
     row.title = e.name + ': ' + e.does;
     var info = el('div', 'emp-info', '<span class="emp-name">' + SHORT_NAMES[e.id] + '</span> <span class="emp-n"></span>' +
       '<span class="emp-cost"></span><span class="emp-does">' + e.does + '</span>');
+    info.insertBefore(helper(e.name + '. ' + e.does + '.'), info.querySelector('.emp-cost'));
     var pause = el('button', 'toggle');
     pause.type = 'button';
     pause.addEventListener('click', function () { S.paused[e.id] = !S.paused[e.id]; bump(pause); soon(); });
@@ -568,11 +623,15 @@
   // Executives: what each one lets you do, and not much else
 
   var ex = {};
+  var phone = window.matchMedia('(max-width: 700px)');
   (function buildExecs() {
     var list = $('exec-list');
-    function row(id, label) {
+    function row(id, label, help) {
       var r = el('div', 'exec');
-      r.appendChild(el('span', 'exec-name', label));
+      r.title = help;
+      var name = el('span', 'exec-name', label);
+      name.appendChild(helper(help));
+      r.appendChild(name);
       var right = el('span', 'exec-ctl');
       r.appendChild(right);
       list.appendChild(r);
@@ -580,9 +639,9 @@
       return right;
     }
 
-    row('staff', 'Staff').appendChild(el('span', 'v'));
+    row('staff', 'Staff', 'Everyone on the payroll, executives included.').appendChild(el('span', 'v'));
 
-    var h = row('hiring', 'Hire at a time');
+    var h = row('hiring', 'Hire at a time', 'How many people each Hire button takes on in one tap.');
     var less = el('button', 'tiny', '−'); less.type = 'button'; less.setAttribute('aria-label', 'Fewer');
     var count = el('span', 'count');
     var more = el('button', 'tiny', '+'); more.type = 'button'; more.setAttribute('aria-label', 'More');
@@ -590,25 +649,29 @@
     more.addEventListener('click', function () { E.setHireCount(S, S.hireCount + 1); bump(more); soon(); });
     h.appendChild(less); h.appendChild(count); h.appendChild(more);
 
-    var hr = row('hr', 'Hire as many as I can afford');
+    var hr = row('hr', 'Hire as many as I can afford', 'Hire buttons take on as many people as you can pay for in one tap.');
     var hrBox = el('input'); hrBox.type = 'checkbox'; hrBox.setAttribute('aria-label', 'Hire as many as I can afford');
     hrBox.addEventListener('change', function () { S.hrMax = this.checked; soon(); });
     hr.appendChild(hrBox);
 
-    row('productivity', 'Productivity').appendChild(el('span', 'v'));
+    row('productivity', 'Productivity', 'How hard everyone works. 100% is normal.').appendChild(el('span', 'v'));
 
     var improve = el('button', 'btn small-btn'); improve.type = 'button';
     improve.addEventListener('click', function () { E.improveProductivity(S); bump(improve); soon(); });
-    row('production', 'Everyone works 5% harder').appendChild(improve);
+    row('production', 'Everyone works 5% harder', 'Pay to make every member of staff 5% faster, for good. It costs more each time.').appendChild(improve);
 
-    var inn = row('innovation', 'Innovate');
+    var inn = row('innovation', 'Innovate', 'Everyone stops their usual work and daydreams up imagination instead. Untick to put them back to work.');
     var innBox = el('input'); innBox.type = 'checkbox'; innBox.setAttribute('aria-label', 'Innovate');
-    innBox.addEventListener('change', function () { S.innovating = this.checked; soon(); });
+    innBox.addEventListener('change', function () {
+      S.innovating = this.checked;
+      if (S.innovating && phone.matches) say('Everyone is daydreaming: ' + rateText(E.imaginationRate(S)) + ' imagination');
+      soon();
+    });
     inn.appendChild(innBox);
-    ex.innovation.note = el('p', 'small');
+    ex.innovation.note = el('p', 'small exec-note');
     ex.innovation.row.after(ex.innovation.note);
 
-    row('coo', 'Keeping back').appendChild(el('span', 'v'));
+    row('coo', 'Keeping back', 'Your COO holds this back so staff don\'t use up what you need for your next level, project or painting.').appendChild(el('span', 'v'));
   })();
 
   function renderExecs() {
@@ -674,6 +737,7 @@
   tabButtons.forEach(function (b) {
     b.addEventListener('click', function () {
       tab = b.getAttribute('data-go');
+      closeTip();
       window.scrollTo(0, 0);
       soon();
     });

@@ -206,11 +206,15 @@ body {
 
 /* ---------- phones ---------- */
 @media (max-width: 640px) {
-  .bar { padding-left: calc(10px + env(safe-area-inset-left)); padding-right: calc(10px + env(safe-area-inset-right)); }
-  .bar .home { padding: 9px 9px; font-size: 11px; letter-spacing: 0.14em; }
-  .home .full { display: none; }
-  .home .short { display: inline; }
-  .hub { padding-top: 44px; }
+  /* the name, then the menus under it, both in the middle like everything below */
+  .bar {
+    flex-direction: column;
+    gap: 2px;
+    padding-left: calc(10px + env(safe-area-inset-left));
+    padding-right: calc(10px + env(safe-area-inset-right));
+  }
+  .bar .home { font-size: 11px; letter-spacing: 0.2em; }
+  .hub { padding-top: 36px; }
   .hub-head { margin-bottom: 30px; }
   .lede { font-size: 16px; }
   .tiles { gap: 20px; }

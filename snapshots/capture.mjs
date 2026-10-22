@@ -25,22 +25,31 @@ if (!slugs.length) {
 const out = (name) => fileURLToPath(new URL(`./${name}`, import.meta.url));
 const wait = (page, ms) => page.waitForTimeout(ms);
 
-// How to get each game to a moment worth showing. Returns false if the moment
-// was missed (the run ended), and the shot is tried again from the start.
+// For each game: the screen it's laid out on, drawn at 4K (width x scale =
+// 3840), and how to get it to a moment worth showing. ready() returns false if
+// the moment was missed (the run ended), and the shot is tried again.
 const GAMES = {
   // a few hops into a run of Cross Country, player still alive
-  crossy: async (page) => {
-    await page.click("#btn-play");
-    await wait(page, 2500);
-    for (let i = 0; i < 6; i++) {
-      await page.keyboard.press("ArrowUp");
-      await wait(page, 800);
-    }
-    return page.evaluate(() => document.getElementById("screen-over").classList.contains("hidden") &&
-      Number(document.getElementById("score").textContent) >= 4);
+  crossy: {
+    view: { width: 1280, height: 800 }, scale: 3,
+    ready: async (page) => {
+      await page.click("#btn-play");
+      await wait(page, 2500);
+      for (let i = 0; i < 6; i++) {
+        await page.keyboard.press("ArrowUp");
+        await wait(page, 800);
+      }
+      return page.evaluate(() => document.getElementById("screen-over").classList.contains("hidden") &&
+        Number(document.getElementById("score").textContent) >= 4);
+    },
   },
-  // The Paper Game from a level 6 save with a few staff (set before load, below)
-  paper: async () => true,
+  // The Paper Game from a level 6 save with a few staff (set before load,
+  // below), on a smaller screen: its fine handwriting smears when a full
+  // laptop's worth is shrunk into a tile
+  paper: {
+    view: { width: 960, height: 600 }, scale: 4,
+    ready: async () => true,
+  },
 };
 
 // software WebGL, so the 3D games draw without a GPU
@@ -59,8 +68,8 @@ for (const slug of slugs) {
     continue;
   }
 
-  // the same laptop layout drawn at 3x: 3840 x 2400
-  const page = await browser.newPage({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 3 });
+  const game = GAMES[slug];
+  const page = await browser.newPage({ viewport: game.view, deviceScaleFactor: game.scale });
   await page.addInitScript(() => {
     if (!location.pathname.startsWith("/paper")) return;
     const emp = (n, cost, kcost) => ({ n, cost, kcost });
@@ -76,7 +85,7 @@ for (const slug of slugs) {
   for (let attempt = 1; attempt <= 12 && !done; attempt++) {
     await page.goto(`${BASE}/${slug}/`, { waitUntil: "networkidle" });
     await wait(page, 3000);
-    if (!(await GAMES[slug](page))) continue;
+    if (!(await game.ready(page))) continue;
     const big = await page.screenshot({ type: "jpeg", quality: 85 });
     // still going a moment later, so the shot didn't catch the end of the run
     await wait(page, 1500);

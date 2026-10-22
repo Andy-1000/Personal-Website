@@ -22,7 +22,7 @@
     {
       id: "Games", name: "Games", hub: "/games", all: "All games",
       items: [
-        { href: "/paper/", img: "/snapshots/paper.jpg", img4k: "/snapshots/paper-4k.jpg", title: "The Paper Game", sub: "An idle game that gets out of hand" },
+        { href: "/paper/", img: "/snapshots/paper.jpg?v=2", img4k: "/snapshots/paper-4k.jpg?v=2", title: "The Paper Game", sub: "An idle game that gets out of hand" },
         { href: "/crossy/", img: "/snapshots/crossy.jpg", img4k: "/snapshots/crossy-4k.jpg", title: "Cross Country", sub: "Open world crossy road" }
       ]
     },

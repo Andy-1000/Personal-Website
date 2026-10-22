@@ -360,6 +360,13 @@ body[data-folds="7"] .desk { transform: scale(0.79) rotate(1deg); filter: graysc
 /* ---------------------------------------------------------------- laptops and desktops */
 
 @media (min-width: 701px) {
+  /* Paint the paper straight onto the page instead of on a fixed layer behind
+     it. A fixed layer makes Chrome lift all the text onto layers of its own,
+     on and off as the page changes, and on Windows that turns text grey. */
+  html { background: #f3f3f1 url("paper-tile.jpg") center top / max(100vw, 160vh) auto repeat-y; }
+  body { background: transparent; }
+  body::before { display: none; }
+
   :root { --side: 250px; }
   body { padding-left: var(--side); }
 

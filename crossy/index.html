@@ -18,8 +18,8 @@
       href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Montserrat:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/crossy/assets/crossy-8DMVRjMK.js"></script>
-    <link rel="stylesheet" crossorigin href="/crossy/assets/crossy-5IJb5TUq.css">
+    <script type="module" crossorigin src="/crossy/assets/crossy-D3w8ZX9o.js"></script>
+    <link rel="stylesheet" crossorigin href="/crossy/assets/crossy-BMU410wT.css">
   </head>
   <body>
     <div id="app">
@@ -67,10 +67,6 @@
         <div id="tip" class="tip hidden"></div>
         <div id="items" class="items"></div>
         <div id="popups" class="popups"></div>
-        <!-- Somewhere found for the first time. -->
-        <div id="discovery" class="discovery hidden" aria-live="polite"></div>
-        <!-- Pointers at the edge to camps, mines, boats and stairways nearby. -->
-        <div id="pointers" class="pointers"></div>
         <div class="hud-buttons">
           <button id="btn-sound" class="hud-btn" type="button" aria-label="Sound off">
             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -92,19 +88,6 @@
       <div id="screen-pause" class="layer screen pause hidden">
         <div id="pause-panel" class="panel pause-panel">
           <h2 class="over-headline">Paused</h2>
-          <!-- The journey so far, drawn fresh each time the game is paused. -->
-          <div class="journey-map">
-            <canvas id="journey-map" aria-label="Map of the journey so far"></canvas>
-            <p class="journey-key">
-              <span class="key key-you">You</span>
-              <span class="key key-camp">Camp</span>
-              <span class="key key-mine">Mine</span>
-              <span class="key key-boat">Boat</span>
-              <span class="key key-steps">Cloud Steps</span>
-            </p>
-          </div>
-          <div id="pause-stats" class="journey-stats"></div>
-          <p id="pause-found" class="journey-found"></p>
           <button id="btn-resume" class="btn btn-primary" type="button">Resume</button>
           <button id="btn-pause-sound" class="btn btn-secondary pause-sound" type="button">Sound: on</button>
           <p class="hint">Tap anywhere to carry on</p>
@@ -128,10 +111,9 @@
           <button id="btn-play" class="btn btn-primary">Play</button>
           <!-- Only once there is a journey to leave behind. The first tap asks
                again, because the world it leaves is gone for good. -->
-          <button id="btn-new" class="link-btn journey-new hidden" type="button">New journey</button>
+          <button id="btn-new" class="link-btn journey-new hidden" type="button">New world</button>
 
-          <p class="hint">Tap to hop &middot; swipe any way you like</p>
-          <p class="hint journey-where">North, south, out to sea, down the mine, up the mountain: it all goes on</p>
+          <p class="hint">Tap to hop &middot; swipe to change lane</p>
         </div>
       </div>
 
@@ -149,11 +131,7 @@
               <span id="over-best" class="score-value">0</span>
             </div>
           </div>
-          <!-- How far this journey got without a fall, and the best ever. -->
-          <div id="over-stats" class="journey-stats"></div>
-          <p id="over-clean" class="journey-clean"></p>
-          <button id="btn-again" class="btn btn-primary">Carry on from camp</button>
-          <button id="btn-over-new" class="link-btn journey-new" type="button">New journey</button>
+          <button id="btn-again" class="btn btn-primary">Play Again</button>
         </div>
       </div>
 

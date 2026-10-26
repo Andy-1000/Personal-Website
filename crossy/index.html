@@ -18,8 +18,8 @@
       href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Montserrat:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/crossy/assets/crossy-DEiHh1wV.js"></script>
-    <link rel="stylesheet" crossorigin href="/crossy/assets/crossy-aiFc-vgu.css">
+    <script type="module" crossorigin src="/crossy/assets/crossy-Wo8A1BXP.js"></script>
+    <link rel="stylesheet" crossorigin href="/crossy/assets/crossy-rQ0p6Ml6.css">
   </head>
   <body>
     <div id="app">
@@ -64,6 +64,8 @@
         <div id="tip" class="tip hidden"></div>
         <div id="items" class="items"></div>
         <div id="popups" class="popups"></div>
+        <!-- Somewhere found for the first time. -->
+        <div id="discovery" class="discovery hidden" aria-live="polite"></div>
         <!-- Pointers at the edge to camps, mines, boats and stairways nearby. -->
         <div id="pointers" class="pointers"></div>
         <div class="hud-buttons">
@@ -98,6 +100,8 @@
               <span class="key key-steps">Cloud Steps</span>
             </p>
           </div>
+          <div id="pause-stats" class="journey-stats"></div>
+          <p id="pause-found" class="journey-found"></p>
           <button id="btn-resume" class="btn btn-primary" type="button">Resume</button>
           <button id="btn-pause-sound" class="btn btn-secondary pause-sound" type="button">Sound: on</button>
           <p class="hint">Tap anywhere to carry on</p>
@@ -142,6 +146,7 @@
             </div>
           </div>
           <!-- How far this journey got without a fall, and the best ever. -->
+          <div id="over-stats" class="journey-stats"></div>
           <p id="over-clean" class="journey-clean"></p>
           <button id="btn-again" class="btn btn-primary">Carry on from camp</button>
           <button id="btn-over-new" class="link-btn journey-new" type="button">New journey</button>

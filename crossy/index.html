@@ -18,8 +18,8 @@
       href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Montserrat:wght@500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/crossy/assets/crossy-BMNDC_3o.js"></script>
-    <link rel="stylesheet" crossorigin href="/crossy/assets/crossy-DK3DZCFy.css">
+    <script type="module" crossorigin src="/crossy/assets/crossy-4-r8sLUs.js"></script>
+    <link rel="stylesheet" crossorigin href="/crossy/assets/crossy-DHcBW2Vf.css">
   </head>
   <body>
     <div id="app">
@@ -106,6 +106,9 @@
           </div>
 
           <button id="btn-play" class="btn btn-primary">Play</button>
+          <!-- Only once there is a journey to leave behind. The first tap asks
+               again, because the world it leaves is gone for good. -->
+          <button id="btn-new" class="link-btn journey-new hidden" type="button">New journey</button>
 
           <p class="hint">Tap to hop &middot; swipe to change lane</p>
         </div>
@@ -125,7 +128,10 @@
               <span id="over-best" class="score-value">0</span>
             </div>
           </div>
-          <button id="btn-again" class="btn btn-primary">Play Again</button>
+          <!-- How far this journey got without a fall, and the best ever. -->
+          <p id="over-clean" class="journey-clean"></p>
+          <button id="btn-again" class="btn btn-primary">Carry on from camp</button>
+          <button id="btn-over-new" class="link-btn journey-new" type="button">New journey</button>
         </div>
       </div>
 

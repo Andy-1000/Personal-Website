@@ -453,8 +453,9 @@
 // The black hole. A ray tracer in a fragment shader bends light round a
 // Schwarzschild hole: each pixel's ray is stepped through the hole's gravity,
 // picks up the accretion disk wherever it crosses the disk's plane, and if it
-// gets away it reads the backdrop (stars, a faint grid and a huge 404) from
-// where it ends up, so the 404 is lensed for real as the hole drifts over it.
+// gets away it reads the navy sky from where it ends up. The 404 and the dust
+// are particles, made as the home page makes the name, and each is moved to
+// where the lens shows it, so the 404 bends round the hole as it drifts by.
 //
 // On top, a 2D canvas and a layer of DOM letters hold everything that falls
 // in: the missing path, whatever you feed it and, once it's had enough,
@@ -694,69 +695,225 @@
     "  float fr = length(uv - u_hole);",
     "  col += u_flash * (vec3(1.0, 0.8, 0.55) * exp(-fr * 5.0 / max(u_zoom, 0.2)) * 1.6 + vec3(0.04, 0.03, 0.02)) * (caught ? 0.0 : 1.0);",
     "  col = aces(col * 1.1);",
-    "  gl_FragColor = vec4(sqrt(col), 1.0);",
+    // alpha: how much of whatever lies behind the hole gets through to us
+    // here, so the particles of the 404 can be laid in behind the disk
+    "  gl_FragColor = vec4(sqrt(col), caught ? 0.0 : T);",
     "}"
   ].join("\n");
 
   var VERT = "attribute vec2 p; void main() { gl_Position = vec4(p, 0.0, 1.0); }";
+  var FX_VS = "attribute vec2 p; varying vec2 v_uv; void main() { v_uv = p * 0.5 + 0.5; gl_Position = vec4(p, 0.0, 1.0); }";
 
-  var prog, loc = {}, tex;
+  // The 404 and the dust are particles, built the way the home page builds
+  // the name: soft round points in the same colours, drawn at full resolution
+  // with a blurred copy added over them for the glow. Each is lensed here as
+  // the light from a point behind the hole: it shows up twice, once outside
+  // the Einstein ring and once, fainter, inside it on the far side, stretched
+  // along the ring by as much as the lens magnifies it.
+  var PT_VS = [
+    "attribute vec4 a_spot;",   // where it sits, then where it flies in from (css px)
+    "attribute vec4 a_look;",   // size, tint, spark, brightness
+    "attribute vec2 a_life;",   // when it arrives (s), and 1 for the 404, 0 for dust
+    "uniform vec2 u_view;",
+    "uniform float u_dpr;",
+    "uniform float u_time;",
+    "uniform float u_clock;",
+    "uniform float u_sweep;",
+    "uniform float u_fade;",
+    "uniform vec2 u_hole;",
+    "uniform float u_zoom;",
+    "uniform vec3 u_wave;",
+    "uniform float u_image;",
+    "varying vec3 v_color;",
+    "varying vec4 v_shape;",
+    "const float D = " + D.toFixed(1) + ";",
+    "const float K = " + K.toFixed(3) + ";",
+    "const float A = " + (2 * D * 1.1).toFixed(3) + ";",
+    "const float SHADOW = " + SHADOW.toFixed(3) + ";",
+    "void main() {",
+    "  float t = clamp((u_clock - a_life.x) / 1.4, 0.0, 1.0);",
+    "  t = 1.0 - (1.0 - t) * (1.0 - t) * (1.0 - t);",
+    "  vec2 p = mix(a_spot.zw, a_spot.xy, t);",
+    // the dust drifts; the letters only shimmer
+    "  float ph = a_look.y * 61.0 + a_look.x * 17.0;",
+    "  p += a_life.y > 0.5 ? vec2(sin(u_time * 1.3 + ph), cos(u_time * 1.1 + ph * 1.7)) * 0.35",
+    "                      : vec2(sin(u_time * 0.07 + ph), cos(u_time * 0.05 + ph * 1.3)) * 16.0;",
+    "  vec2 s = vec2((p.x - u_view.x * 0.5) / (u_view.y * 0.5), (u_view.y * 0.5 - p.y) / (u_view.y * 0.5));",
+    "  vec2 d = s - u_hole;",
+    "  float dl = max(length(d), 1e-5);",
+    "  float z = max(u_zoom, 1e-4);",
+    "  float beta = dl * K / z;",
+    // solve the lens equation for this image, with the same weak-field bend
+    // the tracer uses far out: a point-lens guess, then a few Newton steps
+    "  float tp = 0.5 * (beta + sqrt(beta * beta + 4.0 * A));",
+    // (the two images multiply to -A, which keeps the inner one exact even
+    // when the hole is tiny and the outer one huge)
+    "  float th = u_image > 0.0 ? tp : -A / tp;",
+    "  float fp = 1.0;",
+    "  for (int i = 0; i < 5; i++) {",
+    "    float q = D * D + th * th;",
+    "    float g = D / sqrt(q);",
+    "    float dg = -D * th / (q * sqrt(q));",
+    "    fp = 1.0 + A * g / (th * th) - A * dg / th;",
+    "    th -= (th - A * g / th - beta) / fp;",
+    "  }",
+    "  float mt = abs(th / beta), mr = abs(1.0 / fp);",
+    "  vec2 du = d / dl * th * z / K;",
+    "  if (u_wave.z > 0.0) {",
+    "    float rl = length(du);",
+    "    float R = u_wave.x * 1.3;",
+    "    float q = (rl - R) / 0.14;",
+    "    du -= du / max(rl, 1e-4) * u_wave.z * 0.04 * sin((rl - R) * 34.0) * exp(-q * q) / (1.0 + R);",
+    "  }",
+    "  vec2 o = u_hole + du;",
+    "  gl_Position = vec4(o.x * u_view.y / u_view.x, o.y, 0.0, 1.0);",
+    "  float sx = clamp(mt, 0.3, 4.0), sy = clamp(mr, 0.3, 2.0);",
+    "  float big = max(sx, sy);",
+    "  gl_PointSize = abs(th) < SHADOW ? 0.0 : a_look.x * big * u_dpr;",
+    // which way the ring runs at this point, in point-sprite coordinates
+    "  vec2 n = vec2(d.x, -d.y) / dl;",
+    "  v_shape = vec4(-n.y, n.x, sx / big, sy / big);",
+    // the home page's colours
+    "  vec3 deep = vec3(0.14, 0.40, 0.95);",
+    "  vec3 teal = vec3(0.12, 0.80, 1.0);",
+    "  vec3 violet = vec3(0.45, 0.36, 1.0);",
+    "  vec3 sky = vec3(0.78, 0.89, 1.0);",
+    "  vec3 gold = vec3(1.0, 0.55, 0.12);",
+    "  float w1 = 0.5 + 0.5 * sin(a_spot.x * 0.0042 + a_spot.y * 0.0023 + u_time * 0.45);",
+    "  float w2 = 0.5 + 0.5 * sin(a_spot.x * -0.0031 + a_spot.y * 0.0051 - u_time * 0.31);",
+    "  vec3 base = mix(mix(deep, teal, w1 * 0.7), violet, w2 * w2 * 0.45);",
+    "  vec3 c = mix(base, sky, a_look.y);",
+    "  c = mix(c, gold, a_look.z);",
+    "  float band = 1.0 - smoothstep(0.0, 70.0, abs(a_spot.x + a_spot.y * 0.45 - u_sweep));",
+    "  c += band * vec3(0.5, 0.6, 0.7) * a_life.y;",
+    "  v_color = c * a_look.w * u_fade * mix(1.0, t, a_life.y);",
+    "}"
+  ].join("\n");
+
+  // a soft round glow per particle (an ellipse where the lens stretches it),
+  // added on wherever the hole lets light from behind it through
+  var PT_FS = [
+    "precision mediump float;",
+    "uniform sampler2D u_vis;",
+    "uniform vec2 u_res;",
+    "varying vec3 v_color;",
+    "varying vec4 v_shape;",
+    "void main() {",
+    "  vec2 q = gl_PointCoord - 0.5;",
+    "  float a = dot(q, v_shape.xy) / v_shape.z;",
+    "  float b = dot(q, vec2(-v_shape.y, v_shape.x)) / v_shape.w;",
+    "  float r = (a * a + b * b) * 4.0;",
+    "  if (r > 1.0) discard;",
+    "  float al = exp(-r * 3.5) - 0.03;",
+    "  float vis = texture2D(u_vis, gl_FragCoord.xy / u_res).a;",
+    "  gl_FragColor = vec4(v_color * al * vis, 1.0);",
+    "}"
+  ].join("\n");
+
+  var BLUR_FS = [
+    "precision mediump float;",
+    "uniform sampler2D u_tex;",
+    "uniform vec2 u_dir;",
+    "varying vec2 v_uv;",
+    "void main() {",
+    "  vec3 c = texture2D(u_tex, v_uv).rgb * 0.227027;",
+    "  c += texture2D(u_tex, v_uv + u_dir * 1.3846154).rgb * 0.3162162;",
+    "  c += texture2D(u_tex, v_uv - u_dir * 1.3846154).rgb * 0.3162162;",
+    "  c += texture2D(u_tex, v_uv + u_dir * 3.2307692).rgb * 0.0702703;",
+    "  c += texture2D(u_tex, v_uv - u_dir * 3.2307692).rgb * 0.0702703;",
+    "  gl_FragColor = vec4(c, 1.0);",
+    "}"
+  ].join("\n");
+
+  // a texture to the screen; u_mask keeps the glow out of the shadow
+  var COPY_FS = [
+    "precision mediump float;",
+    "uniform sampler2D u_tex;",
+    "uniform sampler2D u_vis;",
+    "uniform float u_strength;",
+    "uniform float u_mask;",
+    "varying vec2 v_uv;",
+    "void main() {",
+    "  float vis = mix(1.0, texture2D(u_vis, v_uv).a, u_mask);",
+    "  gl_FragColor = vec4(texture2D(u_tex, v_uv).rgb * u_strength * vis, 1.0);",
+    "}"
+  ].join("\n");
+
   function compile(type, src) {
     var sh = gl.createShader(type);
     gl.shaderSource(sh, src);
     gl.compileShader(sh);
-    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
-      console.error(gl.getShaderInfoLog(sh));
-      return null;
-    }
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh));
     return sh;
   }
 
-  if (gl) {
-    var vs = compile(gl.VERTEX_SHADER, VERT), fs = compile(gl.FRAGMENT_SHADER, FRAG);
-    if (vs && fs) {
-      prog = gl.createProgram();
-      gl.attachShader(prog, vs);
-      gl.attachShader(prog, fs);
-      gl.linkProgram(prog);
-      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) prog = null;
-    }
-    if (!prog) gl = null;
+  function program(vs, fs) {
+    var p = gl.createProgram();
+    gl.attachShader(p, compile(gl.VERTEX_SHADER, vs));
+    gl.attachShader(p, compile(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p));
+    var info = { p: p, u: {}, a: {} }, i, n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS);
+    for (i = 0; i < n; i++) { var u = gl.getActiveUniform(p, i).name; info.u[u] = gl.getUniformLocation(p, u); }
+    n = gl.getProgramParameter(p, gl.ACTIVE_ATTRIBUTES);
+    for (i = 0; i < n; i++) { var at = gl.getActiveAttrib(p, i).name; info.a[at] = gl.getAttribLocation(p, at); }
+    return info;
   }
+
+  var holeProg, ptProg, blurProg, copyProg, tex, triBuf, ptBuf;
+  if (gl) {
+    try {
+      holeProg = program(VERT, FRAG);
+      ptProg = program(PT_VS, PT_FS);
+      blurProg = program(FX_VS, BLUR_FS);
+      copyProg = program(FX_VS, COPY_FS);
+    } catch (e) {
+      console.error(e.message);
+      gl = null;
+    }
+  }
+
+  // offscreen targets: the traced hole, and two quarter-size buffers to
+  // ping-pong the glow's blur between
+  function target() { return { tex: gl.createTexture(), fb: gl.createFramebuffer(), w: 0, h: 0 }; }
+  function sizeTarget(t, w, h) {
+    t.w = Math.max(1, w);
+    t.h = Math.max(1, h);
+    gl.bindTexture(gl.TEXTURE_2D, t.tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, t.w, t.h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, t.fb);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, t.tex, 0);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  }
+
+  var traceT, bloom;
+  var BLOOM_DIV = 4;
 
   if (!gl) {
     root.classList.add("no-gl");
   } else {
-    gl.useProgram(prog);
-    var buf = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    triBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, triBuf);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-    var ap = gl.getAttribLocation(prog, "p");
-    gl.enableVertexAttribArray(ap);
-    gl.vertexAttribPointer(ap, 2, gl.FLOAT, false, 0, 0);
-    ["u_res", "u_time", "u_bg", "u_hole", "u_zoom", "u_flash", "u_heat", "u_incl", "u_roll", "u_spin", "u_wave", "u_jet"].forEach(function (n) {
-      loc[n] = gl.getUniformLocation(prog, n);
-    });
+    ptBuf = gl.createBuffer();
+    traceT = target();
+    bloom = [target(), target()];
     tex = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.uniform1i(loc.u_bg, 0);
   }
 
-  // ---------- the backdrop the hole lenses: star dust, a grid and the 404,
-  // drawn in particles like the name on the home page ----------
+  // ---------- the backdrop the hole lenses: the home page's navy glow (the
+  // dust and the 404 are particles, further down) ----------
   var backdrop = document.createElement("canvas");
   var bctx = backdrop.getContext("2d");
-
-  function seeded(seed) {
-    return function () {
-      seed = (seed * 1664525 + 1013904223) >>> 0;
-      return seed / 4294967296;
-    };
-  }
 
   function drawBackdrop() {
     var W = innerWidth, H = innerHeight;
@@ -764,10 +921,7 @@
     var k = Math.min(2, Math.min(devicePixelRatio || 1, 1.5), 2560 / W);
     backdrop.width = Math.round(W * k);
     backdrop.height = Math.round(H * k);
-    var w = backdrop.width, h = backdrop.height, rnd = seeded(404);
-    var c = bctx;
-
-    var size = Math.min(w * 0.36, h * 0.5);
+    var w = backdrop.width, h = backdrop.height, c = bctx;
     var cy = h * TEXT_Y;
 
     // the home page's sky: a navy glow behind the lettering, fading to night
@@ -783,99 +937,6 @@
     c.fillRect(0, -h, w, h * 3.3);
     c.restore();
 
-    // a very faint grid, so you can still watch space itself bend
-    var step = Math.max(28, Math.round(Math.min(w, h) / 16));
-    c.strokeStyle = "rgba(120,170,255,0.045)";
-    c.lineWidth = Math.max(1, k);
-    c.beginPath();
-    for (var x = (w / 2) % step; x < w; x += step) { c.moveTo(x, 0); c.lineTo(x, h); }
-    for (var y = cy % step; y < h; y += step) { c.moveTo(0, y); c.lineTo(w, y); }
-    c.stroke();
-
-    // the particles' colours, as on the home page: deep blue, teal and violet
-    // rolling through each other in slow waves, some lifted to sky blue
-    function tone(px, py, tint, bright) {
-      var w1 = 0.5 + 0.5 * Math.sin(px / k * 0.0042 + py / k * 0.0023);
-      var w2 = 0.5 + 0.5 * Math.sin(px / k * -0.0031 + py / k * 0.0051 + 1.7);
-      var m1 = w1 * 0.7, m2 = w2 * w2 * 0.45;
-      var r = (0.14 + (0.12 - 0.14) * m1), gg = (0.40 + (0.80 - 0.40) * m1), bb = 0.95 + (1.0 - 0.95) * m1;
-      r += (0.45 - r) * m2; gg += (0.36 - gg) * m2; bb += (1.0 - bb) * m2;
-      r += (0.78 - r) * tint; gg += (0.89 - gg) * tint; bb += (1.0 - bb) * tint;
-      return [Math.min(255, r * 255 * bright) | 0, Math.min(255, gg * 255 * bright) | 0, Math.min(255, bb * 255 * bright) | 0];
-    }
-
-    function speck(px, py, rad, col, alpha) {
-      var rgb = col[0] + "," + col[1] + "," + col[2];
-      c.fillStyle = "rgba(" + rgb + "," + (alpha * 0.22).toFixed(3) + ")";
-      c.beginPath();
-      c.arc(px, py, rad * 2.2, 0, 6.2832);
-      c.fill();
-      c.fillStyle = "rgba(" + rgb + "," + alpha.toFixed(3) + ")";
-      c.beginPath();
-      c.arc(px, py, rad, 0, 6.2832);
-      c.fill();
-    }
-
-    c.globalCompositeOperation = "lighter";
-
-    // star dust over the whole sky
-    var count = Math.round(w * h / (900 * k * k));
-    for (var i = 0; i < count; i++) {
-      var sx = rnd() * w, sy = rnd() * h, m = rnd();
-      speck(sx, sy, (0.3 + Math.pow(m, 6) * 0.8) * k, tone(sx, sy, Math.pow(rnd(), 3), 0.8), 0.2 + m * 0.5);
-    }
-
-    // the 404, in the same Merriweather as the name, as a mask to scatter
-    // particles through
-    var font = "900 " + Math.round(size) + "px Merriweather, Georgia, serif";
-    c.font = font;
-    var tw = Math.ceil(c.measureText("404").width + size * 0.3), th = Math.ceil(size * 1.3);
-    var mask = document.createElement("canvas");
-    mask.width = tw;
-    mask.height = th;
-    var mc = mask.getContext("2d");
-    mc.font = font;
-    mc.textAlign = "center";
-    mc.textBaseline = "middle";
-    mc.fillStyle = "#fff";
-    mc.fillText("404", tw / 2, th / 2);
-    var md = mc.getImageData(0, 0, tw, th).data;
-    var ox = w / 2 - tw / 2, oy = cy - th / 2;
-
-    // the glow the dense parts of the lettering give off
-    c.globalCompositeOperation = "source-over";
-    c.textAlign = "center";
-    c.textBaseline = "middle";
-    c.shadowColor = "rgba(43,120,230,0.9)";
-    c.shadowBlur = size * 0.12;
-    c.fillStyle = "rgba(30,100,210,0.2)";
-    c.fillText("404", w / 2, cy);
-    c.shadowBlur = size * 0.4;
-    c.shadowColor = "rgba(43,111,214,0.55)";
-    c.fillText("404", w / 2, cy);
-    c.shadowBlur = 0;
-    c.globalCompositeOperation = "lighter";
-
-    // then the particles: packed inside the letters, with a few strays
-    // particles sized to the lettering, so a phone's smaller 404 stays fine-grained
-    var u = Math.max(0.6 * k, Math.min(k, size / 450));
-    var gap = 2.9 * u;
-    for (var gy = 0; gy < th; gy += gap) {
-      for (var gx = 0; gx < tw; gx += gap) {
-        var jx = gx + (rnd() - 0.5) * gap * 1.6, jy = gy + (rnd() - 0.5) * gap * 1.6;
-        var mx = Math.max(0, Math.min(tw - 1, jx | 0)), my = Math.max(0, Math.min(th - 1, jy | 0));
-        var inside = md[(my * tw + mx) * 4 + 3] > 127;
-        if (!inside && rnd() > 0.035) continue;
-        var spread = inside ? 0 : size * 0.06;
-        var px = ox + jx + (rnd() - 0.5) * spread, py = oy + jy + (rnd() - 0.5) * spread;
-        var e = rnd(), sparkle = rnd() < 0.035;
-        speck(px, py, (0.45 + e * e * 1.0 + (sparkle ? 0.7 : 0)) * u,
-          tone(px, py, sparkle ? 0.95 : Math.pow(rnd(), 3) * 0.55, 0.55 + rnd() * 0.7),
-          inside ? 0.3 + e * 0.7 : 0.3 + e * 0.3);
-      }
-    }
-    c.globalCompositeOperation = "source-over";
-
     if (gl) {
       gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -887,23 +948,113 @@
   var TEXT_Y = 0.4;
 
   // ---------- sizes ----------
-  var W = 0, H = 0, scale = Math.min(devicePixelRatio || 1, 1.25) * 0.75, sparkScale = 1;
+  // the screen is drawn at full resolution; only the traced hole runs at a
+  // scale, which starts from a budget of pixels (so a phone starts sharp and
+  // a big screen starts light) and then drops or climbs with the frame rate
+  var W = 0, H = 0, DPR = 1, scale = 1, sparkScale = 1;
   var maxScale = Math.min(devicePixelRatio || 1, 1.5);
+  scale = Math.max(0.5, Math.min(maxScale, Math.sqrt(1.2e6 / Math.max(1, innerWidth * innerHeight))));
 
   function sizeSky() {
-    sky.width = Math.max(1, Math.round(W * scale));
-    sky.height = Math.max(1, Math.round(H * scale));
-    if (gl) gl.viewport(0, 0, sky.width, sky.height);
+    if (gl) sizeTarget(traceT, Math.round(W * scale), Math.round(H * scale));
   }
 
   function resize() {
     W = innerWidth;
     H = innerHeight;
+    DPR = Math.min(devicePixelRatio || 1, 2);
+    sky.width = Math.max(1, Math.round(W * DPR));
+    sky.height = Math.max(1, Math.round(H * DPR));
+    if (gl) {
+      sizeTarget(bloom[0], Math.ceil(sky.width / BLOOM_DIV), Math.ceil(sky.height / BLOOM_DIV));
+      sizeTarget(bloom[1], Math.ceil(sky.width / BLOOM_DIV), Math.ceil(sky.height / BLOOM_DIV));
+    }
     sizeSky();
-    sparkScale = Math.min(devicePixelRatio || 1, 2);
+    sparkScale = DPR;
     sparks.width = Math.round(W * sparkScale);
     sparks.height = Math.round(H * sparkScale);
     drawBackdrop();
+    buildParticles();
+  }
+
+  // ---------- the particles: the 404 and the dust, as on the home page ----------
+  var NAME_DENSITY = 0.17;  // particles per square px of letter, as on the home page
+  var DUST_DENSITY = 0.007; // free-floating dust, per square px of screen
+  var ptCount = 0, glyphs = { x: 0, y: 0, w: 1, h: 1 };
+
+  function buildParticles() {
+    if (!gl || !W || !H) return;
+    var size = Math.min(W * 0.36, H * 0.5), cy = H * TEXT_Y;
+    var font = "900 " + Math.round(size) + "px Merriweather, Georgia, serif";
+
+    // draw the 404 into a mask and keep every pixel inside the letters
+    var mask = document.createElement("canvas");
+    var m = mask.getContext("2d", { willReadFrequently: true });
+    m.font = font;
+    var mw = Math.ceil(m.measureText("404").width + size * 0.2), mh = Math.ceil(size * 1.3);
+    mask.width = mw;
+    mask.height = mh;
+    m.font = font;
+    m.textAlign = "center";
+    m.textBaseline = "middle";
+    m.fillStyle = "#000";
+    m.fillText("404", mw / 2, mh / 2);
+    var data = m.getImageData(0, 0, mw, mh).data;
+    var x0 = W / 2 - mw / 2, y0 = cy - mh / 2;
+    var spots = [], gx0 = Infinity, gy0 = Infinity, gx1 = -Infinity, gy1 = -Infinity;
+    for (var y = 0; y < mh; y++) {
+      for (var x = 0; x < mw; x++) {
+        if (data[(y * mw + x) * 4 + 3] > 127) {
+          spots.push(x, y);
+          if (x < gx0) gx0 = x;
+          if (x > gx1) gx1 = x;
+          if (y < gy0) gy0 = y;
+          if (y > gy1) gy1 = y;
+        }
+      }
+    }
+    var letters = spots.length / 2;
+    if (!letters) return;
+    glyphs = { x: x0 + gx0, y: y0 + gy0, w: gx1 - gx0 + 1, h: gy1 - gy0 + 1 };
+
+    // the home page's grain: smaller type gets finer specks, and more of them
+    // (the 404 is set far bigger than the name, so it reaches full grain later)
+    var grain = Math.max(0.5, Math.min(1, size / 280));
+    var nb = Math.round(Math.max(2500, Math.min(40000, letters * NAME_DENSITY / (grain * grain))));
+    var na = Math.round(Math.max(1500, Math.min(16000, W * H * DUST_DENSITY)));
+    var n = nb + na, buf = new Float32Array(n * 10), reach = Math.max(W, H) * 1.3;
+    for (var i = 0; i < n; i++) {
+      var o = i * 10, bound = i < nb, sx, sy;
+      if (bound) {
+        var sp = Math.floor(Math.random() * letters) * 2;
+        // a little scatter off the exact spot, so the edges go soft as the
+        // name's do on the home page, where the particles never quite settle
+        sx = x0 + spots[sp] + Math.random() + (Math.random() + Math.random() + Math.random() - 1.5) * 2.2 * grain;
+        sy = y0 + spots[sp + 1] + Math.random() + (Math.random() + Math.random() + Math.random() - 1.5) * 2.2 * grain;
+        // each flies in from deep space, the name pulling together left to right
+        var a = Math.random() * Math.PI * 2, r = reach * (0.35 + Math.random() * 0.65);
+        buf[o] = sx; buf[o + 1] = sy;
+        buf[o + 2] = W / 2 + Math.cos(a) * r; buf[o + 3] = cy + Math.sin(a) * r;
+        buf[o + 4] = (2.4 + Math.random() * 2.6) * grain * (0.97 + Math.random() * 0.06);
+        buf[o + 8] = 0.35 + (sx - glyphs.x) / glyphs.w * 0.9 + Math.random() * 0.35;
+        buf[o + 9] = 1;
+      } else {
+        sx = Math.random() * W;
+        sy = Math.random() * H;
+        buf[o] = buf[o + 2] = sx;
+        buf[o + 1] = buf[o + 3] = sy;
+        // dust sits at every depth, so it comes in every size
+        buf[o + 4] = (1.6 + Math.random() * 3.2) * 900 / (900 + 900 - Math.random() * 1150);
+        buf[o + 8] = -10;
+        buf[o + 9] = 0;
+      }
+      buf[o + 5] = Math.pow(Math.random(), 1.6);
+      buf[o + 6] = Math.random() < 0.025 ? 1 : 0;
+      buf[o + 7] = bound ? 0.55 + Math.random() * 0.25 : 0.25 + Math.random() * 0.3;
+    }
+    gl.bindBuffer(gl.ARRAY_BUFFER, ptBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, buf, gl.STATIC_DRAW);
+    ptCount = n;
   }
 
   // ---------- the hole ----------
@@ -1533,20 +1684,127 @@
   }
   var released = 0;
 
+  function fullscreen(prog) {
+    gl.bindBuffer(gl.ARRAY_BUFFER, triBuf);
+    gl.enableVertexAttribArray(prog.a.p);
+    gl.vertexAttribPointer(prog.a.p, 2, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.disableVertexAttribArray(prog.a.p);
+  }
+
+  // both images of every particle: the one outside the ring and the one inside
+  function points(dpr, w, h) {
+    var u = ptProg.u;
+    gl.useProgram(ptProg.p);
+    gl.uniform1f(u.u_dpr, dpr);
+    gl.uniform2f(u.u_res, w, h);
+    gl.bindBuffer(gl.ARRAY_BUFFER, ptBuf);
+    [["a_spot", 4, 0], ["a_look", 4, 16], ["a_life", 2, 32]].forEach(function (at) {
+      gl.enableVertexAttribArray(ptProg.a[at[0]]);
+      gl.vertexAttribPointer(ptProg.a[at[0]], at[1], gl.FLOAT, false, 40, at[2]);
+    });
+    gl.uniform1f(u.u_image, 1);
+    gl.drawArrays(gl.POINTS, 0, ptCount);
+    gl.uniform1f(u.u_image, -1);
+    gl.drawArrays(gl.POINTS, 0, ptCount);
+    ["a_spot", "a_look", "a_life"].forEach(function (n) { gl.disableVertexAttribArray(ptProg.a[n]); });
+  }
+
   function render() {
     if (!gl) return;
-    gl.uniform2f(loc.u_res, sky.width, sky.height);
-    gl.uniform1f(loc.u_time, time);
-    gl.uniform2f(loc.u_hole, hole.x, hole.y);
-    gl.uniform1f(loc.u_zoom, Math.max(zoom, 0.0001));
-    gl.uniform1f(loc.u_flash, flash);
-    gl.uniform1f(loc.u_heat, heat);
-    gl.uniform1f(loc.u_incl, 0.17 + Math.sin(time * 0.05) * 0.04);
-    gl.uniform1f(loc.u_roll, -0.2 + Math.sin(time * 0.07) * 0.06 + hole.vx * 0.04);
-    gl.uniform1f(loc.u_spin, 6.0);
-    gl.uniform3f(loc.u_wave, wave.t, 0, wave.t < 4 ? wave.a * Math.exp(-wave.t * 0.7) : 0);
-    gl.uniform1f(loc.u_jet, jet);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    var waveZ = wave.t < 4 ? wave.a * Math.exp(-wave.t * 0.7) : 0;
+
+    // the hole, traced at whatever resolution keeps it smooth
+    var u = holeProg.u;
+    gl.bindFramebuffer(gl.FRAMEBUFFER, traceT.fb);
+    gl.viewport(0, 0, traceT.w, traceT.h);
+    gl.useProgram(holeProg.p);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.uniform1i(u.u_bg, 0);
+    gl.uniform2f(u.u_res, traceT.w, traceT.h);
+    gl.uniform1f(u.u_time, time);
+    gl.uniform2f(u.u_hole, hole.x, hole.y);
+    gl.uniform1f(u.u_zoom, Math.max(zoom, 0.0001));
+    gl.uniform1f(u.u_flash, flash);
+    gl.uniform1f(u.u_heat, heat);
+    gl.uniform1f(u.u_incl, 0.17 + Math.sin(time * 0.05) * 0.04);
+    gl.uniform1f(u.u_roll, -0.2 + Math.sin(time * 0.07) * 0.06 + hole.vx * 0.04);
+    gl.uniform1f(u.u_spin, 6.0);
+    gl.uniform3f(u.u_wave, wave.t, 0, waveZ);
+    gl.uniform1f(u.u_jet, jet);
+    fullscreen(holeProg);
+
+    // the particles' shared settings; every eight seconds a band of light
+    // runs across the 404, as it does across the name
+    var sweep = -1e5;
+    if (!reduce && time > 4) {
+      var ph = ((time - 4) % 8) / 1.8;
+      if (ph < 1) sweep = glyphs.x - 300 + ph * (glyphs.w + glyphs.h * 0.45 + 600) + glyphs.y * 0.45;
+    }
+    u = ptProg.u;
+    gl.useProgram(ptProg.p);
+    gl.uniform2f(u.u_view, W, H);
+    gl.uniform1f(u.u_time, time);
+    gl.uniform1f(u.u_clock, reduce ? 99 : time);
+    gl.uniform1f(u.u_sweep, sweep);
+    gl.uniform1f(u.u_fade, reduce ? 1 : Math.min(1, time / 1.2));
+    gl.uniform2f(u.u_hole, hole.x, hole.y);
+    gl.uniform1f(u.u_zoom, Math.max(zoom, 0.0001));
+    gl.uniform3f(u.u_wave, wave.t, 0, waveZ);
+    gl.uniform1i(u.u_vis, 0);
+    gl.bindTexture(gl.TEXTURE_2D, traceT.tex);
+
+    // the glow: the particles go into the small buffer, a little larger so
+    // even the specks feed it, and get blurred twice each way
+    var a = bloom[0], b = bloom[1];
+    gl.bindFramebuffer(gl.FRAMEBUFFER, a.fb);
+    gl.viewport(0, 0, a.w, a.h);
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE);
+    points(DPR / BLOOM_DIV * 1.6, a.w, a.h);
+    gl.disable(gl.BLEND);
+    gl.useProgram(blurProg.p);
+    gl.uniform1i(blurProg.u.u_tex, 0);
+    for (var pass = 1; pass <= 2; pass++) {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, b.fb);
+      gl.bindTexture(gl.TEXTURE_2D, a.tex);
+      gl.uniform2f(blurProg.u.u_dir, pass / a.w, 0);
+      fullscreen(blurProg);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, a.fb);
+      gl.bindTexture(gl.TEXTURE_2D, b.tex);
+      gl.uniform2f(blurProg.u.u_dir, 0, pass / a.h);
+      fullscreen(blurProg);
+    }
+
+    // the screen: the hole, the sharp particles, then the glow over them
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, sky.width, sky.height);
+    gl.useProgram(copyProg.p);
+    gl.uniform1i(copyProg.u.u_tex, 0);
+    gl.uniform1i(copyProg.u.u_vis, 1);
+    gl.uniform1f(copyProg.u.u_strength, 1);
+    gl.uniform1f(copyProg.u.u_mask, 0);
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, traceT.tex);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, traceT.tex);
+    fullscreen(copyProg);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE);
+    points(DPR, sky.width, sky.height);
+    gl.useProgram(copyProg.p);
+    gl.bindTexture(gl.TEXTURE_2D, a.tex);
+    gl.uniform1f(copyProg.u.u_strength, 0.9);
+    gl.uniform1f(copyProg.u.u_mask, 1);
+    fullscreen(copyProg);
+    gl.disable(gl.BLEND);
+    // let go of the traced hole, which gets drawn into again next frame
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+    gl.activeTexture(gl.TEXTURE0);
   }
 
   function loop(now) {
@@ -1572,7 +1830,7 @@
   gatherLeaners();
   addEventListener("resize", function () { resize(); gatherLeaners(); });
   if (document.fonts && document.fonts.load) {
-    document.fonts.load("900 200px Merriweather").then(function () { drawBackdrop(); gatherLeaners(); }, function () {});
+    document.fonts.load("900 200px Merriweather").then(function () { buildParticles(); gatherLeaners(); }, function () {});
   }
   type(kicker.textContent);
 

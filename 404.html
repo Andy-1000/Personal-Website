@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lost in space | Andy Sansness</title>
+<meta name="description" content="This page fell into a black hole.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#020a14">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@900&family=Open+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site-nav.css?v=1">
+<link rel="stylesheet" href="/hubs.css?v=2">
+<script>document.documentElement.className += " js";</script>
+<style>
+  /* GitHub Pages serves this for any missing path, so every link and asset
+     here is absolute */
+  :root {
+    --night: #020a14;
+    --deep: #04162b;
+    --blue: #004d99;
+    --sky: #cce6ff;
+    --ice: #e9f3ff;
+    --gold: #e8a921;
+    --hot: #ff6a2b;
+    --line: rgba(204, 230, 255, 0.16);
+    --muted: rgba(204, 230, 255, 0.62);
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  }
+
+  html, body { height: 100%; overflow: hidden; }
+
+  body {
+    overflow: hidden;
+    background: var(--night);
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* ---------- the sky: the black hole, the sparks, and a vignette and grain over both ---------- */
+  .sky, .sparks {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .sky { z-index: 0; }
+  .sparks { z-index: 1; pointer-events: none; }
+
+  .veil {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 85% 75% at 50% 45%, rgba(2, 10, 20, 0) 55%, rgba(2, 10, 20, 0.7) 100%),
+      linear-gradient(to bottom, rgba(2, 10, 20, 0.75) 0, rgba(2, 10, 20, 0) 130px),
+      linear-gradient(to top, rgba(2, 10, 20, 0.85) 0, rgba(2, 10, 20, 0) 38%);
+  }
+
+  .veil::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* the alarm wash as it goes critical, and the white of the blast */
+  .alarm, .blast {
+    position: fixed;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .alarm {
+    background: radial-gradient(ellipse at center, rgba(255, 106, 43, 0) 40%, rgba(255, 70, 30, 0.5) 100%);
+  }
+
+  .critical .alarm { animation: alarm 0.5s ease-in-out infinite alternate; }
+
+  @keyframes alarm { from { opacity: 0.15; } to { opacity: 1; } }
+
+  .blast { background: #fff8ea; }
+
+  /* the letters and pieces of page in free fall */
+  .debris {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .debris span {
+    position: fixed;
+    font-family: var(--mono);
+    font-weight: 500;
+    color: var(--gold);
+    text-shadow: 0 0 12px rgba(232, 169, 33, 0.8);
+    white-space: pre;
+    will-change: transform, opacity;
+  }
+
+  /* ---------- the page over the sky ---------- */
+  /* clipped, so the closed menus can't widen the page on a phone */
+  .stage {
+    position: relative;
+    z-index: 3;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+  }
+
+  .stage a, .stage button, .stage nav { pointer-events: auto; }
+
+  /* the bar has to read over a blazing white 404 */
+  .bar .home, .bar .drop-toggle { text-shadow: 0 1px 12px rgba(2, 10, 20, 0.95), 0 0 3px rgba(2, 10, 20, 0.8); }
+
+  [hidden] { display: none !important; }
+
+  .critical .stage { animation: shake 0.09s linear infinite; }
+
+  @keyframes shake {
+    0% { transform: translate(2px, -1px); }
+    25% { transform: translate(-3px, 2px); }
+    50% { transform: translate(1px, 3px); }
+    75% { transform: translate(-2px, -2px); }
+    100% { transform: translate(3px, 1px); }
+  }
+
+  .lost {
+    margin-top: auto;
+    padding: 0 16px calc(30px + env(safe-area-inset-bottom));
+    text-align: center;
+  }
+
+  .kicker {
+    display: inline-block;
+    min-height: 1.6em;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-shadow: 0 0 18px rgba(232, 169, 33, 0.55);
+  }
+
+  .kicker .caret {
+    display: inline-block;
+    width: 0.6em;
+    height: 1em;
+    margin-left: 0.15em;
+    vertical-align: -0.12em;
+    background: currentColor;
+    animation: blink 1s steps(1) infinite;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .lost h1 {
+    margin: 6px auto 0;
+    max-width: 16em;
+    font-family: "Merriweather", serif;
+    font-weight: 900;
+    font-size: clamp(28px, 4.6vw, 52px);
+    line-height: 1.12;
+    color: var(--ice);
+    text-shadow: 0 2px 30px rgba(2, 10, 20, 0.9), 0 0 40px rgba(43, 111, 214, 0.45);
+  }
+
+  .lost h1 .w { display: inline-block; }
+
+  .lede {
+    max-width: 34em;
+    margin: 12px auto 0;
+    font-size: 16px;
+    color: rgba(233, 243, 255, 0.8);
+    text-shadow: 0 1px 14px rgba(2, 10, 20, 0.95);
+  }
+
+  .lede code {
+    font-family: var(--mono);
+    font-size: 0.92em;
+    color: var(--gold);
+    word-break: break-all;
+  }
+
+  .lede code .ghost { opacity: 0.22; transition: opacity 0.6s ease; }
+
+  .ways {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 22px 0 0;
+  }
+
+  .way {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 20px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(2, 10, 20, 0.5);
+    font: 600 12px/1.4 "Open Sans", sans-serif;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ice);
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .way svg { width: 16px; height: 16px; flex: none; }
+
+  .way:hover, .way:focus-visible {
+    border-color: rgba(204, 230, 255, 0.45);
+    background: rgba(4, 22, 43, 0.85);
+    box-shadow: 0 0 30px rgba(43, 111, 214, 0.35);
+    outline: none;
+  }
+
+  .way.home-way {
+    border-color: var(--gold);
+    background: var(--gold);
+    color: var(--night);
+  }
+
+  .way.home-way:hover, .way.home-way:focus-visible {
+    background: #ffc23d;
+    border-color: #ffc23d;
+    box-shadow: 0 0 36px rgba(232, 169, 33, 0.6);
+  }
+
+  .way:focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; }
+
+  .hint {
+    margin: 16px 0 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .hint .touch { display: none; }
+  .coarse .hint .mouse { display: none; }
+  .coarse .hint .touch { display: inline; }
+
+  /* ---------- the readouts in the corners ---------- */
+  .hud {
+    position: fixed;
+    z-index: 3;
+    bottom: calc(26px + env(safe-area-inset-bottom));
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    line-height: 1.75;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .hud.left { left: calc(30px + env(safe-area-inset-left)); }
+  .hud.right { right: calc(30px + env(safe-area-inset-right)); text-align: right; }
+
+  .hud dt { display: inline; color: rgba(204, 230, 255, 0.4); }
+  .hud dt::after { content: " "; }
+  .hud dd { display: inline; margin: 0; color: var(--sky); font-variant-numeric: tabular-nums; }
+  .hud div { white-space: nowrap; }
+
+  .hud .warn dd { color: var(--gold); }
+  .critical .hud .warn dd { color: var(--hot); animation: blink 0.25s steps(1) infinite; }
+
+  .meter {
+    display: block;
+    width: 150px;
+    height: 3px;
+    margin: 6px 0 2px auto;
+    border-radius: 2px;
+    background: rgba(204, 230, 255, 0.14);
+    overflow: hidden;
+  }
+
+  .meter i {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--hot));
+    box-shadow: 0 0 10px var(--gold);
+    transition: width 0.25s ease;
+  }
+
+  /* things the hole has eaten can't be clicked until they're back */
+  .eaten { pointer-events: none !important; }
+
+  /* the sound toggle */
+  .sound {
+    position: fixed;
+    z-index: 4;
+    right: calc(30px + env(safe-area-inset-right));
+    bottom: calc(118px + env(safe-area-inset-bottom));
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: rgba(2, 10, 20, 0.45);
+    color: var(--muted);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .sound:hover, .sound:focus-visible { color: var(--ice); border-color: rgba(204, 230, 255, 0.45); outline: none; }
+  .sound:focus-visible { outline: 2px solid var(--sky); outline-offset: 3px; }
+  .sound svg { width: 17px; height: 17px; }
+  .sound .on { display: none; }
+  .sound[aria-pressed="true"] .on { display: block; }
+  .sound[aria-pressed="true"] .off { display: none; }
+
+  /* ---------- without WebGL: a drawn hole, still and quiet ---------- */
+  .fallback {
+    display: none;
+    position: fixed;
+    left: 50%;
+    top: 40%;
+    z-index: 0;
+    width: min(70vw, 52vh);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: #000;
+    box-shadow: 0 0 0 2px rgba(255, 214, 140, 0.9), 0 0 40px 10px rgba(232, 169, 33, 0.55), 0 0 160px 40px rgba(232, 120, 33, 0.25);
+  }
+
+  .fallback::before {
+    content: "404";
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font: 900 min(18vw, 13vh)/1 "Merriweather", serif;
+    color: var(--ice);
+    text-shadow: 0 0 40px rgba(43, 111, 214, 0.6);
+  }
+
+  .no-gl .fallback { display: block; }
+  .no-gl .sky, .no-gl .sound { display: none; }
+
+  @media (max-width: 760px) {
+    .hud { display: none; }
+    .sound { bottom: auto; top: calc(72px + env(safe-area-inset-top)); right: calc(16px + env(safe-area-inset-right)); }
+    .lost { padding-bottom: calc(22px + env(safe-area-inset-bottom)); }
+    .lede { font-size: 15px; }
+    .way { padding: 11px 16px; font-size: 11px; letter-spacing: 0.16em; }
+  }
+
+  @media (max-width: 1100px) {
+    .hud.left .wide, .hud.right .wide { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .critical .stage, .kicker .caret { animation: none; }
+  }
+
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    margin: -1px; padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
+</head>
+<body>
+
+<canvas class="sky" id="sky" aria-hidden="true"></canvas>
+<canvas class="sparks" id="sparks" aria-hidden="true"></canvas>
+<div class="fallback" aria-hidden="true"></div>
+<div class="veil" aria-hidden="true"></div>
+<div class="debris" id="debris" aria-hidden="true"></div>
+<div class="alarm" aria-hidden="true"></div>
+<div class="blast" id="blast" aria-hidden="true"></div>
+
+<div class="stage" id="stage">
+  <header class="bar">
+    <a class="home" href="/" aria-label="Andy Sansness, home" data-eat><span class="full">Andy Sansness</span><span class="short">AS</span></a>
+    <nav class="site" id="site" aria-label="Site">
+      <ul class="site-list">
+        <li class="drop"><a class="drop-toggle" href="/stories">Data stories</a></li>
+        <li class="drop"><a class="drop-toggle" href="/games">Games</a></li>
+        <li class="drop"><a class="drop-toggle" href="/reviews">Reviews</a></li>
+      </ul>
+    </nav>
+    <script src="/site-nav.js?v=2"></script>
+  </header>
+
+  <main class="lost" id="lost">
+    <p class="kicker" data-eat><span id="kicker">Error 404 · Signal lost</span><span class="caret"></span></p>
+    <h1 id="title">This page fell into a black hole.</h1>
+    <p class="lede" id="lede" data-eat>Nothing made it back out of <code id="path">this address</code>. Not even light.</p>
+    <p class="ways">
+      <a class="way home-way" href="/" data-eat>Escape to the home page <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h15M13 6l6 6-6 6"/></svg></a>
+      <button class="way" type="button" id="feed" data-eat>Feed it <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></button>
+    </p>
+    <p class="hint" data-eat aria-hidden="true"><span class="mouse">Move to steer it · click anywhere to feed it</span><span class="touch">Drag to steer · tap to feed</span></p>
+  </main>
+</div>
+
+<dl class="hud left" aria-hidden="true">
+  <div><dt>Object</dt><dd>SAN-404</dd></div>
+  <div class="wide"><dt>Last seen</dt><dd id="hudPath">/</dd></div>
+  <div><dt>Mass</dt><dd id="hudMass">4.04 × 10⁶ M☉</dd></div>
+  <div><dt>Horizon</dt><dd id="hudHorizon">11.9 M km</dd></div>
+</dl>
+
+<dl class="hud right" aria-hidden="true">
+  <div class="wide"><dt>Your clock</dt><dd id="hudClock">×1.000</dd></div>
+  <div><dt>Swallowed</dt><dd id="hudEaten">0</dd></div>
+  <div class="warn"><dt>Status</dt><dd id="hudStatus">Stable</dd></div>
+  <span class="meter"><i id="hudMeter"></i></span>
+</dl>
+
+<button class="sound" type="button" id="sound" aria-pressed="false" aria-label="Sound">
+  <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="m23 9-6 6M17 9l6 6"/></svg>
+  <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>
+</button>
+
+<script>
+// The black hole. A ray tracer in a fragment shader bends light round a
+// Schwarzschild hole: each pixel's ray is stepped through the hole's gravity,
+// picks up the accretion disk wherever it crosses the disk's plane, and if it
+// gets away it reads the backdrop (stars, a faint grid and a huge 404) from
+// where it ends up, so the 404 is lensed for real as the hole drifts over it.
+//
+// On top, a 2D canvas and a layer of DOM letters hold everything that falls
+// in: the missing path, whatever you feed it and, once it's had enough,
+// the page itself.
+(function () {
+  "use strict";
+
+  var root = document.documentElement;
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var coarse = matchMedia("(pointer: coarse)").matches;
+  if (coarse) root.classList.add("coarse");
+
+  // ---------- the missing path, shown as typed (and never as HTML) ----------
+  var rawPath = location.pathname + location.search;
+  var path;
+  try { path = decodeURIComponent(rawPath); } catch (e) { path = rawPath; }
+  if (path.length > 42) path = path.slice(0, 40) + "…";
+  if (!path || path === "/404.html" || path === "/404") path = "/somewhere";
+  var pathEl = document.getElementById("path");
+  pathEl.textContent = "";
+  var pathChars = [];
+  for (var i = 0; i < path.length; i++) {
+    var s = document.createElement("span");
+    s.textContent = path[i];
+    pathEl.appendChild(s);
+    pathChars.push(s);
+  }
+  document.getElementById("hudPath").textContent = path.length > 22 ? path.slice(0, 21) + "…" : path;
+
+  // the headline goes word by word, so it can be eaten word by word
+  var title = document.getElementById("title");
+  function setTitle(text) {
+    title.textContent = "";
+    text.split(" ").forEach(function (w, i) {
+      if (i) title.appendChild(document.createTextNode(" "));
+      var s = document.createElement("span");
+      s.className = "w";
+      s.setAttribute("data-eat", "");
+      s.textContent = w;
+      title.appendChild(s);
+    });
+  }
+  setTitle(title.textContent);
+
+  var sky = document.getElementById("sky");
+  var sparks = document.getElementById("sparks");
+  var sctx = sparks.getContext("2d");
+  var debris = document.getElementById("debris");
+  var blast = document.getElementById("blast");
+  var kicker = document.getElementById("kicker");
+  var hud = {
+    mass: document.getElementById("hudMass"),
+    horizon: document.getElementById("hudHorizon"),
+    clock: document.getElementById("hudClock"),
+    eaten: document.getElementById("hudEaten"),
+    status: document.getElementById("hudStatus"),
+    meter: document.getElementById("hudMeter")
+  };
+
+  // ---------- WebGL ----------
+  var gl = null;
+  try {
+    gl = sky.getContext("webgl", { antialias: false, alpha: false, preserveDrawingBuffer: false }) ||
+         sky.getContext("experimental-webgl", { antialias: false, alpha: false, preserveDrawingBuffer: false });
+  } catch (e) { gl = null; }
+
+  // lengths are in Schwarzschild radii: rays are traced from D in front of
+  // the hole to D behind it, one screen unit spans K of them at zoom 1, and
+  // the shadow is SHADOW across
+  var D = 22, K = 20.9, SHADOW = 2.598;
+
+  var FRAG = [
+    "precision highp float;",
+    "uniform vec2 u_res;",
+    "uniform float u_time;",
+    "uniform sampler2D u_bg;",
+    "uniform vec2 u_hole;",
+    "uniform float u_zoom;",
+    "uniform float u_flash;",
+    "uniform float u_heat;",
+    "uniform float u_incl;",
+    "uniform float u_roll;",
+    "uniform float u_spin;",
+    "uniform vec3 u_wave;",
+    "uniform float u_jet;",
+    "const float D = " + D.toFixed(1) + ";",
+    "const float K = " + K.toFixed(3) + ";",
+
+    "float hash(vec3 p) { p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }",
+    "float noise(vec3 x) {",
+    "  vec3 i = floor(x); vec3 f = fract(x); f = f * f * (3.0 - 2.0 * f);",
+    "  return mix(mix(mix(hash(i), hash(i + vec3(1,0,0)), f.x), mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),",
+    "             mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x), mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z);",
+    "}",
+    "float fbm(vec3 p) { float a = 0.5, s = 0.0; for (int i = 0; i < 4; i++) { s += a * noise(p); p = p * 2.07 + 3.1; a *= 0.5; } return s; }",
+
+    // the disk's swirl: two copies of the pattern, each sheared by Kepler's
+    // law for a while and then swapped out, so it never shreds into rings
+    "float swirl(float r, float ang) {",
+    "  float omega = u_spin / (r * sqrt(r));",
+    "  float ph = u_time / 7.0;",
+    "  float f1 = fract(ph), f2 = fract(ph + 0.5);",
+    "  float a1 = ang + omega * f1 * 7.0, a2 = ang + omega * f2 * 7.0;",
+    "  float n1 = fbm(vec3(cos(a1) * 2.2, sin(a1) * 2.2, r * 1.35 + floor(ph) * 7.3));",
+    "  float n2 = fbm(vec3(cos(a2) * 2.2, sin(a2) * 2.2, r * 1.35 + floor(ph + 0.5) * 7.3 + 40.0));",
+    "  float w = sin(3.14159 * f1); w *= w;",
+    "  float n = mix(n2, n1, w);",
+    "  float fine1 = noise(vec3(cos(a1) * 9.0, sin(a1) * 9.0, r * 6.0));",
+    "  float fine2 = noise(vec3(cos(a2) * 9.0, sin(a2) * 9.0, r * 6.0 + 20.0));",
+    "  return n * 0.8 + mix(fine2, fine1, w) * 0.35;",
+    "}",
+
+    // a colour for a shift in frequency: red-gold when the light is
+    // stretched, gold-white at rest, ice blue when it's crushed
+    "vec3 shiftColour(float g) {",
+    "  vec3 c = mix(vec3(0.85, 0.22, 0.05), vec3(1.0, 0.62, 0.22), smoothstep(0.35, 0.8, g));",
+    "  c = mix(c, vec3(1.0, 0.9, 0.72), smoothstep(0.8, 1.1, g));",
+    "  return mix(c, vec3(0.7, 0.86, 1.0), smoothstep(1.1, 1.6, g));",
+    "}",
+
+    "vec4 disk(vec3 c, vec3 vel) {",
+    "  float r = length(c.xz);",
+    "  float inner = smoothstep(2.4, 3.1, r);",
+    "  float outer = 1.0 - smoothstep(7.0, 12.5, r);",
+    "  float dens = inner * outer;",
+    "  if (dens <= 0.0) return vec4(0.0);",
+    "  float n = swirl(r, atan(c.z, c.x));",
+    "  vec3 tang = normalize(vec3(-c.z, 0.0, c.x));",
+    "  float beta = sqrt(0.5 / r) * 0.95;",
+    "  float cosT = dot(tang, -normalize(vel));",
+    "  float gamma = 1.0 / sqrt(1.0 - beta * beta);",
+    "  float dop = 1.0 / (gamma * (1.0 - beta * cosT));",
+    "  float g = dop * sqrt(1.0 - 1.0 / r);",
+    "  float temp = pow(3.0 / r, 1.6);",
+    "  float lum = temp * pow(g, 3.2) * (0.25 + 1.5 * n * n) * (1.0 + u_heat * 1.5);",
+    "  float a = clamp(dens * (0.35 + 0.85 * n), 0.0, 0.97);",
+    "  return vec4(shiftColour(g) * lum * 3.2, a);",
+    "}",
+
+    // stars for rays bent clean round behind the camera
+    "vec3 stars(vec3 d) {",
+    "  vec3 p = d * 180.0; vec3 id = floor(p); float h = hash(id);",
+    "  float s = step(0.985, h) * (1.0 - smoothstep(0.0, 0.5, length(fract(p) - 0.5)));",
+    "  return vec3(0.75, 0.85, 1.0) * s * 1.4 + vec3(0.004, 0.012, 0.026);",
+    "}",
+
+    "vec3 aces(vec3 x) { return clamp((x * (2.51 * x + 0.03)) / (x * (2.43 * x + 0.59) + 0.14), 0.0, 1.0); }",
+
+    "void main() {",
+    "  vec2 uv = (gl_FragCoord.xy - 0.5 * u_res) / u_res.y * 2.0;",
+    "  float aspect = u_res.x / u_res.y;",
+    "  vec2 du = uv - u_hole;",
+    // a gravitational wave: a ring that runs out from the hole after a big
+    // meal and shoves space back and forth as it passes
+    "  if (u_wave.z > 0.0) {",
+    "    float rl = length(du);",
+    "    float R = u_wave.x * 1.3;",
+    "    float q = (rl - R) / 0.14;",
+    "    du += du / max(rl, 1e-4) * u_wave.z * 0.04 * sin((rl - R) * 34.0) * exp(-q * q) / (1.0 + R);",
+    "  }",
+    "  vec2 rel = du / max(u_zoom, 0.0001);",
+    "  float cr = cos(u_roll), sr = sin(u_roll);",
+    "  rel = vec2(cr * rel.x - sr * rel.y, sr * rel.x + cr * rel.y);",
+
+    // parallel rays from far off: each pixel is a ray with an impact
+    // parameter, so space only bends near the hole and not across the screen
+    "  vec3 fwd = vec3(0.0, -sin(u_incl), cos(u_incl));",
+    "  vec3 right = vec3(1.0, 0.0, 0.0);",
+    "  vec3 up = cross(fwd, right);",
+    "  vec2 lat = rel * K;",
+    "  float b = length(lat);",
+    "  vec3 pos = fwd * -D + right * lat.x + up * lat.y;",
+    "  vec3 vel = fwd;",
+    "  vec3 hv = cross(pos, vel); float h2 = dot(hv, hv);",
+    "  const float P = D * 1.1;",
+
+    "  vec3 col = vec3(0.0); float T = 1.0; bool caught = false; float glow = 0.0, ring = 0.0;",
+    "  vec2 hit; bool away = false;",
+    "  if (b > 12.5) {",
+    // far out the bend is small: the weak-field deflection, over the same
+    // stretch of path the traced rays get, is plenty
+    "    float alpha = 2.0 / b * D / sqrt(D * D + b * b);",
+    "    hit = lat * (1.0 - alpha * P / b);",
+    "  } else {",
+    "    for (int i = 0; i < 160; i++) {",
+    "      float r2 = dot(pos, pos); float r = sqrt(r2);",
+    "      if (r < 1.0) { caught = true; break; }",
+    "      if (dot(pos, fwd) > D || r > D * 4.0) break;",
+    "      float dt = clamp(0.085 * r * (r - 0.75), 0.03, 1.6);",
+    "      vec3 acc = -1.5 * h2 * pos / (r2 * r2 * r);",
+    "      vec3 nvel = vel + acc * dt;",
+    "      vec3 npos = pos + nvel * dt;",
+    "      if (pos.y * npos.y < 0.0) {",
+    "        float t = pos.y / (pos.y - npos.y);",
+    "        vec4 d = disk(mix(pos, npos, t), nvel);",
+    "        col += T * d.rgb * d.a; T *= 1.0 - d.a;",
+    "      }",
+    // a haze round the disk and a glow hugging the photon sphere
+    "      float rr = length(pos.xz);",
+    "      glow += dt * exp(-abs(pos.y) * 2.2) * smoothstep(2.4, 3.4, rr) * (1.0 - smoothstep(6.0, 13.0, rr)) / (r2 * 0.12 + 0.6);",
+    "      ring += dt * exp(-abs(r - 1.5) * 9.0);",
+    "      vel = nvel; pos = npos;",
+    "      if (T < 0.02) break;",
+    "    }",
+    "    vec3 d = normalize(vel);",
+    "    float df = dot(d, fwd);",
+    "    if (df > 0.05) {",
+    "      float t = (P - dot(pos, fwd)) / df;",
+    "      hit = vec2(dot(pos, right) + t * dot(d, right), dot(pos, up) + t * dot(d, up));",
+    "    } else away = true;",
+    "  }",
+
+    // (none in front of the shadow, so the hole stays black)
+    "  col += T * glow * vec3(1.0, 0.6, 0.25) * 0.16 * (1.0 + u_heat) * (caught ? 0.0 : 1.0);",
+    // the photon ring: light that went round and round before it got out
+    "  if (!caught) col += T * ring * vec3(1.0, 0.78, 0.5) * 0.11 * (1.0 + u_heat);",
+    "  if (!caught) {",
+    "    vec3 bg = stars(normalize(vel));",
+    "    if (!away) {",
+    "      vec2 scr = hit / K;",
+    "      scr = vec2(cr * scr.x + sr * scr.y, -sr * scr.x + cr * scr.y);",
+    "      vec2 s = u_hole + scr * u_zoom;",
+    "      vec2 tuv = vec2(s.x / aspect * 0.5 + 0.5, s.y * 0.5 + 0.5);",
+    "      if (tuv.x > 0.0 && tuv.x < 1.0 && tuv.y > 0.0 && tuv.y < 1.0) bg = texture2D(u_bg, tuv).rgb;",
+    "    }",
+    "    col += T * bg * bg * 1.15;",
+    "  }",
+    // the jets: matter the hole can't swallow fast enough, fired out of
+    // both poles once it's overfed
+    "  if (u_jet > 0.0) {",
+    "    float al = abs(rel.y), pe = abs(rel.x);",
+    "    float wid = 0.01 + al * 0.09;",
+    "    float flick = 0.65 + 0.35 * noise(vec3(al * 14.0 - u_time * 22.0, rel.y > 0.0 ? 0.0 : 9.0, u_time * 3.0));",
+    "    float jet = exp(-pe / wid) * smoothstep(0.1, 0.22, al) * exp(-al * 0.9) * flick / (1.0 + pe * 60.0);",
+    "    col += u_jet * jet * vec3(0.55, 0.8, 1.0) * 4.5;",
+    "  }",
+    "  float fr = length(uv - u_hole);",
+    "  col += u_flash * (vec3(1.0, 0.8, 0.55) * exp(-fr * 5.0 / max(u_zoom, 0.2)) * 1.6 + vec3(0.04, 0.03, 0.02)) * (caught ? 0.0 : 1.0);",
+    "  col = aces(col * 1.1);",
+    "  gl_FragColor = vec4(sqrt(col), 1.0);",
+    "}"
+  ].join("\n");
+
+  var VERT = "attribute vec2 p; void main() { gl_Position = vec4(p, 0.0, 1.0); }";
+
+  var prog, loc = {}, tex;
+  function compile(type, src) {
+    var sh = gl.createShader(type);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
+      console.error(gl.getShaderInfoLog(sh));
+      return null;
+    }
+    return sh;
+  }
+
+  if (gl) {
+    var vs = compile(gl.VERTEX_SHADER, VERT), fs = compile(gl.FRAGMENT_SHADER, FRAG);
+    if (vs && fs) {
+      prog = gl.createProgram();
+      gl.attachShader(prog, vs);
+      gl.attachShader(prog, fs);
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) prog = null;
+    }
+    if (!prog) gl = null;
+  }
+
+  if (!gl) {
+    root.classList.add("no-gl");
+  } else {
+    gl.useProgram(prog);
+    var buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    var ap = gl.getAttribLocation(prog, "p");
+    gl.enableVertexAttribArray(ap);
+    gl.vertexAttribPointer(ap, 2, gl.FLOAT, false, 0, 0);
+    ["u_res", "u_time", "u_bg", "u_hole", "u_zoom", "u_flash", "u_heat", "u_incl", "u_roll", "u_spin", "u_wave", "u_jet"].forEach(function (n) {
+      loc[n] = gl.getUniformLocation(prog, n);
+    });
+    tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.uniform1i(loc.u_bg, 0);
+  }
+
+  // ---------- the backdrop the hole lenses: stars, a grid and the 404 ----------
+  var backdrop = document.createElement("canvas");
+  var bctx = backdrop.getContext("2d");
+
+  function seeded(seed) {
+    return function () {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      return seed / 4294967296;
+    };
+  }
+
+  function drawBackdrop() {
+    var W = innerWidth, H = innerHeight;
+    if (!W || !H) return;
+    var k = Math.min(2, Math.min(devicePixelRatio || 1, 1.5), 2560 / W);
+    backdrop.width = Math.round(W * k);
+    backdrop.height = Math.round(H * k);
+    var w = backdrop.width, h = backdrop.height, rnd = seeded(404);
+    var c = bctx;
+
+    c.fillStyle = "#020a14";
+    c.fillRect(0, 0, w, h);
+
+    // nebulae, in the blues of the rest of the site
+    [[0.2, 0.3, 0.55, "rgba(12,45,82,0.9)"], [0.82, 0.25, 0.45, "rgba(0,77,153,0.35)"],
+     [0.65, 0.8, 0.5, "rgba(30,40,110,0.4)"], [0.1, 0.85, 0.35, "rgba(10,70,110,0.35)"],
+     [0.5, 0.42, 0.6, "rgba(12,45,82,0.7)"]].forEach(function (n) {
+      var g = c.createRadialGradient(n[0] * w, n[1] * h, 0, n[0] * w, n[1] * h, n[2] * Math.max(w, h));
+      g.addColorStop(0, n[3]);
+      g.addColorStop(1, "rgba(2,10,20,0)");
+      c.fillStyle = g;
+      c.fillRect(0, 0, w, h);
+    });
+
+    // a faint grid, so you can watch space itself bend
+    var step = Math.max(28, Math.round(Math.min(w, h) / 16));
+    c.strokeStyle = "rgba(120,170,255,0.09)";
+    c.lineWidth = Math.max(1, k);
+    c.beginPath();
+    for (var x = (w / 2) % step; x < w; x += step) { c.moveTo(x, 0); c.lineTo(x, h); }
+    for (var y = (h * 0.42) % step; y < h; y += step) { c.moveTo(0, y); c.lineTo(w, y); }
+    c.stroke();
+
+    // stars
+    var count = Math.round(w * h / 1400);
+    for (var i = 0; i < count; i++) {
+      var sx = rnd() * w, sy = rnd() * h, m = rnd();
+      var r = (0.3 + Math.pow(m, 6) * 1.8) * k;
+      var tint = rnd();
+      c.fillStyle = tint < 0.12 ? "rgba(255,214,150," : tint < 0.4 ? "rgba(190,220,255," : "rgba(255,255,255,";
+      c.fillStyle += (0.35 + m * 0.65).toFixed(2) + ")";
+      c.beginPath();
+      c.arc(sx, sy, r, 0, 6.2832);
+      c.fill();
+      if (m > 0.985) {
+        c.strokeStyle = "rgba(220,235,255,0.35)";
+        c.lineWidth = 0.8 * k;
+        c.beginPath();
+        c.moveTo(sx - r * 7, sy); c.lineTo(sx + r * 7, sy);
+        c.moveTo(sx, sy - r * 7); c.lineTo(sx, sy + r * 7);
+        c.stroke();
+      }
+    }
+
+    // the 404
+    var size = Math.min(w * 0.36, h * 0.5);
+    var cy = h * TEXT_Y;
+    c.textAlign = "center";
+    c.textBaseline = "middle";
+    c.font = "900 " + Math.round(size) + "px Merriweather, Georgia, serif";
+    c.shadowColor = "rgba(43,111,214,0.9)";
+    c.shadowBlur = size * 0.12;
+    c.fillStyle = "#e9f3ff";
+    c.fillText("404", w / 2, cy);
+    c.shadowBlur = size * 0.35;
+    c.shadowColor = "rgba(43,111,214,0.55)";
+    c.fillText("404", w / 2, cy);
+    c.shadowBlur = 0;
+
+    if (gl) {
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, backdrop);
+    }
+  }
+
+  // where the 404 sits, as a fraction of the height from the top
+  var TEXT_Y = 0.4;
+
+  // ---------- sizes ----------
+  var W = 0, H = 0, scale = Math.min(devicePixelRatio || 1, 1.25) * 0.75, sparkScale = 1;
+  var maxScale = Math.min(devicePixelRatio || 1, 1.5);
+
+  function sizeSky() {
+    sky.width = Math.max(1, Math.round(W * scale));
+    sky.height = Math.max(1, Math.round(H * scale));
+    if (gl) gl.viewport(0, 0, sky.width, sky.height);
+  }
+
+  function resize() {
+    W = innerWidth;
+    H = innerHeight;
+    sizeSky();
+    sparkScale = Math.min(devicePixelRatio || 1, 2);
+    sparks.width = Math.round(W * sparkScale);
+    sparks.height = Math.round(H * sparkScale);
+    drawBackdrop();
+  }
+
+  // ---------- the hole ----------
+  // positions in screen units: y from -1 (bottom) to 1 (top), x scaled the same
+  function toPx(u) { return { x: W / 2 + u.x * H / 2, y: H / 2 - u.y * H / 2 }; }
+  function toUnits(x, y) { return { x: (x - W / 2) / (H / 2), y: (H / 2 - y) / (H / 2) }; }
+
+  var hole = { x: 2.8, y: 0.7, vx: -0.6, vy: 0 };
+  var zoom = 0.2;           // its size on screen; it grows as it feeds
+  var mass = 1;             // how much it has eaten, from 1 up to CRIT
+  var CRIT = 1.9;
+  var flash = 0, heat = 0, jet = 0;
+  var wave = { t: 9, a: 0 }, gulps = 0;
+  var eatenCount = 0;
+  var state = "intro";      // intro, calm, critical, devour, bang, reborn
+  var stateT = 0;
+  var time = 0;
+  var pointer = { x: 0, y: 0, active: false, last: -10, down: false, drag: false, sx: 0, sy: 0 };
+
+  // the size it is drawn at for its mass (a bigger screen gets a bigger hole)
+  function baseZoom() {
+    var aspect = W / H;
+    return Math.min(1.75, aspect * 1.6);
+  }
+
+  function horizonPx() { return SHADOW / K * zoom * H / 2; }
+
+  // idle, it wanders round the 404 on a slow Lissajous
+  function wander(t) {
+    var a = Math.min(W / H, 1.6);
+    return { x: Math.sin(t * 0.13) * 0.55 * a, y: (1 - TEXT_Y * 2) + Math.sin(t * 0.21 + 1.3) * 0.22 };
+  }
+
+  // ---------- everything that falls in ----------
+  var bodies = [];   // { x, y, vx, vy, kind, el?, ox, oy, life, hue, spin, rot }
+  var sparksList = []; // the blast's flying embers
+
+  function gravityG() { return 2.4e7 * Math.pow(H / 900, 3) * (0.6 + 0.4 * mass) * zoom / baseZoom(); }
+
+  function orbitVelocity(x, y, frac, dir) {
+    var hp = toPx(hole);
+    var dx = x - hp.x, dy = y - hp.y, r = Math.max(30, Math.hypot(dx, dy));
+    var v = Math.sqrt(gravityG() / r) * frac;
+    return { vx: -dy / r * v * dir, vy: dx / r * v * dir };
+  }
+
+  // a fistful of glowing matter where you clicked
+  function feed(x, y) {
+    if (state === "devour" || state === "collapse" || state === "bang") return;
+    var n = coarse ? 45 : 70;
+    var dir = Math.random() < 0.5 ? 1 : -1;
+    for (var i = 0; i < n; i++) {
+      var px = x + (Math.random() - 0.5) * 26, py = y + (Math.random() - 0.5) * 26;
+      var o = orbitVelocity(px, py, 0.55 + Math.random() * 0.5, dir);
+      bodies.push({
+        x: px, y: py,
+        vx: o.vx + (Math.random() - 0.5) * 160, vy: o.vy + (Math.random() - 0.5) * 160,
+        kind: "dot", life: 1, hue: Math.random(), size: 1.1 + Math.random() * 2.2
+      });
+    }
+    ring(x, y);
+    sound.feed();
+  }
+
+  // now and then a comet wanders in, slingshots round the hole and either
+  // gets away or doesn't
+  var nextComet = 5;
+  function comet() {
+    var hp = toPx(hole), edge = Math.floor(Math.random() * 4), x, y;
+    if (edge === 0) { x = -60; y = Math.random() * H; }
+    else if (edge === 1) { x = W + 60; y = Math.random() * H; }
+    else if (edge === 2) { x = Math.random() * W; y = -60; }
+    else { x = Math.random() * W; y = H + 60; }
+    var dx = hp.x - x, dy = hp.y - y, d = Math.hypot(dx, dy);
+    var miss = (Math.random() < 0.5 ? 1 : -1) * horizonPx() * (1.5 + Math.random() * 3);
+    var v = 260 + Math.random() * 220;
+    bodies.push({
+      x: x, y: y,
+      vx: (dx / d) * v + (-dy / d) * miss, vy: (dy / d) * v + (dx / d) * miss,
+      kind: "comet", life: 1, hue: Math.random(), size: 2.6
+    });
+  }
+
+  // a shockwave ring where something was dropped in
+  var rings = [];
+  function ring(x, y, big) { rings.push({ x: x, y: y, t: 0, big: !!big }); }
+
+  // a DOM element (a letter of the path or a piece of the page) let go
+  function release(el, clone, push) {
+    var r = el.getBoundingClientRect();
+    if (!r.width && !r.height) return;
+    var target = el;
+    if (clone) {
+      target = document.createElement("span");
+      target.textContent = el.textContent;
+      var cs = getComputedStyle(el);
+      target.style.left = r.left + "px";
+      target.style.top = r.top + "px";
+      target.style.fontSize = cs.fontSize;
+      target.style.lineHeight = r.height + "px";
+      debris.appendChild(target);
+      el.classList.add("ghost");
+    } else {
+      el.classList.add("eaten");
+    }
+    var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    var o = orbitVelocity(cx, cy, push == null ? 0.6 : push, Math.random() < 0.5 ? 1 : -1);
+    bodies.push({
+      x: cx, y: cy, ox: cx, oy: cy, vx: o.vx, vy: o.vy * 0.6 - 40,
+      kind: clone ? "letter" : "page", el: target, src: clone ? el : null, life: 1,
+      spin: (Math.random() - 0.5) * 8, rot: 0, size: Math.max(r.width, r.height)
+    });
+  }
+
+  // a letter of the path is gone, but leaks back out as Hawking radiation,
+  // so you can still read what you typed
+  function gone(b) {
+    b.el.remove();
+    setTimeout(function () { b.src.classList.remove("ghost"); }, 900);
+  }
+
+  function swallow(b) {
+    // a flare for each thing that crosses, and a little more mass
+    flash = Math.min(0.8, flash + (b.kind === "page" ? 0.2 : b.kind === "comet" ? 0.25 : b.kind === "letter" ? 0.05 : 0.012));
+    if (b.kind === "comet") { wave = { t: 0, a: 0.7 }; ring(b.x, b.y); }
+    if (b.kind === "dot") gulps++;
+    if (state === "calm" && b.kind === "dot") mass = Math.min(CRIT, mass + 0.0028);
+    if (b.kind !== "dot" && state === "calm" && wave.t > 0.5) wave = { t: 0, a: 0.5 };
+    if (b.kind !== "dot") { eatenCount++; sound.gulp(); } else eatenCount += 0.025;
+    if (b.kind === "letter") gone(b);
+    if (b.kind === "page") { b.el.style.opacity = "0"; b.done = true; }
+  }
+
+  function stepBodies(dt) {
+    var hp = toPx(hole), G = gravityG(), rh = horizonPx();
+    for (var i = bodies.length - 1; i >= 0; i--) {
+      var b = bodies[i];
+      if (b.kind === "home") {
+        // a piece of the page flying back to where it belongs
+        var k = 90, c = 13;
+        b.vx += (-(b.x - b.ox) * k - b.vx * c) * dt;
+        b.vy += (-(b.y - b.oy) * k - b.vy * c) * dt;
+        b.x += b.vx * dt; b.y += b.vy * dt;
+        b.rot *= Math.exp(-dt * 6);
+        b.grow = Math.min(1, b.grow + dt * 2.2);
+        if (Math.hypot(b.x - b.ox, b.y - b.oy) < 0.6 && Math.hypot(b.vx, b.vy) < 6 && b.grow >= 1) {
+          b.el.style.transform = "";
+          b.el.style.opacity = "";
+          b.el.classList.remove("eaten");
+          bodies.splice(i, 1);
+          continue;
+        }
+        b.el.style.opacity = b.grow;
+        b.el.style.transform = "translate(" + (b.x - b.ox).toFixed(1) + "px," + (b.y - b.oy).toFixed(1) + "px) rotate(" + b.rot.toFixed(1) + "deg) scale(" + (0.2 + 0.8 * b.grow).toFixed(3) + ")";
+        continue;
+      }
+      var dx = hp.x - b.x, dy = hp.y - b.y;
+      var r2 = dx * dx + dy * dy, r = Math.sqrt(r2);
+      if (r < rh * (b.kind === "dot" || b.kind === "comet" ? 0.95 : 0.7)) {
+        swallow(b);
+        bodies.splice(i, 1);
+        continue;
+      }
+      var a = G / (r2 + 400);
+      b.vx += dx / r * a * dt;
+      b.vy += dy / r * a * dt;
+      // a drag that bleeds the orbit away, harder the deeper it gets
+      var drag = Math.exp(-dt * (b.kind === "comet" ? 0.12 : b.kind === "dot" ? 0.5 : 0.9) * (1 + 180 / (r + 30)));
+      b.vx *= drag; b.vy *= drag;
+      b.x += b.vx * dt; b.y += b.vy * dt;
+      if (b.kind === "letter" || b.kind === "page") {
+        // spaghettified: stretched along the line to the hole, crushed across it
+        var stretch = 1 + Math.min(6, Math.pow(rh * 2.2 / Math.max(r, 1), 2) * 1.2);
+        var ang = Math.atan2(dy, dx) * 57.2958;
+        b.rot += b.spin * dt * 30;
+        var fade = Math.min(1, (r - rh * 0.7) / (rh * 1.2));
+        b.el.style.opacity = Math.max(0, fade).toFixed(3);
+        b.el.style.transform = "translate(" + (b.x - b.ox).toFixed(1) + "px," + (b.y - b.oy).toFixed(1) + "px) rotate(" + ang.toFixed(1) + "deg) scale(" + stretch.toFixed(3) + "," + (1 / stretch).toFixed(3) + ") rotate(" + (b.rot - ang).toFixed(1) + "deg)";
+      }
+      // anything flung right off the screen comes round again or is let go
+      if (b.x < -400 || b.x > W + 400 || b.y < -400 || b.y > H + 400 || (b.kind === "comet" && (b.life -= dt / 14) <= 0)) {
+        if (b.kind === "letter") gone(b);
+        if (b.kind === "page") { b.el.style.opacity = "0"; b.done = true; }
+        bodies.splice(i, 1);
+      }
+    }
+  }
+
+  function drawSparks(dt) {
+    var c = sctx, k = sparkScale;
+    c.setTransform(k, 0, 0, k, 0, 0);
+    c.clearRect(0, 0, W, H);
+    c.globalCompositeOperation = "lighter";
+    c.lineCap = "round";
+    var hp = toPx(hole);
+
+    for (var i = 0; i < bodies.length; i++) {
+      var b = bodies[i];
+      if (b.kind !== "dot" && b.kind !== "comet") continue;
+      var dx = hp.x - b.x, dy = hp.y - b.y, r = Math.hypot(dx, dy);
+      var hot = Math.min(1, horizonPx() * 2.5 / r);
+      var col = b.hue < 0.55 ? [255, 190 + hot * 50, 90 + hot * 120] : [170 + hot * 70, 210 + hot * 30, 255];
+      var tail = b.kind === "comet" ? 0.28 : 0.07 + hot * 0.05;
+      var rgb = (col[0] | 0) + "," + (col[1] | 0) + "," + (col[2] | 0);
+      // a soft halo, then the hot core
+      c.strokeStyle = "rgba(" + rgb + ",0.08)";
+      c.lineWidth = b.size * 3.2;
+      c.beginPath();
+      c.moveTo(b.x, b.y);
+      c.lineTo(b.x - b.vx * tail, b.y - b.vy * tail);
+      c.stroke();
+      c.strokeStyle = "rgba(" + rgb + "," + (0.7 + hot * 0.3).toFixed(2) + ")";
+      c.lineWidth = b.size * (1 - hot * 0.35);
+      c.stroke();
+    }
+
+    for (i = sparksList.length - 1; i >= 0; i--) {
+      var s = sparksList[i];
+      s.life -= dt * s.decay;
+      if (s.life <= 0) { sparksList.splice(i, 1); continue; }
+      s.vx *= Math.exp(-dt * 1.2); s.vy *= Math.exp(-dt * 1.2);
+      s.x += s.vx * dt; s.y += s.vy * dt;
+      c.strokeStyle = s.c + (s.life * 0.9).toFixed(2) + ")";
+      c.lineWidth = s.w * s.life;
+      c.beginPath();
+      c.moveTo(s.x, s.y);
+      c.lineTo(s.x - s.vx * 0.06, s.y - s.vy * 0.06);
+      c.stroke();
+    }
+
+    for (i = rings.length - 1; i >= 0; i--) {
+      var g = rings[i];
+      g.t += dt;
+      var life = g.big ? 2.2 : 0.7;
+      if (g.t > life) { rings.splice(i, 1); continue; }
+      var p = g.t / life;
+      var rad = g.big ? Math.pow(p, 0.55) * Math.hypot(W, H) : 6 + p * 70;
+      c.strokeStyle = "rgba(255,210,140," + ((1 - p) * (g.big ? 0.9 : 0.6)).toFixed(2) + ")";
+      c.lineWidth = g.big ? 30 * (1 - p) + 2 : 2 * (1 - p) + 0.5;
+      c.beginPath();
+      c.arc(g.x, g.y, rad, 0, 6.2832);
+      c.stroke();
+      if (g.big) {
+        c.strokeStyle = "rgba(160,200,255," + ((1 - p) * 0.5).toFixed(2) + ")";
+        c.lineWidth = 8 * (1 - p) + 1;
+        c.beginPath();
+        c.arc(g.x, g.y, rad * 0.93, 0, 6.2832);
+        c.stroke();
+      }
+    }
+    c.globalCompositeOperation = "source-over";
+  }
+
+  // ---------- the tide: the page leans in towards the hole as it passes ----------
+  var leaners = [];
+  function gatherLeaners() {
+    leaners = [].slice.call(document.querySelectorAll("[data-eat], .site-list > li")).map(function (el) {
+      var t = el.style.transform;
+      el.style.transform = "";
+      var r = el.getBoundingClientRect();
+      el.style.transform = t;
+      return { el: el, x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    });
+  }
+
+  function lean() {
+    if (state !== "calm" && state !== "critical" && state !== "intro") return;
+    var hp = toPx(hole), rh = horizonPx(), shaking = state === "critical";
+    leaners.forEach(function (l) {
+      if (l.el.classList.contains("eaten")) return;
+      var dx = hp.x - l.x, dy = hp.y - l.y, r = Math.max(1, Math.hypot(dx, dy));
+      var f = Math.min(1, rh * 3.4 / r);
+      f *= f;
+      var amt = f * (shaking ? 26 : 10);
+      var jx = shaking ? (Math.random() - 0.5) * 6 * f : 0, jy = shaking ? (Math.random() - 0.5) * 6 * f : 0;
+      l.el.style.transform = "translate(" + (dx / r * amt + jx).toFixed(1) + "px," + (dy / r * amt + jy).toFixed(1) + "px) rotate(" + (dx / r * f * (shaking ? 5 : 2)).toFixed(2) + "deg)";
+    });
+  }
+
+  // ---------- critical mass: it eats the page, then goes off ----------
+  var eatList = [];
+  function goCritical() {
+    state = "critical";
+    stateT = 0;
+    root.classList.add("critical");
+    sound.alarm(true);
+  }
+
+  function devour() {
+    state = "devour";
+    stateT = 0;
+    eatList = [].slice.call(document.querySelectorAll("[data-eat], .site-list > li"));
+    // nearest the hole goes first
+    var hp = toPx(hole);
+    eatList.sort(function (a, b) {
+      var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+      return Math.hypot(ra.left + ra.width / 2 - hp.x, ra.top + ra.height / 2 - hp.y) -
+             Math.hypot(rb.left + rb.width / 2 - hp.x, rb.top + rb.height / 2 - hp.y);
+    });
+    eatList.forEach(function (el, i) {
+      setTimeout(function () { if (state === "devour") release(el, false, 0.35 + Math.random() * 0.3); }, i * 70);
+    });
+  }
+
+  function bang() {
+    state = "bang";
+    stateT = 0;
+    root.classList.remove("critical");
+    sound.alarm(false);
+    sound.boom();
+    blast.style.transition = "none";
+    blast.style.opacity = "1";
+    void blast.offsetWidth;
+    blast.style.transition = "opacity 1.6s cubic-bezier(0.2, 0.7, 0.3, 1)";
+    blast.style.opacity = "0";
+    // embers flung out in every direction, behind a ring of light
+    var hp = toPx(hole), n = coarse ? 500 : 1100;
+    ring(hp.x, hp.y, true);
+    for (var i = 0; i < n; i++) {
+      var a = Math.random() * 6.2832, v = 200 + Math.pow(Math.random(), 0.6) * Math.max(W, H) * 1.4;
+      var t = Math.random();
+      sparksList.push({
+        x: hp.x, y: hp.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v,
+        life: 1, decay: 0.35 + Math.random() * 0.6, w: 1 + Math.random() * 2.6,
+        c: t < 0.5 ? "rgba(255,200,120," : t < 0.8 ? "rgba(200,225,255," : "rgba(255,120,60,"
+      });
+    }
+    // what was left in mid-fall is gone
+    bodies = bodies.filter(function (b) {
+      if (b.kind === "letter") b.el.remove();
+      return b.kind === "page";
+    });
+    bodies.forEach(function (b) { b.done = true; b.el.style.opacity = "0"; });
+    bodies = [];
+    zoom = 0;
+    mass = 1;
+    wave = { t: 0, a: 2.2 };
+    flash = 0;
+    heat = 0;
+  }
+
+  var REBORN = [
+    ["You fed it the whole page.", "Error 404 · Universe rebooted"],
+    ["It’s back. It’s always back.", "Error 404 · Still missing"],
+    ["The page is still gone, but that was fun.", "Error 404 · Signal lost (again)"],
+    ["Okay, you broke physics.", "Error 404 · Laws of nature under review"],
+    ["Somewhere in there is the page you wanted.", "Error 404 · Try the home page"]
+  ];
+  var rebirths = 0;
+
+  function reborn() {
+    state = "reborn";
+    stateT = 0;
+    wave = { t: 0, a: 0.9 };
+    var line = REBORN[rebirths++ % REBORN.length];
+    setTitle(line[0]);
+    type(line[1]);
+    // the page comes flying back out of where the hole was
+    var hp = toPx(hole);
+    eatList = [].slice.call(document.querySelectorAll("[data-eat], .site-list > li"));
+    eatList.forEach(function (el, i) {
+      el.classList.add("eaten");
+      el.style.opacity = "0";
+      el.style.transform = "";
+      var r = el.getBoundingClientRect();
+      var ox = r.left + r.width / 2, oy = r.top + r.height / 2;
+      var a = Math.random() * 6.2832, v = 400 + Math.random() * 900;
+      setTimeout(function () {
+        bodies.push({ kind: "home", el: el, x: hp.x, y: hp.y, ox: ox, oy: oy, vx: Math.cos(a) * v, vy: Math.sin(a) * v, rot: (Math.random() - 0.5) * 540, grow: 0 });
+      }, 120 + i * 45);
+    });
+    gatherLeaners();
+    pathChars.forEach(function (s) { s.classList.remove("ghost"); });
+  }
+
+  // ---------- the kicker types itself out ----------
+  var typing = null;
+  function type(text) {
+    clearInterval(typing);
+    var n = 0;
+    kicker.textContent = "";
+    if (reduce) { kicker.textContent = text; return; }
+    typing = setInterval(function () {
+      kicker.textContent = text.slice(0, ++n);
+      if (n >= text.length) clearInterval(typing);
+    }, 38);
+  }
+
+  // ---------- the readouts ----------
+  var SUP = "⁰¹²³⁴⁵⁶⁷⁸⁹";
+  function sup(n) { return String(n).split("").map(function (d) { return SUP[+d]; }).join(""); }
+
+  var lastHud = 0;
+  function updateHud() {
+    var m = 4.04e6 * mass * (state === "bang" || state === "reborn" ? Math.max(0.01, zoom / baseZoom()) : 1);
+    var e = Math.floor(Math.log10(m)), mant = m / Math.pow(10, e);
+    hud.mass.textContent = mant.toFixed(2) + " × 10" + sup(e) + " M☉";
+    hud.horizon.textContent = (m * 2.953 / 1e6).toFixed(1) + " M km";
+    hud.eaten.textContent = Math.floor(eatenCount);
+    var pct = Math.max(0, Math.min(1, (mass - 1) / (CRIT - 1)));
+    hud.meter.style.width = (state === "critical" || state === "devour" ? 100 : pct * 100).toFixed(1) + "%";
+    hud.status.textContent =
+      state === "intro" ? "Approaching" :
+      state === "critical" ? "Critical mass" :
+      state === "devour" ? "Eating the page" :
+      state === "collapse" ? "Collapsing" :
+      state === "bang" ? "Gone supernova" :
+      state === "reborn" ? "Re-forming" :
+      pct > 0.66 ? "Unstable" : pct > 0.05 ? "Feeding" : "Stable";
+    // time dilation where the pointer is: how slow your clock would run there
+    var hp = toPx(hole);
+    var dist = pointer.active ? Math.hypot(pointer.x - hp.x, pointer.y - hp.y) : W;
+    var rs = dist / (H / 2) / Math.max(zoom, 0.001) * K;
+    hud.clock.textContent = rs <= 1.02 ? "×∞" : "×" + (1 / Math.sqrt(1 - 1 / rs)).toFixed(3);
+  }
+
+  // ---------- sound: a low drone that deepens as it grows ----------
+  var sound = (function () {
+    var ac = null, master, drone1, drone2, lp, alarmOsc, alarmGain, on = false;
+    var btn = document.getElementById("sound");
+    function start() {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return false;
+      ac = new AC();
+      master = ac.createGain();
+      master.gain.value = 0;
+      master.connect(ac.destination);
+      lp = ac.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 240;
+      lp.Q.value = 6;
+      lp.connect(master);
+      drone1 = ac.createOscillator();
+      drone1.type = "sawtooth";
+      drone1.frequency.value = 41.2;
+      drone2 = ac.createOscillator();
+      drone2.type = "sawtooth";
+      drone2.frequency.value = 41.2 * 1.007;
+      var dg = ac.createGain();
+      dg.gain.value = 0.22;
+      drone1.connect(dg); drone2.connect(dg); dg.connect(lp);
+      drone1.start(); drone2.start();
+      alarmGain = ac.createGain();
+      alarmGain.gain.value = 0;
+      alarmGain.connect(master);
+      alarmOsc = ac.createOscillator();
+      alarmOsc.type = "square";
+      alarmOsc.frequency.value = 440;
+      var ag = ac.createGain();
+      ag.gain.value = 0.05;
+      alarmOsc.connect(ag); ag.connect(alarmGain);
+      alarmOsc.start();
+      return true;
+    }
+    function noiseBurst(dur, from, to, vol) {
+      if (!on) return;
+      var n = Math.round(ac.sampleRate * dur), b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0);
+      for (var i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2);
+      var src = ac.createBufferSource();
+      src.buffer = b;
+      var f = ac.createBiquadFilter();
+      f.type = "bandpass";
+      f.Q.value = 1.4;
+      f.frequency.setValueAtTime(from, ac.currentTime);
+      f.frequency.exponentialRampToValueAtTime(to, ac.currentTime + dur);
+      var g = ac.createGain();
+      g.gain.value = vol;
+      src.connect(f); f.connect(g); g.connect(master);
+      src.start();
+    }
+    function set(v) {
+      on = v;
+      btn.setAttribute("aria-pressed", v ? "true" : "false");
+      if (v && !ac && !start()) { on = false; btn.setAttribute("aria-pressed", "false"); return; }
+      if (!ac) return;
+      if (ac.state === "suspended") ac.resume();
+      master.gain.setTargetAtTime(v ? 0.6 : 0, ac.currentTime, 0.3);
+    }
+    btn.addEventListener("click", function (e) { e.stopPropagation(); set(!on); });
+    return {
+      feed: function () { noiseBurst(0.9, 2400, 120, 0.5); },
+      gulp: function () {
+        if (!on) return;
+        var o = ac.createOscillator(), g = ac.createGain();
+        o.type = "sine";
+        o.frequency.setValueAtTime(320, ac.currentTime);
+        o.frequency.exponentialRampToValueAtTime(40, ac.currentTime + 0.25);
+        g.gain.setValueAtTime(0.25, ac.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.3);
+        o.connect(g); g.connect(master);
+        o.start(); o.stop(ac.currentTime + 0.32);
+      },
+      boom: function () {
+        noiseBurst(3.5, 900, 30, 1.6);
+        if (!on) return;
+        var o = ac.createOscillator(), g = ac.createGain();
+        o.frequency.setValueAtTime(90, ac.currentTime);
+        o.frequency.exponentialRampToValueAtTime(18, ac.currentTime + 2.5);
+        g.gain.setValueAtTime(0.9, ac.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 3);
+        o.connect(g); g.connect(master);
+        o.start(); o.stop(ac.currentTime + 3.1);
+      },
+      alarm: function (v) { if (ac) alarmGain.gain.setTargetAtTime(v && on ? 1 : 0, ac.currentTime, 0.02); },
+      tick: function (t) {
+        if (!ac || !on) return;
+        var m = state === "bang" ? 0.4 : mass;
+        drone1.frequency.setTargetAtTime(41.2 / (0.7 + 0.3 * m), ac.currentTime, 0.2);
+        drone2.frequency.setTargetAtTime(41.2 * 1.007 / (0.7 + 0.3 * m) + flash * 3, ac.currentTime, 0.2);
+        lp.frequency.setTargetAtTime(Math.max(60, 160 + 260 * (m - 1) + flash * 900 + 40 * Math.sin(t * 0.7)), ac.currentTime, 0.1);
+        if (state === "critical") alarmOsc.frequency.setValueAtTime(Math.sin(t * 25) > 0 ? 660 : 440, ac.currentTime);
+      }
+    };
+  })();
+
+  // ---------- input ----------
+  function onMove(e) {
+    pointer.x = e.clientX;
+    pointer.y = e.clientY;
+    pointer.active = true;
+    pointer.last = time;
+    if (pointer.down && Math.hypot(e.clientX - pointer.sx, e.clientY - pointer.sy) > 10) pointer.drag = true;
+  }
+
+  function onTarget(e) {
+    return e.target.closest && e.target.closest("a, button, nav, .menu");
+  }
+
+  addEventListener("pointermove", onMove, { passive: true });
+  addEventListener("pointerdown", function (e) {
+    if (onTarget(e)) return;
+    onMove(e);
+    pointer.down = true;
+    pointer.drag = false;
+    pointer.sx = e.clientX;
+    pointer.sy = e.clientY;
+  });
+  addEventListener("pointerup", function (e) {
+    if (pointer.down && !pointer.drag && !onTarget(e)) feed(e.clientX, e.clientY);
+    pointer.down = false;
+    if (e.pointerType !== "mouse") pointer.last = time - 1.5;
+  });
+  addEventListener("pointercancel", function () { pointer.down = false; });
+  document.addEventListener("mouseleave", function () { pointer.active = false; });
+
+  function feedNear() {
+    var hp = toPx(hole), a = Math.random() * 6.2832, r = horizonPx() * 4 + 60;
+    feed(hp.x + Math.cos(a) * r, hp.y + Math.sin(a) * r);
+  }
+  document.getElementById("feed").addEventListener("click", feedNear);
+  addEventListener("keydown", function (e) {
+    if ((e.key === "f" || e.key === "F") && !e.ctrlKey && !e.metaKey && !e.altKey && !reduce) feedNear();
+  });
+
+  // ---------- the loop ----------
+  var frames = 0, frameAcc = 0, lastNow = 0, slowFrames = 0, fastFrames = 0;
+
+  function frame(dt, still) {
+    time += dt;
+    stateT += dt;
+    var bz = baseZoom();
+
+    // where the hole wants to be
+    var target;
+    var steering = pointer.active && (pointer.down || !coarse) && time - pointer.last < 3.5;
+    if (state === "intro") {
+      target = wander(time);
+      if (stateT > 1.2 && pathChars.length) {
+        // the path's letters let go, one after another
+        var due = Math.floor((stateT - 1.2) / 0.09);
+        while (released < Math.min(due, pathChars.length)) release(pathChars[released++], true, 0.5);
+      }
+      if (stateT > 1.2 + pathChars.length * 0.09 + 0.4) { state = "calm"; stateT = 0; }
+    } else if (steering && state !== "bang") {
+      target = toUnits(pointer.x, pointer.y);
+    } else {
+      target = wander(time);
+    }
+
+    // a spring that lags behind, so it swings in like it has mass
+    var stiff = state === "critical" || state === "collapse" ? 2 : state === "intro" ? 1.6 : 6;
+    var damp = state === "critical" ? 1.6 : state === "intro" ? 2.3 : 3.6;
+    hole.vx += ((target.x - hole.x) * stiff - hole.vx * damp) * dt;
+    hole.vy += ((target.y - hole.y) * stiff - hole.vy * damp) * dt;
+    hole.x += hole.vx * dt;
+    hole.y += hole.vy * dt;
+
+    // its size
+    var want = bz * (0.85 + 0.25 * (mass - 1) / (CRIT - 1) * 2);
+    if (state === "intro") want = bz * Math.min(1, 0.2 + stateT * 0.4) * 0.85;
+    if (state === "critical") want = bz * (1.4 + Math.sin(stateT * 30) * 0.05 * stateT);
+    if (state === "devour") want = bz * (1.55 + stateT * 0.15);
+    if (state === "collapse") want = 0.02;
+    if (state === "bang") want = 0;
+    if (state === "reborn") want = bz * 0.85 * Math.min(1, stateT / 2.5);
+    zoom += (want - zoom) * Math.min(1, dt * (state === "reborn" ? 1.5 : state === "collapse" ? 9 : 3.5));
+
+    heat += ((state === "critical" || state === "devour" ? 1 : (mass - 1) / (CRIT - 1) * 0.5) - heat) * Math.min(1, dt * 2);
+    flash *= Math.exp(-dt * 3.2);
+    var wantJet = state === "critical" || state === "devour" ? 1.6 : state === "calm" ? Math.max(0, Math.min(1, (heat - 0.28) / 0.22)) : 0;
+    jet += (wantJet - jet) * Math.min(1, dt * 3);
+    // a good mouthful sets off a gravitational wave
+    wave.t += dt;
+    if (gulps >= 4 && wave.t > 0.7) { wave = { t: 0, a: Math.min(1, 0.3 + gulps / 25) }; gulps = 0; }
+    gulps = Math.max(0, gulps - dt * 2);
+
+    if (state === "calm" && mass >= CRIT - 0.001) goCritical();
+    if (state === "critical" && stateT > 2.2) devour();
+    if (state === "devour") {
+      // it goes off once the page is in, or soon after anyway
+      var left = bodies.some(function (b) { return b.kind === "page"; });
+      if ((!left && stateT > eatList.length * 0.07 + 0.3) || stateT > 4.5) { state = "collapse"; stateT = 0; sound.alarm(false); }
+    }
+    // a breath in before it goes: the hole crushes down to a point
+    if (state === "collapse") flash = Math.min(1.5, flash + dt * 4);
+    if (state === "collapse" && stateT > 0.45) bang();
+    if (state === "bang" && stateT > 1.4) reborn();
+    if (state === "calm" && (nextComet -= dt) <= 0) { comet(); nextComet = 7 + Math.random() * 9; }
+    if (state === "reborn" && stateT > 3) { state = "calm"; stateT = 0; }
+
+    stepBodies(dt);
+    lean();
+    drawSparks(dt);
+    if (!still) render();
+    sound.tick(time);
+    if (time - lastHud > 0.1) { lastHud = time; updateHud(); }
+  }
+  var released = 0;
+
+  function render() {
+    if (!gl) return;
+    gl.uniform2f(loc.u_res, sky.width, sky.height);
+    gl.uniform1f(loc.u_time, time);
+    gl.uniform2f(loc.u_hole, hole.x, hole.y);
+    gl.uniform1f(loc.u_zoom, Math.max(zoom, 0.0001));
+    gl.uniform1f(loc.u_flash, flash);
+    gl.uniform1f(loc.u_heat, heat);
+    gl.uniform1f(loc.u_incl, 0.17 + Math.sin(time * 0.05) * 0.04);
+    gl.uniform1f(loc.u_roll, -0.2 + Math.sin(time * 0.07) * 0.06 + hole.vx * 0.04);
+    gl.uniform1f(loc.u_spin, 6.0);
+    gl.uniform3f(loc.u_wave, wave.t, 0, wave.t < 4 ? wave.a * Math.exp(-wave.t * 0.7) : 0);
+    gl.uniform1f(loc.u_jet, jet);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+  }
+
+  function loop(now) {
+    requestAnimationFrame(loop);
+    if (!lastNow) { lastNow = now; return; }
+    var ms = now - lastNow;
+    lastNow = now;
+    if (document.hidden) return;
+    frame(Math.min(ms, 50) / 1000);
+    // keep it smooth: drop the resolution when frames run long, raise it when there's room
+    frameAcc += ms;
+    if (++frames >= 30) {
+      var avg = frameAcc / frames;
+      frames = 0;
+      frameAcc = 0;
+      if (avg > 24 && scale > 0.35) { scale = Math.max(0.35, scale * 0.82); sizeSky(); }
+      else if (avg < 14 && scale < maxScale) { scale = Math.min(maxScale, scale * 1.1); sizeSky(); }
+    }
+  }
+
+  // ---------- go ----------
+  resize();
+  gatherLeaners();
+  addEventListener("resize", function () { resize(); gatherLeaners(); });
+  if (document.fonts && document.fonts.load) {
+    document.fonts.load("900 200px Merriweather").then(function () { drawBackdrop(); gatherLeaners(); }, function () {});
+  }
+  type(kicker.textContent);
+
+  if (reduce) {
+    // one still frame, the hole parked by the 404 and nothing falling
+    hole.x = 0.32 * Math.min(W / H, 1.6);
+    hole.y = 1 - TEXT_Y * 2 + 0.05;
+    zoom = baseZoom() * 0.85;
+    state = "calm";
+    document.querySelector(".hint").hidden = true;
+    var still = function () { render(); updateHud(); };
+    still();
+    addEventListener("resize", still);
+    if (document.fonts) document.fonts.ready.then(still);
+    document.getElementById("feed").hidden = true;
+  } else {
+    requestAnimationFrame(loop);
+  }
+
+  // a handle for poking at it from the console
+  window.__bh = { frame: frame, render: render, hole: hole, get state() { return state; }, set mass(v) { mass = v; }, get mass() { return mass; }, feed: feed };
+})();
+</script>
+
+</body>
+</html>

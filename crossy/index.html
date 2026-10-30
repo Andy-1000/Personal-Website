@@ -17,9 +17,9 @@
     <link
       href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Montserrat:wght@500;600;700;800&display=swap"
       rel="stylesheet"
-    />
-    <script type="module" crossorigin src="/crossy/assets/crossy-afnzGXSX.js"></script>
-    <link rel="stylesheet" crossorigin href="/crossy/assets/crossy-9yf0gAhb.css">
+    />
+    <script type="module" crossorigin src="/crossy/assets/crossy-D-r6y7Ai.js"></script>
+    <link rel="stylesheet" crossorigin href="/crossy/assets/crossy-BGYcMSXw.css">
   </head>
   <body>
     <div id="app">
@@ -106,12 +106,13 @@
 
           <div class="identity">
             <p id="start-best" class="greeting-best">No runs yet</p>
+            <p id="start-map" class="map-line"></p>
           </div>
 
           <button id="btn-play" class="btn btn-primary">Play</button>
-          <!-- Only once there is a journey to leave behind. The first tap asks
-               again, because the world it leaves is gone for good. -->
-          <button id="btn-new" class="link-btn journey-new hidden" type="button">New world</button>
+          <!-- Every map is laid out differently. The first tap asks again,
+               because the map it leaves is gone for good. -->
+          <button id="btn-new" class="link-btn journey-new hidden" type="button">New map</button>
 
           <p class="hint">Tap to hop &middot; swipe to change lane</p>
         </div>
@@ -131,7 +132,11 @@
               <span id="over-best" class="score-value">0</span>
             </div>
           </div>
-          <button id="btn-again" class="btn btn-primary">Play Again</button>
+          <p id="over-map" class="map-line"></p>
+          <div class="over-choices">
+            <button id="btn-again" class="btn btn-primary">Same map again</button>
+            <button id="btn-new-map" class="btn btn-secondary">New map</button>
+          </div>
         </div>
       </div>
 
@@ -143,6 +148,6 @@
         </div>
       </div>
     </div>
-
+
   </body>
 </html>

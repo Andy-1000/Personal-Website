@@ -2,7 +2,7 @@
   Layout audit for /novels.
 
   Loads novels.html in an off-screen iframe at each viewport size, switches
-  through all three sorts, and checks four things every time:
+  through all four sorts, and checks four things every time:
 
     1. nothing scrolls sideways
     2. no chart label overlaps another, or spills out of the plot
@@ -33,7 +33,7 @@
     { w: 844, h: 390, name: "844x390 (phone, landscape)" }
   ];
 
-  var SORTS = ["rating", "year", "author"];
+  var SORTS = ["rating", "year", "author", "genre"];
   var PAGE = "novels.html";
   var SLACK = 1;          // a pixel of rounding is not a bug
   var OVERLAP = 0.5;      // labels must clear each other by at least this much

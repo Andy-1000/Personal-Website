@@ -32,7 +32,7 @@
     { w: 1920, h: 1080, name: "1920x1080" },
     { w: 844, h: 390, name: "844x390 landscape" }
   ];
-  var MODES = ["rating", "year", "director"];
+  var MODES = ["rating", "year", "director", "genre"];
 
   // the longest review on the page: the tallest the dialog ever has to get
   var LONGEST = "inception-2010";

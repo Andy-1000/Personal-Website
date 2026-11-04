@@ -1116,8 +1116,10 @@
     var W = plot.clientWidth;
     var vertical = W < 600;
     var isYear = mode === "year";
-    // stacked top to bottom, a year-per-row timeline would run past 1000px, so it bins by decade
-    var byDecade = isYear && vertical;
+    // stacked top to bottom, a year-per-row timeline would run past 1000px, and across a
+    // wide screen a century and more of single years leaves each column too thin for a
+    // cover, so either way it bins by decade
+    var byDecade = isYear && (vertical || YEARS.length > 100);
     var hist = !isYear || byDecade;           // rating, author and the decade view all draw as columns
     var countEveryBin = mode === "rating";    // 10 counts is helpful, 27 or 164 would be noise
     var B = bins(mode, byDecade);
@@ -1137,12 +1139,12 @@
       var colGap = hist ? Math.max(4, Math.min(18, W / (N * 6))) : (W / N > 14 ? 2 : 1);
       var apartGap = B.some(function (b) { return b.apart; }) ? colGap * 1.6 : 0;
       var topBand = 18, bottomBand = hist ? 30 : 26;
-      var budget = Math.max(180, Math.min(240, W * 0.2));
+      var budget = Math.max(220, Math.min(300, W * 0.25));
       var colW = (W - colGap * (N - 1) - apartGap) / N;
       var perRow, rows, plotH;
 
       // 16 is the sprite's own cell width, so a tile never has to be upscaled
-      for (t = 16; t >= 3; t--) {
+      for (t = 16; t >= 3; t -= 0.5) {
         th = t * 1.5;
         g = t >= 8 ? 2 : 1;
         perRow = Math.floor((colW + g) / (t + g));
@@ -1177,8 +1179,10 @@
         var stackRows = Math.ceil(b.items.length / perRow);
         var cx = x0 + colW / 2;
 
+        // a "1970s" label wants about 40px, so a narrow decade axis names every other one
+        var labelled = !(byDecade && colW + colGap < 40 && i % 2);
         if (hist) {
-          labels.push({ kind: "bin", mode: mode, key: b.key, x: cx, y: baseY + 9, cls: "center" });
+          if (labelled) labels.push({ kind: "bin", mode: mode, key: b.key, x: cx, y: baseY + 9, cls: "center" });
           if (countEveryBin && b.items.length) labels.push({ kind: "text", text: b.items.length, x: cx, y: baseY - stackRows * (th + g) - 13, cls: "center count" });
           else if (!countEveryBin && b.items.length === maxCount) labels.push({ kind: "text", text: b.items.length, x: cx, y: baseY - stackRows * (th + g) - 13, cls: "center peak" });
         } else {
@@ -1209,7 +1213,7 @@
       var plotW = W - labelW - tail;
       var rowGap = mode === "rating" ? 9 : mode === "author" ? 5 : 6;
       var apartGapV = B.some(function (b) { return b.apart; }) ? 14 : 0;
-      var budgetV = mode === "rating" ? 400 : mode === "author" ? 470 : 430;
+      var budgetV = mode === "rating" ? 480 : mode === "author" ? 650 : 520;
       var labelEveryRow = true;   // every row is named in all three views, so it needs room to breathe
       var topPad = 8;             // the first and last row labels are centred on their row, so leave them room
       var cols, R, rowH, gap;
@@ -1224,7 +1228,7 @@
         H = N * rowH + (N - 1) * gap + apartGapV + topPad * 2;
       }
 
-      for (t = 16; t >= 3; t--) {
+      for (t = 16; t >= 3; t -= 0.5) {
         fit(t);
         if (H <= budgetV) break;
       }
@@ -1359,10 +1363,11 @@
     return rects;
   }
 
-  // all the clouds, packed around the biggest; aspect is the plot's width over height
-  function genreMap(b, aspect, labs) {
+  // all the clouds, packed around the biggest; aspect is the plot's width over height,
+  // and apart is how far the clouds keep from each other, in full-size tiles
+  function genreMap(b, aspect, labs, apart) {
     var placed = [];
-    var gapC = Math.max(4, b * 0.8);
+    var gapC = Math.max(apart * 5, b * apart);
     var grid = new Grid(b * 3);
     var sx = Math.sqrt(aspect), sy = 1 / sx;
     GENRES.forEach(function (g, gi) {
@@ -1401,7 +1406,7 @@
     var W = plot.clientWidth;
     var vertical = W < 600;
     // on phones the map runs taller the more there is in it
-    var H = fit || (vertical ? Math.round(Math.min(760, Math.max(320, W * (1.2 + NOVELS.length / 500)))) : 260);
+    var H = fit || (vertical ? Math.round(Math.min(960, Math.max(420, W * (1.8 + NOVELS.length / 300)))) : 260);
     var key = W + "|" + H;
     if (genreCache[key]) return genreCache[key];
 
@@ -1411,12 +1416,13 @@
     // first guess from area: with the names and the gaps between clouds, the covers end up
     // covering about a seventh of the plot
     var area = NOVELS.reduce(function (s, a) { var k = genreScale(a.half); return s + k * k * 1.5; }, 0);
-    var cap = vertical ? 20 : 24;
+    var cap = vertical ? 22 : 26;
     var b = Math.min(cap, Math.sqrt(boxW * boxH * 0.14 / area));
     var best = null, lo = 0, hi = Infinity, least = 2.5;
     // the names do not scale with the covers, so close in on the biggest size that fits
     for (var pass = 0; pass < 14; pass++) {
-      var map = genreMap(b, boxW / boxH, labs);
+      // on a phone the clouds stack, so they need clearer air between them to read as groups
+      var map = genreMap(b, boxW / boxH, labs, vertical ? 1.8 : 0.8);
       var all = boxOf([].concat.apply([], map.map(function (c) { return c.rects; })));
       var f = Math.min(boxW / (all.x1 - all.x0), boxH / (all.y1 - all.y0));
       if (f >= 1) { best = { map: map, all: all, b: b }; lo = b; } else hi = b;

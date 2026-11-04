@@ -308,6 +308,10 @@
   button.lab[disabled] svg { fill: var(--star-empty); }
   .lab.unrated { color: var(--muted); }
 
+  /* the genre map: each name sits in the middle of its own cloud of covers */
+  button.lab.mid { margin: 0; padding: 3px 4px; transform: translate(-50%, -50%); font-weight: 600; color: var(--navy); gap: 0.3em; }
+  button.lab.mid .n { font-weight: 400; color: var(--muted); font-size: 0.8em; }
+
   /* ---------- tooltip ---------- */
   .tip {
     position: fixed;
@@ -958,11 +962,9 @@
 
   /* ---------- genres ---------- */
   // biggest first, ties A to Z, so the chart's bars and the shelves read in one order
-  var GENRES = (function () {
-    var n = {};
-    BOOKS.forEach(function (a) { n[a.genre] = (n[a.genre] || 0) + 1; });
-    return Object.keys(n).sort(function (x, y) { return n[y] - n[x] || x.localeCompare(y); });
-  })();
+  var GENRE_N = {};
+  BOOKS.forEach(function (a) { GENRE_N[a.genre] = (GENRE_N[a.genre] || 0) + 1; });
+  var GENRES = Object.keys(GENRE_N).sort(function (x, y) { return GENRE_N[y] - GENRE_N[x] || x.localeCompare(y); });
 
   function genreId(g) { return "g-" + g.toLowerCase().replace(/[^a-z0-9]+/g, "-"); }
 
@@ -1262,78 +1264,191 @@
   }
 
   /* ================================================================
-     Genre -> one bar of covers per genre, biggest first, at every width.
-     The names are words rather than initials, so each needs a row of its
-     own. fit is the height the other views share on wide screens: the
-     bars size their tiles to it and sit in the middle of it.
+     Genre -> a freeform map, a word cloud made of covers. Each genre is a
+     cloud with its name at the heart; covers spiral out from the name,
+     best rated first and biggest, so a genre's favourites sit closest to
+     it. The clouds then spiral out from the biggest genre, stretched to
+     the shape of the plot, and the whole map scales to fill it. fit is the
+     height the other views share on wide screens.
      ================================================================ */
-  // the widest genre name, measured in the label's own font
-  function genreLabelW() {
+  var genreCache = {};
+  if (document.fonts) document.fonts.ready.then(function () { genreCache = {}; });
+
+  // a five-star cover is full size and a one-star one about half, like words in a cloud
+  function genreScale(half) {
+    return half === null ? 0.42 : 0.4 + 0.6 * Math.pow(half / 10, 1.2);
+  }
+
+  function genreLabelHtml(g) {
+    return esc(g) + '<span class="n">' + GENRE_N[g] + "</span>";
+  }
+
+  // each name's size and the footprint of its whole button, measured in its own font
+  function genreLabels(vertical) {
     var probe = document.createElement("button");
-    probe.className = "lab";
+    probe.className = "lab mid";
     probe.style.visibility = "hidden";
     labelsEl.appendChild(probe);
-    var w = 0;
-    GENRES.forEach(function (g) { probe.textContent = g; w = Math.max(w, probe.offsetWidth - 14); });
+    var most = GENRE_N[GENRES[0]];
+    var out = GENRES.map(function (g) {
+      var size = vertical ? 10 + 3 * Math.sqrt(GENRE_N[g] / most) : 11 + 5 * Math.sqrt(GENRE_N[g] / most);
+      probe.style.fontSize = size + "px";
+      probe.innerHTML = genreLabelHtml(g);
+      return { size: size, w: probe.offsetWidth, h: probe.offsetHeight };
+    });
     labelsEl.removeChild(probe);
-    return Math.ceil(w);
+    return out;
+  }
+
+  function overlaps(r, o, pad) {
+    return r.x < o.x + o.w + pad && o.x < r.x + r.w + pad && r.y < o.y + o.h + pad && o.y < r.y + r.h + pad;
+  }
+
+  // placed rects filed in a coarse grid, so a collision test only looks at its neighbours
+  function Grid(cell) { this.cell = cell; this.map = {}; }
+  Grid.prototype.add = function (r) {
+    var c = this.cell;
+    for (var i = Math.floor(r.x / c); i <= Math.floor((r.x + r.w) / c); i++) {
+      for (var j = Math.floor(r.y / c); j <= Math.floor((r.y + r.h) / c); j++) {
+        (this.map[i * 4096 + j] = this.map[i * 4096 + j] || []).push(r);
+      }
+    }
+  };
+  Grid.prototype.hits = function (r, pad) {
+    var c = this.cell;
+    for (var i = Math.floor((r.x - pad) / c); i <= Math.floor((r.x + r.w + pad) / c); i++) {
+      for (var j = Math.floor((r.y - pad) / c); j <= Math.floor((r.y + r.h + pad) / c); j++) {
+        var l = this.map[i * 4096 + j];
+        if (l) for (var n = 0; n < l.length; n++) if (overlaps(r, l[n], pad)) return true;
+      }
+    }
+    return false;
+  };
+
+  function boxOf(rects) {
+    var b = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity };
+    rects.forEach(function (r) {
+      b.x0 = Math.min(b.x0, r.x); b.y0 = Math.min(b.y0, r.y);
+      b.x1 = Math.max(b.x1, r.x + r.w); b.y1 = Math.max(b.y1, r.y + r.h);
+    });
+    return b;
+  }
+
+  // one genre's cloud, centred on its name, for covers b px wide at full size
+  function genreCloud(g, lab, b) {
+    var gap = b >= 10 ? 2 : 1;
+    // the name's whole button, so its tap target stays clear of covers and other names
+    var rects = [{ x: -lab.w / 2, y: -lab.h / 2, w: lab.w, h: lab.h }];
+    var last = 0;
+    var grid = new Grid(b * 1.5);
+    grid.add(rects[0]);
+    BOOKS.filter(function (a) { return a.genre === g; })
+      .sort(function (a, c) { return genreScale(c.half) - genreScale(a.half) || byRatingThenYear(a, c); })
+      .forEach(function (a) {
+        var w = b * genreScale(a.half), h = w * 1.5;
+        // walk an Archimedean spiral out from the name until the cover finds a free spot,
+        // starting a turn and a half back from where the last one landed: the middle is full
+        var th = Math.max(0, last - 9), r, rect = { w: w, h: h, a: a };
+        for (;;) {
+          r = b * 0.1 * th;
+          rect.x = Math.cos(th) * r * 1.2 - w / 2;
+          rect.y = Math.sin(th) * r - h / 2;
+          if (!grid.hits(rect, gap)) break;
+          th += Math.min(0.6, b * 0.3 / Math.max(r, 1));
+        }
+        last = th;
+        rects.push(rect);
+        grid.add(rect);
+      });
+    return rects;
+  }
+
+  // all the clouds, packed around the biggest; aspect is the plot's width over height
+  function genreMap(b, aspect, labs) {
+    var placed = [];
+    var gapC = Math.max(4, b * 0.8);
+    var grid = new Grid(b * 3);
+    var sx = Math.sqrt(aspect), sy = 1 / sx;
+    GENRES.forEach(function (g, gi) {
+      var rects = genreCloud(g, labs[gi], b);
+      var box = boxOf(rects);
+      var dx = 0, dy = 0, th = 0, r = 0;
+      var m = { x: 0, y: 0, w: 0, h: 0 };
+      function free() {
+        var near = placed.some(function (c) {
+          return !(box.x0 + dx > c.box.x1 + gapC || c.box.x0 > box.x1 + dx + gapC ||
+                   box.y0 + dy > c.box.y1 + gapC || c.box.y0 > box.y1 + dy + gapC);
+        });
+        if (!near) return true;
+        // the bounding boxes meet, so check cover by cover and let the clouds interlock
+        for (var k = 0; k < rects.length; k++) {
+          m.x = rects[k].x + dx; m.y = rects[k].y + dy; m.w = rects[k].w; m.h = rects[k].h;
+          if (grid.hits(m, gapC)) return false;
+        }
+        return true;
+      }
+      while (gi > 0 && !free()) {
+        th += Math.min(0.5, b * 0.7 / Math.max(r, 1));
+        r = b * 0.45 * th;
+        dx = Math.cos(th) * r * sx;
+        dy = Math.sin(th) * r * sy;
+      }
+      var moved = rects.map(function (q) { return { x: q.x + dx, y: q.y + dy, w: q.w, h: q.h, a: q.a }; });
+      moved.forEach(function (q) { grid.add(q); });
+      placed.push({ g: g, lab: labs[gi], cx: dx, cy: dy, rects: moved,
+                    box: { x0: box.x0 + dx, y0: box.y0 + dy, x1: box.x1 + dx, y1: box.y1 + dy } });
+    });
+    return placed;
   }
 
   function genreLayout(fit) {
     var W = plot.clientWidth;
     var vertical = W < 600;
-    var B = GENRES.map(function (g) {
-      return { key: g, items: BOOKS.filter(function (a) { return a.genre === g; }).sort(byRatingThenYear) };
-    });
-    var N = B.length;
-    var maxCount = Math.max.apply(null, B.map(function (b) { return b.items.length; }));
-    // a label button sits 14px left of its anchor (padding inside a negative margin)
-    var labelW = genreLabelW() + 30;
-    var plotW = W - labelW - 30;            // 30 leaves room for the count after the longest bar
-    // each name is a tappable button, so a row is never shorter than one
-    var pitch = vertical ? 24 : 16;
-    var budget = fit || (vertical ? 520 : 260);
-    var t, th, g, R, rowH, gap, H;
+    // on phones the map runs taller the more there is in it
+    var H = fit || (vertical ? Math.round(Math.min(760, Math.max(320, W * (1.2 + BOOKS.length / 500)))) : 260);
+    var key = W + "|" + H;
+    if (genreCache[key]) return genreCache[key];
 
-    function size(tile) {
-      th = tile * 1.5;
-      g = tile >= 8 ? 2 : 1;
-      R = Math.ceil(maxCount / Math.max(1, Math.floor((plotW + g) / (tile + g))));
-      rowH = R * (th + g) - g;
-      gap = Math.max(4, pitch - rowH);
-      H = N * rowH + (N - 1) * gap + 8;
+    var labs = genreLabels(vertical);
+    var pad = 6;
+    var boxW = W - pad * 2, boxH = H - pad * 2;
+    // first guess from area: with the names and the gaps between clouds, the covers end up
+    // covering about a seventh of the plot
+    var area = BOOKS.reduce(function (s, a) { var k = genreScale(a.half); return s + k * k * 1.5; }, 0);
+    var cap = vertical ? 20 : 24;
+    var b = Math.min(cap, Math.sqrt(boxW * boxH * 0.14 / area));
+    var best = null, lo = 0, hi = Infinity, least = 2.5;
+    // the names do not scale with the covers, so close in on the biggest size that fits
+    for (var pass = 0; pass < 14; pass++) {
+      var map = genreMap(b, boxW / boxH, labs);
+      var all = boxOf([].concat.apply([], map.map(function (c) { return c.rects; })));
+      var f = Math.min(boxW / (all.x1 - all.x0), boxH / (all.y1 - all.y0));
+      if (f >= 1) { best = { map: map, all: all, b: b }; lo = b; } else hi = b;
+      if (f < 1 && b <= least) {
+        // even the smallest tiles will not fit beside the names, so the map grows taller
+        H = Math.ceil(H / f) + 8; boxH = H - pad * 2;
+        lo = 0; hi = Infinity; b = least * 2;
+        continue;
+      }
+      if ((f >= 1 && b >= cap) || hi - lo < lo * 0.1) break;
+      b = Math.max(least, hi < Infinity ? (lo ? (lo + hi) / 2 : b * f * 0.97) : Math.min(cap, b * Math.min(f, 1.3)));
     }
+    if (!best) best = { map: map, all: all, b: b };
 
-    // 16 is the sprite's own cell width, so a tile never has to be upscaled
-    for (t = BASE; t >= 3; t--) {
-      size(t);
-      if (H <= budget) break;
-      if (rowH + 4 <= pitch) break;   // rows are as short as the names allow, so smaller tiles gain nothing
-    }
-    if (t < 3) { t = 3; size(3); }
-
-    var blockH = H;
-    var top = 4;
-    if (fit && H < fit) { top += (fit - H) / 2; H = fit; }
-
+    // centre the map in the plot
+    var ox = pad + (boxW - (best.all.x1 - best.all.x0)) / 2 - best.all.x0;
+    var oy = pad + (boxH - (best.all.y1 - best.all.y0)) / 2 - best.all.y0;
     var pos = new Array(BOOKS.length);
     var labels = [];
-    B.forEach(function (b, i) {
-      var y0 = top + i * (rowH + gap);
-      // fill each bar a column at a time, so it grows away from its name
-      b.items.forEach(function (a, k) {
-        pos[a.i] = { x: labelW + 4 + Math.floor(k / R) * (t + g), y: y0 + (k % R) * (th + g), t: t, d: y0 / H };
+    best.map.forEach(function (c) {
+      c.rects.forEach(function (q) {
+        if (q.a) pos[q.a.i] = { x: q.x + ox, y: q.y + oy, t: q.w, d: (q.x + ox) / W };
       });
-      var cy = y0 + rowH / 2;
-      labels.push({ kind: "bin", mode: "genre", key: b.key, x: labelW - 8, y: cy, cls: "right" });
-      labels.push({ kind: "text", text: b.items.length, x: labelW + 4 + Math.ceil(b.items.length / R) * (t + g) + 5, y: cy, cls: "left count" });
+      labels.push({ kind: "bin", mode: "genre", key: c.g, size: c.lab.size, x: c.cx + ox, y: c.cy + oy, cls: "mid" });
     });
-
-    var axes = [
-      { left: labelW, top: top - 4, width: 1, height: blockH },
-      { left: labelW, top: top - 4, width: 1, height: 0 }
-    ];
-    return { pos: pos, labels: labels, axes: axes, H: Math.ceil(H), W: W, vertical: vertical, hist: true, t: t, th: th, bands: 0 };
+    var none = { left: 0, top: 0, width: 0, height: 0 };
+    return (genreCache[key] = { pos: pos, labels: labels, axes: [none, none], H: H, W: W, vertical: vertical,
+                                hist: true, t: best.b, th: best.b * 1.5, bands: 0 });
   }
 
   var BIN_STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + STAR + '"/></svg>';
@@ -1353,12 +1468,9 @@
     var L = computeLayout(sortMode);
     // on wide screens every view shares one height, so switching never moves the page
     if (!L.vertical) {
-      // the genre bars fit themselves into the height the other views share,
-      // unless their names need more, and then every view takes that height
+      // the genre map scales itself to fill the height the other views share
       var shared = Math.max.apply(null, MODES.filter(function (m) { return m !== "genre"; }).map(function (m) { return m === sortMode ? L.H : computeLayout(m).H; }));
-      var G = genreLayout(shared);
-      shared = Math.max(shared, G.H);
-      if (sortMode === "genre") L = G;
+      if (sortMode === "genre") L = genreLayout(shared);
       dropTo(L, shared);
     }
     var modeChanged = lastMode !== null && lastMode !== sortMode;
@@ -1389,10 +1501,11 @@
         el.className = "lab " + l.cls + (l.key === "unrated" ? " unrated" : "");
         var missing;
         if (l.mode === "genre") {
-          el.textContent = l.key;
+          el.innerHTML = genreLabelHtml(l.key);
+          el.style.fontSize = l.size + "px";
           el.dataset.target = genreId(l.key);
           missing = "No books in " + l.key;
-          el.setAttribute("aria-label", "Jump to " + l.key);
+          el.setAttribute("aria-label", "Jump to " + l.key + ", " + GENRE_N[l.key] + " books");
         } else if (l.mode === "author") {
           el.textContent = l.key;
           el.dataset.target = letterId(l.key);
@@ -1462,7 +1575,7 @@
   function chartSummary() {
     if (sortMode === "genre") {
       var tally = GENRES.map(function (g) { return g + ": " + BOOKS.filter(function (a) { return a.genre === g; }).length; });
-      return "Bar chart of " + BOOKS.length + " books by genre, biggest first. " + tally.join(", ") + ".";
+      return "Map of " + BOOKS.length + " books in clouds by genre, biggest first, higher rated covers drawn larger. " + tally.join(", ") + ".";
     }
     if (sortMode === "author") {
       var letters = {};
